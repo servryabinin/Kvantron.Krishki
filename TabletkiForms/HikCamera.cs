@@ -249,7 +249,7 @@ namespace Kvantron.Ruberoid.Hardwares
 				int nRet = m_MyCamera.MV_CC_StartGrabbing_NET();
 				if (MyCamera.MV_OK != nRet)
 				{
-					Console.WriteLine("Start grabbing failed:{0:x8}", nRet);
+					MessageBox.Show("Start grabbing failed:{0:x8}");
 					return false;
 				}
 

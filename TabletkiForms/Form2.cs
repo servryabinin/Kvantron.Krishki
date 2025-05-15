@@ -44,6 +44,7 @@ using ScottPlot.Colormaps;
 using System.Runtime.Intrinsics.X86;
 
 using EasyModbus;
+using System.Collections.Concurrent;
 
 namespace KrishkiForms
 {
@@ -118,6 +119,10 @@ namespace KrishkiForms
         private bool obduvEnabled = false;
 
         private byte[] HUE_LUT = new byte[128 * 128 * 128];
+
+        private DateTime? _lastImageReceivedTime = null;
+        private readonly string _logFilePath = "SendImageLog.txt";
+
 
 
 
@@ -287,15 +292,35 @@ namespace KrishkiForms
             dataGridView2.Rows.Clear(); // Очищаем все строки в таблице*/
         }
 
-        private void recognizeButton_Click(object sender, EventArgs e)
+        private async void recognizeButton_Click(object sender, EventArgs e)  // Добавили async
         {
             if (isProcessing)
             {
-                // Остановить обработку
+                // Остановить обработку (без блокировки UI)
                 cts?.Cancel();
-                processingTask?.Wait();
-                isProcessing = false;
-                recognizeButton.Text = "Начать распознавание";
+                recognizeButton.Text = "Остановка...";
+                recognizeButton.Enabled = false;
+
+                try
+                {
+                    await processingTask;  // Асинхронное ожидание вместо Wait()
+                }
+                catch (OperationCanceledException)
+                {
+                    // Обработка отмены - нормальная ситуация
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при остановке: {ex.Message}");
+                }
+                finally
+                {
+                    isProcessing = false;
+                    recognizeButton.Text = "Начать распознавание";
+                    recognizeButton.Enabled = true;
+                    cts?.Dispose();
+                    cts = null;
+                }
             }
             else
             {
@@ -307,11 +332,17 @@ namespace KrishkiForms
 
                 // Запустить обработку
                 cts = new CancellationTokenSource();
-                var token = cts.Token;
-
-                processingTask = Task.Run(() => StartContinuousProcessing(token));
-                isProcessing = true;
-                recognizeButton.Text = "Остановить распознавание";
+                try
+                {
+                    processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
+                    isProcessing = true;
+                    recognizeButton.Text = "Остановить распознавание";
+                }
+                catch
+                {
+                    cts?.Dispose();
+                    throw;
+                }
             }
         }
 
@@ -978,78 +1009,106 @@ namespace KrishkiForms
 
         private async void StartContinuousProcessing(CancellationToken token)
         {
-            while (!token.IsCancellationRequested)
+            try
             {
-                Mat image = CaptureImage();
-                if (image.Empty()) break;
-
-                Mat gray = new Mat();
-                Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
-                Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
-
-                // Копии изображений для параллельных потоков
-                Mat imageForOvality = image.Clone();
-                Mat grayForOvality = gray.Clone();
-
-                Mat imageForInclusions = image.Clone();
-                Mat grayForInclusions = gray.Clone();
-
-                Mat imageForPaintDefects = image.Clone();
-                Mat grayForPaintDefects = gray.Clone();
-
-                Mat imageForUnderfill = image.Clone();
-                Mat grayForUnderfill = gray.Clone();
-
-                // Запуск каждой проверки в своём потоке
-                var ovalityTask = Task.Run(() => RunCheckOvality(grayForOvality, imageForOvality, token));
-                var inclusionsTask = Task.Run(() => RunCheckForInclusions(grayForInclusions, imageForInclusions, token));
-                var paintTask = Task.Run(() => RunCheckForPaintDefects(grayForPaintDefects, imageForPaintDefects, token));
-                var underfillTask = Task.Run(() => RunCheckUnderfill(grayForUnderfill, imageForUnderfill, token));
-
-                // Ожидаем завершения всех
-                bool[] results = await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, underfillTask);
-
-                bool defectOvality = results[0];
-                bool defectInclusion = results[1];
-                bool defectPaint = results[2];
-                bool defectUnderfill = results[3];
-
-                bool anyDefect = defectOvality || defectInclusion || defectPaint || defectUnderfill;
-
-                try
+                while (!token.IsCancellationRequested)
                 {
-                    //modbusClient.WriteSingleRegister(16465, anyDefect ? 1 : 0);
-
-                    if (anyDefect)
+                    using (Mat originalImage = CaptureImage())
                     {
-                        blowTriggerCount++;
-                        UpdateTextBox(textBox4, blowTriggerCount);
+                        if (originalImage.Empty())
+                            break;
+
+                        using (Mat gray = new Mat())
+                        {
+                            Cv2.CvtColor(originalImage, gray, ColorConversionCodes.BGR2GRAY);
+                            Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
+
+                            // Создаём копии для задач
+                            using (Mat imageForOvality = originalImage.Clone())
+                            using (Mat grayForOvality = gray.Clone())
+                            using (Mat imageForInclusions = originalImage.Clone())
+                            using (Mat grayForInclusions = gray.Clone())
+                            using (Mat imageForPaintDefects = originalImage.Clone())
+                            using (Mat grayForPaintDefects = gray.Clone())
+                            {
+                                // Создаем задачи с таймаутом 60 мс
+                                var tasks = new[]
+                                {
+                                    RunWithTimeout(token  => RunCheckOvality(grayForOvality, imageForOvality, token), 60),
+                                    RunWithTimeout(token  => RunCheckForInclusions(grayForInclusions, imageForInclusions, token), 60),
+                                    RunWithTimeout(token  => RunCheckForPaintDefects(grayForPaintDefects, imageForPaintDefects, token), 60)
+                                };
+
+                                // Ждём завершения всех трёх задач
+                                var results = await Task.WhenAll(tasks);
+
+                                bool anyDefect = results.Any(x => x);
+
+                                if (anyDefect)
+                                {
+                                    BeginInvoke((Action)(() =>
+                                    {
+                                        blowTriggerCount++;
+                                        textBox4.Text = blowTriggerCount.ToString();
+                                    }));
+                                }
+                            }
+                        }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Ошибка при отправке команды на ПЛК: " + ex.Message);
-                }
-
-                //await Task.Delay(5);
+            }
+            catch (OperationCanceledException)
+            {
+                // Обработка отмены
+            }
+            catch (Exception ex)
+            {
+                BeginInvoke((Action)(() =>
+                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));
             }
         }
 
 
-
-        private async Task<bool> RunWithTimeout(Func<bool> checkFunc, int timeoutMs)
+        // Вспомогательный метод для выполнения проверки с таймаутом
+        private bool RunCheckWithTimeout(Func<bool> checkFunc, CancellationToken token)
         {
-            var task = Task.Run(checkFunc);
-            var completed = await Task.WhenAny(task, Task.Delay(timeoutMs));
-            if (completed == task)
+            try
             {
-                return task.Result; // вернёт true = дефект, false = нет дефекта
+                return checkFunc();
             }
-            else
+            catch (OperationCanceledException)
             {
-                return false; // Превышен лимит — считаем, что дефекта нет
+                // Таймаут или внешняя отмена
+                return false;
+            }
+            catch
+            {
+                // Любая другая ошибка
+                return false;
             }
         }
+
+        // Вспомогательный метод для запуска задачи с таймаутом
+        private async Task<bool> RunWithTimeout(Func<CancellationToken, bool> checkFunc, int timeoutMs)
+        {
+            using (var cts = new CancellationTokenSource())
+            {
+                var task = Task.Run(() => checkFunc(cts.Token), cts.Token);
+
+                if (await Task.WhenAny(task, Task.Delay(timeoutMs, cts.Token)) == task)
+                {
+                    return await task;
+                }
+                else
+                {
+                    // отменяем через токен
+                    cts.Cancel(); // <- Сигнал отмены для тех, кто его слушает
+                    return false;
+                }
+            }
+        }
+
+
 
 
         // Гистограмма по прореженному через каждые 16 строк и столбцов изображению
@@ -1712,18 +1771,18 @@ namespace KrishkiForms
 
         private Mat CaptureImage()
         {
-            // Этот метод должен быть адаптирован для захвата изображения с камеры или другого источника
-            string tempImagePath = System.IO.Path.GetTempFileName() + ".jpg";
             if (isStreamCam)
             {
-                img1.SaveImage(tempImagePath);
+                return img1.Clone(); // уже Mat — ничего конвертировать не нужно
             }
             else
             {
-                originalImage.Save(tempImagePath);
+                return BitmapConverter.ToMat((Bitmap)originalImage.Clone());
             }
-            return Cv2.ImRead(tempImagePath, ImreadModes.Color);
         }
+
+
+
 
         private bool isUnderfillSaved = false; // Флаг для сохранения одного изображения
 
@@ -1735,12 +1794,14 @@ namespace KrishkiForms
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            bool underfillResult = CheckUnderfill(gray, image); // true = дефект
+            bool underfillResult = CheckUnderfill(gray, image, token); // Добавлен токен
+
+            if (token.IsCancellationRequested) return false;
 
             if (underfillResult)
             {
                 underfillCount++;
-                UpdateTextBox(underfillDef, underfillCount);
+                //UpdateTextBox(underfillDef, underfillCount);
             }
 
             stopwatch.Stop();
@@ -1750,8 +1811,6 @@ namespace KrishkiForms
             return underfillResult;
         }
 
-
-
         private bool RunCheckOvality(Mat gray, Mat image, CancellationToken token)
         {
             if (token.IsCancellationRequested) return false;
@@ -1759,7 +1818,9 @@ namespace KrishkiForms
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            bool isOval = CheckOvality(gray, image); // true = дефект
+            bool isOval = CheckOvality(gray, image, token); // Добавлен токен
+
+            if (token.IsCancellationRequested) return false;
 
             if (isOval)
             {
@@ -1774,7 +1835,6 @@ namespace KrishkiForms
             return isOval;
         }
 
-
         private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token)
         {
             if (token.IsCancellationRequested) return false;
@@ -1782,7 +1842,9 @@ namespace KrishkiForms
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            bool hasInclusions = CheckForInclusions(gray, image); // true = дефект
+            bool hasInclusions = CheckForInclusions(gray, image, token); // Добавлен токен
+
+            if (token.IsCancellationRequested) return false;
 
             if (hasInclusions)
             {
@@ -1797,7 +1859,6 @@ namespace KrishkiForms
             return hasInclusions;
         }
 
-
         private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token)
         {
             if (token.IsCancellationRequested) return false;
@@ -1805,7 +1866,9 @@ namespace KrishkiForms
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            bool hasPaintDefects = CheckForPaintDefects(gray, image); // true = дефект
+            bool hasPaintDefects = CheckForPaintDefects(gray, image, token); // Добавлен токен
+
+            if (token.IsCancellationRequested) return false;
 
             if (hasPaintDefects)
             {
@@ -1819,6 +1882,7 @@ namespace KrishkiForms
 
             return hasPaintDefects;
         }
+
 
 
         // Потокобезопасное обновление PictureBox
@@ -1864,48 +1928,49 @@ namespace KrishkiForms
 
 
 
-        private bool CheckUnderfill(Mat gray, Mat imgColor)
+        private bool CheckUnderfill(Mat gray, Mat imgColor, CancellationToken token)
         {
-            // Размытие
+            // Проверка наличия токена перед выполнением анализа
+            if (token == null || token.IsCancellationRequested)
+                return false;
+
+            // Размытие изображения
             Mat smoothImage = new Mat();
-            Cv2.BoxFilter(imgColor, smoothImage, -1, new Size(4, 4), new Point(-1, -1), true, BorderTypes.Default);
+            Cv2.BoxFilter(imgColor, smoothImage, -1, new Size(4, 4));
 
             // Преобразование в HSV
             Mat imgHSV = new Mat();
             Cv2.CvtColor(smoothImage, imgHSV, ColorConversionCodes.BGR2HSV);
 
-            Point[] capContour = GetCapContour(gray, imgColor); // Получаем контур крышки
+            // Получение контура крышки
+            Point[] capContour = GetCapContour(gray, imgColor);
+
+            if (token.IsCancellationRequested)
+                return false;
 
             if (capContour == null || capContour.Length < 5)
             {
-                // Контур не найден или недостаточно точек для FitEllipse
-                return true;
+                return true; // Контур не найден или недостаточно точек для FitEllipse
             }
 
-            // Находим эллипс по контуру
+            // Аппроксимация эллипсом
             RotatedRect ellipse = Cv2.FitEllipse(capContour);
             Point center = new Point((int)ellipse.Center.X, (int)ellipse.Center.Y);
             int radius = (int)(Math.Max(ellipse.Size.Width, ellipse.Size.Height) / 2);
-            //radiusTb.Text = radius.ToString();
 
-            // --- РИСУЕМ НАЙДЕННЫЙ КРУГ ---
-            Cv2.Circle(imgColor, center, radius, new Scalar(0, 255, 0), 2); // Круг (зелёный, толщина 2)
-            Cv2.Circle(imgColor, center, 5, new Scalar(0, 0, 255), -1); // Центр (красная точка)
+            // Визуализация результата (по желанию, можно убрать)
+            Cv2.Circle(imgColor, center, radius, new Scalar(0, 255, 0), 2); // круг
+            Cv2.Circle(imgColor, center, 5, new Scalar(0, 0, 255), -1); // центр
 
-            // Получаем признак недолива
+            if (token.IsCancellationRequested)
+                return false;
+
+            // Анализ признаков недолива
             int decision = GetDefectFeatureFromRectifiedImage(imgColor, imgHSV, radius, center, 1024, (int)(radius * 0.08), TRESHOLD);
 
-            if (decision == 1)
-            {
-                return false;
-            }
-            else if (decision == 0)
-            {
-                return true;
-            }
-
-            return false;
+            return decision != 1; // true, если есть недолив (0 или -1); false, если дефектов нет (1)
         }
+
 
 
 
@@ -2073,208 +2138,101 @@ namespace KrishkiForms
 
 
         private static bool capMaskSaved = false;
-        public bool CheckForPaintDefects(Mat gray, Mat image)
+        public bool CheckForPaintDefects(Mat gray, Mat image, CancellationToken cancellationToken)
         {
-            Stopwatch overallStopwatch = new Stopwatch();
-            overallStopwatch.Start();
+            if (cancellationToken.IsCancellationRequested) return false;
 
-            // Время для этапа 1 (Конвертация в HSV)
-            Stopwatch step1 = new Stopwatch();
-            step1.Start();
+            // Преобразование в HSV
             Mat hsv = new Mat();
             Cv2.CvtColor(image, hsv, ColorConversionCodes.BGR2HSV);
-            step1.Stop();
 
-            // Время для этапа 2 (Получение контура таблетки)
-            Stopwatch step2 = new Stopwatch();
-            step2.Start();
-            // Получение контура таблетки
+            if (cancellationToken.IsCancellationRequested) return false;
+
+            // Получение контура крышки
             Point[] capContour = GetCapContour(gray, image);
             if (capContour == null || capContour.Length == 0)
-            {
-                MessageBox.Show("Контур таблетки не найден.");
                 return false;
-            }
-            step2.Stop();
 
-            // Рисование контура на изображении
-            Cv2.Polylines(image, new[] { capContour }, true, new Scalar(255, 0, 0), 2); // Зеленый цвет, толщина 2
-
-            // Время для этапа 3 (Маска для крышки)
-            Stopwatch step3 = new Stopwatch();
-            step3.Start();
+            // Маска по контуру крышки
             Mat capMask = Mat.Zeros(image.Size(), MatType.CV_8UC1);
             Cv2.FillPoly(capMask, new[] { capContour }, new Scalar(255));
-            step3.Stop();
-            //Cv2.ImShow("capMask", capMask);
-            // Отображение изображения с контуром
-            //Cv2.ImShow("Контур крышки", image);
 
+            if (cancellationToken.IsCancellationRequested) return false;
 
-            // Время для этапа 4 (Применение маски к HSV)
-            Stopwatch step4 = new Stopwatch();
-            step4.Start();
+            // Применение маски к HSV
             Mat maskedHSV = new Mat();
             Cv2.BitwiseAnd(hsv, hsv, maskedHSV, capMask);
-            step4.Stop();
-            //Cv2.ImShow("maskedHSV", maskedHSV);
 
-            // Время для этапа 5 (Разделение на каналы HSV)
-            Stopwatch step5 = new Stopwatch();
-            step5.Start();
-            Mat[] hsvChannels;
-            Cv2.Split(maskedHSV, out hsvChannels);
-            Mat hChannel = hsvChannels[0];
-            Mat sChannel = hsvChannels[1];
+            // Разделение на каналы HSV
+            Mat[] hsvChannels = Cv2.Split(maskedHSV);
             Mat vChannel = hsvChannels[2];
-            step5.Stop();
 
-            // Время для этапа 6 (Получение значений для перцентилей)
-            Stopwatch step6 = new Stopwatch();
-            step6.Start();
+            // Границы по S и V каналам (фиксированные)
+            Scalar lowerMain = new Scalar(0, 12.75, 12.75);  // 5-й перцентиль от 255
+            Scalar upperMain = new Scalar(180, 242.25, 242.25); // 95-й перцентиль от 255
 
-            // Статические перцентильные значения для S и V
-            int lowerMainBorder = 5;
-            int upperMainBorder = 95;
+            if (cancellationToken.IsCancellationRequested) return false;
 
-            // Для каналов S и V берем заранее известные минимальные и максимальные значения
-            // Эти значения могут быть вычислены на основе стандартных изображений, например, из базы данных
-            // или в случае постоянных характеристик изображения они остаются фиксированными.
-            double minS = 0;
-            double maxS = 255;
-            double minV = 0;
-            double maxV = 255;
-
-            // Рассчитываем перцентильные значения для S и V
-            double lowerSPercentile = minS + (maxS - minS) * (lowerMainBorder / 100.0);
-            double upperSPercentile = minS + (maxS - minS) * (upperMainBorder / 100.0);
-
-            double lowerVPercentile = minV + (maxV - minV) * (lowerMainBorder / 100.0);
-            double upperVPercentile = minV + (maxV - minV) * (upperMainBorder / 100.0);
-
-            // Результат
-            Scalar lowerMain = new Scalar(0, lowerSPercentile, lowerVPercentile);
-            Scalar upperMain = new Scalar(180, upperSPercentile, upperVPercentile);
-
-            step6.Stop();
-
-            // Время для этапа 7 (Вычисление перцентилей)
-            Stopwatch step7 = new Stopwatch();
-            step7.Start();
-
-            // Результат для верхних и нижних перцентилей
-
-            step7.Stop();
-
-
-
-            // Время для этапа 8 (Маска для белого цвета)
-            Stopwatch step8 = new Stopwatch();
-            step8.Start();
+            // Маска "правильных" цветов (не дефектных)
             Mat whiteMask = new Mat();
             Cv2.InRange(hsv, lowerMain, upperMain, whiteMask);
-            step8.Stop();
-            // Cv2.ImShow("whiteMask", whiteMask);
 
-            // Время для этапа 9 (Инвертирование маски)
-            Stopwatch step9 = new Stopwatch();
-            step9.Start();
+            // Маска дефектов (всё, что вне допустимого диапазона)
             Mat defectsMask = new Mat();
             Cv2.BitwiseNot(whiteMask, defectsMask);
-            step9.Stop();
-            //Cv2.ImShow("defectsMask", defectsMask);
 
-            // Время для этапа 10 (Наложение маски таблетки на дефекты)
-            Stopwatch step10 = new Stopwatch();
-            step10.Start();
+            // Пересечение маски дефектов с областью крышки
             Mat maskedDefects = new Mat();
             Cv2.BitwiseAnd(defectsMask, capMask, maskedDefects);
-            step10.Stop();
-            //Cv2.ImShow("maskedDefects", maskedDefects);
 
-            // Время для этапа 11 (Поиск и фильтрация контуров дефектов)
-            Stopwatch step11 = new Stopwatch();
-            step11.Start();
-            Point[][] contours;
-            HierarchyIndex[] hierarchy;
-            Cv2.FindContours(maskedDefects, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
-            double minDefectArea;
-            double.TryParse(minSquareInpaint.Text, out minDefectArea);
-            var significantContours = contours.Where(c => Cv2.ContourArea(c) > minDefectArea).ToList();
-            step11.Stop();
+            if (cancellationToken.IsCancellationRequested) return false;
 
-            double whiteThresold;
-            double.TryParse(whiteThresoldTx.Text, out whiteThresold);
+            // Поиск контуров дефектов
+            Cv2.FindContours(maskedDefects, out Point[][] contours, out _, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
 
-            Stopwatch step12 = new Stopwatch();
-            step12.Start();
+            if (cancellationToken.IsCancellationRequested) return false;
+
+            // Минимальная площадь дефекта
+            double.TryParse(minSquareInpaint.Text, out double minDefectArea);
+            double.TryParse(whiteThresoldTx.Text, out double whiteThreshold);
+
             var whiteDefects = new List<Point[]>();
-            foreach (var contour in significantContours)
+
+            foreach (var contour in contours)
             {
-                // Создаем маску для текущего контура
+                if (cancellationToken.IsCancellationRequested) return false;
+
+                if (Cv2.ContourArea(contour) <= minDefectArea)
+                    continue;
+
                 Mat contourMask = Mat.Zeros(image.Size(), MatType.CV_8UC1);
                 Cv2.FillPoly(contourMask, new[] { contour }, new Scalar(255));
 
-                // Вычисляем среднее значение яркости пикселей в области контуров
                 Mat maskedImage = new Mat();
-                Cv2.BitwiseAnd(image, image, maskedImage, contourMask);  // Применяем маску
+                Cv2.BitwiseAnd(image, image, maskedImage, contourMask);
 
-                // Вычисляем среднее значение всех каналов в маске
-                Scalar meanColor = Cv2.Mean(maskedImage, contourMask); // Возвращает среднее значение по каналам (BGR)
+                Scalar meanColor = Cv2.Mean(maskedImage, contourMask);
+                double averageBrightness = meanColor.Val2;
 
-                // Среднее значение яркости (значение V в HSV)
-                double averageBrightness = meanColor.Val2; // Среднее значение канала V
-
-                // Проверяем, насколько близка средняя яркость к белому (255)
-                if (Math.Abs(averageBrightness - 255) < whiteThresold)  // Порог близости к белому
-                {
+                if (Math.Abs(averageBrightness - 255) < whiteThreshold)
                     whiteDefects.Add(contour);
-                }
             }
-            step12.Stop();
 
-
-            // Время для этапа 13 (Отображение найденных дефектов)
-            Stopwatch step13 = new Stopwatch();
-            step13.Start();
+            // Отрисовка дефектов
             if (whiteDefects.Count > 0)
             {
-                // Рисуем красные контуры для белых дефектов
                 Cv2.DrawContours(image, whiteDefects, -1, new Scalar(0, 0, 255), 2);
 
-                // Рисуем желтые рамки вокруг дефектов
                 foreach (var contour in whiteDefects)
                 {
-                    // Находим ограничивающий прямоугольник для каждого контура
-                    Rect boundingBox = Cv2.BoundingRect(contour);
-                    // Рисуем желтую рамку вокруг контуров
-                    Cv2.Rectangle(image, boundingBox, new Scalar(0, 255, 255), 2); // Желтый цвет (BGR)
+                    Rect bbox = Cv2.BoundingRect(contour);
+                    Cv2.Rectangle(image, bbox, new Scalar(0, 255, 255), 2);
                 }
             }
-            step13.Stop();
-
-            overallStopwatch.Stop();
-
-            // Вывод времени для каждого этапа
-            /*MessageBox.Show($"Общее время выполнения: {overallStopwatch.ElapsedMilliseconds} миллисекунд\n" +
-                $"1. Конвертация в HSV: {step1.ElapsedMilliseconds} миллисекунд\n" +
-                $"2. Получение контура таблетки: {step2.ElapsedMilliseconds} миллисекунд\n" +
-                $"3. Маска для крышки: {step3.ElapsedMilliseconds} миллисекунд\n" +
-                $"4. Применение маски к HSV: {step4.ElapsedMilliseconds} миллисекунд\n" +
-                $"5. Разделение на каналы HSV: {step5.ElapsedMilliseconds} миллисекунд\n" +
-                $"6. Получение значений для перцентилей: {step6.ElapsedMilliseconds} миллисекунд\n" +
-                $"7. Вычисление перцентилей: {step7.ElapsedMilliseconds} миллисекунд\n" +
-                $"8. Маска для белого цвета: {step8.ElapsedMilliseconds} миллисекунд\n" +
-                $"9. Инвертирование маски: {step9.ElapsedMilliseconds} миллисекунд\n" +
-                $"10. Наложение маски таблетки на дефекты: {step10.ElapsedMilliseconds} миллисекунд\n" +
-                $"11. Поиск и фильтрация контуров дефектов: {step11.ElapsedMilliseconds} миллисекунд\n" +
-                $"12. Проверка на приближенность к белому цвету: {step12.ElapsedMilliseconds} миллисекунд\n" +
-                $"13. Отображение найденных дефектов: {step13.ElapsedMilliseconds} миллисекунд");
-*/
-            //Cv2.ImShow("Обнаруженные дефекты", image);
 
             return whiteDefects.Count > 0;
         }
+
 
 
         // Функция для проверки на приближенность к белому цвету
@@ -2492,80 +2450,70 @@ namespace KrishkiForms
 
 
 
-        private bool CheckForInclusions(Mat gray, Mat image)
+        private bool CheckForInclusions(Mat gray, Mat image, CancellationToken token)
         {
-            Point[] bestContour = GetCapContour(gray, image);
+            if (token.IsCancellationRequested) return false;
 
-            // Аппроксимация эллипсом методом наименьших квадратов
+            Point[] bestContour = GetCapContour(gray, image);
+            if (bestContour == null || bestContour.Length == 0) return false;
+
+            if (token.IsCancellationRequested) return false;
+
             RotatedRect ellipse = Cv2.FitEllipse(bestContour);
             Point2f ellipseCenter = ellipse.Center;
-            float ellipseRadius = (float)(0.7 * (ellipse.Size.Width + ellipse.Size.Height) / 4.0); // Радиус окружности
+            float ellipseRadius = (float)(0.7 * (ellipse.Size.Width + ellipse.Size.Height) / 4.0);
 
-            // Рисуем окружность внутри эллипса (гладкая сторона крышки)
             Cv2.Circle(image, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(0, 255, 0), 2);
 
-            // Создаем маску для поиска вкраплений внутри окружности
-            Mat mask = Mat.Zeros(gray.Size(), MatType.CV_8UC1);
-            Cv2.Circle(mask, (Point)ellipseCenter, (int)(ellipseRadius), new Scalar(255), -1); // Маска внутри окружности
+            if (token.IsCancellationRequested) return false;
 
-            // Бинаризация исходного изображения для поиска темных вкраплений
-            Mat binary = new Mat();
+            using Mat mask = Mat.Zeros(gray.Size(), MatType.CV_8UC1);
+            Cv2.Circle(mask, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(255), -1);
+
+            using Mat binary = new Mat();
             Cv2.AdaptiveThreshold(gray, binary, 255, AdaptiveThresholdTypes.MeanC, ThresholdTypes.BinaryInv, 11, 2);
-            //Cv2.ImShow("sfsd", binary);
 
-            // Применяем маску для поиска только внутри окружности
-            Mat maskedBinary = new Mat();
+            if (token.IsCancellationRequested) return false;
+
+            using Mat maskedBinary = new Mat();
             binary.CopyTo(maskedBinary, mask);
 
-            // Дополнительная фильтрация (поиск маленьких объектов)
-            Mat filteredBinary = new Mat();
-            Cv2.Erode(maskedBinary, filteredBinary, new Mat(), iterations: 2); // Уменьшаем шум
-            //Cv2.ImShow("sfsd", filteredBinary);
-            // Поиск контуров (предположительно вкраплений) внутри окружности
-            Point[][] inclusionContours;
-            HierarchyIndex[] inclusionHierarchy;
-            Cv2.FindContours(filteredBinary, out inclusionContours, out inclusionHierarchy, RetrievalModes.List, ContourApproximationModes.ApproxSimple);
+            using Mat filteredBinary = new Mat();
+            Cv2.Erode(maskedBinary, filteredBinary, new Mat(), iterations: 2);
+
+            if (token.IsCancellationRequested) return false;
+
+            Cv2.FindContours(filteredBinary, out Point[][] inclusionContours, out HierarchyIndex[] inclusionHierarchy,
+                RetrievalModes.List, ContourApproximationModes.ApproxSimple);
 
             bool inclusionsFound = false;
-            double minArea;
-            double.TryParse(minSquareInclusion.Text, out minArea);
-            double maxArea;
-            double.TryParse(maxSquareInclusion.Text, out maxArea);
-            // Фильтрация контуров по площади — предполагаем, что вкрапления — маленькие черные точки
+
+            if (!double.TryParse(minSquareInclusion.Text, out double minArea)) minArea = 0;
+            if (!double.TryParse(maxSquareInclusion.Text, out double maxArea)) maxArea = double.MaxValue;
+
             foreach (var contour in inclusionContours)
             {
-                double area = Cv2.ContourArea(contour);
+                if (token.IsCancellationRequested) break;
 
-                // Фильтрация по размеру области
-                if (area > minArea && area < maxArea) // Настроить под размер вкраплений
+                double area = Cv2.ContourArea(contour);
+                if (area > minArea && area < maxArea)
                 {
-                    // Проверка на форму: чем ближе объект к окружности, тем вероятнее это вкрапление
                     if (IsCircularContour(contour))
                     {
-                        // Находим bounding box вокруг вкрапления
                         Rect bbox = Cv2.BoundingRect(contour);
-
-                        // Рисуем красные рамки на исходном изображении
                         Cv2.Rectangle(image,
                             new Point(bbox.X, bbox.Y),
                             new Point(bbox.X + bbox.Width, bbox.Y + bbox.Height),
-                            new Scalar(0, 0, 255), 2); // Красный цвет для рамок
+                            new Scalar(0, 0, 255), 2);
 
                         inclusionsFound = true;
                     }
                 }
             }
 
-            // Показываем результаты
-            //Cv2.ImShow("Final Image with Inclusions", image);
-            //Cv2.WaitKey(0);
-
-            binary.Dispose();
-            mask.Dispose();
-            filteredBinary.Dispose();
-
             return inclusionsFound;
         }
+
 
         private bool IsCircularContour(Point[] contour)
         {
@@ -2665,42 +2613,48 @@ namespace KrishkiForms
 
 
         // ✅ Метод проверки на овальность
-        private bool CheckOvality(Mat gray, Mat image)
+        private bool CheckOvality(Mat gray, Mat image, CancellationToken token)
         {
+            if (token.IsCancellationRequested) return false;
 
             Point[] largestContour = GetCapContour(gray, image);
-            Cv2.DrawContours(image, new[] { largestContour }, -1, new Scalar(255, 0, 0), 2); // Красный контур толщиной 2px
-            // Аппроксимация эллипсом методом наименьших квадратов
+            if (largestContour == null || largestContour.Length == 0)
+                return false;
+
+            if (token.IsCancellationRequested) return false;
+
+            Cv2.DrawContours(image, new[] { largestContour }, -1, new Scalar(255, 0, 0), 2); // Красный контур
+
             RotatedRect ellipse = Cv2.FitEllipse(largestContour);
+            if (token.IsCancellationRequested) return false;
 
-            // Вычисление длин осей эллипса
-            double majorAxis = Math.Max(ellipse.Size.Width, ellipse.Size.Height); // большая ось
-            double minorAxis = Math.Min(ellipse.Size.Width, ellipse.Size.Height); // малая ось
-
-            // Соотношение осей (чем ближе к 1, тем круглее)
+            double majorAxis = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
+            double minorAxis = Math.Min(ellipse.Size.Width, ellipse.Size.Height);
             double axisRatio = minorAxis / majorAxis;
 
-            // Порог овальности (если меньше 0.96 — крышка дефектная)
-            double ovalityThreshold;
-            if (double.TryParse(ovalityCoef.Text, out ovalityThreshold))
-            {
-                // Значение успешно преобразовано в double, теперь его можно использовать
-                double ovalityCoef = ovalityThreshold; // Теперь переменная ovalityThreshold будет содержать значение из TextBox
-            }
-            else
-            {
-                // Если значение не удалось преобразовать, можно вывести ошибку
-                MessageBox.Show("Неверный формат числа в поле Threshold!");
-            }
-            bool isOval = axisRatio < ovalityThreshold;
-            // Визуализация: красный — дефект, зеленый — норма
-            Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
-            Cv2.Ellipse(image, ellipse, color, 2);
+            if (token.IsCancellationRequested) return false;
 
+            // Значение порога
+            double ovalityThreshold = 0.96; // Значение по умолчанию
+            if (!double.TryParse(ovalityCoef.Text, out ovalityThreshold))
+            {
+                BeginInvoke((Action)(() =>
+                    MessageBox.Show("Неверный формат числа в поле Threshold!")));
+                return false;
+            }
+
+            bool isOval = axisRatio < ovalityThreshold;
+
+            Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
+
+            if (token.IsCancellationRequested) return false;
+
+            Cv2.Ellipse(image, ellipse, color, 2);
             Cv2.PutText(image, $"Ratio: {axisRatio:F2}", new Point(10, 30), HersheyFonts.HersheySimplex, 1, color, 2);
-            //Cv2.ImShow("image", image);
+
             return isOval;
         }
+
 
         private Point[] GetCapContour(Mat gray, Mat image)
         {
@@ -4164,6 +4118,25 @@ namespace KrishkiForms
 
         public void GetImage(Mat img)
         {
+            DateTime now = DateTime.Now;
+
+            if (_lastImageReceivedTime.HasValue)
+            {
+                TimeSpan interval = now - _lastImageReceivedTime.Value;
+                string logEntry = $"{now:HH:mm:ss.fff} | Interval: {interval.TotalMilliseconds} ms";
+
+                try
+                {
+                    File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Ошибка при записи лога: {ex.Message}");
+                }
+            }
+
+            _lastImageReceivedTime = now;
+
             // Если ROI не выбран, показываем полное изображение с камеры
             if (!LocalSettings.Instance.UseVConcat)
             {
@@ -4297,9 +4270,9 @@ namespace KrishkiForms
                 originalImage = null;
             }
             isStreamCam = true;
-            cam.TriggerMode = false;
+            /*cam.TriggerMode = false;
             cam.SetTriggerMode();
-            cam.SetExposureTime();
+            cam.SetExposureTime();*/
 
             ovalityCoef.Enabled = false;
             circleCoefTx.Enabled = false;
