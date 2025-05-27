@@ -21,7 +21,7 @@ namespace Kvantron.Ruberoid.Hardwares
         public bool FrameRateControlEnable { get; set; } //включить ограничение кадров
         public float FrameRate { get; set; } = 0; //кол-во кадров в секунду
         public bool TriggerMode { get; set; } //получение кадров по триггеру
-        public float ExposureTime { get; set; } = 5000; //экспозиция
+        public float ExposureTime { get; set; } = 800; //экспозиция
 
         //Analog Control
         public float Gain { get; set; } //усиление

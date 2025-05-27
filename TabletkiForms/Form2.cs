@@ -119,6 +119,9 @@ namespace KrishkiForms
 
         private byte[] HUE_LUT = new byte[128 * 128 * 128];
 
+        private DateTime? _lastImageReceivedTime = null;
+        private readonly string _logFilePath = "SendImageLog.txt";
+
 
 
 
@@ -287,15 +290,35 @@ namespace KrishkiForms
             dataGridView2.Rows.Clear(); // Очищаем все строки в таблице*/
         }
 
-        private void recognizeButton_Click(object sender, EventArgs e)
+        private async void recognizeButton_Click(object sender, EventArgs e)  // Добавили async
         {
             if (isProcessing)
             {
-                // Остановить обработку
+                // Остановить обработку (без блокировки UI)
                 cts?.Cancel();
-                processingTask?.Wait();
-                isProcessing = false;
-                recognizeButton.Text = "Начать распознавание";
+                recognizeButton.Text = "Остановка...";
+                recognizeButton.Enabled = false;
+
+                try
+                {
+                    await processingTask;  // Асинхронное ожидание вместо Wait()
+                }
+                catch (OperationCanceledException)
+                {
+                    // Обработка отмены - нормальная ситуация
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при остановке: {ex.Message}");
+                }
+                finally
+                {
+                    isProcessing = false;
+                    recognizeButton.Text = "Начать распознавание";
+                    recognizeButton.Enabled = true;
+                    cts?.Dispose();
+                    cts = null;
+                }
             }
             else
             {
@@ -307,11 +330,17 @@ namespace KrishkiForms
 
                 // Запустить обработку
                 cts = new CancellationTokenSource();
-                var token = cts.Token;
-
-                processingTask = Task.Run(() => StartContinuousProcessing(token));
-                isProcessing = true;
-                recognizeButton.Text = "Остановить распознавание";
+                try
+                {
+                    processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
+                    isProcessing = true;
+                    recognizeButton.Text = "Остановить распознавание";
+                }
+                catch
+                {
+                    cts?.Dispose();
+                    throw;
+                }
             }
         }
 
@@ -976,62 +1005,116 @@ namespace KrishkiForms
 
 
 
-        private async void StartContinuousProcessing(CancellationToken token)
+        private void StartContinuousProcessing(CancellationToken token)
         {
-            while (!token.IsCancellationRequested)
+            try
             {
-                Mat image = CaptureImage();
-                if (image.Empty()) break;
-
-                Mat gray = new Mat();
-                Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
-                Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
-
-                // Копии изображений для параллельных потоков
-                Mat imageForOvality = image.Clone();
-                Mat grayForOvality = gray.Clone();
-
-                Mat imageForInclusions = image.Clone();
-                Mat grayForInclusions = gray.Clone();
-
-                Mat imageForPaintDefects = image.Clone();
-                Mat grayForPaintDefects = gray.Clone();
-
-                Mat imageForUnderfill = image.Clone();
-                Mat grayForUnderfill = gray.Clone();
-
-                // Запуск каждой проверки в своём потоке
-                var ovalityTask = Task.Run(() => RunCheckOvality(grayForOvality, imageForOvality, token));
-                var inclusionsTask = Task.Run(() => RunCheckForInclusions(grayForInclusions, imageForInclusions, token));
-                var paintTask = Task.Run(() => RunCheckForPaintDefects(grayForPaintDefects, imageForPaintDefects, token));
-                var underfillTask = Task.Run(() => RunCheckUnderfill(grayForUnderfill, imageForUnderfill, token));
-
-                // Ожидаем завершения всех
-                bool[] results = await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, underfillTask);
-
-                bool defectOvality = results[0];
-                bool defectInclusion = results[1];
-                bool defectPaint = results[2];
-                bool defectUnderfill = results[3];
-
-                bool anyDefect = defectOvality || defectInclusion || defectPaint || defectUnderfill;
-
-                try
+                while (!token.IsCancellationRequested)
                 {
-                    //modbusClient.WriteSingleRegister(16465, anyDefect ? 1 : 0);
-
-                    if (anyDefect)
+                    using (Mat originalImage = CaptureImage())
                     {
-                        blowTriggerCount++;
-                        UpdateTextBox(textBox4, blowTriggerCount);
+                        if (originalImage.Empty())
+                            break;
+
+                        using (Mat gray = new Mat())
+                        {
+                            Cv2.CvtColor(originalImage, gray, ColorConversionCodes.BGR2GRAY);
+                            Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
+
+                            // Создаём копии для каждого потока
+                            using (Mat imageForOvality = originalImage.Clone())
+                            using (Mat grayForOvality = gray.Clone())
+                            using (Mat imageForInclusions = originalImage.Clone())
+                            using (Mat grayForInclusions = gray.Clone())
+                            using (Mat imageForPaintDefects = originalImage.Clone())
+                            using (Mat grayForPaintDefects = gray.Clone())
+                            using (Mat imageForUnderfill = originalImage.Clone())
+                            using (Mat grayForUnderfill = gray.Clone())
+                            {
+                                // Результаты проверок
+                                var results = new bool[3];
+                                var threads = new Thread[3];
+                                var ctsArray = new CancellationTokenSource[3];
+
+                                // Создаем отдельные токены отмены для каждого потока
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    ctsArray[i] = CancellationTokenSource.CreateLinkedTokenSource(token);
+                                    ctsArray[i].CancelAfter(60); // Таймаут 60 мс
+                                }
+
+                                // Запускаем потоки с таймаутом
+                                threads[0] = new Thread(() =>
+                                    results[0] = RunCheckWithTimeout(
+                                        () => RunCheckOvality(grayForOvality, imageForOvality, ctsArray[0].Token),
+                                        ctsArray[0].Token));
+
+                                threads[1] = new Thread(() =>
+                                    results[1] = RunCheckWithTimeout(
+                                        () => RunCheckForInclusions(grayForInclusions, imageForInclusions, ctsArray[1].Token),
+                                        ctsArray[1].Token));
+
+                                threads[2] = new Thread(() =>
+                                    results[2] = RunCheckWithTimeout(
+                                        () => RunCheckForPaintDefects(grayForPaintDefects, imageForPaintDefects, ctsArray[2].Token),
+                                        ctsArray[2].Token));
+
+                                /*threads[3] = new Thread(() =>
+                                    results[3] = RunCheckWithTimeout(
+                                        () => RunCheckUnderfill(grayForUnderfill, imageForUnderfill, ctsArray[3].Token),
+                                        ctsArray[3].Token));*/
+
+                                // Старт всех потоков
+                                foreach (var thread in threads) thread.Start();
+
+                                // Ожидаем завершения всех потоков
+                                foreach (var thread in threads) thread.Join();
+
+                                // Освобождаем ресурсы токенов
+                                foreach (var cts in ctsArray) cts.Dispose();
+
+                                bool anyDefect = results.Any(x => x);
+
+                                if (anyDefect)
+                                {
+                                    BeginInvoke((Action)(() =>
+                                    {
+                                        blowTriggerCount++;
+                                        textBox4.Text = blowTriggerCount.ToString();
+                                    }));
+                                }
+                            }
+                        }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Ошибка при отправке команды на ПЛК: " + ex.Message);
-                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Ожидаемое исключение при отмене
+            }
+            catch (Exception ex)
+            {
+                BeginInvoke((Action)(() =>
+                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));
+            }
+        }
 
-                //await Task.Delay(5);
+        // Вспомогательный метод для выполнения проверки с таймаутом
+        private bool RunCheckWithTimeout(Func<bool> checkFunc, CancellationToken token)
+        {
+            try
+            {
+                return checkFunc();
+            }
+            catch (OperationCanceledException)
+            {
+                // Таймаут или внешняя отмена
+                return false;
+            }
+            catch
+            {
+                // Любая другая ошибка
+                return false;
             }
         }
 
@@ -1712,17 +1795,14 @@ namespace KrishkiForms
 
         private Mat CaptureImage()
         {
-            // Этот метод должен быть адаптирован для захвата изображения с камеры или другого источника
-            string tempImagePath = System.IO.Path.GetTempFileName() + ".jpg";
             if (isStreamCam)
             {
-                img1.SaveImage(tempImagePath);
+                return img1.Clone(); // уже Mat — ничего конвертировать не нужно
             }
             else
             {
-                originalImage.Save(tempImagePath);
+                return BitmapConverter.ToMat((Bitmap)originalImage.Clone());
             }
-            return Cv2.ImRead(tempImagePath, ImreadModes.Color);
         }
 
         private bool isUnderfillSaved = false; // Флаг для сохранения одного изображения
@@ -4164,6 +4244,25 @@ namespace KrishkiForms
 
         public void GetImage(Mat img)
         {
+            /*DateTime now = DateTime.Now;
+
+            if (_lastImageReceivedTime.HasValue)
+            {
+                TimeSpan interval = now - _lastImageReceivedTime.Value;
+                string logEntry = $"{now:HH:mm:ss.fff} | Interval: {interval.TotalMilliseconds} ms";
+
+                try
+                {
+                    File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Ошибка при записи лога: {ex.Message}");
+                }
+            }
+
+            _lastImageReceivedTime = now;*/
+
             // Если ROI не выбран, показываем полное изображение с камеры
             if (!LocalSettings.Instance.UseVConcat)
             {
@@ -4297,9 +4396,9 @@ namespace KrishkiForms
                 originalImage = null;
             }
             isStreamCam = true;
-            cam.TriggerMode = false;
+            /*cam.TriggerMode = false;
             cam.SetTriggerMode();
-            cam.SetExposureTime();
+            cam.SetExposureTime();*/
 
             ovalityCoef.Enabled = false;
             circleCoefTx.Enabled = false;
