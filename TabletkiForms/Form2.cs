@@ -122,14 +122,32 @@ namespace KrishkiForms
         private DateTime? _lastImageReceivedTime = null;
         private readonly string _logFilePath = "SendImageLog.txt";
 
+        // Добавляем в класс формы
+        private Mat _imageForOvality;
+        private Mat _grayForOvality;
+        private Mat _imageForInclusions;
+        private Mat _grayForInclusions;
+        private Mat _imageForPaintDefects;
+        private Mat _grayForPaintDefects;
+        private Mat _imageForUnderfill;
+        private Mat _grayForUnderfill;
+
 
 
 
         public Form2()
         {
             InitializeComponent();
-
             InitializeHueLUT();
+
+            _imageForOvality = new Mat();
+            _grayForOvality = new Mat();
+            _imageForInclusions = new Mat();
+            _grayForInclusions = new Mat();
+            _imageForPaintDefects = new Mat();
+            _grayForPaintDefects = new Mat();
+            _imageForUnderfill = new Mat();
+            _grayForUnderfill = new Mat();
 
             /*chart1.MouseMove += Chart1_MouseMove; // Добавляем обработчик событий
             chart2.MouseMove += Chart1_MouseMove;
@@ -189,6 +207,7 @@ namespace KrishkiForms
 
             LocalSettings.Instance.Save();
         }
+
 
         // Метод инициализации LUT
         private void InitializeHueLUT()
@@ -1021,15 +1040,15 @@ namespace KrishkiForms
                             Cv2.CvtColor(originalImage, gray, ColorConversionCodes.BGR2GRAY);
                             Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
 
-                            // Создаём копии для каждого потока
-                            using (Mat imageForOvality = originalImage.Clone())
-                            using (Mat grayForOvality = gray.Clone())
-                            using (Mat imageForInclusions = originalImage.Clone())
-                            using (Mat grayForInclusions = gray.Clone())
-                            using (Mat imageForPaintDefects = originalImage.Clone())
-                            using (Mat grayForPaintDefects = gray.Clone())
-                            using (Mat imageForUnderfill = originalImage.Clone())
-                            using (Mat grayForUnderfill = gray.Clone())
+                            // Копируем данные в предварительно созданные Mat
+                            originalImage.CopyTo(_imageForOvality);
+                            gray.CopyTo(_grayForOvality);
+                            originalImage.CopyTo(_imageForInclusions);
+                            gray.CopyTo(_grayForInclusions);
+                            originalImage.CopyTo(_imageForPaintDefects);
+                            gray.CopyTo(_grayForPaintDefects);
+                            originalImage.CopyTo(_imageForUnderfill);
+                            gray.CopyTo(_grayForUnderfill);
                             {
                                 // Результаты проверок
                                 var results = new bool[3];
@@ -1046,17 +1065,17 @@ namespace KrishkiForms
                                 // Запускаем потоки с таймаутом
                                 threads[0] = new Thread(() =>
                                     results[0] = RunCheckWithTimeout(
-                                        () => RunCheckOvality(grayForOvality, imageForOvality, ctsArray[0].Token),
+                                        () => RunCheckOvality(_grayForOvality, _imageForOvality, ctsArray[0].Token),
                                         ctsArray[0].Token));
 
                                 threads[1] = new Thread(() =>
                                     results[1] = RunCheckWithTimeout(
-                                        () => RunCheckForInclusions(grayForInclusions, imageForInclusions, ctsArray[1].Token),
+                                        () => RunCheckForInclusions(_grayForInclusions, _imageForInclusions, ctsArray[1].Token),
                                         ctsArray[1].Token));
 
                                 threads[2] = new Thread(() =>
                                     results[2] = RunCheckWithTimeout(
-                                        () => RunCheckForPaintDefects(grayForPaintDefects, imageForPaintDefects, ctsArray[2].Token),
+                                        () => RunCheckForPaintDefects(_grayForPaintDefects, _imageForPaintDefects, ctsArray[2].Token),
                                         ctsArray[2].Token));
 
                                 /*threads[3] = new Thread(() =>

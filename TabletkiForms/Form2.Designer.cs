@@ -16,6 +16,14 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+                _imageForOvality?.Dispose();
+                _grayForOvality?.Dispose();
+                _imageForInclusions?.Dispose();
+                _grayForInclusions?.Dispose();
+                _imageForPaintDefects?.Dispose();
+                _grayForPaintDefects?.Dispose();
+                _imageForUnderfill?.Dispose();
+                _grayForUnderfill?.Dispose();
             }
             base.Dispose(disposing);
         }
