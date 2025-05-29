@@ -85,6 +85,7 @@
             heightTb = new TextBox();
             label22 = new Label();
             panel3 = new Panel();
+            button9 = new Button();
             textBox4 = new TextBox();
             obduvBatton = new Button();
             label18 = new Label();
@@ -142,7 +143,6 @@
             panel8 = new Panel();
             button3 = new Button();
             loadImageButton = new Button();
-            button9 = new Button();
             tabParameter.SuspendLayout();
             tabParSearch.SuspendLayout();
             tabParCamera.SuspendLayout();
@@ -518,7 +518,7 @@
             ovalityCoef.Name = "ovalityCoef";
             ovalityCoef.Size = new Size(100, 21);
             ovalityCoef.TabIndex = 6;
-            ovalityCoef.Text = "0,96";
+            ovalityCoef.Text = "0,7";
             // 
             // label12
             // 
@@ -701,6 +701,19 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(1062, 736);
             panel3.TabIndex = 2;
+            // 
+            // button9
+            // 
+            button9.BackColor = Color.FromArgb(4, 85, 191);
+            button9.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            button9.ForeColor = SystemColors.Control;
+            button9.Location = new Point(777, 429);
+            button9.Name = "button9";
+            button9.Size = new Size(148, 55);
+            button9.TabIndex = 32;
+            button9.Text = "4-ий метод Холопова";
+            button9.UseVisualStyleBackColor = false;
+            button9.Click += button9_Click;
             // 
             // textBox4
             // 
@@ -1292,19 +1305,6 @@
             loadImageButton.Text = "Загрузить";
             loadImageButton.UseVisualStyleBackColor = false;
             loadImageButton.Click += loadImageButton_Click;
-            // 
-            // button9
-            // 
-            button9.BackColor = Color.FromArgb(4, 85, 191);
-            button9.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button9.ForeColor = SystemColors.Control;
-            button9.Location = new Point(777, 429);
-            button9.Name = "button9";
-            button9.Size = new Size(148, 55);
-            button9.TabIndex = 32;
-            button9.Text = "4-ий метод Холопова";
-            button9.UseVisualStyleBackColor = false;
-            button9.Click += button9_Click;
             // 
             // Form2
             // 
