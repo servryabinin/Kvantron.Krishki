@@ -53,6 +53,11 @@
             panel2 = new Panel();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            obduvCB = new CheckBox();
+            prStatus = new Label();
+            camStatus = new Label();
+            label39 = new Label();
+            label19 = new Label();
             groupBox4 = new GroupBox();
             whiteThresoldTx = new TextBox();
             label29 = new Label();
@@ -339,6 +344,11 @@
             // tabPage1
             // 
             tabPage1.BorderStyle = BorderStyle.Fixed3D;
+            tabPage1.Controls.Add(obduvCB);
+            tabPage1.Controls.Add(prStatus);
+            tabPage1.Controls.Add(camStatus);
+            tabPage1.Controls.Add(label39);
+            tabPage1.Controls.Add(label19);
             tabPage1.Controls.Add(groupBox4);
             tabPage1.Controls.Add(groupBox2);
             tabPage1.Controls.Add(groupBox1);
@@ -352,6 +362,56 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Параметры поиска";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // obduvCB
+            // 
+            obduvCB.AutoSize = true;
+            obduvCB.Location = new Point(201, 367);
+            obduvCB.Name = "obduvCB";
+            obduvCB.Size = new Size(119, 19);
+            obduvCB.TabIndex = 35;
+            obduvCB.Text = "Включить обдув";
+            obduvCB.UseVisualStyleBackColor = true;
+            // 
+            // prStatus
+            // 
+            prStatus.AutoSize = true;
+            prStatus.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            prStatus.Location = new Point(123, 385);
+            prStatus.Name = "prStatus";
+            prStatus.Size = new Size(70, 13);
+            prStatus.TabIndex = 34;
+            prStatus.Text = "Подключено";
+            // 
+            // camStatus
+            // 
+            camStatus.AutoSize = true;
+            camStatus.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            camStatus.Location = new Point(17, 385);
+            camStatus.Name = "camStatus";
+            camStatus.Size = new Size(70, 13);
+            camStatus.TabIndex = 33;
+            camStatus.Text = "Подключено";
+            // 
+            // label39
+            // 
+            label39.AutoSize = true;
+            label39.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label39.Location = new Point(122, 369);
+            label39.Name = "label39";
+            label39.Size = new Size(59, 13);
+            label39.TabIndex = 32;
+            label39.Text = "Статус ПР";
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label19.Location = new Point(16, 369);
+            label19.Name = "label19";
+            label19.Size = new Size(87, 13);
+            label19.TabIndex = 31;
+            label19.Text = "Статус камеры:";
             // 
             // groupBox4
             // 
@@ -372,7 +432,7 @@
             whiteThresoldTx.Name = "whiteThresoldTx";
             whiteThresoldTx.Size = new Size(100, 21);
             whiteThresoldTx.TabIndex = 34;
-            whiteThresoldTx.Text = "150";
+            whiteThresoldTx.Text = "40";
             // 
             // label29
             // 
@@ -471,7 +531,7 @@
             minSquareInclusion.Name = "minSquareInclusion";
             minSquareInclusion.Size = new Size(100, 21);
             minSquareInclusion.TabIndex = 8;
-            minSquareInclusion.Text = "50";
+            minSquareInclusion.Text = "200";
             // 
             // label14
             // 
@@ -489,7 +549,7 @@
             circleCoefTx.Name = "circleCoefTx";
             circleCoefTx.Size = new Size(100, 21);
             circleCoefTx.TabIndex = 6;
-            circleCoefTx.Text = "0,5";
+            circleCoefTx.Text = "0,8";
             // 
             // label13
             // 
@@ -1328,6 +1388,7 @@
             panel2.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
             groupBox2.ResumeLayout(false);
@@ -1470,5 +1531,10 @@
         private TextBox textBox4;
         private Label label18;
         private Button button9;
+        private Label prStatus;
+        private Label camStatus;
+        private Label label39;
+        private Label label19;
+        private CheckBox obduvCB;
     }
 }

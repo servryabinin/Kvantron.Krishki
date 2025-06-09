@@ -170,6 +170,11 @@ namespace KrishkiForms
         private static readonly Scalar lowerMain = new Scalar(0, 255 * 0.05, 255 * 0.05); // 5% от 255
         private static readonly Scalar upperMain = new Scalar(180, 255 * 0.95, 255 * 0.95); // 95% от 255
 
+        private volatile bool newFrameAvailable = false;
+        private readonly object frameLock = new object();
+        private Mat latestFrame = null;
+
+        private readonly int obduvRegister = 16465;
 
 
         public Form2()
@@ -201,41 +206,49 @@ namespace KrishkiForms
                 new Point(morphSize2, morphSize2)
             );
 
-            /*chart1.MouseMove += Chart1_MouseMove; // Добавляем обработчик событий
-            chart2.MouseMove += Chart1_MouseMove;
-            chart1.MouseClick += Chart1_MouseClick;
-            chart2.MouseClick += Chart2_MouseClick;*/
-
             Form1_Load();
 
             try
             {
-                modbusClient = new ModbusTCP("192.168.1.99", 502); // IP ПР205
+                modbusClient = new ModbusTCP("10.10.69.38", 502); // IP ПР205
                 modbusClient.Connect();
 
                 if (modbusClient.Connected)
                 {
                     MessageBox.Show("Modbus подключение к ПР205 установлено.");
+
+                    prStatus.Text = "ПР подключена";
+                    prStatus.ForeColor = Color.Green;
                 }
                 else
                 {
                     MessageBox.Show("Не удалось подключиться к ПР205.");
+
+                    prStatus.Text = "Не подключено";
+                    prStatus.ForeColor = Color.Red;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка подключения к ПР205: {ex.Message}");
+                prStatus.Text = "Не подключено";
+                prStatus.ForeColor = Color.Red;
             }
 
 
             if (cam.Open() == false) //если открытие камеры не удалось,
             {
                 MessageBox.Show("камера 1 - ошибка"); //вывести сообщение об ошибке
-                cameraError1 = true; //выставить флаг ошибки,
+                camStatus.Text = "Не подключено";
+                camStatus.ForeColor = Color.Red;
+                cameraError1 = true;
             }
             else //иначе
             {
                 cam.SendImage += GetImage; //???
+
+                camStatus.Text = "Камера подключена";
+                camStatus.ForeColor = Color.Green;
             }
 
             if (LocalSettings.Instance.UseModule) //если UseModule истинно (по умолчанию истинно),
@@ -775,11 +788,11 @@ namespace KrishkiForms
                 modbusClient.WriteSingleRegister(register, state);
 
                 obduvBatton.Text = obduvEnabled ? "Включить обдув" : "Выключить обдув";
-                MessageBox.Show($"Обдув {(obduvEnabled ? "выключён" : "включен")}");
+                //MessageBox.Show($"Обдув {(obduvEnabled ? "выключён" : "включен")}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка отправки сигнала: {ex.Message}");
+                //MessageBox.Show($"Ошибка отправки сигнала: {ex.Message}");
             }
         }
 
@@ -1082,53 +1095,79 @@ namespace KrishkiForms
             {
                 while (!token.IsCancellationRequested)
                 {
-                    using (Mat originalImage = CaptureImage())
+                    Mat frameToProcess = null;
+
+                    lock (frameLock)
                     {
-                        if (originalImage.Empty())
-                            break;
+                        if (!newFrameAvailable)
+                            continue;
 
-                        using (Mat gray = new Mat())
+                        frameToProcess = latestFrame.Clone(); // создаём копию для обработки
+                        newFrameAvailable = false;
+                    }
+
+                    if (frameToProcess == null || frameToProcess.Empty())
+                        continue;
+
+                    using (frameToProcess)
+                    using (Mat gray = new Mat())
+                    {
+                        Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
+                        Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
+
+                        frameToProcess.CopyTo(_imageForOvality);
+                        gray.CopyTo(_grayForOvality);
+                        frameToProcess.CopyTo(_imageForInclusions);
+                        gray.CopyTo(_grayForInclusions);
+                        frameToProcess.CopyTo(_imageForPaintDefects);
+                        gray.CopyTo(_grayForPaintDefects);
+
+                        using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
-                            Cv2.CvtColor(originalImage, gray, ColorConversionCodes.BGR2GRAY);
-                            Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
+                            timeoutCts.CancelAfter(60);
 
-                            // Копируем данные в предварительно созданные Mat
-                            originalImage.CopyTo(_imageForOvality);
-                            gray.CopyTo(_grayForOvality);
-                            originalImage.CopyTo(_imageForInclusions);
-                            gray.CopyTo(_grayForInclusions);
-                            originalImage.CopyTo(_imageForPaintDefects);
-                            gray.CopyTo(_grayForPaintDefects);
-
-                            // Создаем общий CancellationTokenSource с таймаутом 60 мс
-                            using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
+                            try
                             {
-                                timeoutCts.CancelAfter(60);
+                                var ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality);
+                                var inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions);
+                                var paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects);
 
-                                try
+                                await Task.WhenAll(ovalityTask, inclusionsTask, paintTask);
+
+                                bool anyDefect = ovalityTask.Result || inclusionsTask.Result || paintTask.Result;
+
+                                if (anyDefect ==true)
                                 {
-                                    // Запускаем все проверки параллельно
-                                    var ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality);
-                                    var inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions);
-                                    var paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects);
+                                    BeginInvoke((Action)(() =>
+                                    {
+                                        blowTriggerCount++;
+                                        textBox4.Text = blowTriggerCount.ToString();
+                                    }));
+                                }
+                                else if (!anyDefect)
+                                {
+                                    try
+                                    {
+                                        // Отключить обдув
+                                        modbusClient.WriteSingleRegister(obduvRegister, 1);
 
-                                    await Task.WhenAll(ovalityTask, inclusionsTask, paintTask);
+                                        // Подождать немного, чтобы оборудование успело среагировать (например, 100–200 мс)
+                                        await Task.Delay(1, token);
 
-                                    bool anyDefect = ovalityTask.Result || inclusionsTask.Result || paintTask.Result;
-
-                                    if (anyDefect)
+                                        // Включить обдув снова
+                                        modbusClient.WriteSingleRegister(obduvRegister, 0);
+                                    }
+                                    catch (Exception ex)
                                     {
                                         BeginInvoke((Action)(() =>
-                                        {
-                                            blowTriggerCount++;
-                                            textBox4.Text = blowTriggerCount.ToString();
-                                        }));
+                                            MessageBox.Show($"Ошибка при управлении обдувом: {ex.Message}")));
                                     }
                                 }
-                                catch (OperationCanceledException)
-                                {
-                                    // Таймаут или отмена - нормальное поведение
-                                }
+
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                // ОК
                             }
                         }
                     }
@@ -1140,6 +1179,7 @@ namespace KrishkiForms
                     MessageBox.Show($"Ошибка обработки: {ex.Message}")));
             }
         }
+
 
         private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, CancellationToken token, Func<Mat, Mat, CancellationToken, bool> checkFunc)
         {
@@ -2733,7 +2773,7 @@ namespace KrishkiForms
             {
                 Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
                 Cv2.Ellipse(image, ellipse, color, 2);
-                Cv2.PutText(image, $"Ratio: {axisRatio:F2}", new Point(10, 30),
+                Cv2.PutText(image, $"Ratio: {axisRatio:F5}", new Point(10, 30),
                            HersheyFonts.HersheySimplex, 1, color, 2);
             }
             return isOval;
@@ -4205,6 +4245,13 @@ namespace KrishkiForms
 
             _lastImageReceivedTime = now;*/
 
+            lock (frameLock)
+            {
+                latestFrame?.Dispose();
+                latestFrame = img.Clone();
+                newFrameAvailable = true;
+            }
+
             // Если ROI не выбран, показываем полное изображение с камеры
             if (!LocalSettings.Instance.UseVConcat)
             {
@@ -4709,7 +4756,7 @@ namespace KrishkiForms
 
                 cam.Close();
             }
-
+            modbusClient.Disconnect();
             Application.Exit();
         }
 
