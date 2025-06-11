@@ -111,7 +111,7 @@
             tabPage3 = new TabPage();
             panel12 = new Panel();
             label42 = new Label();
-            ovalityPb = new PictureBox();
+            originPb = new PictureBox();
             panel10 = new Panel();
             label32 = new Label();
             inpaintTime = new TextBox();
@@ -128,11 +128,11 @@
             label23 = new Label();
             panel6 = new Panel();
             label30 = new Label();
+            ovalityPb = new PictureBox();
             timeOvality = new TextBox();
             label25 = new Label();
             ovalityDef = new TextBox();
             label2 = new Label();
-            originPb = new PictureBox();
             obduvBatton = new Button();
             panel4 = new Panel();
             label33 = new Label();
@@ -158,6 +158,7 @@
             panel8 = new Panel();
             button3 = new Button();
             loadImageButton = new Button();
+            loadSettingsButton = new Button();
             tabParameter.SuspendLayout();
             tabParSearch.SuspendLayout();
             tabParCamera.SuspendLayout();
@@ -182,13 +183,13 @@
             tabControl2.SuspendLayout();
             tabPage3.SuspendLayout();
             panel12.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)ovalityPb).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
             panel10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inpaintPb).BeginInit();
             panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inclusionPb).BeginInit();
             panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ovalityPb).BeginInit();
             panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             panel11.SuspendLayout();
@@ -794,15 +795,15 @@
             // saveImageButton
             // 
             saveImageButton.BackColor = Color.FromArgb(4, 85, 191);
-            saveImageButton.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
+            saveImageButton.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
             saveImageButton.ForeColor = SystemColors.Control;
             saveImageButton.Location = new Point(156, 109);
             saveImageButton.Name = "saveImageButton";
-            saveImageButton.Size = new Size(138, 46);
+            saveImageButton.Size = new Size(65, 46);
             saveImageButton.TabIndex = 21;
-            saveImageButton.Text = "Сохранить";
+            saveImageButton.Text = "📤";
             saveImageButton.UseVisualStyleBackColor = false;
-            saveImageButton.Click += saveImageButton_Click;
+            saveImageButton.Click += saveSettingsButton_Click;
             // 
             // applySettingsButton
             // 
@@ -968,6 +969,7 @@
             // tabPage3
             // 
             tabPage3.BorderStyle = BorderStyle.Fixed3D;
+            tabPage3.Controls.Add(loadSettingsButton);
             tabPage3.Controls.Add(label21);
             tabPage3.Controls.Add(saveImageButton);
             tabPage3.Controls.Add(heightTb);
@@ -1007,15 +1009,15 @@
             label42.TabIndex = 5;
             label42.Text = "ИЗОБРАЖЕНИЕ С КАМЕРЫ";
             // 
-            // ovalityPb
+            // originPb
             // 
-            ovalityPb.BorderStyle = BorderStyle.Fixed3D;
-            ovalityPb.Location = new Point(3, 4);
-            ovalityPb.Name = "ovalityPb";
-            ovalityPb.Size = new Size(265, 218);
-            ovalityPb.SizeMode = PictureBoxSizeMode.Zoom;
-            ovalityPb.TabIndex = 0;
-            ovalityPb.TabStop = false;
+            originPb.BorderStyle = BorderStyle.Fixed3D;
+            originPb.Location = new Point(13, 28);
+            originPb.Name = "originPb";
+            originPb.Size = new Size(295, 233);
+            originPb.SizeMode = PictureBoxSizeMode.Zoom;
+            originPb.TabIndex = 0;
+            originPb.TabStop = false;
             // 
             // panel10
             // 
@@ -1176,6 +1178,16 @@
             label30.TabIndex = 5;
             label30.Text = "Определение ОВАЛЬНОСТИ";
             // 
+            // ovalityPb
+            // 
+            ovalityPb.BorderStyle = BorderStyle.Fixed3D;
+            ovalityPb.Location = new Point(3, 4);
+            ovalityPb.Name = "ovalityPb";
+            ovalityPb.Size = new Size(265, 218);
+            ovalityPb.SizeMode = PictureBoxSizeMode.Zoom;
+            ovalityPb.TabIndex = 0;
+            ovalityPb.TabStop = false;
+            // 
             // timeOvality
             // 
             timeOvality.Location = new Point(275, 81);
@@ -1207,16 +1219,6 @@
             label2.Size = new Size(200, 15);
             label2.TabIndex = 1;
             label2.Text = "Количество бракованных крышек:";
-            // 
-            // originPb
-            // 
-            originPb.BorderStyle = BorderStyle.Fixed3D;
-            originPb.Location = new Point(13, 28);
-            originPb.Name = "originPb";
-            originPb.Size = new Size(295, 233);
-            originPb.SizeMode = PictureBoxSizeMode.Zoom;
-            originPb.TabIndex = 0;
-            originPb.TabStop = false;
             // 
             // obduvBatton
             // 
@@ -1478,6 +1480,19 @@
             loadImageButton.UseVisualStyleBackColor = false;
             loadImageButton.Click += loadImageButton_Click;
             // 
+            // loadSettingsButton
+            // 
+            loadSettingsButton.BackColor = Color.FromArgb(4, 85, 191);
+            loadSettingsButton.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            loadSettingsButton.ForeColor = SystemColors.Control;
+            loadSettingsButton.Location = new Point(229, 109);
+            loadSettingsButton.Name = "loadSettingsButton";
+            loadSettingsButton.Size = new Size(65, 46);
+            loadSettingsButton.TabIndex = 24;
+            loadSettingsButton.Text = "📥";
+            loadSettingsButton.UseVisualStyleBackColor = false;
+            loadSettingsButton.Click += loadSettingsButton_Click;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1529,7 +1544,7 @@
             tabPage3.PerformLayout();
             panel12.ResumeLayout(false);
             panel12.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)ovalityPb).EndInit();
+            ((System.ComponentModel.ISupportInitialize)originPb).EndInit();
             panel10.ResumeLayout(false);
             panel10.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)inpaintPb).EndInit();
@@ -1538,7 +1553,7 @@
             ((System.ComponentModel.ISupportInitialize)inclusionPb).EndInit();
             panel6.ResumeLayout(false);
             panel6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)originPb).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ovalityPb).EndInit();
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
@@ -1675,5 +1690,6 @@
         private TabPage tabPage6;
         private TabControl tabControl6;
         private TabPage tabPage7;
+        private Button loadSettingsButton;
     }
 }

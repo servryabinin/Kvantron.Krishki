@@ -133,8 +133,11 @@ namespace KrishkiForms
         private Mat _imageForUnderfill;
         private Mat _grayForUnderfill;
 
-        private readonly string ovalityDefectPath = @"C:\Users\Kvantron\source\repos\Kvantron.Krishki\TabletkiForms\дефектные крышки\овальность";
-        private string fileNameForOvalityDefect= $"ovality_{DateTime.Now:yyyyMMdd_HHmmss_fff}.bmp";
+        private readonly string settingsFilePath;
+
+
+        private readonly string ovalityDefectPath;
+        private string fileNameForOvalityDefect = $"ovality_{DateTime.Now:yyyyMMdd_HHmmss_fff}.bmp";
         private string fullPathForOvalityDefect = "";
         private double ovalityThreshold = 0.7;
         private Point[] largestContourOvality;
@@ -142,15 +145,15 @@ namespace KrishkiForms
         private double minorAxis;
         private double axisRatio;
 
-        private readonly string paintDefectPath = @"C:\Users\Kvantron\source\repos\Kvantron.Krishki\TabletkiForms\дефектные крышки\непрокрас";
+        private readonly string paintDefectPath;
         private string fileNameForPaintDefect = $"paint_{DateTime.Now:yyyyMMdd_HHmmss_fff}.bmp";
         private string fullPathForPaintDefect = "";
         private double minInpaintWhiteTgreshold = 150.0;
         private double minAreaInpaintDefect = 500.0;
 
-        private readonly string inclusionDefectPath = @"C:\Users\Kvantron\source\repos\Kvantron.Krishki\TabletkiForms\дефектные крышки\вкрапления";
+        private readonly string inclusionDefectPath;
         private string fileNameForInclusionDefect = $"inclusion_{DateTime.Now:yyyyMMdd_HHmmss_fff}.bmp";
-        private string fullPathForInclusionDefect= "";
+        private string fullPathForInclusionDefect = "";
         private double inclusionThreshold = 0.5;
         private double minAreaInclusion = 50.0;
         private double maxAreaInclusion = 500.0;
@@ -207,6 +210,11 @@ namespace KrishkiForms
             );
 
             Form1_Load();
+
+            settingsFilePath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "файлы настроек");
+            ovalityDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "овальность");
+            paintDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "непрокрас");
+            inclusionDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "вкрапления");
 
             try
             {
@@ -1162,7 +1170,7 @@ namespace KrishkiForms
 
                                 bool anyDefect = ovalityTask.Result || inclusionsTask.Result || paintTask.Result;
 
-                                if (anyDefect ==true)
+                                if (anyDefect == true)
                                 {
                                     BeginInvoke((Action)(() =>
                                     {
@@ -1185,7 +1193,7 @@ namespace KrishkiForms
                                             // Включить обдув снова
                                             modbusClient.WriteSingleRegister(obduvRegister, 0);
                                         }
-                                        
+
                                     }
                                     catch (Exception ex)
                                     {
@@ -4494,6 +4502,85 @@ namespace KrishkiForms
             StartStop(false);
         }
 
+        private void saveSettingsButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Собираем значения из текстбоксов
+                var settings = new
+                {
+                    Width = widthTb.Text,
+                    Height = heightTb.Text,
+                    Exposure = exposureTb.Text,
+                    Gain = gainTb.Text
+                };
+
+                // Сериализуем в JSON
+                string json = System.Text.Json.JsonSerializer.Serialize(settings, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+
+                // Открываем диалог сохранения
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                    saveFileDialog.Title = "Сохранить настройки";
+                    saveFileDialog.FileName = "settings.json";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // Сохраняем файл
+                        File.WriteAllText(saveFileDialog.FileName, json);
+                        MessageBox.Show("Настройки успешно сохранены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при сохранении настроек: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void loadSettingsButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                    openFileDialog.Title = "Загрузить настройки";
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // Чтение содержимого файла
+                        string json = File.ReadAllText(openFileDialog.FileName);
+
+                        // Десериализация в словарь
+                        var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+                        if (settings != null)
+                        {
+                            // Заполнение текстбоксов
+                            widthTb.Text = settings.ContainsKey("Width") ? settings["Width"] : "";
+                            heightTb.Text = settings.ContainsKey("Height") ? settings["Height"] : "";
+                            exposureTb.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "";
+                            gainTb.Text = settings.ContainsKey("Gain") ? settings["Gain"] : "";
+
+                            MessageBox.Show("Настройки успешно загружены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Не удалось прочитать настройки из файла.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при загрузке настроек: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
         private void saveImageButton_Click(object sender, EventArgs e)
         {
             try
@@ -4531,7 +4618,6 @@ namespace KrishkiForms
                 MessageBox.Show($"Ошибка при сохранении изображения: {ex.Message}");
             }
         }
-
 
         private void buttonResetImage_Click(object sender, EventArgs e)
         {
@@ -4830,6 +4916,8 @@ namespace KrishkiForms
         }
 
         
+
+
 
 
 
