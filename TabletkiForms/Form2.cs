@@ -217,7 +217,7 @@ namespace KrishkiForms
                 {
                     MessageBox.Show("Modbus подключение к ПР205 установлено.");
 
-                    prStatus.Text = "ПР подключена";
+                    prStatus.Text = "Подключено";
                     prStatus.ForeColor = Color.Green;
                 }
                 else
@@ -247,7 +247,7 @@ namespace KrishkiForms
             {
                 cam.SendImage += GetImage; //???
 
-                camStatus.Text = "Камера подключена";
+                camStatus.Text = "Подключено";
                 camStatus.ForeColor = Color.Green;
             }
 
@@ -298,7 +298,7 @@ namespace KrishkiForms
                 originalImage.Dispose();
             }
             originalImage = new Bitmap(path);
-            originPictureBox.Image = (Bitmap)originalImage.Clone();
+            originPb.Image = (Bitmap)originalImage.Clone();
         }
 
 
@@ -350,7 +350,7 @@ namespace KrishkiForms
                     try
                     {
                         // Загружаем выбранное изображение в PictureBox
-                        originPictureBox.Image = new Bitmap(openFileDialog.FileName);
+                        originPb.Image = new Bitmap(openFileDialog.FileName);
                     }
                     catch (Exception ex)
                     {
@@ -364,8 +364,8 @@ namespace KrishkiForms
         private void button3_Click(object sender, EventArgs e)
         {
             isStreamCam = false;
-            originPictureBox.Image = null;
-            recognizePictureBox.Image = null;
+            originPb.Image = null;
+            inclusionPb.Image = null;
             /*chart1.Series.Clear(); // Удаляем все серии данных из графика
             chart1.ChartAreas.Clear(); // Очищаем области графика
             dataGridView1.Rows.Clear(); // Очищаем все строки в таблице
@@ -397,6 +397,17 @@ namespace KrishkiForms
                 }
                 finally
                 {
+                    try
+                    {
+                        if (modbusClient != null && modbusClient.Connected)
+                        {
+                            modbusClient.WriteSingleRegister(obduvRegister, 1);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при выключении обдува: {ex.Message}");
+                    }
                     isProcessing = false;
                     recognizeButton.Text = "Начать распознавание";
                     recognizeButton.Enabled = true;
@@ -406,10 +417,22 @@ namespace KrishkiForms
             }
             else
             {
-                if (originPictureBox.Image == null)
+                if (originPb.Image == null)
                 {
                     MessageBox.Show("Пожалуйста, загрузите изображение перед распознаванием.");
                     return;
+                }
+
+                try
+                {
+                    if (modbusClient != null && modbusClient.Connected)
+                    {
+                        modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при включении обдува: {ex.Message}");
                 }
 
                 // Запустить обработку
@@ -1104,6 +1127,9 @@ namespace KrishkiForms
 
                         frameToProcess = latestFrame.Clone(); // создаём копию для обработки
                         newFrameAvailable = false;
+
+                        /*frameToProcess = CaptureImage(); // создаём копию для обработки
+                        newFrameAvailable = false;*/
                     }
 
                     if (frameToProcess == null || frameToProcess.Empty())
@@ -1148,14 +1174,18 @@ namespace KrishkiForms
                                 {
                                     try
                                     {
-                                        // Отключить обдув
-                                        modbusClient.WriteSingleRegister(obduvRegister, 1);
+                                        if (obduvCB.Checked)
+                                        {
+                                            // Отключить обдув
+                                            modbusClient.WriteSingleRegister(obduvRegister, 1);
 
-                                        // Подождать немного, чтобы оборудование успело среагировать (например, 100–200 мс)
-                                        await Task.Delay(1, token);
+                                            // Подождать немного, чтобы оборудование успело среагировать
+                                            await Task.Delay(10, token);
 
-                                        // Включить обдув снова
-                                        modbusClient.WriteSingleRegister(obduvRegister, 0);
+                                            // Включить обдув снова
+                                            modbusClient.WriteSingleRegister(obduvRegister, 0);
+                                        }
+                                        
                                     }
                                     catch (Exception ex)
                                     {
@@ -1931,7 +1961,7 @@ namespace KrishkiForms
 
             stopwatch.Stop();
             UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds);
-            //UpdatePictureBox(originPictureBox, image);
+            UpdatePictureBox(ovalityPb, image);
 
             return isOval;
         }
@@ -1958,7 +1988,7 @@ namespace KrishkiForms
 
             stopwatch.Stop();
             UpdateTextBox(conclusionTime, stopwatch.ElapsedMilliseconds);
-            //UpdatePictureBox(recognizePictureBox, image);
+            UpdatePictureBox(inclusionPb, image);
 
             return hasInclusions;
         }
@@ -1984,7 +2014,7 @@ namespace KrishkiForms
 
             stopwatch.Stop();
             UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds);
-            //UpdatePictureBox(pictureBox1, image);
+            UpdatePictureBox(inpaintPb, image);
 
             return hasPaintDefects;
         }
@@ -3446,7 +3476,7 @@ namespace KrishkiForms
         {
             string resultImagePath = System.IO.Path.GetTempFileName() + "_result.jpg";
             Cv2.ImWrite(resultImagePath, image);
-            recognizePictureBox.Image = new Bitmap(resultImagePath);
+            inclusionPb.Image = new Bitmap(resultImagePath);
         }
 
         // ✅ Очистка ресурсов
@@ -3649,7 +3679,7 @@ namespace KrishkiForms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (originPictureBox.Image == null)
+            if (originPb.Image == null)
             {
                 MessageBox.Show("Пожалуйста, загрузите изображение перед распознаванием.");
                 return;
@@ -3978,7 +4008,7 @@ namespace KrishkiForms
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (originPictureBox.Image == null)
+            if (originPb.Image == null)
             {
                 MessageBox.Show("Пожалуйста, загрузите изображение перед распознаванием.");
                 return;
@@ -4004,7 +4034,7 @@ namespace KrishkiForms
 
         private void FrameProcessingTimer_Tick(object sender, EventArgs e)
         {
-            if (originPictureBox.Image == null)
+            if (originPb.Image == null)
             {
                 frameProcessingTimer.Stop(); // Останавливаем таймер, если изображение отсутствует
                 return;
@@ -4143,7 +4173,7 @@ namespace KrishkiForms
             //ellipseRejectTx.Text = emptyCellsCount.ToString();
 
             Bitmap outputBitmap = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(highlightedImage);
-            recognizePictureBox.Image = outputBitmap;
+            inclusionPb.Image = outputBitmap;
         }
 
         private void applySettingsButton_Click(object sender, EventArgs e)
@@ -4180,7 +4210,7 @@ namespace KrishkiForms
         private void DrawLines()
         {
             // Проверяем наличие изображения
-            if (originPictureBox.Image == null && img1.Empty())
+            if (originPb.Image == null && img1.Empty())
             {
                 MessageBox.Show("Изображение не загружено.");
                 return;
@@ -4216,7 +4246,7 @@ namespace KrishkiForms
             }*/
 
             // Обновляем изображение в PictureBox
-            originPictureBox.Image = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(imgCopy);
+            originPb.Image = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(imgCopy);
 
             // Освобождаем ресурсы
             img.Dispose();
@@ -4260,7 +4290,7 @@ namespace KrishkiForms
                 {
                     img1 = new Mat(img, roi);
                 }
-                originPictureBox.Image = MatToBitmap(img1);
+                originPb.Image = MatToBitmap(img1);
                 /*recognizePictureBox.Image = MatToBitmap(img1);
                 pictureBox1.Image = MatToBitmap(img1);
                 underfillPictureBox.Image = MatToBitmap(img1);*/
@@ -4275,7 +4305,7 @@ namespace KrishkiForms
                     {
                         img1 = new Mat(img, roi);
                     }
-                    originPictureBox.Image = MatToBitmap(img1);
+                    originPb.Image = MatToBitmap(img1);
                     /*recognizePictureBox.Image = MatToBitmap(img1);
                     pictureBox1.Image = MatToBitmap(img1);
                     underfillPictureBox.Image = MatToBitmap(img1);*/
@@ -4289,7 +4319,7 @@ namespace KrishkiForms
                     {
                         img1 = new Mat(img, roi);
                     }
-                    originPictureBox.Image = MatToBitmap(img1);
+                    originPb.Image = MatToBitmap(img1);
                     /*recognizePictureBox.Image = MatToBitmap(img1);
                     pictureBox1.Image = MatToBitmap(img1);
                     underfillPictureBox.Image = MatToBitmap(img1);*/
@@ -4437,10 +4467,22 @@ namespace KrishkiForms
 
         private void endStream_Click(object sender, EventArgs e)
         {
+            try
+            {
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при выключении обдува: {ex.Message}");
+            }
+
             isRoiProduce = false;
             isROISelected = false;
             isStreamCam = false;
-            originPictureBox.Image = null;
+            originPb.Image = null;
 
             ovalityCoef.Enabled = true;
             circleCoefTx.Enabled = true;
@@ -4495,7 +4537,7 @@ namespace KrishkiForms
         {
             if (originalImage != null)
             {
-                originPictureBox.Image = (Bitmap)originalImage.Clone();
+                originPb.Image = (Bitmap)originalImage.Clone();
             }
         }
 
@@ -4561,11 +4603,11 @@ namespace KrishkiForms
             isDrawing = true;
             isRoiProduce = true;
             isConfirmVisible = false; // Скрываем кнопки
-            originPictureBox.MouseDown += OriginPictureBox_MouseDown;
-            originPictureBox.MouseMove += OriginPictureBox_MouseMove;
-            originPictureBox.MouseUp += OriginPictureBox_MouseUp;
-            originPictureBox.Paint += OriginPictureBox_Paint;
-            originPictureBox.MouseClick += OriginPictureBox_MouseClick;
+            originPb.MouseDown += OriginPictureBox_MouseDown;
+            originPb.MouseMove += OriginPictureBox_MouseMove;
+            originPb.MouseUp += OriginPictureBox_MouseUp;
+            originPb.Paint += OriginPictureBox_Paint;
+            originPb.MouseClick += OriginPictureBox_MouseClick;
         }
 
         private void OriginPictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -4587,7 +4629,7 @@ namespace KrishkiForms
                 int height = Math.Abs(startPoint.Y - e.Y);
 
                 selectedROI = new Rectangle(x, y, width, height);
-                originPictureBox.Invalidate(); // Перерисовываем PictureBox
+                originPb.Invalidate(); // Перерисовываем PictureBox
             }
         }
 
@@ -4596,9 +4638,9 @@ namespace KrishkiForms
             if (isDrawing && e.Button == MouseButtons.Left)
             {
                 isDrawing = false;
-                originPictureBox.MouseDown -= OriginPictureBox_MouseDown;
-                originPictureBox.MouseMove -= OriginPictureBox_MouseMove;
-                originPictureBox.MouseUp -= OriginPictureBox_MouseUp;
+                originPb.MouseDown -= OriginPictureBox_MouseDown;
+                originPb.MouseMove -= OriginPictureBox_MouseMove;
+                originPb.MouseUp -= OriginPictureBox_MouseUp;
 
                 if (selectedROI.Width > 0 && selectedROI.Height > 0)
                 {
@@ -4617,7 +4659,7 @@ namespace KrishkiForms
                     checkRect = new Rectangle(buttonX, buttonY, btnSize, btnSize);
                     crossRect = new Rectangle(buttonX + btnSize + btnSpacing, buttonY, btnSize, btnSize);
 
-                    originPictureBox.Invalidate(); // Перерисовываем PictureBox
+                    originPb.Invalidate(); // Перерисовываем PictureBox
                 }
             }
         }
@@ -4645,13 +4687,13 @@ namespace KrishkiForms
             {
                 int imgWidth = img1.Width;
                 int imgHeight = img1.Height;
-                int pbWidth = originPictureBox.Width;
-                int pbHeight = originPictureBox.Height;
+                int pbWidth = originPb.Width;
+                int pbHeight = originPb.Height;
 
                 float scaleX, scaleY;
                 int offsetX = 0, offsetY = 0;
 
-                if (originPictureBox.SizeMode == PictureBoxSizeMode.Zoom)
+                if (originPb.SizeMode == PictureBoxSizeMode.Zoom)
                 {
                     float ratioX = (float)pbWidth / imgWidth;
                     float ratioY = (float)pbHeight / imgHeight;
@@ -4689,8 +4731,8 @@ namespace KrishkiForms
                 isROISelected = true;
                 isConfirmVisible = false; // Скрываем кнопки
                 selectedROI = Rectangle.Empty;
-                originPictureBox.Image = MatToBitmap(img1);
-                originPictureBox.Invalidate();
+                originPb.Image = MatToBitmap(img1);
+                originPb.Invalidate();
             }
         }
 
@@ -4699,7 +4741,7 @@ namespace KrishkiForms
         {
             selectedROI = Rectangle.Empty;
             isConfirmVisible = false; // Скрываем кнопки
-            originPictureBox.Invalidate();
+            originPb.Invalidate();
         }
 
         // Метод отрисовки ROI и кнопок ✅❌
@@ -4738,17 +4780,27 @@ namespace KrishkiForms
             }
         }
 
-
-
-
-
-
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
             CloseProgramButton_Click(null, null);
         }
         private void CloseProgramButton_Click(object sender, EventArgs e)
         {
+            try
+            {
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    // Установить обдув в "отключен" при завершении работы
+                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Логируем или игнорируем, чтобы не мешать закрытию программы
+                MessageBox.Show($"Ошибка при установке обдува при завершении: {ex.Message}");
+            }
+
+            // Завершение потоков камеры
             if (!cameraError1)
             {
                 if (cam.Streamed)
@@ -4756,9 +4808,15 @@ namespace KrishkiForms
 
                 cam.Close();
             }
-            modbusClient.Disconnect();
+
+            if (modbusClient != null && modbusClient.Connected)
+            {
+                modbusClient.Disconnect();
+            }
+
             Application.Exit();
         }
+
 
         private void redrawRoi_Click(object sender, EventArgs e)
         {

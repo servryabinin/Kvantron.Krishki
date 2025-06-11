@@ -53,11 +53,14 @@
             panel2 = new Panel();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            obduvCB = new CheckBox();
-            prStatus = new Label();
-            camStatus = new Label();
-            label39 = new Label();
-            label19 = new Label();
+            tabControl6 = new TabControl();
+            tabPage7 = new TabPage();
+            label18 = new Label();
+            textBox4 = new TextBox();
+            tabControl5 = new TabControl();
+            tabPage6 = new TabPage();
+            drawRoi = new Button();
+            redrawRoi = new Button();
             groupBox4 = new GroupBox();
             whiteThresoldTx = new TextBox();
             label29 = new Label();
@@ -76,9 +79,18 @@
             groupBox1 = new GroupBox();
             ovalityCoef = new TextBox();
             label12 = new Label();
-            redrawRoi = new Button();
-            drawRoi = new Button();
             tabPage2 = new TabPage();
+            obduvCB = new CheckBox();
+            prStatus = new Label();
+            camStatus = new Label();
+            label39 = new Label();
+            label19 = new Label();
+            button10 = new Button();
+            button11 = new Button();
+            textBox5 = new TextBox();
+            label40 = new Label();
+            textBox6 = new TextBox();
+            label41 = new Label();
             gainTb = new TextBox();
             label17 = new Label();
             saveImageButton = new Button();
@@ -90,20 +102,45 @@
             heightTb = new TextBox();
             label22 = new Label();
             panel3 = new Panel();
-            button9 = new Button();
-            textBox4 = new TextBox();
+            panel13 = new Panel();
+            tabControl4 = new TabControl();
+            tabPage5 = new TabPage();
+            tabControl3 = new TabControl();
+            tabPage4 = new TabPage();
+            tabControl2 = new TabControl();
+            tabPage3 = new TabPage();
+            panel12 = new Panel();
+            label42 = new Label();
+            ovalityPb = new PictureBox();
+            panel10 = new Panel();
+            label32 = new Label();
+            inpaintTime = new TextBox();
+            InpaintDef = new TextBox();
+            label27 = new Label();
+            inpaintPb = new PictureBox();
+            label24 = new Label();
+            panel9 = new Panel();
+            label31 = new Label();
+            conclusionTime = new TextBox();
+            inclusionDef = new TextBox();
+            label26 = new Label();
+            inclusionPb = new PictureBox();
+            label23 = new Label();
+            panel6 = new Panel();
+            label30 = new Label();
+            timeOvality = new TextBox();
+            label25 = new Label();
+            ovalityDef = new TextBox();
+            label2 = new Label();
+            originPb = new PictureBox();
             obduvBatton = new Button();
-            label18 = new Label();
-            button8 = new Button();
-            button7 = new Button();
-            button6 = new Button();
-            button5 = new Button();
-            button4 = new Button();
-            button2 = new Button();
-            button1 = new Button();
-            textBox8 = new TextBox();
-            imagesMinus = new Button();
             panel4 = new Panel();
+            label33 = new Label();
+            textBox1 = new TextBox();
+            label34 = new Label();
+            textBox3 = new TextBox();
+            label35 = new Label();
+            pictureBox2 = new PictureBox();
             panel11 = new Panel();
             ratioTb = new TextBox();
             radiusTb = new TextBox();
@@ -113,33 +150,6 @@
             underfillDef = new TextBox();
             label38 = new Label();
             underfillPictureBox = new PictureBox();
-            label33 = new Label();
-            textBox1 = new TextBox();
-            label34 = new Label();
-            textBox3 = new TextBox();
-            label35 = new Label();
-            pictureBox2 = new PictureBox();
-            panel10 = new Panel();
-            label32 = new Label();
-            inpaintTime = new TextBox();
-            InpaintDef = new TextBox();
-            label27 = new Label();
-            pictureBox1 = new PictureBox();
-            label24 = new Label();
-            panel9 = new Panel();
-            label31 = new Label();
-            conclusionTime = new TextBox();
-            inclusionDef = new TextBox();
-            label26 = new Label();
-            recognizePictureBox = new PictureBox();
-            label23 = new Label();
-            panel6 = new Panel();
-            label30 = new Label();
-            timeOvality = new TextBox();
-            label25 = new Label();
-            ovalityDef = new TextBox();
-            label2 = new Label();
-            originPictureBox = new PictureBox();
             panel7 = new Panel();
             recognizeButton = new Button();
             panel5 = new Panel();
@@ -155,22 +165,34 @@
             panel2.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
+            tabControl6.SuspendLayout();
+            tabPage7.SuspendLayout();
+            tabControl5.SuspendLayout();
+            tabPage6.SuspendLayout();
             groupBox4.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox1.SuspendLayout();
-            tabPage2.SuspendLayout();
             panel3.SuspendLayout();
+            panel13.SuspendLayout();
+            tabControl4.SuspendLayout();
+            tabPage5.SuspendLayout();
+            tabControl3.SuspendLayout();
+            tabPage4.SuspendLayout();
+            tabControl2.SuspendLayout();
+            tabPage3.SuspendLayout();
+            panel12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ovalityPb).BeginInit();
+            panel10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)inpaintPb).BeginInit();
+            panel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)inclusionPb).BeginInit();
+            panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
             panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             panel11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)underfillPictureBox).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
-            panel10.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            panel9.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)recognizePictureBox).BeginInit();
-            panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)originPictureBox).BeginInit();
             panel7.SuspendLayout();
             panel5.SuspendLayout();
             panel8.SuspendLayout();
@@ -344,16 +366,11 @@
             // tabPage1
             // 
             tabPage1.BorderStyle = BorderStyle.Fixed3D;
-            tabPage1.Controls.Add(obduvCB);
-            tabPage1.Controls.Add(prStatus);
-            tabPage1.Controls.Add(camStatus);
-            tabPage1.Controls.Add(label39);
-            tabPage1.Controls.Add(label19);
+            tabPage1.Controls.Add(tabControl6);
+            tabPage1.Controls.Add(tabControl5);
             tabPage1.Controls.Add(groupBox4);
             tabPage1.Controls.Add(groupBox2);
             tabPage1.Controls.Add(groupBox1);
-            tabPage1.Controls.Add(redrawRoi);
-            tabPage1.Controls.Add(drawRoi);
             tabPage1.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
@@ -363,55 +380,93 @@
             tabPage1.Text = "Параметры поиска";
             tabPage1.UseVisualStyleBackColor = true;
             // 
-            // obduvCB
+            // tabControl6
             // 
-            obduvCB.AutoSize = true;
-            obduvCB.Location = new Point(201, 367);
-            obduvCB.Name = "obduvCB";
-            obduvCB.Size = new Size(119, 19);
-            obduvCB.TabIndex = 35;
-            obduvCB.Text = "Включить обдув";
-            obduvCB.UseVisualStyleBackColor = true;
+            tabControl6.Controls.Add(tabPage7);
+            tabControl6.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            tabControl6.Location = new Point(178, 369);
+            tabControl6.Name = "tabControl6";
+            tabControl6.SelectedIndex = 0;
+            tabControl6.Size = new Size(139, 98);
+            tabControl6.TabIndex = 37;
             // 
-            // prStatus
+            // tabPage7
             // 
-            prStatus.AutoSize = true;
-            prStatus.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            prStatus.Location = new Point(123, 385);
-            prStatus.Name = "prStatus";
-            prStatus.Size = new Size(70, 13);
-            prStatus.TabIndex = 34;
-            prStatus.Text = "Подключено";
+            tabPage7.BorderStyle = BorderStyle.Fixed3D;
+            tabPage7.Controls.Add(label18);
+            tabPage7.Controls.Add(textBox4);
+            tabPage7.Location = new Point(4, 24);
+            tabPage7.Name = "tabPage7";
+            tabPage7.Padding = new Padding(3);
+            tabPage7.Size = new Size(131, 70);
+            tabPage7.TabIndex = 0;
+            tabPage7.Text = "Брак";
+            tabPage7.UseVisualStyleBackColor = true;
             // 
-            // camStatus
+            // label18
             // 
-            camStatus.AutoSize = true;
-            camStatus.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            camStatus.Location = new Point(17, 385);
-            camStatus.Name = "camStatus";
-            camStatus.Size = new Size(70, 13);
-            camStatus.TabIndex = 33;
-            camStatus.Text = "Подключено";
+            label18.AutoSize = true;
+            label18.Location = new Point(2, 7);
+            label18.Name = "label18";
+            label18.Size = new Size(81, 30);
+            label18.TabIndex = 7;
+            label18.Text = "Бракованных\r\nкрышек:";
             // 
-            // label39
+            // textBox4
             // 
-            label39.AutoSize = true;
-            label39.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label39.Location = new Point(122, 369);
-            label39.Name = "label39";
-            label39.Size = new Size(59, 13);
-            label39.TabIndex = 32;
-            label39.Text = "Статус ПР";
+            textBox4.Location = new Point(5, 38);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(100, 23);
+            textBox4.TabIndex = 8;
             // 
-            // label19
+            // tabControl5
             // 
-            label19.AutoSize = true;
-            label19.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label19.Location = new Point(16, 369);
-            label19.Name = "label19";
-            label19.Size = new Size(87, 13);
-            label19.TabIndex = 31;
-            label19.Text = "Статус камеры:";
+            tabControl5.Controls.Add(tabPage6);
+            tabControl5.Location = new Point(6, 367);
+            tabControl5.Name = "tabControl5";
+            tabControl5.SelectedIndex = 0;
+            tabControl5.Size = new Size(170, 100);
+            tabControl5.TabIndex = 36;
+            // 
+            // tabPage6
+            // 
+            tabPage6.BorderStyle = BorderStyle.Fixed3D;
+            tabPage6.Controls.Add(drawRoi);
+            tabPage6.Controls.Add(redrawRoi);
+            tabPage6.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            tabPage6.Location = new Point(4, 24);
+            tabPage6.Name = "tabPage6";
+            tabPage6.Padding = new Padding(3);
+            tabPage6.Size = new Size(162, 72);
+            tabPage6.TabIndex = 0;
+            tabPage6.Text = "Настройка области кадра";
+            tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // drawRoi
+            // 
+            drawRoi.BackColor = Color.FromArgb(4, 85, 191);
+            drawRoi.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            drawRoi.ForeColor = SystemColors.Control;
+            drawRoi.Location = new Point(3, 1);
+            drawRoi.Name = "drawRoi";
+            drawRoi.Size = new Size(148, 32);
+            drawRoi.TabIndex = 26;
+            drawRoi.Text = "Вырезать кадр";
+            drawRoi.UseVisualStyleBackColor = false;
+            drawRoi.Click += drawRoi_Click;
+            // 
+            // redrawRoi
+            // 
+            redrawRoi.BackColor = Color.FromArgb(4, 85, 191);
+            redrawRoi.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            redrawRoi.ForeColor = SystemColors.Control;
+            redrawRoi.Location = new Point(3, 35);
+            redrawRoi.Name = "redrawRoi";
+            redrawRoi.Size = new Size(148, 32);
+            redrawRoi.TabIndex = 27;
+            redrawRoi.Text = "Вернуть кадр";
+            redrawRoi.UseVisualStyleBackColor = false;
+            redrawRoi.Click += redrawRoi_Click;
             // 
             // groupBox4
             // 
@@ -590,69 +645,149 @@
             label12.TabIndex = 5;
             label12.Text = "Коэффициент овальности:";
             // 
-            // redrawRoi
-            // 
-            redrawRoi.BackColor = Color.FromArgb(4, 85, 191);
-            redrawRoi.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            redrawRoi.ForeColor = SystemColors.Control;
-            redrawRoi.Location = new Point(165, 401);
-            redrawRoi.Name = "redrawRoi";
-            redrawRoi.Size = new Size(148, 55);
-            redrawRoi.TabIndex = 27;
-            redrawRoi.Text = "Вернуть кадр";
-            redrawRoi.UseVisualStyleBackColor = false;
-            redrawRoi.Click += redrawRoi_Click;
-            // 
-            // drawRoi
-            // 
-            drawRoi.BackColor = Color.FromArgb(4, 85, 191);
-            drawRoi.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            drawRoi.ForeColor = SystemColors.Control;
-            drawRoi.Location = new Point(11, 401);
-            drawRoi.Name = "drawRoi";
-            drawRoi.Size = new Size(148, 55);
-            drawRoi.TabIndex = 26;
-            drawRoi.Text = "Вырезать кадр";
-            drawRoi.UseVisualStyleBackColor = false;
-            drawRoi.Click += drawRoi_Click;
-            // 
             // tabPage2
             // 
             tabPage2.BorderStyle = BorderStyle.Fixed3D;
-            tabPage2.Controls.Add(gainTb);
-            tabPage2.Controls.Add(label17);
-            tabPage2.Controls.Add(saveImageButton);
-            tabPage2.Controls.Add(applySettingsButton);
-            tabPage2.Controls.Add(exposureTb);
-            tabPage2.Controls.Add(label20);
-            tabPage2.Controls.Add(widthTb);
-            tabPage2.Controls.Add(label21);
-            tabPage2.Controls.Add(heightTb);
-            tabPage2.Controls.Add(label22);
             tabPage2.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(322, 472);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "Параметры камера";
+            tabPage2.Text = "Камера и обдув";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // obduvCB
+            // 
+            obduvCB.AutoSize = true;
+            obduvCB.Location = new Point(187, 10);
+            obduvCB.Name = "obduvCB";
+            obduvCB.Size = new Size(116, 19);
+            obduvCB.TabIndex = 35;
+            obduvCB.Text = "Включить обдув";
+            obduvCB.UseVisualStyleBackColor = true;
+            // 
+            // prStatus
+            // 
+            prStatus.AutoSize = true;
+            prStatus.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            prStatus.Location = new Point(98, 21);
+            prStatus.Name = "prStatus";
+            prStatus.Size = new Size(70, 13);
+            prStatus.TabIndex = 34;
+            prStatus.Text = "Подключено";
+            // 
+            // camStatus
+            // 
+            camStatus.AutoSize = true;
+            camStatus.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            camStatus.Location = new Point(98, 3);
+            camStatus.Name = "camStatus";
+            camStatus.Size = new Size(70, 13);
+            camStatus.TabIndex = 33;
+            camStatus.Text = "Подключено";
+            // 
+            // label39
+            // 
+            label39.AutoSize = true;
+            label39.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label39.Location = new Point(5, 21);
+            label39.Name = "label39";
+            label39.Size = new Size(82, 13);
+            label39.TabIndex = 32;
+            label39.Text = "Статус обдува:";
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label19.Location = new Point(5, 3);
+            label19.Name = "label19";
+            label19.Size = new Size(87, 13);
+            label19.TabIndex = 31;
+            label19.Text = "Статус камеры:";
+            // 
+            // button10
+            // 
+            button10.BackColor = Color.FromArgb(4, 85, 191);
+            button10.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            button10.ForeColor = SystemColors.Control;
+            button10.Location = new Point(155, 58);
+            button10.Name = "button10";
+            button10.Size = new Size(138, 76);
+            button10.TabIndex = 29;
+            button10.Text = "Подключиться ПР";
+            button10.UseVisualStyleBackColor = false;
+            // 
+            // button11
+            // 
+            button11.BackColor = Color.FromArgb(4, 85, 191);
+            button11.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            button11.ForeColor = SystemColors.Control;
+            button11.Location = new Point(3, 58);
+            button11.Name = "button11";
+            button11.Size = new Size(142, 76);
+            button11.TabIndex = 28;
+            button11.Text = "Подключиться камере";
+            button11.UseVisualStyleBackColor = false;
+            // 
+            // textBox5
+            // 
+            textBox5.BackColor = Color.FromArgb(211, 220, 229);
+            textBox5.Font = new Font("Segoe UI", 9F);
+            textBox5.Location = new Point(156, 26);
+            textBox5.Name = "textBox5";
+            textBox5.Size = new Size(138, 23);
+            textBox5.TabIndex = 27;
+            textBox5.Text = "10.10.69.38";
+            // 
+            // label40
+            // 
+            label40.AutoSize = true;
+            label40.Font = new Font("Segoe UI", 9F);
+            label40.Location = new Point(156, 6);
+            label40.Name = "label40";
+            label40.Size = new Size(92, 15);
+            label40.TabIndex = 26;
+            label40.Text = "Ip адрес обдува";
+            // 
+            // textBox6
+            // 
+            textBox6.BackColor = Color.FromArgb(211, 220, 229);
+            textBox6.Font = new Font("Segoe UI", 9F);
+            textBox6.Location = new Point(5, 26);
+            textBox6.Name = "textBox6";
+            textBox6.Size = new Size(138, 23);
+            textBox6.TabIndex = 25;
+            textBox6.Text = "169.254.205.254";
+            // 
+            // label41
+            // 
+            label41.AutoSize = true;
+            label41.Font = new Font("Segoe UI", 9F);
+            label41.Location = new Point(5, 6);
+            label41.Name = "label41";
+            label41.Size = new Size(97, 15);
+            label41.TabIndex = 24;
+            label41.Text = "Ip адрес камеры";
             // 
             // gainTb
             // 
             gainTb.BackColor = Color.FromArgb(211, 220, 229);
-            gainTb.Location = new Point(172, 80);
+            gainTb.Font = new Font("Segoe UI", 9F);
+            gainTb.Location = new Point(157, 72);
             gainTb.Name = "gainTb";
-            gainTb.Size = new Size(138, 21);
+            gainTb.Size = new Size(138, 23);
             gainTb.TabIndex = 23;
             gainTb.Text = "100";
             // 
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(172, 63);
+            label17.Font = new Font("Segoe UI", 9F);
+            label17.Location = new Point(157, 55);
             label17.Name = "label17";
-            label17.Size = new Size(95, 15);
+            label17.Size = new Size(92, 15);
             label17.TabIndex = 22;
             label17.Text = "Насыщенность";
             // 
@@ -661,11 +796,11 @@
             saveImageButton.BackColor = Color.FromArgb(4, 85, 191);
             saveImageButton.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
             saveImageButton.ForeColor = SystemColors.Control;
-            saveImageButton.Location = new Point(171, 117);
+            saveImageButton.Location = new Point(156, 109);
             saveImageButton.Name = "saveImageButton";
-            saveImageButton.Size = new Size(138, 76);
+            saveImageButton.Size = new Size(138, 46);
             saveImageButton.TabIndex = 21;
-            saveImageButton.Text = "Сохранить изображение";
+            saveImageButton.Text = "Сохранить";
             saveImageButton.UseVisualStyleBackColor = false;
             saveImageButton.Click += saveImageButton_Click;
             // 
@@ -674,9 +809,9 @@
             applySettingsButton.BackColor = Color.FromArgb(4, 85, 191);
             applySettingsButton.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold);
             applySettingsButton.ForeColor = SystemColors.Control;
-            applySettingsButton.Location = new Point(19, 117);
+            applySettingsButton.Location = new Point(4, 109);
             applySettingsButton.Name = "applySettingsButton";
-            applySettingsButton.Size = new Size(142, 76);
+            applySettingsButton.Size = new Size(142, 46);
             applySettingsButton.TabIndex = 20;
             applySettingsButton.Text = "Применить";
             applySettingsButton.UseVisualStyleBackColor = false;
@@ -685,54 +820,60 @@
             // exposureTb
             // 
             exposureTb.BackColor = Color.FromArgb(211, 220, 229);
-            exposureTb.Location = new Point(21, 80);
+            exposureTb.Font = new Font("Segoe UI", 9F);
+            exposureTb.Location = new Point(6, 72);
             exposureTb.Name = "exposureTb";
-            exposureTb.Size = new Size(138, 21);
+            exposureTb.Size = new Size(138, 23);
             exposureTb.TabIndex = 15;
             exposureTb.Text = "800";
             // 
             // label20
             // 
             label20.AutoSize = true;
-            label20.Location = new Point(21, 63);
+            label20.Font = new Font("Segoe UI", 9F);
+            label20.Location = new Point(6, 55);
             label20.Name = "label20";
-            label20.Size = new Size(75, 15);
+            label20.Size = new Size(72, 15);
             label20.TabIndex = 14;
             label20.Text = "Экспозиция";
             // 
             // widthTb
             // 
             widthTb.BackColor = Color.FromArgb(211, 220, 229);
-            widthTb.Location = new Point(174, 30);
+            widthTb.Font = new Font("Segoe UI", 9F);
+            widthTb.Location = new Point(159, 22);
             widthTb.Name = "widthTb";
-            widthTb.Size = new Size(138, 21);
+            widthTb.Size = new Size(138, 23);
             widthTb.TabIndex = 13;
             widthTb.Text = "1400";
             // 
             // label21
             // 
             label21.AutoSize = true;
-            label21.Location = new Point(174, 13);
+            label21.Font = new Font("Segoe UI", 9F);
+            label21.Location = new Point(159, 5);
             label21.Name = "label21";
-            label21.Size = new Size(90, 15);
+            label21.Size = new Size(86, 15);
             label21.TabIndex = 12;
             label21.Text = "Ширина кадра";
             // 
             // heightTb
             // 
             heightTb.BackColor = Color.FromArgb(211, 220, 229);
-            heightTb.Location = new Point(23, 30);
+            heightTb.Font = new Font("Segoe UI", 9F);
+            heightTb.Location = new Point(8, 22);
             heightTb.Name = "heightTb";
-            heightTb.Size = new Size(138, 21);
+            heightTb.Size = new Size(138, 23);
             heightTb.TabIndex = 11;
             heightTb.Text = "1700";
             // 
             // label22
             // 
             label22.AutoSize = true;
-            label22.Location = new Point(23, 13);
+            label22.Font = new Font("Segoe UI", 9F);
+            label22.Location = new Point(8, 5);
             label22.Name = "label22";
-            label22.Size = new Size(88, 15);
+            label22.Size = new Size(81, 15);
             label22.TabIndex = 10;
             label22.Text = "Высота кадра";
             // 
@@ -740,54 +881,349 @@
             // 
             panel3.BackColor = SystemColors.ButtonHighlight;
             panel3.BorderStyle = BorderStyle.Fixed3D;
-            panel3.Controls.Add(button9);
-            panel3.Controls.Add(textBox4);
-            panel3.Controls.Add(obduvBatton);
-            panel3.Controls.Add(label18);
-            panel3.Controls.Add(button8);
-            panel3.Controls.Add(button7);
-            panel3.Controls.Add(button6);
-            panel3.Controls.Add(button5);
-            panel3.Controls.Add(button4);
-            panel3.Controls.Add(button2);
-            panel3.Controls.Add(button1);
-            panel3.Controls.Add(textBox8);
-            panel3.Controls.Add(imagesMinus);
-            panel3.Controls.Add(panel4);
+            panel3.Controls.Add(panel13);
+            panel3.Controls.Add(panel12);
             panel3.Controls.Add(panel10);
             panel3.Controls.Add(panel9);
             panel3.Controls.Add(panel6);
             panel3.Location = new Point(356, 12);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1062, 736);
+            panel3.Size = new Size(870, 740);
             panel3.TabIndex = 2;
             // 
-            // button9
+            // panel13
             // 
-            button9.BackColor = Color.FromArgb(4, 85, 191);
-            button9.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button9.ForeColor = SystemColors.Control;
-            button9.Location = new Point(777, 429);
-            button9.Name = "button9";
-            button9.Size = new Size(148, 55);
-            button9.TabIndex = 32;
-            button9.Text = "4-ий метод Холопова";
-            button9.UseVisualStyleBackColor = false;
-            button9.Click += button9_Click;
+            panel13.BorderStyle = BorderStyle.Fixed3D;
+            panel13.Controls.Add(tabControl4);
+            panel13.Controls.Add(tabControl3);
+            panel13.Controls.Add(tabControl2);
+            panel13.Location = new Point(3, 285);
+            panel13.Name = "panel13";
+            panel13.Size = new Size(324, 449);
+            panel13.TabIndex = 35;
             // 
-            // textBox4
+            // tabControl4
             // 
-            textBox4.Location = new Point(777, 394);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(100, 23);
-            textBox4.TabIndex = 8;
+            tabControl4.Controls.Add(tabPage5);
+            tabControl4.Location = new Point(4, 374);
+            tabControl4.Name = "tabControl4";
+            tabControl4.SelectedIndex = 0;
+            tabControl4.Size = new Size(313, 67);
+            tabControl4.TabIndex = 36;
+            // 
+            // tabPage5
+            // 
+            tabPage5.BorderStyle = BorderStyle.Fixed3D;
+            tabPage5.Controls.Add(label39);
+            tabPage5.Controls.Add(obduvCB);
+            tabPage5.Controls.Add(label19);
+            tabPage5.Controls.Add(camStatus);
+            tabPage5.Controls.Add(prStatus);
+            tabPage5.Location = new Point(4, 24);
+            tabPage5.Name = "tabPage5";
+            tabPage5.Padding = new Padding(3);
+            tabPage5.Size = new Size(305, 39);
+            tabPage5.TabIndex = 0;
+            tabPage5.Text = "Статусы подключения";
+            tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // tabControl3
+            // 
+            tabControl3.Controls.Add(tabPage4);
+            tabControl3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            tabControl3.Location = new Point(4, 200);
+            tabControl3.Name = "tabControl3";
+            tabControl3.SelectedIndex = 0;
+            tabControl3.Size = new Size(315, 172);
+            tabControl3.TabIndex = 36;
+            // 
+            // tabPage4
+            // 
+            tabPage4.BorderStyle = BorderStyle.Fixed3D;
+            tabPage4.Controls.Add(label40);
+            tabPage4.Controls.Add(button10);
+            tabPage4.Controls.Add(label41);
+            tabPage4.Controls.Add(button11);
+            tabPage4.Controls.Add(textBox6);
+            tabPage4.Controls.Add(textBox5);
+            tabPage4.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
+            tabPage4.Location = new Point(4, 24);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(3);
+            tabPage4.Size = new Size(307, 144);
+            tabPage4.TabIndex = 0;
+            tabPage4.Text = "Сетевые настройки камеры и обдува";
+            tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tabControl2
+            // 
+            tabControl2.Controls.Add(tabPage3);
+            tabControl2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            tabControl2.Location = new Point(3, 3);
+            tabControl2.Name = "tabControl2";
+            tabControl2.SelectedIndex = 0;
+            tabControl2.Size = new Size(316, 195);
+            tabControl2.TabIndex = 36;
+            // 
+            // tabPage3
+            // 
+            tabPage3.BorderStyle = BorderStyle.Fixed3D;
+            tabPage3.Controls.Add(label21);
+            tabPage3.Controls.Add(saveImageButton);
+            tabPage3.Controls.Add(heightTb);
+            tabPage3.Controls.Add(applySettingsButton);
+            tabPage3.Controls.Add(label22);
+            tabPage3.Controls.Add(label17);
+            tabPage3.Controls.Add(widthTb);
+            tabPage3.Controls.Add(exposureTb);
+            tabPage3.Controls.Add(label20);
+            tabPage3.Controls.Add(gainTb);
+            tabPage3.Location = new Point(4, 24);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(308, 167);
+            tabPage3.TabIndex = 0;
+            tabPage3.Text = "Настройка камеры";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // panel12
+            // 
+            panel12.BorderStyle = BorderStyle.Fixed3D;
+            panel12.Controls.Add(label42);
+            panel12.Controls.Add(originPb);
+            panel12.Location = new Point(3, 3);
+            panel12.Name = "panel12";
+            panel12.Size = new Size(321, 270);
+            panel12.TabIndex = 6;
+            // 
+            // label42
+            // 
+            label42.AutoSize = true;
+            label42.BackColor = Color.Transparent;
+            label42.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            label42.Location = new Point(61, 4);
+            label42.Name = "label42";
+            label42.Size = new Size(220, 21);
+            label42.TabIndex = 5;
+            label42.Text = "ИЗОБРАЖЕНИЕ С КАМЕРЫ";
+            // 
+            // ovalityPb
+            // 
+            ovalityPb.BorderStyle = BorderStyle.Fixed3D;
+            ovalityPb.Location = new Point(3, 4);
+            ovalityPb.Name = "ovalityPb";
+            ovalityPb.Size = new Size(265, 218);
+            ovalityPb.SizeMode = PictureBoxSizeMode.Zoom;
+            ovalityPb.TabIndex = 0;
+            ovalityPb.TabStop = false;
+            // 
+            // panel10
+            // 
+            panel10.BorderStyle = BorderStyle.Fixed3D;
+            panel10.Controls.Add(label32);
+            panel10.Controls.Add(inpaintTime);
+            panel10.Controls.Add(InpaintDef);
+            panel10.Controls.Add(label27);
+            panel10.Controls.Add(inpaintPb);
+            panel10.Controls.Add(label24);
+            panel10.Location = new Point(330, 487);
+            panel10.Name = "panel10";
+            panel10.Size = new Size(527, 246);
+            panel10.TabIndex = 5;
+            // 
+            // label32
+            // 
+            label32.AutoSize = true;
+            label32.BackColor = Color.Lime;
+            label32.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label32.Location = new Point(275, 31);
+            label32.Name = "label32";
+            label32.Size = new Size(221, 21);
+            label32.TabIndex = 7;
+            label32.Text = "Определение НЕПРОКРАСОВ";
+            // 
+            // inpaintTime
+            // 
+            inpaintTime.Location = new Point(274, 83);
+            inpaintTime.Name = "inpaintTime";
+            inpaintTime.Size = new Size(100, 23);
+            inpaintTime.TabIndex = 8;
+            // 
+            // InpaintDef
+            // 
+            InpaintDef.Location = new Point(274, 144);
+            InpaintDef.Name = "InpaintDef";
+            InpaintDef.Size = new Size(100, 23);
+            InpaintDef.TabIndex = 6;
+            // 
+            // label27
+            // 
+            label27.AutoSize = true;
+            label27.Location = new Point(274, 61);
+            label27.Name = "label27";
+            label27.Size = new Size(183, 15);
+            label27.TabIndex = 7;
+            label27.Text = "Время обработки одного кадра:";
+            // 
+            // inpaintPb
+            // 
+            inpaintPb.BorderStyle = BorderStyle.Fixed3D;
+            inpaintPb.Location = new Point(4, 12);
+            inpaintPb.Name = "inpaintPb";
+            inpaintPb.Size = new Size(265, 218);
+            inpaintPb.SizeMode = PictureBoxSizeMode.Zoom;
+            inpaintPb.TabIndex = 2;
+            inpaintPb.TabStop = false;
+            // 
+            // label24
+            // 
+            label24.AutoSize = true;
+            label24.Location = new Point(274, 122);
+            label24.Name = "label24";
+            label24.Size = new Size(200, 15);
+            label24.TabIndex = 5;
+            label24.Text = "Количество бракованных крышек:";
+            // 
+            // panel9
+            // 
+            panel9.BorderStyle = BorderStyle.Fixed3D;
+            panel9.Controls.Add(label31);
+            panel9.Controls.Add(conclusionTime);
+            panel9.Controls.Add(inclusionDef);
+            panel9.Controls.Add(label26);
+            panel9.Controls.Add(inclusionPb);
+            panel9.Controls.Add(label23);
+            panel9.Location = new Point(330, 248);
+            panel9.Name = "panel9";
+            panel9.Size = new Size(527, 229);
+            panel9.TabIndex = 4;
+            // 
+            // label31
+            // 
+            label31.AutoSize = true;
+            label31.BackColor = Color.Lime;
+            label31.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label31.Location = new Point(274, 24);
+            label31.Name = "label31";
+            label31.Size = new Size(213, 21);
+            label31.TabIndex = 6;
+            label31.Text = "Определение ВКРАПЛЕНИЙ";
+            // 
+            // conclusionTime
+            // 
+            conclusionTime.Location = new Point(274, 77);
+            conclusionTime.Name = "conclusionTime";
+            conclusionTime.Size = new Size(100, 23);
+            conclusionTime.TabIndex = 6;
+            // 
+            // inclusionDef
+            // 
+            inclusionDef.Location = new Point(274, 131);
+            inclusionDef.Name = "inclusionDef";
+            inclusionDef.Size = new Size(100, 23);
+            inclusionDef.TabIndex = 4;
+            // 
+            // label26
+            // 
+            label26.AutoSize = true;
+            label26.Location = new Point(274, 55);
+            label26.Name = "label26";
+            label26.Size = new Size(183, 15);
+            label26.TabIndex = 5;
+            label26.Text = "Время обработки одного кадра:";
+            // 
+            // inclusionPb
+            // 
+            inclusionPb.BorderStyle = BorderStyle.Fixed3D;
+            inclusionPb.Location = new Point(3, 3);
+            inclusionPb.Name = "inclusionPb";
+            inclusionPb.Size = new Size(265, 218);
+            inclusionPb.SizeMode = PictureBoxSizeMode.Zoom;
+            inclusionPb.TabIndex = 1;
+            inclusionPb.TabStop = false;
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.Location = new Point(274, 109);
+            label23.Name = "label23";
+            label23.Size = new Size(200, 15);
+            label23.TabIndex = 3;
+            label23.Text = "Количество бракованных крышек:";
+            // 
+            // panel6
+            // 
+            panel6.BorderStyle = BorderStyle.Fixed3D;
+            panel6.Controls.Add(label30);
+            panel6.Controls.Add(ovalityPb);
+            panel6.Controls.Add(timeOvality);
+            panel6.Controls.Add(label25);
+            panel6.Controls.Add(ovalityDef);
+            panel6.Controls.Add(label2);
+            panel6.Location = new Point(330, 3);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(527, 232);
+            panel6.TabIndex = 3;
+            // 
+            // label30
+            // 
+            label30.AutoSize = true;
+            label30.BackColor = Color.Lime;
+            label30.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label30.Location = new Point(274, 22);
+            label30.Name = "label30";
+            label30.Size = new Size(215, 21);
+            label30.TabIndex = 5;
+            label30.Text = "Определение ОВАЛЬНОСТИ";
+            // 
+            // timeOvality
+            // 
+            timeOvality.Location = new Point(275, 81);
+            timeOvality.Name = "timeOvality";
+            timeOvality.Size = new Size(100, 23);
+            timeOvality.TabIndex = 4;
+            // 
+            // label25
+            // 
+            label25.AutoSize = true;
+            label25.Location = new Point(275, 59);
+            label25.Name = "label25";
+            label25.Size = new Size(183, 15);
+            label25.TabIndex = 3;
+            label25.Text = "Время обработки одного кадра:";
+            // 
+            // ovalityDef
+            // 
+            ovalityDef.Location = new Point(274, 133);
+            ovalityDef.Name = "ovalityDef";
+            ovalityDef.Size = new Size(100, 23);
+            ovalityDef.TabIndex = 2;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(274, 111);
+            label2.Name = "label2";
+            label2.Size = new Size(200, 15);
+            label2.TabIndex = 1;
+            label2.Text = "Количество бракованных крышек:";
+            // 
+            // originPb
+            // 
+            originPb.BorderStyle = BorderStyle.Fixed3D;
+            originPb.Location = new Point(13, 28);
+            originPb.Name = "originPb";
+            originPb.Size = new Size(295, 233);
+            originPb.SizeMode = PictureBoxSizeMode.Zoom;
+            originPb.TabIndex = 0;
+            originPb.TabStop = false;
             // 
             // obduvBatton
             // 
             obduvBatton.BackColor = Color.FromArgb(4, 85, 191);
             obduvBatton.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
             obduvBatton.ForeColor = SystemColors.Control;
-            obduvBatton.Location = new Point(777, 287);
+            obduvBatton.Location = new Point(202, 848);
             obduvBatton.Name = "obduvBatton";
             obduvBatton.Size = new Size(148, 55);
             obduvBatton.TabIndex = 34;
@@ -795,142 +1231,72 @@
             obduvBatton.UseVisualStyleBackColor = false;
             obduvBatton.Click += obduvBatton_Click_1;
             // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Location = new Point(777, 372);
-            label18.Name = "label18";
-            label18.Size = new Size(167, 15);
-            label18.TabIndex = 7;
-            label18.Text = "Количество отправленных 1:";
-            // 
-            // button8
-            // 
-            button8.BackColor = Color.FromArgb(4, 85, 191);
-            button8.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button8.ForeColor = SystemColors.Control;
-            button8.Location = new Point(571, 287);
-            button8.Name = "button8";
-            button8.Size = new Size(148, 55);
-            button8.TabIndex = 33;
-            button8.Text = "1-ий метод Контуры";
-            button8.UseVisualStyleBackColor = false;
-            button8.Click += button8_Click;
-            // 
-            // button7
-            // 
-            button7.BackColor = Color.FromArgb(4, 85, 191);
-            button7.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button7.ForeColor = SystemColors.Control;
-            button7.Location = new Point(571, 362);
-            button7.Name = "button7";
-            button7.Size = new Size(148, 55);
-            button7.TabIndex = 32;
-            button7.Text = "2-ий метод Холопова";
-            button7.UseVisualStyleBackColor = false;
-            button7.Click += button7_Click;
-            // 
-            // button6
-            // 
-            button6.BackColor = Color.FromArgb(4, 85, 191);
-            button6.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button6.ForeColor = SystemColors.Control;
-            button6.Location = new Point(571, 429);
-            button6.Name = "button6";
-            button6.Size = new Size(148, 55);
-            button6.TabIndex = 31;
-            button6.Text = "3-ий метод Холопова";
-            button6.UseVisualStyleBackColor = false;
-            button6.Click += button6_Click;
-            // 
-            // button5
-            // 
-            button5.BackColor = Color.FromArgb(4, 85, 191);
-            button5.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button5.ForeColor = SystemColors.Control;
-            button5.Location = new Point(808, 674);
-            button5.Name = "button5";
-            button5.Size = new Size(148, 55);
-            button5.TabIndex = 30;
-            button5.Text = "Преобразовать картинку";
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
-            // 
-            // button4
-            // 
-            button4.BackColor = Color.FromArgb(4, 85, 191);
-            button4.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button4.ForeColor = SystemColors.Control;
-            button4.Location = new Point(555, 642);
-            button4.Name = "button4";
-            button4.Size = new Size(148, 55);
-            button4.TabIndex = 29;
-            button4.Text = "Преобразовать картинку";
-            button4.UseVisualStyleBackColor = false;
-            button4.Click += button4_Click;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.FromArgb(4, 85, 191);
-            button2.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button2.ForeColor = SystemColors.Control;
-            button2.Location = new Point(808, 601);
-            button2.Name = "button2";
-            button2.Size = new Size(148, 55);
-            button2.TabIndex = 28;
-            button2.Text = "Преобразовать картинку";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click_1;
-            // 
-            // button1
-            // 
-            button1.BackColor = Color.FromArgb(4, 85, 191);
-            button1.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button1.ForeColor = SystemColors.Control;
-            button1.Location = new Point(809, 529);
-            button1.Name = "button1";
-            button1.Size = new Size(148, 55);
-            button1.TabIndex = 27;
-            button1.Text = "Найти контуры";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click_1;
-            // 
-            // textBox8
-            // 
-            textBox8.Location = new Point(595, 595);
-            textBox8.Name = "textBox8";
-            textBox8.Size = new Size(100, 23);
-            textBox8.TabIndex = 26;
-            textBox8.Visible = false;
-            // 
-            // imagesMinus
-            // 
-            imagesMinus.BackColor = Color.FromArgb(4, 85, 191);
-            imagesMinus.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            imagesMinus.ForeColor = SystemColors.Control;
-            imagesMinus.Location = new Point(555, 529);
-            imagesMinus.Name = "imagesMinus";
-            imagesMinus.Size = new Size(148, 55);
-            imagesMinus.TabIndex = 25;
-            imagesMinus.Text = "Вычесть изображения";
-            imagesMinus.UseVisualStyleBackColor = false;
-            imagesMinus.Visible = false;
-            imagesMinus.Click += imagesMinus_Click;
-            // 
             // panel4
             // 
             panel4.BorderStyle = BorderStyle.Fixed3D;
-            panel4.Controls.Add(panel11);
             panel4.Controls.Add(label33);
             panel4.Controls.Add(textBox1);
             panel4.Controls.Add(label34);
             panel4.Controls.Add(textBox3);
             panel4.Controls.Add(label35);
             panel4.Controls.Add(pictureBox2);
-            panel4.Location = new Point(533, 3);
+            panel4.Location = new Point(907, 848);
             panel4.Name = "panel4";
             panel4.Size = new Size(527, 257);
             panel4.TabIndex = 6;
+            // 
+            // label33
+            // 
+            label33.AutoSize = true;
+            label33.BackColor = Color.Lime;
+            label33.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label33.Location = new Point(274, 22);
+            label33.Name = "label33";
+            label33.Size = new Size(215, 42);
+            label33.TabIndex = 5;
+            label33.Text = "Определение ВЫВЕРНУТОЙ \r\nКОРОНКИ";
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(274, 103);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(100, 23);
+            textBox1.TabIndex = 4;
+            // 
+            // label34
+            // 
+            label34.AutoSize = true;
+            label34.Location = new Point(274, 81);
+            label34.Name = "label34";
+            label34.Size = new Size(183, 15);
+            label34.TabIndex = 3;
+            label34.Text = "Время обработки одного кадра:";
+            // 
+            // textBox3
+            // 
+            textBox3.Location = new Point(273, 155);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(100, 23);
+            textBox3.TabIndex = 2;
+            // 
+            // label35
+            // 
+            label35.AutoSize = true;
+            label35.Location = new Point(273, 133);
+            label35.Name = "label35";
+            label35.Size = new Size(200, 15);
+            label35.TabIndex = 1;
+            label35.Text = "Количество бракованных крышек:";
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.BorderStyle = BorderStyle.Fixed3D;
+            pictureBox2.Location = new Point(3, 3);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(265, 247);
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.TabIndex = 0;
+            pictureBox2.TabStop = false;
             // 
             // panel11
             // 
@@ -943,7 +1309,7 @@
             panel11.Controls.Add(underfillDef);
             panel11.Controls.Add(label38);
             panel11.Controls.Add(underfillPictureBox);
-            panel11.Location = new Point(-2, -2);
+            panel11.Location = new Point(361, 848);
             panel11.Name = "panel11";
             panel11.Size = new Size(527, 257);
             panel11.TabIndex = 7;
@@ -1015,260 +1381,6 @@
             underfillPictureBox.TabIndex = 0;
             underfillPictureBox.TabStop = false;
             // 
-            // label33
-            // 
-            label33.AutoSize = true;
-            label33.BackColor = Color.Lime;
-            label33.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label33.Location = new Point(274, 22);
-            label33.Name = "label33";
-            label33.Size = new Size(215, 42);
-            label33.TabIndex = 5;
-            label33.Text = "Определение ВЫВЕРНУТОЙ \r\nКОРОНКИ";
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(274, 103);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(100, 23);
-            textBox1.TabIndex = 4;
-            // 
-            // label34
-            // 
-            label34.AutoSize = true;
-            label34.Location = new Point(274, 81);
-            label34.Name = "label34";
-            label34.Size = new Size(183, 15);
-            label34.TabIndex = 3;
-            label34.Text = "Время обработки одного кадра:";
-            // 
-            // textBox3
-            // 
-            textBox3.Location = new Point(273, 155);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(100, 23);
-            textBox3.TabIndex = 2;
-            // 
-            // label35
-            // 
-            label35.AutoSize = true;
-            label35.Location = new Point(273, 133);
-            label35.Name = "label35";
-            label35.Size = new Size(200, 15);
-            label35.TabIndex = 1;
-            label35.Text = "Количество бракованных крышек:";
-            // 
-            // pictureBox2
-            // 
-            pictureBox2.BorderStyle = BorderStyle.Fixed3D;
-            pictureBox2.Location = new Point(3, 3);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(265, 247);
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.TabIndex = 0;
-            pictureBox2.TabStop = false;
-            // 
-            // panel10
-            // 
-            panel10.BorderStyle = BorderStyle.Fixed3D;
-            panel10.Controls.Add(label32);
-            panel10.Controls.Add(inpaintTime);
-            panel10.Controls.Add(InpaintDef);
-            panel10.Controls.Add(label27);
-            panel10.Controls.Add(pictureBox1);
-            panel10.Controls.Add(label24);
-            panel10.Location = new Point(3, 496);
-            panel10.Name = "panel10";
-            panel10.Size = new Size(527, 230);
-            panel10.TabIndex = 5;
-            // 
-            // label32
-            // 
-            label32.AutoSize = true;
-            label32.BackColor = Color.Lime;
-            label32.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label32.Location = new Point(275, 31);
-            label32.Name = "label32";
-            label32.Size = new Size(221, 21);
-            label32.TabIndex = 7;
-            label32.Text = "Определение НЕПРОКРАСОВ";
-            // 
-            // inpaintTime
-            // 
-            inpaintTime.Location = new Point(274, 83);
-            inpaintTime.Name = "inpaintTime";
-            inpaintTime.Size = new Size(100, 23);
-            inpaintTime.TabIndex = 8;
-            // 
-            // InpaintDef
-            // 
-            InpaintDef.Location = new Point(274, 144);
-            InpaintDef.Name = "InpaintDef";
-            InpaintDef.Size = new Size(100, 23);
-            InpaintDef.TabIndex = 6;
-            // 
-            // label27
-            // 
-            label27.AutoSize = true;
-            label27.Location = new Point(274, 61);
-            label27.Name = "label27";
-            label27.Size = new Size(183, 15);
-            label27.TabIndex = 7;
-            label27.Text = "Время обработки одного кадра:";
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.BorderStyle = BorderStyle.Fixed3D;
-            pictureBox1.Location = new Point(4, 3);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(265, 218);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 2;
-            pictureBox1.TabStop = false;
-            // 
-            // label24
-            // 
-            label24.AutoSize = true;
-            label24.Location = new Point(274, 122);
-            label24.Name = "label24";
-            label24.Size = new Size(200, 15);
-            label24.TabIndex = 5;
-            label24.Text = "Количество бракованных крышек:";
-            // 
-            // panel9
-            // 
-            panel9.BorderStyle = BorderStyle.Fixed3D;
-            panel9.Controls.Add(label31);
-            panel9.Controls.Add(conclusionTime);
-            panel9.Controls.Add(inclusionDef);
-            panel9.Controls.Add(label26);
-            panel9.Controls.Add(recognizePictureBox);
-            panel9.Controls.Add(label23);
-            panel9.Location = new Point(3, 261);
-            panel9.Name = "panel9";
-            panel9.Size = new Size(527, 229);
-            panel9.TabIndex = 4;
-            // 
-            // label31
-            // 
-            label31.AutoSize = true;
-            label31.BackColor = Color.Lime;
-            label31.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label31.Location = new Point(274, 24);
-            label31.Name = "label31";
-            label31.Size = new Size(213, 21);
-            label31.TabIndex = 6;
-            label31.Text = "Определение ВКРАПЛЕНИЙ";
-            // 
-            // conclusionTime
-            // 
-            conclusionTime.Location = new Point(274, 77);
-            conclusionTime.Name = "conclusionTime";
-            conclusionTime.Size = new Size(100, 23);
-            conclusionTime.TabIndex = 6;
-            // 
-            // inclusionDef
-            // 
-            inclusionDef.Location = new Point(274, 131);
-            inclusionDef.Name = "inclusionDef";
-            inclusionDef.Size = new Size(100, 23);
-            inclusionDef.TabIndex = 4;
-            // 
-            // label26
-            // 
-            label26.AutoSize = true;
-            label26.Location = new Point(274, 55);
-            label26.Name = "label26";
-            label26.Size = new Size(183, 15);
-            label26.TabIndex = 5;
-            label26.Text = "Время обработки одного кадра:";
-            // 
-            // recognizePictureBox
-            // 
-            recognizePictureBox.BorderStyle = BorderStyle.Fixed3D;
-            recognizePictureBox.Location = new Point(3, 3);
-            recognizePictureBox.Name = "recognizePictureBox";
-            recognizePictureBox.Size = new Size(265, 218);
-            recognizePictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            recognizePictureBox.TabIndex = 1;
-            recognizePictureBox.TabStop = false;
-            // 
-            // label23
-            // 
-            label23.AutoSize = true;
-            label23.Location = new Point(274, 109);
-            label23.Name = "label23";
-            label23.Size = new Size(200, 15);
-            label23.TabIndex = 3;
-            label23.Text = "Количество бракованных крышек:";
-            // 
-            // panel6
-            // 
-            panel6.BorderStyle = BorderStyle.Fixed3D;
-            panel6.Controls.Add(label30);
-            panel6.Controls.Add(timeOvality);
-            panel6.Controls.Add(label25);
-            panel6.Controls.Add(ovalityDef);
-            panel6.Controls.Add(label2);
-            panel6.Controls.Add(originPictureBox);
-            panel6.Location = new Point(3, 3);
-            panel6.Name = "panel6";
-            panel6.Size = new Size(527, 257);
-            panel6.TabIndex = 3;
-            // 
-            // label30
-            // 
-            label30.AutoSize = true;
-            label30.BackColor = Color.Lime;
-            label30.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label30.Location = new Point(274, 22);
-            label30.Name = "label30";
-            label30.Size = new Size(215, 21);
-            label30.TabIndex = 5;
-            label30.Text = "Определение ОВАЛЬНОСТИ";
-            // 
-            // timeOvality
-            // 
-            timeOvality.Location = new Point(275, 81);
-            timeOvality.Name = "timeOvality";
-            timeOvality.Size = new Size(100, 23);
-            timeOvality.TabIndex = 4;
-            // 
-            // label25
-            // 
-            label25.AutoSize = true;
-            label25.Location = new Point(275, 59);
-            label25.Name = "label25";
-            label25.Size = new Size(183, 15);
-            label25.TabIndex = 3;
-            label25.Text = "Время обработки одного кадра:";
-            // 
-            // ovalityDef
-            // 
-            ovalityDef.Location = new Point(274, 133);
-            ovalityDef.Name = "ovalityDef";
-            ovalityDef.Size = new Size(100, 23);
-            ovalityDef.TabIndex = 2;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(274, 111);
-            label2.Name = "label2";
-            label2.Size = new Size(200, 15);
-            label2.TabIndex = 1;
-            label2.Text = "Количество бракованных крышек:";
-            // 
-            // originPictureBox
-            // 
-            originPictureBox.BorderStyle = BorderStyle.Fixed3D;
-            originPictureBox.Location = new Point(3, 3);
-            originPictureBox.Name = "originPictureBox";
-            originPictureBox.Size = new Size(265, 247);
-            originPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            originPictureBox.TabIndex = 0;
-            originPictureBox.TabStop = false;
-            // 
             // panel7
             // 
             panel7.BackColor = SystemColors.ButtonHighlight;
@@ -1276,7 +1388,7 @@
             panel7.Controls.Add(recognizeButton);
             panel7.Location = new Point(11, 677);
             panel7.Name = "panel7";
-            panel7.Size = new Size(339, 71);
+            panel7.Size = new Size(339, 75);
             panel7.TabIndex = 5;
             // 
             // recognizeButton
@@ -1284,7 +1396,7 @@
             recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
             recognizeButton.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
             recognizeButton.ForeColor = SystemColors.Control;
-            recognizeButton.Location = new Point(25, 8);
+            recognizeButton.Location = new Point(25, 10);
             recognizeButton.Name = "recognizeButton";
             recognizeButton.Size = new Size(290, 55);
             recognizeButton.TabIndex = 22;
@@ -1370,9 +1482,12 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1422, 774);
+            ClientSize = new Size(1232, 761);
+            Controls.Add(panel11);
             Controls.Add(panel8);
+            Controls.Add(obduvBatton);
             Controls.Add(panel7);
+            Controls.Add(panel4);
             Controls.Add(panel5);
             Controls.Add(panel3);
             Controls.Add(panel1);
@@ -1388,7 +1503,11 @@
             panel2.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
-            tabPage1.PerformLayout();
+            tabControl6.ResumeLayout(false);
+            tabPage7.ResumeLayout(false);
+            tabPage7.PerformLayout();
+            tabControl5.ResumeLayout(false);
+            tabPage6.ResumeLayout(false);
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
             groupBox2.ResumeLayout(false);
@@ -1397,25 +1516,35 @@
             groupBox3.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            tabPage2.ResumeLayout(false);
-            tabPage2.PerformLayout();
             panel3.ResumeLayout(false);
-            panel3.PerformLayout();
+            panel13.ResumeLayout(false);
+            tabControl4.ResumeLayout(false);
+            tabPage5.ResumeLayout(false);
+            tabPage5.PerformLayout();
+            tabControl3.ResumeLayout(false);
+            tabPage4.ResumeLayout(false);
+            tabPage4.PerformLayout();
+            tabControl2.ResumeLayout(false);
+            tabPage3.ResumeLayout(false);
+            tabPage3.PerformLayout();
+            panel12.ResumeLayout(false);
+            panel12.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)ovalityPb).EndInit();
+            panel10.ResumeLayout(false);
+            panel10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)inpaintPb).EndInit();
+            panel9.ResumeLayout(false);
+            panel9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)inclusionPb).EndInit();
+            panel6.ResumeLayout(false);
+            panel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)originPb).EndInit();
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             panel11.ResumeLayout(false);
             panel11.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)underfillPictureBox).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
-            panel10.ResumeLayout(false);
-            panel10.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            panel9.ResumeLayout(false);
-            panel9.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)recognizePictureBox).EndInit();
-            panel6.ResumeLayout(false);
-            panel6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)originPictureBox).EndInit();
             panel7.ResumeLayout(false);
             panel5.ResumeLayout(false);
             panel8.ResumeLayout(false);
@@ -1452,8 +1581,8 @@
         private TextBox heightTb;
         private Label label22;
         private Panel panel3;
-        private PictureBox originPictureBox;
-        private PictureBox recognizePictureBox;
+        private PictureBox originPb;
+        private PictureBox inclusionPb;
         private Panel panel7;
         private Button recognizeButton;
         private Panel panel5;
@@ -1462,7 +1591,7 @@
         private Button loadImageButton;
         private Button endStream;
         private Button getImageButton;
-        private PictureBox pictureBox1;
+        private PictureBox inpaintPb;
         private Panel panel10;
         private TextBox InpaintDef;
         private Label label24;
@@ -1516,25 +1645,35 @@
         private Label label32;
         private Label label31;
         private Label label30;
-        private Button imagesMinus;
-        private TextBox textBox8;
         private TextBox ratioTb;
         private TextBox radiusTb;
-        private Button button1;
-        private Button button2;
-        private Button button4;
-        private Button button5;
-        private Button button6;
-        private Button button8;
-        private Button button7;
         private Button obduvBatton;
         private TextBox textBox4;
         private Label label18;
-        private Button button9;
         private Label prStatus;
         private Label camStatus;
         private Label label39;
         private Label label19;
         private CheckBox obduvCB;
+        private Button button10;
+        private Button button11;
+        private TextBox textBox5;
+        private Label label40;
+        private TextBox textBox6;
+        private Label label41;
+        private Panel panel13;
+        private Panel panel12;
+        private Label label42;
+        private PictureBox ovalityPb;
+        private TabControl tabControl2;
+        private TabPage tabPage3;
+        private TabControl tabControl3;
+        private TabPage tabPage4;
+        private TabControl tabControl4;
+        private TabPage tabPage5;
+        private TabControl tabControl5;
+        private TabPage tabPage6;
+        private TabControl tabControl6;
+        private TabPage tabPage7;
     }
 }
