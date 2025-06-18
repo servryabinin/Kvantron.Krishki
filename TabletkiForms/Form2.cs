@@ -179,6 +179,9 @@ namespace KrishkiForms
 
         private readonly int obduvRegister = 16465;
 
+        private bool cameraConnected = false;
+        private bool prConnected = false;
+
 
         public Form2()
         {
@@ -227,6 +230,9 @@ namespace KrishkiForms
 
                     prStatus.Text = "Подключено";
                     prStatus.ForeColor = Color.Green;
+
+                    button10.Text = "Отключиться от ПР";
+                    prConnected = true; // камеру удалось открыть
                 }
                 else
                 {
@@ -234,6 +240,9 @@ namespace KrishkiForms
 
                     prStatus.Text = "Не подключено";
                     prStatus.ForeColor = Color.Red;
+
+                    button10.Text = "Подключиться к ПР";
+                    prConnected = false; // камеру удалось открыть
                 }
             }
             catch (Exception ex)
@@ -244,22 +253,30 @@ namespace KrishkiForms
             }
 
 
-            if (cam.Open() == false) //если открытие камеры не удалось,
+            if (cam.Open())
             {
-                MessageBox.Show("камера 1 - ошибка"); //вывести сообщение об ошибке
-                camStatus.Text = "Не подключено";
-                camStatus.ForeColor = Color.Red;
-                cameraError1 = true;
-            }
-            else //иначе
-            {
-                cam.SendImage += GetImage; //???
+                cam.SendImage += GetImage;
 
                 camStatus.Text = "Подключено";
                 camStatus.ForeColor = Color.Green;
+
+                button11.Text = "Отключиться от камеры";
+                cameraConnected = true; // камеру удалось открыть
+            }
+            else
+            {
+                MessageBox.Show("Камера 1 - ошибка");
+
+                camStatus.Text = "Не подключено";
+                camStatus.ForeColor = Color.Red;
+
+                button11.Text = "Подключиться к камере";
+                cameraConnected = false; // камера не подключена
+                cameraError1 = true;
             }
 
-            if (LocalSettings.Instance.UseModule) //если UseModule истинно (по умолчанию истинно),
+            // Подключение к модулю
+            if (LocalSettings.Instance.UseModule)
             {
                 try
                 {
@@ -279,6 +296,95 @@ namespace KrishkiForms
             StartStop(false, true);
 
             LocalSettings.Instance.Save();
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            if (cameraConnected)
+            {
+                cam.Close();
+                cameraConnected = false;
+
+                button11.Text = "Подключиться к камере";
+                camStatus.Text = "Не подключено";
+                camStatus.ForeColor = Color.Red;
+            }
+            else
+            {
+                if (cam.Open())
+                {
+                    cam.SendImage += GetImage;
+                    cameraConnected = true;
+
+                    button11.Text = "Отключиться от камеры";
+                    camStatus.Text = "Подключено";
+                    camStatus.ForeColor = Color.Green;
+                }
+                else
+                {
+                    MessageBox.Show("Не удалось подключиться к камере.");
+                    camStatus.Text = "Не подключено";
+                    camStatus.ForeColor = Color.Red;
+                    cameraConnected = false;
+                }
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            // Если уже подключено — отключаем
+            if (prConnected && modbusClient != null && modbusClient.Connected)
+            {
+                try
+                {
+                    modbusClient.Disconnect();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при отключении от ПР205: {ex.Message}");
+                }
+
+                prConnected = false;
+                button10.Text = "Подключиться к ПР";
+                prStatus.Text = "Не подключено";
+                prStatus.ForeColor = Color.Red;
+                return;
+            }
+
+            // Подключение
+            try
+            {
+                string ip = textBox5.Text.Trim();
+                modbusClient = new ModbusTCP(ip, 502);
+                modbusClient.Connect();
+
+                if (modbusClient.Connected)
+                {
+                    prConnected = true;
+                    MessageBox.Show("Modbus подключение к ПР205 установлено.");
+
+                    prStatus.Text = "Подключено";
+                    prStatus.ForeColor = Color.Green;
+                    button10.Text = "Отключиться от ПР";
+                }
+                else
+                {
+                    prConnected = false;
+                    MessageBox.Show("Не удалось подключиться к ПР205.");
+
+                    prStatus.Text = "Не подключено";
+                    prStatus.ForeColor = Color.Red;
+                    button10.Text = "Подключиться к ПР";
+                }
+            }
+            catch (Exception ex)
+            {
+                prConnected = false;
+                MessageBox.Show($"Ошибка подключения к ПР205: {ex.Message}");
+                prStatus.Text = "Не подключено";
+                prStatus.ForeColor = Color.Red;
+                button10.Text = "Подключиться к ПР";
+            }
         }
 
 
@@ -4916,6 +5022,10 @@ namespace KrishkiForms
         }
 
         
+
+
+
+
 
 
 

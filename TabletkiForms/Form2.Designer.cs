@@ -79,7 +79,6 @@
             groupBox1 = new GroupBox();
             ovalityCoef = new TextBox();
             label12 = new Label();
-            tabPage2 = new TabPage();
             obduvCB = new CheckBox();
             prStatus = new Label();
             camStatus = new Label();
@@ -109,6 +108,7 @@
             tabPage4 = new TabPage();
             tabControl2 = new TabControl();
             tabPage3 = new TabPage();
+            loadSettingsButton = new Button();
             panel12 = new Panel();
             label42 = new Label();
             originPb = new PictureBox();
@@ -158,7 +158,6 @@
             panel8 = new Panel();
             button3 = new Button();
             loadImageButton = new Button();
-            loadSettingsButton = new Button();
             tabParameter.SuspendLayout();
             tabParSearch.SuspendLayout();
             tabParCamera.SuspendLayout();
@@ -356,7 +355,6 @@
             // tabControl1
             // 
             tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
             tabControl1.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
@@ -646,18 +644,6 @@
             label12.TabIndex = 5;
             label12.Text = "Коэффициент овальности:";
             // 
-            // tabPage2
-            // 
-            tabPage2.BorderStyle = BorderStyle.Fixed3D;
-            tabPage2.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            tabPage2.Location = new Point(4, 24);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(322, 472);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Камера и обдув";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
             // obduvCB
             // 
             obduvCB.AutoSize = true;
@@ -719,6 +705,7 @@
             button10.TabIndex = 29;
             button10.Text = "Подключиться ПР";
             button10.UseVisualStyleBackColor = false;
+            button10.Click += button10_Click;
             // 
             // button11
             // 
@@ -731,6 +718,7 @@
             button11.TabIndex = 28;
             button11.Text = "Подключиться камере";
             button11.UseVisualStyleBackColor = false;
+            button11.Click += button11_Click;
             // 
             // textBox5
             // 
@@ -987,6 +975,19 @@
             tabPage3.TabIndex = 0;
             tabPage3.Text = "Настройка камеры";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // loadSettingsButton
+            // 
+            loadSettingsButton.BackColor = Color.FromArgb(4, 85, 191);
+            loadSettingsButton.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            loadSettingsButton.ForeColor = SystemColors.Control;
+            loadSettingsButton.Location = new Point(229, 109);
+            loadSettingsButton.Name = "loadSettingsButton";
+            loadSettingsButton.Size = new Size(65, 46);
+            loadSettingsButton.TabIndex = 24;
+            loadSettingsButton.Text = "📥";
+            loadSettingsButton.UseVisualStyleBackColor = false;
+            loadSettingsButton.Click += loadSettingsButton_Click;
             // 
             // panel12
             // 
@@ -1480,19 +1481,6 @@
             loadImageButton.UseVisualStyleBackColor = false;
             loadImageButton.Click += loadImageButton_Click;
             // 
-            // loadSettingsButton
-            // 
-            loadSettingsButton.BackColor = Color.FromArgb(4, 85, 191);
-            loadSettingsButton.Font = new Font("Microsoft Sans Serif", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            loadSettingsButton.ForeColor = SystemColors.Control;
-            loadSettingsButton.Location = new Point(229, 109);
-            loadSettingsButton.Name = "loadSettingsButton";
-            loadSettingsButton.Size = new Size(65, 46);
-            loadSettingsButton.TabIndex = 24;
-            loadSettingsButton.Text = "📥";
-            loadSettingsButton.UseVisualStyleBackColor = false;
-            loadSettingsButton.Click += loadSettingsButton_Click;
-            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1584,7 +1572,6 @@
         private Label label11;
         private Panel panel2;
         private TabControl tabControl1;
-        private TabPage tabPage2;
         private TextBox gainTb;
         private Label label17;
         private Button saveImageButton;
