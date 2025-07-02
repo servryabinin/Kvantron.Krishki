@@ -113,20 +113,22 @@
             label42 = new Label();
             originPb = new PictureBox();
             panel10 = new Panel();
-            label32 = new Label();
+            inpaintCB = new CheckBox();
             inpaintTime = new TextBox();
             InpaintDef = new TextBox();
             label27 = new Label();
             inpaintPb = new PictureBox();
             label24 = new Label();
             panel9 = new Panel();
-            label31 = new Label();
+            inclusionCB = new CheckBox();
+            checkBox1 = new CheckBox();
             conclusionTime = new TextBox();
             inclusionDef = new TextBox();
             label26 = new Label();
             inclusionPb = new PictureBox();
             label23 = new Label();
             panel6 = new Panel();
+            ovalityCB = new CheckBox();
             label30 = new Label();
             ovalityPb = new PictureBox();
             timeOvality = new TextBox();
@@ -1023,7 +1025,7 @@
             // panel10
             // 
             panel10.BorderStyle = BorderStyle.Fixed3D;
-            panel10.Controls.Add(label32);
+            panel10.Controls.Add(inpaintCB);
             panel10.Controls.Add(inpaintTime);
             panel10.Controls.Add(InpaintDef);
             panel10.Controls.Add(label27);
@@ -1034,16 +1036,20 @@
             panel10.Size = new Size(527, 246);
             panel10.TabIndex = 5;
             // 
-            // label32
+            // inpaintCB
             // 
-            label32.AutoSize = true;
-            label32.BackColor = Color.Lime;
-            label32.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label32.Location = new Point(275, 31);
-            label32.Name = "label32";
-            label32.Size = new Size(221, 21);
-            label32.TabIndex = 7;
-            label32.Text = "Определение НЕПРОКРАСОВ";
+            inpaintCB.AutoSize = true;
+            inpaintCB.BackColor = Color.Lime;
+            inpaintCB.Checked = true;
+            inpaintCB.CheckState = CheckState.Checked;
+            inpaintCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inpaintCB.Location = new Point(277, 24);
+            inpaintCB.Name = "inpaintCB";
+            inpaintCB.Size = new Size(223, 25);
+            inpaintCB.TabIndex = 9;
+            inpaintCB.Text = "Определение непрокрасов";
+            inpaintCB.UseVisualStyleBackColor = false;
+            inpaintCB.CheckedChanged += inpaintCB_CheckedChanged;
             // 
             // inpaintTime
             // 
@@ -1090,7 +1096,8 @@
             // panel9
             // 
             panel9.BorderStyle = BorderStyle.Fixed3D;
-            panel9.Controls.Add(label31);
+            panel9.Controls.Add(inclusionCB);
+            panel9.Controls.Add(checkBox1);
             panel9.Controls.Add(conclusionTime);
             panel9.Controls.Add(inclusionDef);
             panel9.Controls.Add(label26);
@@ -1101,16 +1108,30 @@
             panel9.Size = new Size(527, 229);
             panel9.TabIndex = 4;
             // 
-            // label31
+            // inclusionCB
             // 
-            label31.AutoSize = true;
-            label31.BackColor = Color.Lime;
-            label31.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label31.Location = new Point(274, 24);
-            label31.Name = "label31";
-            label31.Size = new Size(213, 21);
-            label31.TabIndex = 6;
-            label31.Text = "Определение ВКРАПЛЕНИЙ";
+            inclusionCB.AutoSize = true;
+            inclusionCB.BackColor = Color.Lime;
+            inclusionCB.Checked = true;
+            inclusionCB.CheckState = CheckState.Checked;
+            inclusionCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inclusionCB.Location = new Point(274, 18);
+            inclusionCB.Name = "inclusionCB";
+            inclusionCB.Size = new Size(215, 25);
+            inclusionCB.TabIndex = 7;
+            inclusionCB.Text = "Определение вкраплений";
+            inclusionCB.UseVisualStyleBackColor = false;
+            inclusionCB.CheckedChanged += inclusionCB_CheckedChanged;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(274, 170);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(164, 19);
+            checkBox1.TabIndex = 7;
+            checkBox1.Text = "Проверка на вкрапления";
+            checkBox1.UseVisualStyleBackColor = true;
             // 
             // conclusionTime
             // 
@@ -1157,6 +1178,7 @@
             // panel6
             // 
             panel6.BorderStyle = BorderStyle.Fixed3D;
+            panel6.Controls.Add(ovalityCB);
             panel6.Controls.Add(label30);
             panel6.Controls.Add(ovalityPb);
             panel6.Controls.Add(timeOvality);
@@ -1168,6 +1190,21 @@
             panel6.Size = new Size(527, 232);
             panel6.TabIndex = 3;
             // 
+            // ovalityCB
+            // 
+            ovalityCB.AutoSize = true;
+            ovalityCB.BackColor = Color.Lime;
+            ovalityCB.Checked = true;
+            ovalityCB.CheckState = CheckState.Checked;
+            ovalityCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            ovalityCB.Location = new Point(274, 18);
+            ovalityCB.Name = "ovalityCB";
+            ovalityCB.Size = new Size(212, 25);
+            ovalityCB.TabIndex = 6;
+            ovalityCB.Text = "Определение овальности";
+            ovalityCB.UseVisualStyleBackColor = false;
+            ovalityCB.CheckedChanged += ovalityCB_CheckedChanged;
+            // 
             // label30
             // 
             label30.AutoSize = true;
@@ -1175,9 +1212,8 @@
             label30.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label30.Location = new Point(274, 22);
             label30.Name = "label30";
-            label30.Size = new Size(215, 21);
+            label30.Size = new Size(0, 21);
             label30.TabIndex = 5;
-            label30.Text = "Определение ОВАЛЬНОСТИ";
             // 
             // ovalityPb
             // 
@@ -1644,8 +1680,6 @@
         private TextBox textBox3;
         private Label label35;
         private PictureBox pictureBox2;
-        private Label label32;
-        private Label label31;
         private Label label30;
         private TextBox ratioTb;
         private TextBox radiusTb;
@@ -1678,5 +1712,9 @@
         private TabControl tabControl6;
         private TabPage tabPage7;
         private Button loadSettingsButton;
+        private CheckBox ovalityCB;
+        private CheckBox inpaintCB;
+        private CheckBox inclusionCB;
+        private CheckBox checkBox1;
     }
 }

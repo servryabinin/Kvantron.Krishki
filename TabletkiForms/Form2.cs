@@ -182,6 +182,10 @@ namespace KrishkiForms
         private bool cameraConnected = false;
         private bool prConnected = false;
 
+        private bool isObduv = true;
+        private bool isInclusion = true;
+        private bool isInpaint = true;
+
 
         public Form2()
         {
@@ -1241,9 +1245,6 @@ namespace KrishkiForms
 
                         frameToProcess = latestFrame.Clone(); // создаём копию для обработки
                         newFrameAvailable = false;
-
-                        /*frameToProcess = CaptureImage(); // создаём копию для обработки
-                        newFrameAvailable = false;*/
                     }
 
                     if (frameToProcess == null || frameToProcess.Empty())
@@ -1255,12 +1256,24 @@ namespace KrishkiForms
                         Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
                         Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
 
-                        frameToProcess.CopyTo(_imageForOvality);
-                        gray.CopyTo(_grayForOvality);
-                        frameToProcess.CopyTo(_imageForInclusions);
-                        gray.CopyTo(_grayForInclusions);
-                        frameToProcess.CopyTo(_imageForPaintDefects);
-                        gray.CopyTo(_grayForPaintDefects);
+                        // Копируем изображения только если соответствующий CheckBox активен
+                        if (ovalityCB.Checked)
+                        {
+                            frameToProcess.CopyTo(_imageForOvality);
+                            gray.CopyTo(_grayForOvality);
+                        }
+
+                        if (inclusionCB.Checked)
+                        {
+                            frameToProcess.CopyTo(_imageForInclusions);
+                            gray.CopyTo(_grayForInclusions);
+                        }
+
+                        if (inpaintCB.Checked)
+                        {
+                            frameToProcess.CopyTo(_imageForPaintDefects);
+                            gray.CopyTo(_grayForPaintDefects);
+                        }
 
                         using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
@@ -1268,15 +1281,35 @@ namespace KrishkiForms
 
                             try
                             {
-                                var ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality);
-                                var inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions);
-                                var paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects);
+                                // Инициализируем задачи как завершенные с результатом false
+                                var ovalityTask = Task.FromResult(false);
+                                var inclusionsTask = Task.FromResult(false);
+                                var paintTask = Task.FromResult(false);
+
+                                // Запускаем только если CheckBox активен
+                                if (ovalityCB.Checked)
+                                {
+                                    ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality);
+                                }
+
+                                if (inclusionCB.Checked)
+                                {
+                                    inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions);
+                                }
+
+                                if (inpaintCB.Checked)
+                                {
+                                    paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects);
+                                }
 
                                 await Task.WhenAll(ovalityTask, inclusionsTask, paintTask);
 
-                                bool anyDefect = ovalityTask.Result || inclusionsTask.Result || paintTask.Result;
+                                // Проверяем только те задачи, которые были запущены
+                                bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
+                                               (inclusionCB.Checked && inclusionsTask.Result) ||
+                                               (inpaintCB.Checked && paintTask.Result);
 
-                                if (anyDefect == true)
+                                if (anyDefect)
                                 {
                                     BeginInvoke((Action)(() =>
                                     {
@@ -1284,7 +1317,7 @@ namespace KrishkiForms
                                         textBox4.Text = blowTriggerCount.ToString();
                                     }));
                                 }
-                                else if (!anyDefect)
+                                else
                                 {
                                     try
                                     {
@@ -1299,7 +1332,6 @@ namespace KrishkiForms
                                             // Включить обдув снова
                                             modbusClient.WriteSingleRegister(obduvRegister, 0);
                                         }
-
                                     }
                                     catch (Exception ex)
                                     {
@@ -1307,7 +1339,6 @@ namespace KrishkiForms
                                             MessageBox.Show($"Ошибка при управлении обдувом: {ex.Message}")));
                                     }
                                 }
-
                             }
                             catch (OperationCanceledException)
                             {
@@ -1323,6 +1354,105 @@ namespace KrishkiForms
                     MessageBox.Show($"Ошибка обработки: {ex.Message}")));
             }
         }
+
+        /*
+         private async void StartContinuousProcessing(CancellationToken token)
+ {
+     try
+     {
+         while (!token.IsCancellationRequested)
+         {
+             Mat frameToProcess = null;
+
+             lock (frameLock)
+             {
+                 if (!newFrameAvailable)
+                     continue;
+
+                 frameToProcess = latestFrame.Clone(); // создаём копию для обработки
+                 newFrameAvailable = false;
+
+                 
+         }
+
+             if (frameToProcess == null || frameToProcess.Empty())
+                 continue;
+
+             using (frameToProcess)
+             using (Mat gray = new Mat())
+             {
+                 Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
+                 Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
+
+                 frameToProcess.CopyTo(_imageForOvality);
+                 gray.CopyTo(_grayForOvality);
+                 frameToProcess.CopyTo(_imageForInclusions);
+                 gray.CopyTo(_grayForInclusions);
+                 frameToProcess.CopyTo(_imageForPaintDefects);
+                 gray.CopyTo(_grayForPaintDefects);
+
+                 using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
+                 {
+                     timeoutCts.CancelAfter(60);
+
+                     try
+                     {
+                         var ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality);
+                var inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions);
+                var paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects);
+
+                await Task.WhenAll(ovalityTask, inclusionsTask, paintTask);
+
+                bool anyDefect = ovalityTask.Result || inclusionsTask.Result || paintTask.Result;
+
+                                     if (anyDefect == true)
+                                     {
+                                         BeginInvoke((Action)(() =>
+                                         {
+                    blowTriggerCount++;
+                    textBox4.Text = blowTriggerCount.ToString();
+                }));
+                                     }
+                                     else if (!anyDefect)
+            {
+                try
+                {
+                    if (obduvCB.Checked)
+                    {
+                        // Отключить обдув
+                        modbusClient.WriteSingleRegister(obduvRegister, 1);
+
+                        // Подождать немного, чтобы оборудование успело среагировать
+                        await Task.Delay(10, token);
+
+                        // Включить обдув снова
+                        modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    BeginInvoke((Action)(() =>
+                        MessageBox.Show($"Ошибка при управлении обдувом: {ex.Message}")));
+                }
+            }
+
+                                 }
+                                 catch (OperationCanceledException)
+                                 {
+                // ОК
+            }
+                             }
+                         }
+                     }
+                 }
+                 catch (Exception ex)
+                 {
+                     BeginInvoke((Action)(() =>
+                         MessageBox.Show($"Ошибка обработки: {ex.Message}")));
+                 }
+             }
+                     */
 
 
         private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, CancellationToken token, Func<Mat, Mat, CancellationToken, bool> checkFunc)
@@ -5021,7 +5151,43 @@ namespace KrishkiForms
 
         }
 
-        
+        private void ovalityCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (ovalityCB.Checked == true)
+            {
+                ovalityCB.BackColor = Color.Lime;
+            }
+            if (ovalityCB.Checked == false)
+            {
+                ovalityCB.BackColor = Color.Red;
+            }
+        }
+
+        private void inclusionCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (inclusionCB.Checked == true)
+            {
+                inclusionCB.BackColor = Color.Lime;
+            }
+            if (inclusionCB.Checked == false)
+            {
+                inclusionCB.BackColor = Color.Red;
+            }
+        }
+
+        private void inpaintCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (inpaintCB.Checked == true)
+            {
+                inpaintCB.BackColor = Color.Lime;
+            }
+            if (inpaintCB.Checked == false)
+            {
+                inpaintCB.BackColor = Color.Red;
+            }
+        }
+
+
 
 
 
