@@ -186,6 +186,11 @@ namespace KrishkiForms
         private bool isInclusion = true;
         private bool isInpaint = true;
 
+        private int _writeZeroFailCount = 0;
+        private int _writeOneFailCount = 0;
+        private bool obduvState = false; // false = выкл (0), true = вкл (1)
+
+
 
         public Form2()
         {
@@ -1227,7 +1232,15 @@ namespace KrishkiForms
             }
         }
 
-
+        private async Task SetObduv(bool newState)
+        {
+            if (obduvState != newState)
+            {
+                obduvState = newState;
+                modbusClient.WriteSingleRegister(obduvRegister, newState ? 0 : 1);
+                await Task.Delay(15);
+            }
+        }
 
 
         private async void StartContinuousProcessing(CancellationToken token)
@@ -1236,6 +1249,29 @@ namespace KrishkiForms
             {
                 while (!token.IsCancellationRequested)
                 {
+                    try
+                    {
+                        // Включить обдув только один раз при дефекте
+                        //SetObduv(true);
+                        /* modbusClient.WriteSingleRegister(obduvRegister, 0);
+                         await Task.Delay(15, token); // Короткая пауза для применения*/
+                        /*int currentValue = modbusClient.ReadSingleRegister(obduvRegister);
+                        if (currentValue == 1)
+                        {
+                            modbusClient.WriteSingleRegister(obduvRegister, 0);
+                            await Task.Delay(50, token); // Короткая пауза для применения
+                        }*/
+                    }
+                    catch (Exception ex)
+                    {
+                        _writeZeroFailCount++;
+                        UpdateTextBox(textBox7, _writeZeroFailCount);
+
+                        BeginInvoke((Action)(() =>
+                            MessageBox.Show($"Ошибка инициализации обдува: {ex.Message}")));
+                        return; // Прерываем если не удалось проверить/включить обдув
+                    }
+
                     Mat frameToProcess = null;
 
                     lock (frameLock)
@@ -1311,34 +1347,21 @@ namespace KrishkiForms
 
                                 if (anyDefect)
                                 {
+                                    /*// Включить обдув только один раз при дефекте
+                                    SetObduv(true);*/
                                     BeginInvoke((Action)(() =>
                                     {
                                         blowTriggerCount++;
                                         textBox4.Text = blowTriggerCount.ToString();
                                     }));
                                 }
-                                else
+                                else //нет дефекта
                                 {
-                                    try
-                                    {
-                                        if (obduvCB.Checked)
-                                        {
-                                            // Отключить обдув
-                                            modbusClient.WriteSingleRegister(obduvRegister, 1);
-
-                                            // Подождать немного, чтобы оборудование успело среагировать
-                                            await Task.Delay(10, token);
-
-                                            // Включить обдув снова
-                                            modbusClient.WriteSingleRegister(obduvRegister, 0);
-                                        }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        BeginInvoke((Action)(() =>
-                                            MessageBox.Show($"Ошибка при управлении обдувом: {ex.Message}")));
-                                    }
+                                    // Выключить обдув
+                                    SetObduv(false);
+                                    SetObduv(true);
                                 }
+
                             }
                             catch (OperationCanceledException)
                             {
@@ -5184,6 +5207,32 @@ namespace KrishkiForms
             if (inpaintCB.Checked == false)
             {
                 inpaintCB.BackColor = Color.Red;
+            }
+        }
+
+        private void button1_Click_2(object sender, EventArgs e)
+        {
+            try
+            {
+                // Проверяем подключение
+                if (!modbusClient.Connected)
+                {
+                    MessageBox.Show("Нет подключения к устройству!");
+                    return;
+                }
+
+                // Читаем значение регистра 16465
+                int registerValue = modbusClient.ReadSingleRegister(16465);
+
+                // Выводим результат
+                MessageBox.Show($"Значение регистра 16465: {registerValue}", "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Можно также вывести в TextBox или Label, например:
+                // textBox1.Text = registerValue.ToString();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка чтения регистра: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

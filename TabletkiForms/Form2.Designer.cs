@@ -113,7 +113,11 @@
             label42 = new Label();
             originPb = new PictureBox();
             panel10 = new Panel();
+            textBox8 = new TextBox();
+            label32 = new Label();
+            textBox7 = new TextBox();
             inpaintCB = new CheckBox();
+            label31 = new Label();
             inpaintTime = new TextBox();
             InpaintDef = new TextBox();
             label27 = new Label();
@@ -488,7 +492,7 @@
             whiteThresoldTx.Name = "whiteThresoldTx";
             whiteThresoldTx.Size = new Size(100, 21);
             whiteThresoldTx.TabIndex = 34;
-            whiteThresoldTx.Text = "40";
+            whiteThresoldTx.Text = "10";
             // 
             // label29
             // 
@@ -1025,7 +1029,11 @@
             // panel10
             // 
             panel10.BorderStyle = BorderStyle.Fixed3D;
+            panel10.Controls.Add(textBox8);
+            panel10.Controls.Add(label32);
+            panel10.Controls.Add(textBox7);
             panel10.Controls.Add(inpaintCB);
+            panel10.Controls.Add(label31);
             panel10.Controls.Add(inpaintTime);
             panel10.Controls.Add(InpaintDef);
             panel10.Controls.Add(label27);
@@ -1035,6 +1043,29 @@
             panel10.Name = "panel10";
             panel10.Size = new Size(527, 246);
             panel10.TabIndex = 5;
+            // 
+            // textBox8
+            // 
+            textBox8.Location = new Point(328, 208);
+            textBox8.Name = "textBox8";
+            textBox8.Size = new Size(32, 23);
+            textBox8.TabIndex = 11;
+            // 
+            // label32
+            // 
+            label32.AutoSize = true;
+            label32.Location = new Point(328, 186);
+            label32.Name = "label32";
+            label32.Size = new Size(13, 15);
+            label32.TabIndex = 10;
+            label32.Text = "1";
+            // 
+            // textBox7
+            // 
+            textBox7.Location = new Point(277, 208);
+            textBox7.Name = "textBox7";
+            textBox7.Size = new Size(32, 23);
+            textBox7.TabIndex = 9;
             // 
             // inpaintCB
             // 
@@ -1050,6 +1081,15 @@
             inpaintCB.Text = "Определение непрокрасов";
             inpaintCB.UseVisualStyleBackColor = false;
             inpaintCB.CheckedChanged += inpaintCB_CheckedChanged;
+            // 
+            // label31
+            // 
+            label31.AutoSize = true;
+            label31.Location = new Point(277, 186);
+            label31.Name = "label31";
+            label31.Size = new Size(13, 15);
+            label31.TabIndex = 8;
+            label31.Text = "0";
             // 
             // inpaintTime
             // 
@@ -1716,5 +1756,9 @@
         private CheckBox inpaintCB;
         private CheckBox inclusionCB;
         private CheckBox checkBox1;
+        private TextBox textBox8;
+        private Label label32;
+        private TextBox textBox7;
+        private Label label31;
     }
 }
