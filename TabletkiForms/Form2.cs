@@ -190,6 +190,11 @@ namespace KrishkiForms
         private int _writeOneFailCount = 0;
         private bool obduvState = false; // false = выкл (0), true = вкл (1)
 
+        private List<string> imageFiles = new List<string>();
+        private int currentImageIndex = 0;
+        private bool isProcessingFromFolder = false;
+        private object imageListLock = new object();
+
 
 
         public Form2()
@@ -460,26 +465,59 @@ namespace KrishkiForms
         private void loadImageButton_Click(object sender, EventArgs e)
         {
             isStreamCam = false;
-            // Создаем экземпляр OpenFileDialog
+
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                // Устанавливаем фильтр для файлов изображений
+                openFileDialog.Multiselect = true;
                 openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif";
 
-                // Проверяем, выбрал ли пользователь файл и нажал "ОК"
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    LoadImage(openFileDialog.FileName);
-                    try
+                    lock (imageListLock)
                     {
-                        // Загружаем выбранное изображение в PictureBox
-                        originPb.Image = new Bitmap(openFileDialog.FileName);
+                        imageFiles = new List<string>(openFileDialog.FileNames);
+                        currentImageIndex = 0;
+                        isProcessingFromFolder = imageFiles.Count > 0;
                     }
-                    catch (Exception ex)
+
+                    if (imageFiles.Count > 0)
                     {
-                        // Обрабатываем возможные ошибки (например, если файл не является изображением)
-                        MessageBox.Show("Не удалось загрузить изображение: " + ex.Message);
+                        LoadAndDisplayCurrentImage();
                     }
+                }
+            }
+        }
+
+        // Новый метод для загрузки и отображения текущего изображения
+        private void LoadAndDisplayCurrentImage()
+        {
+            lock (imageListLock)
+            {
+                if (imageFiles.Count == 0) return;
+
+                try
+                {
+                    using (var imageFromFile = new Mat(imageFiles[currentImageIndex]))
+                    {
+                        // Обновляем latestFrame для обработки
+                        lock (frameLock)
+                        {
+                            latestFrame?.Dispose();
+                            latestFrame = imageFromFile.Clone();
+                            newFrameAvailable = true;
+                        }
+
+                        // Отображаем текущее изображение
+                        originPb.Image = MatToBitmap(imageFromFile.Clone());
+
+                        // Обновляем информацию о текущем изображении
+                        /*textBoxCurrentImage.Text = $"{currentImageIndex + 1}/{imageFiles.Count}";
+                        textBoxCurrentImageName.Text = Path.GetFileName(imageFiles[currentImageIndex]);*/
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}");
                 }
             }
         }
@@ -1251,16 +1289,7 @@ namespace KrishkiForms
                 {
                     try
                     {
-                        // Включить обдув только один раз при дефекте
-                        //SetObduv(true);
-                        /* modbusClient.WriteSingleRegister(obduvRegister, 0);
-                         await Task.Delay(15, token); // Короткая пауза для применения*/
-                        /*int currentValue = modbusClient.ReadSingleRegister(obduvRegister);
-                        if (currentValue == 1)
-                        {
-                            modbusClient.WriteSingleRegister(obduvRegister, 0);
-                            await Task.Delay(50, token); // Короткая пауза для применения
-                        }*/
+         
                     }
                     catch (Exception ex)
                     {
@@ -1274,13 +1303,42 @@ namespace KrishkiForms
 
                     Mat frameToProcess = null;
 
-                    lock (frameLock)
+                    if (isStreamCam)
                     {
-                        if (!newFrameAvailable)
-                            continue;
+                        // Оригинальная логика для камеры
+                        lock (frameLock)
+                        {
+                            if (!newFrameAvailable) continue;
+                            frameToProcess = latestFrame.Clone();
+                            newFrameAvailable = false;
+                        }
+                    }
 
-                        frameToProcess = latestFrame.Clone(); // создаём копию для обработки
-                        newFrameAvailable = false;
+                    else if (isProcessingFromFolder)
+                    {
+                        await Task.Delay(100);
+                        // Логика для изображений из папки
+                        lock (imageListLock)
+                        {
+                            if (imageFiles.Count == 0) continue;
+
+                            try
+                            {
+                                frameToProcess = new Mat(imageFiles[currentImageIndex]);
+
+                                // Переходим к следующему изображению для следующей итерации
+                                currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
+
+                                
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}");
+                                continue;
+                            }
+                        }
+
+                        
                     }
 
                     if (frameToProcess == null || frameToProcess.Empty())
@@ -4542,30 +4600,19 @@ namespace KrishkiForms
 
             _lastImageReceivedTime = now;*/
 
-            lock (frameLock)
+            if (isStreamCam)
             {
-                latestFrame?.Dispose();
-                latestFrame = img.Clone();
-                newFrameAvailable = true;
-            }
 
-            // Если ROI не выбран, показываем полное изображение с камеры
-            if (!LocalSettings.Instance.UseVConcat)
-            {
-                img1 = img.Clone();
-                if (isRoiProduce == true && isROISelected == true)
+
+                lock (frameLock)
                 {
-                    img1 = new Mat(img, roi);
+                    latestFrame?.Dispose();
+                    latestFrame = img.Clone();
+                    newFrameAvailable = true;
                 }
-                originPb.Image = MatToBitmap(img1);
-                /*recognizePictureBox.Image = MatToBitmap(img1);
-                pictureBox1.Image = MatToBitmap(img1);
-                underfillPictureBox.Image = MatToBitmap(img1);*/
 
-            }
-            else
-            {
-                if (!isFirstImageCam1)
+                // Если ROI не выбран, показываем полное изображение с камеры
+                if (!LocalSettings.Instance.UseVConcat)
                 {
                     img1 = img.Clone();
                     if (isRoiProduce == true && isROISelected == true)
@@ -4576,30 +4623,47 @@ namespace KrishkiForms
                     /*recognizePictureBox.Image = MatToBitmap(img1);
                     pictureBox1.Image = MatToBitmap(img1);
                     underfillPictureBox.Image = MatToBitmap(img1);*/
-                    isFirstImageCam1 = true;
 
                 }
                 else
                 {
-                    Cv2.VConcat(img1, img.Clone(), img1);
-                    if (isRoiProduce == true && isROISelected == true)
+                    if (!isFirstImageCam1)
                     {
-                        img1 = new Mat(img, roi);
+                        img1 = img.Clone();
+                        if (isRoiProduce == true && isROISelected == true)
+                        {
+                            img1 = new Mat(img, roi);
+                        }
+                        originPb.Image = MatToBitmap(img1);
+                        /*recognizePictureBox.Image = MatToBitmap(img1);
+                        pictureBox1.Image = MatToBitmap(img1);
+                        underfillPictureBox.Image = MatToBitmap(img1);*/
+                        isFirstImageCam1 = true;
+
                     }
-                    originPb.Image = MatToBitmap(img1);
-                    /*recognizePictureBox.Image = MatToBitmap(img1);
-                    pictureBox1.Image = MatToBitmap(img1);
-                    underfillPictureBox.Image = MatToBitmap(img1);*/
+                    else
+                    {
+                        Cv2.VConcat(img1, img.Clone(), img1);
+                        if (isRoiProduce == true && isROISelected == true)
+                        {
+                            img1 = new Mat(img, roi);
+                        }
+                        originPb.Image = MatToBitmap(img1);
+                        /*recognizePictureBox.Image = MatToBitmap(img1);
+                        pictureBox1.Image = MatToBitmap(img1);
+                        underfillPictureBox.Image = MatToBitmap(img1);*/
 
+                    }
                 }
+
+
+                // После обновления изображения, рисуем линии, если нужно
+                /*if (drawLinesCb.Checked)
+                {
+                    DrawLines();
+                }*/
+
             }
-
-
-            // После обновления изображения, рисуем линии, если нужно
-            /*if (drawLinesCb.Checked)
-            {
-                DrawLines();
-            }*/
         }
 
 
