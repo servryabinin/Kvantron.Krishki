@@ -959,7 +959,7 @@ namespace KrishkiForms
                 {
                     try
                     {
-         
+
                     }
                     catch (Exception ex)
                     {
@@ -999,7 +999,7 @@ namespace KrishkiForms
                                 // Переходим к следующему изображению для следующей итерации
                                 currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
 
-                                
+
                             }
                             catch (Exception ex)
                             {
@@ -1008,7 +1008,7 @@ namespace KrishkiForms
                             }
                         }
 
-                        
+
                     }
 
                     if (frameToProcess == null || frameToProcess.Empty())
@@ -1086,6 +1086,8 @@ namespace KrishkiForms
                                 else //нет дефекта
                                 {
                                     // Выключить обдув
+                                    /* await SetObduv(false);
+                                     await SetObduv(true);*/
                                     SetObduv(false);
                                     SetObduv(true);
                                 }
