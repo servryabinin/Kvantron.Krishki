@@ -1160,7 +1160,7 @@ namespace KrishkiForms
             {
                 ovalityCount++;
                 UpdateTextBox(ovalityDef, ovalityCount);
-                fileNameForOvalityDefect = $"ovality_{ovalityCount}_{DateTime.Now:G}.bmp";
+                fileNameForOvalityDefect = $"ovality_{ovalityCount}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.bmp";
                 fullPathForOvalityDefect = Path.Combine(ovalityDefectPath, fileNameForOvalityDefect);
                 image.SaveImage(fullPathForOvalityDefect);
             }
@@ -1187,7 +1187,7 @@ namespace KrishkiForms
             {
                 inclusionCount++;
                 UpdateTextBox(inclusionDef, inclusionCount);
-                fileNameForInclusionDefect = $"inclusion_{inclusionCount}_{DateTime.Now:G}.bmp";
+                fileNameForInclusionDefect = $"inclusion_{inclusionCount}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.bmp";
                 fullPathForInclusionDefect = Path.Combine(inclusionDefectPath, fileNameForInclusionDefect);
                 image.SaveImage(fullPathForInclusionDefect);
             }
@@ -1213,7 +1213,7 @@ namespace KrishkiForms
             {
                 paintDefectCount++;
                 UpdateTextBox(InpaintDef, paintDefectCount);
-                fileNameForPaintDefect = $"paint_{paintDefectCount}_{DateTime.Now:G}.bmp";
+                fileNameForPaintDefect = $"paint_{paintDefectCount}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.bmp";
                 fullPathForPaintDefect = Path.Combine(paintDefectPath, fileNameForPaintDefect);
                 image.SaveImage(fullPathForPaintDefect);
             }
