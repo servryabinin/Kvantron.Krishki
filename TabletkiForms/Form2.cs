@@ -159,9 +159,13 @@ namespace KrishkiForms
         private double maxAreaInclusion = 500.0;
 
         // Параметры обработки
-        private int window = 13;
-        private int morph_size = 9;
-        private int morph_size_2 = 9;
+        private int window = 7;
+        private int morph_size = 4;
+        private int morph_size_2 = 4;
+
+        // Константы для деколоризации фона
+        private const byte BLUE_CAPS = 80;
+        private const byte YELLOW_CAPS = 128;
 
         private Mat element1;
         private Mat element2;
@@ -209,8 +213,8 @@ namespace KrishkiForms
             _imageForUnderfill = new Mat();
             _grayForUnderfill = new Mat();
 
-            int morphSize = 9;
-            int morphSize2 = 9;
+            int morphSize = 4;
+            int morphSize2 = 4;
 
             element1 = Cv2.GetStructuringElement(
                 MorphShapes.Rect,
@@ -1572,6 +1576,37 @@ namespace KrishkiForms
             return isOval;
         }
 
+        public static void NonlinearBackgroundDecolorization(Mat img, byte nWhite)
+        {
+            if (img.Empty() || img.Type() != MatType.CV_8UC3)
+                throw new ArgumentException("Ожидается 3-канальное 8-битное изображение.");
+
+            int total = img.Rows * img.Cols * 3;
+            unsafe
+            {
+                byte* data = (byte*)img.DataPointer;
+
+                for (int i = 0; i < total; i += 3)
+                {
+                    // Выбеливание каждого канала (BGR)
+                    int b = (255 * data[i]) / nWhite;
+                    int g = (255 * data[i + 1]) / nWhite;
+                    int r = (255 * data[i + 2]) / nWhite;
+
+                    if (b > 255) b = 255;
+                    if (g > 255) g = 255;
+                    if (r > 255) r = 255;
+
+                    // Вычитание: новый B = |B - (G+R)/2|
+                    data[i] = (byte)Math.Abs(b - ((g + r) >> 1));
+
+                    // G и R остаются "выбеленными"
+                    data[i + 1] = (byte)g;
+                    data[i + 2] = (byte)r;
+                }
+            }
+        }
+
         private Point[] GetCapContour(Mat gray, Mat image)
         {
             // Проверка входных данных
@@ -1580,26 +1615,36 @@ namespace KrishkiForms
 
             // Обработка изображения
             Mat processed = image.Clone();
-            Fast_RGB_pseudo_color(processed, 64, HUE_LUT);
+            NonlinearBackgroundDecolorization(processed, BLUE_CAPS);
+            //Fast_RGB_pseudo_color(processed, 64, HUE_LUT);
+            // Cv2.ImShow("sac", processed);
 
             // Разделение каналов
             Mat[] channels;
             Cv2.Split(processed, out channels);
 
-            // Размытие и бинаризация
-            Cv2.Blur(channels[0], channels[1], new Size(window, window));
-            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.BinaryInv);
+            // Гауссово размытие (σ = 4) вместо Blur
+            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
 
-            // Морфологические операции
+            // Бинаризация без инверсии (Otsu + Binary)
+            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
+
+            // Морфологические операции (как в C++)
             Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
             Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
-            Cv2.BitwiseNot(channels[2], channels[2]);
+
+            // ВАЖНО: не делаем финальную инверсию! (bitwise_not убран)
 
             // Поиск контуров
             Point[][] contours;
             HierarchyIndex[] hierarchy;
-            Cv2.FindContours(channels[2], out contours, out hierarchy,
-                            RetrievalModes.External, ContourApproximationModes.ApproxNone);
+            Cv2.FindContours(
+                channels[2],
+                out contours,
+                out hierarchy,
+                RetrievalModes.External,
+                ContourApproximationModes.ApproxNone
+            );
 
             // Поиск самого длинного контура
             int maxInd = 0;
@@ -1615,6 +1660,7 @@ namespace KrishkiForms
 
             return contours.Length > 0 ? contours[maxInd] : null;
         }
+
 
         // ✅ Метод проверки на облои
         private bool CheckBurrs(Mat gray, Mat image)
