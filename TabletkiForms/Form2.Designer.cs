@@ -104,6 +104,8 @@
             panel13 = new Panel();
             tabControl4 = new TabControl();
             tabPage5 = new TabPage();
+            comboBox1 = new ComboBox();
+            label43 = new Label();
             tabControl3 = new TabControl();
             tabPage4 = new TabPage();
             tabControl2 = new TabControl();
@@ -653,7 +655,7 @@
             // obduvCB
             // 
             obduvCB.AutoSize = true;
-            obduvCB.Location = new Point(187, 10);
+            obduvCB.Location = new Point(230, 909);
             obduvCB.Name = "obduvCB";
             obduvCB.Size = new Size(116, 19);
             obduvCB.TabIndex = 35;
@@ -664,7 +666,7 @@
             // 
             prStatus.AutoSize = true;
             prStatus.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            prStatus.Location = new Point(98, 21);
+            prStatus.Location = new Point(98, 30);
             prStatus.Name = "prStatus";
             prStatus.Size = new Size(70, 13);
             prStatus.TabIndex = 34;
@@ -674,7 +676,7 @@
             // 
             camStatus.AutoSize = true;
             camStatus.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            camStatus.Location = new Point(98, 3);
+            camStatus.Location = new Point(98, 10);
             camStatus.Name = "camStatus";
             camStatus.Size = new Size(70, 13);
             camStatus.TabIndex = 33;
@@ -684,7 +686,7 @@
             // 
             label39.AutoSize = true;
             label39.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label39.Location = new Point(5, 21);
+            label39.Location = new Point(5, 30);
             label39.Name = "label39";
             label39.Size = new Size(82, 13);
             label39.TabIndex = 32;
@@ -694,7 +696,7 @@
             // 
             label19.AutoSize = true;
             label19.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label19.Location = new Point(5, 3);
+            label19.Location = new Point(5, 10);
             label19.Name = "label19";
             label19.Size = new Size(87, 13);
             label19.TabIndex = 31;
@@ -883,7 +885,7 @@
             panel3.Controls.Add(panel6);
             panel3.Location = new Point(356, 12);
             panel3.Name = "panel3";
-            panel3.Size = new Size(870, 740);
+            panel3.Size = new Size(870, 752);
             panel3.TabIndex = 2;
             // 
             // panel13
@@ -894,7 +896,7 @@
             panel13.Controls.Add(tabControl2);
             panel13.Location = new Point(3, 285);
             panel13.Name = "panel13";
-            panel13.Size = new Size(324, 449);
+            panel13.Size = new Size(324, 460);
             panel13.TabIndex = 35;
             // 
             // tabControl4
@@ -903,24 +905,44 @@
             tabControl4.Location = new Point(4, 374);
             tabControl4.Name = "tabControl4";
             tabControl4.SelectedIndex = 0;
-            tabControl4.Size = new Size(313, 67);
+            tabControl4.Size = new Size(313, 84);
             tabControl4.TabIndex = 36;
             // 
             // tabPage5
             // 
             tabPage5.BorderStyle = BorderStyle.Fixed3D;
+            tabPage5.Controls.Add(comboBox1);
+            tabPage5.Controls.Add(label43);
             tabPage5.Controls.Add(label39);
-            tabPage5.Controls.Add(obduvCB);
             tabPage5.Controls.Add(label19);
             tabPage5.Controls.Add(camStatus);
             tabPage5.Controls.Add(prStatus);
             tabPage5.Location = new Point(4, 24);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(305, 39);
+            tabPage5.Size = new Size(305, 56);
             tabPage5.TabIndex = 0;
             tabPage5.Text = "Статусы подключения";
             tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые" });
+            comboBox1.Location = new Point(189, 19);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(105, 23);
+            comboBox1.TabIndex = 36;
+            // 
+            // label43
+            // 
+            label43.AutoSize = true;
+            label43.Font = new Font("Segoe UI", 9F);
+            label43.Location = new Point(187, 3);
+            label43.Name = "label43";
+            label43.Size = new Size(81, 15);
+            label43.TabIndex = 35;
+            label43.Text = "Цвет крышек";
             // 
             // tabControl3
             // 
@@ -1041,7 +1063,7 @@
             panel10.Controls.Add(label24);
             panel10.Location = new Point(330, 487);
             panel10.Name = "panel10";
-            panel10.Size = new Size(527, 246);
+            panel10.Size = new Size(527, 258);
             panel10.TabIndex = 5;
             // 
             // textBox8
@@ -1467,7 +1489,7 @@
             panel7.Controls.Add(recognizeButton);
             panel7.Location = new Point(11, 677);
             panel7.Name = "panel7";
-            panel7.Size = new Size(339, 75);
+            panel7.Size = new Size(339, 87);
             panel7.TabIndex = 5;
             // 
             // recognizeButton
@@ -1475,7 +1497,7 @@
             recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
             recognizeButton.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
             recognizeButton.ForeColor = SystemColors.Control;
-            recognizeButton.Location = new Point(25, 10);
+            recognizeButton.Location = new Point(25, 16);
             recognizeButton.Name = "recognizeButton";
             recognizeButton.Size = new Size(290, 55);
             recognizeButton.TabIndex = 22;
@@ -1561,8 +1583,9 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1232, 761);
+            ClientSize = new Size(1232, 776);
             Controls.Add(panel11);
+            Controls.Add(obduvCB);
             Controls.Add(panel8);
             Controls.Add(obduvBatton);
             Controls.Add(panel7);
@@ -1628,6 +1651,7 @@
             panel5.ResumeLayout(false);
             panel8.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -1760,5 +1784,7 @@
         private Label label32;
         private TextBox textBox7;
         private Label label31;
+        private Label label43;
+        private ComboBox comboBox1;
     }
 }

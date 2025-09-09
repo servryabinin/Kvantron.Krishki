@@ -166,6 +166,8 @@ namespace KrishkiForms
         // Константы для деколоризации фона
         private const byte BLUE_CAPS = 80;
         private const byte YELLOW_CAPS = 128;
+        private const byte GOLD_CAPS = 80; //Заменить на настоящие
+        private const byte WHITE_CAPS = 120; //Заменить на настоящие
 
         private Mat element1;
         private Mat element2;
@@ -198,6 +200,8 @@ namespace KrishkiForms
         private int currentImageIndex = 0;
         private bool isProcessingFromFolder = false;
         private object imageListLock = new object();
+
+        private byte capsColor = 0;
 
         public Form2()
         {
@@ -591,6 +595,7 @@ namespace KrishkiForms
                 cts = new CancellationTokenSource();
                 try
                 {
+                    capsColor = GetSelectedCapValue();
                     processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                     isProcessing = true;
                     recognizeButton.Text = "Остановить распознавание";
@@ -954,6 +959,24 @@ namespace KrishkiForms
             }
         }
 
+        private async Task PulseObduv(int delayMs = 25)
+        {
+            // Сначала выключаем (если было включено)
+            if (obduvState)
+            {
+                obduvState = false;
+                modbusClient.WriteSingleRegister(obduvRegister, 1);
+            }
+
+            // Делаем одну паузу
+            await Task.Delay(delayMs);
+
+            // Теперь включаем снова
+            obduvState = true;
+            modbusClient.WriteSingleRegister(obduvRegister, 0);
+        }
+
+
 
         private async void StartContinuousProcessing(CancellationToken token)
         {
@@ -1092,8 +1115,9 @@ namespace KrishkiForms
                                     // Выключить обдув
                                     /* await SetObduv(false);
                                      await SetObduv(true);*/
-                                    SetObduv(false);
-                                    SetObduv(true);
+                                    /*SetObduv(false);
+                                    SetObduv(true);*/
+                                    await PulseObduv();   // один вызов вместо двух
                                 }
 
                             }
@@ -1615,7 +1639,7 @@ namespace KrishkiForms
 
             // Обработка изображения
             Mat processed = image.Clone();
-            NonlinearBackgroundDecolorization(processed, BLUE_CAPS);
+            NonlinearBackgroundDecolorization(processed, capsColor);
             //Fast_RGB_pseudo_color(processed, 64, HUE_LUT);
             // Cv2.ImShow("sac", processed);
 
@@ -1659,6 +1683,18 @@ namespace KrishkiForms
             }
 
             return contours.Length > 0 ? contours[maxInd] : null;
+        }
+
+        private byte GetSelectedCapValue()
+        {
+            switch (comboBox1.SelectedItem?.ToString())
+            {
+                case "Желтые": return YELLOW_CAPS;
+                case "Синие": return BLUE_CAPS;
+                case "Золотые": return GOLD_CAPS;
+                case "Белые": return WHITE_CAPS;
+                default: return YELLOW_CAPS; // fallback
+            }
         }
 
 
