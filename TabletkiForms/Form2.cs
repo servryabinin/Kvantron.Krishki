@@ -202,6 +202,9 @@ namespace KrishkiForms
         private object imageListLock = new object();
 
         private byte capsColor = 0;
+        private int delayValue;
+
+                                       
 
         public Form2()
         {
@@ -596,6 +599,7 @@ namespace KrishkiForms
                 try
                 {
                     capsColor = GetSelectedCapValue();
+                    int.TryParse(delayTb.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out delayValue);
                     processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                     isProcessing = true;
                     recognizeButton.Text = "Остановить распознавание";
@@ -955,7 +959,7 @@ namespace KrishkiForms
             {
                 obduvState = newState;
                 modbusClient.WriteSingleRegister(obduvRegister, newState ? 0 : 1);
-                await Task.Delay(15);
+                await Task.Delay(delayValue);
             }
         }
 
@@ -969,7 +973,7 @@ namespace KrishkiForms
             }
 
             // Делаем одну паузу
-            await Task.Delay(delayMs);
+            await Task.Delay(delayValue);
 
             // Теперь включаем снова
             obduvState = true;
@@ -1113,11 +1117,11 @@ namespace KrishkiForms
                                 else //нет дефекта
                                 {
                                     // Выключить обдув
-                                    /* await SetObduv(false);
-                                     await SetObduv(true);*/
+                                    await SetObduv(false);
+                                    await SetObduv(true);
                                     /*SetObduv(false);
                                     SetObduv(true);*/
-                                    await PulseObduv();   // один вызов вместо двух
+                                    //await PulseObduv();   // один вызов вместо двух
                                 }
 
                             }
@@ -1868,6 +1872,24 @@ namespace KrishkiForms
 
         public void GetImage(Mat img)
         {
+            DateTime now = DateTime.Now;
+
+            if (_lastImageReceivedTime.HasValue)
+            {
+                TimeSpan interval = now - _lastImageReceivedTime.Value;
+                string logEntry = $"{now:HH:mm:ss.fff} | Interval: {interval.TotalMilliseconds} ms";
+
+                try
+                {
+                    File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Ошибка при записи лога: {ex.Message}");
+                }
+            }
+
+            _lastImageReceivedTime = now;
             if (isStreamCam)
             {
 

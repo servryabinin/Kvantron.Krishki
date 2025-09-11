@@ -166,6 +166,8 @@
             panel8 = new Panel();
             button3 = new Button();
             loadImageButton = new Button();
+            delayTb = new TextBox();
+            label44 = new Label();
             tabParameter.SuspendLayout();
             tabParSearch.SuspendLayout();
             tabParCamera.SuspendLayout();
@@ -1051,6 +1053,8 @@
             // panel10
             // 
             panel10.BorderStyle = BorderStyle.Fixed3D;
+            panel10.Controls.Add(delayTb);
+            panel10.Controls.Add(label44);
             panel10.Controls.Add(textBox8);
             panel10.Controls.Add(label32);
             panel10.Controls.Add(textBox7);
@@ -1579,6 +1583,22 @@
             loadImageButton.UseVisualStyleBackColor = false;
             loadImageButton.Click += loadImageButton_Click;
             // 
+            // delayTb
+            // 
+            delayTb.Location = new Point(388, 208);
+            delayTb.Name = "delayTb";
+            delayTb.Size = new Size(32, 23);
+            delayTb.TabIndex = 13;
+            // 
+            // label44
+            // 
+            label44.AutoSize = true;
+            label44.Location = new Point(388, 186);
+            label44.Name = "label44";
+            label44.Size = new Size(13, 15);
+            label44.TabIndex = 12;
+            label44.Text = "0";
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1786,5 +1806,7 @@
         private Label label31;
         private Label label43;
         private ComboBox comboBox1;
+        private TextBox delayTb;
+        private Label label44;
     }
 }
