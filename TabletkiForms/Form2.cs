@@ -167,7 +167,8 @@ namespace KrishkiForms
         private const byte BLUE_CAPS = 80;
         private const byte YELLOW_CAPS = 128;
         private const byte GOLD_CAPS = 80; //Заменить на настоящие
-        private const byte WHITE_CAPS = 120; //Заменить на настоящие
+        private const byte WHITE_CAPS = 160; //Заменить на настоящие
+        private static bool isColored = true;
 
         private Mat element1;
         private Mat element2;
@@ -1614,26 +1615,40 @@ namespace KrishkiForms
             {
                 byte* data = (byte*)img.DataPointer;
 
-                for (int i = 0; i < total; i += 3)
+                if (!isColored)
                 {
-                    // Выбеливание каждого канала (BGR)
-                    int b = (255 * data[i]) / nWhite;
-                    int g = (255 * data[i + 1]) / nWhite;
-                    int r = (255 * data[i + 2]) / nWhite;
+                    // Простое выбеливание всех каналов
+                    for (int i = 0; i < total; i++)
+                    {
+                        int val = (255 * data[i]) / nWhite;
+                        if (val > 255) val = 255;
+                        data[i] = (byte)val;
+                    }
+                }
+                else
+                {
+                    // Выбеливание и цветоразностная компонента
+                    for (int i = 0; i < total; i += 3)
+                    {
+                        int b = (255 * data[i]) / nWhite;
+                        int g = (255 * data[i + 1]) / nWhite;
+                        int r = (255 * data[i + 2]) / nWhite;
 
-                    if (b > 255) b = 255;
-                    if (g > 255) g = 255;
-                    if (r > 255) r = 255;
+                        if (b > 255) b = 255;
+                        if (g > 255) g = 255;
+                        if (r > 255) r = 255;
 
-                    // Вычитание: новый B = |B - (G+R)/2|
-                    data[i] = (byte)Math.Abs(b - ((g + r) >> 1));
+                        // Цветоразностная компонента: новый B = |B - (G+R)/2|
+                        data[i] = (byte)Math.Abs(b - ((g + r) >> 1));
 
-                    // G и R остаются "выбеленными"
-                    data[i + 1] = (byte)g;
-                    data[i + 2] = (byte)r;
+                        // G и R остаются выбеленными
+                        data[i + 1] = (byte)g;
+                        data[i + 2] = (byte)r;
+                    }
                 }
             }
         }
+
 
         private Point[] GetCapContour(Mat gray, Mat image)
         {
@@ -1691,15 +1706,27 @@ namespace KrishkiForms
 
         private byte GetSelectedCapValue()
         {
-            switch (comboBox1.SelectedItem?.ToString())
+            string selected = comboBox1.SelectedItem?.ToString();
+            switch (selected)
             {
-                case "Желтые": return YELLOW_CAPS;
-                case "Синие": return BLUE_CAPS;
-                case "Золотые": return GOLD_CAPS;
-                case "Белые": return WHITE_CAPS;
-                default: return YELLOW_CAPS; // fallback
+                case "Желтые":
+                    isColored = true;
+                    return YELLOW_CAPS;
+                case "Синие":
+                    isColored = true;
+                    return BLUE_CAPS;
+                case "Золотые":
+                    isColored = true;
+                    return GOLD_CAPS;
+                case "Белые":
+                    isColored = false;
+                    return WHITE_CAPS;
+                default:
+                    isColored = true; // fallback для всех остальных
+                    return YELLOW_CAPS;
             }
         }
+
 
 
         // ✅ Метод проверки на облои
