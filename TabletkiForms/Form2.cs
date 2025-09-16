@@ -45,6 +45,7 @@ using System.Runtime.Intrinsics.X86;
 
 using EasyModbus;
 using System.Globalization;
+using System.Collections.Concurrent;
 
 namespace KrishkiForms
 {
@@ -205,8 +206,31 @@ namespace KrishkiForms
         private byte capsColor = 0;
         private int delayValue;
 
+        // --- очередь и воркер для обдува ---
+        private class CapDecision
+        {
+            public bool IsDefective;
+            public DateTime DetectedAtUtc;
+            public long SequenceId; // опционально, для отладки
+        }
 
-                                       
+        private BlockingCollection<CapDecision> capsQueue; // FIFO, потокобезопасная
+        private CancellationTokenSource blowCts;
+        private Task blowTask;
+        private long capSeq = 0;
+
+        // --- параметры для расчёта задержки ---
+        private readonly object intervalLock = new object();
+        private double avgIntervalMs = 120.0; // усреднённый интервал между крышками (ms)
+        private DateTime? _lastCapTime = null;
+
+        // Физика (подкорректируй под своё)
+        private double capStepMm = 80.0;              // расстояние между центрами крышек (мм). настроить.
+        private double distanceCameraToBlowMm = 252.0; // расстояние камера -> сопло(мм). настроить.
+        private int blowPulseMs = 25;                 // длительность импульса обдува в мс (под TOF)
+
+
+
 
         public Form2()
         {
@@ -562,13 +586,14 @@ namespace KrishkiForms
                     {
                         if (modbusClient != null && modbusClient.Connected)
                         {
-                            modbusClient.WriteSingleRegister(obduvRegister, 1);
+                            //modbusClient.WriteSingleRegister(obduvRegister, 1);
                         }
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show($"Ошибка при выключении обдува: {ex.Message}");
                     }
+                    StopBlowWorker(); // остановка воркера обдува
                     isProcessing = false;
                     recognizeButton.Text = "Начать распознавание";
                     recognizeButton.Enabled = true;
@@ -602,7 +627,13 @@ namespace KrishkiForms
                 {
                     capsColor = GetSelectedCapValue();
                     int.TryParse(delayTb.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out delayValue);
+
+                    // запускаем основной процесс
                     processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
+
+                    // запускаем воркер обдува
+                    StartBlowWorker();
+
                     isProcessing = true;
                     recognizeButton.Text = "Остановить распознавание";
                 }
@@ -613,6 +644,105 @@ namespace KrishkiForms
                 }
             }
         }
+
+        private void StartBlowWorker()
+        {
+            // если уже запущен, ничего не делаем
+            if (capsQueue != null && !capsQueue.IsAddingCompleted && blowTask != null && !blowTask.IsCompleted)
+                return;
+
+            // создаём очередь, если нужно
+            if (capsQueue == null || capsQueue.IsAddingCompleted)
+                capsQueue = new BlockingCollection<CapDecision>(new ConcurrentQueue<CapDecision>());
+
+            blowCts = new CancellationTokenSource();
+            var ct = blowCts.Token;
+
+            blowTask = Task.Run(async () =>
+            {
+                try
+                {
+                    foreach (var decision in capsQueue.GetConsumingEnumerable(ct))
+                    {
+                        // вычисляем задержку на основе текущей усреднённой скорости
+                        double intervalMs;
+                        lock (intervalLock) intervalMs = avgIntervalMs;
+
+                        // защитные проверки — если интервал нулевой или очень маленький, используем запасное значение
+                        if (intervalMs <= 0.1) intervalMs = 120.0;
+
+                        // скорость в мм/с
+                        double speedMmPerS = capStepMm / (intervalMs / 1000.0);
+                        UpdateTextBox(imageProcDelay, (float)speedMmPerS);
+                        if (speedMmPerS <= 1e-3) speedMmPerS = 1.0; // защита от деления на ноль
+
+                        // время до обдува в мс
+                        int delayMs;
+                        lock (intervalLock)
+                        {
+                            delayMs = (int)Math.Round((distanceCameraToBlowMm / speedMmPerS) * 1000.0);
+                            UpdateTextBox(generalTime, (float)delayMs);
+                        }
+
+                        // защита: минимальная и максимальная задержка
+                        if (delayMs < 0) delayMs = 0;
+                        if (delayMs > 10000) delayMs = 10000;
+
+                        // Ждём пока крышка доедет
+                        try
+                        {
+                            await Task.Delay(delayMs, ct);
+                        }
+                        catch (OperationCanceledException) { break; }
+
+                        // Выполняем обдув только если крышка была признана дефектной
+                        if (decision.IsDefective)
+                        {
+                            try
+                            {
+                                if (modbusClient != null && modbusClient.Connected)
+                                {
+                                    modbusClient.WriteSingleRegister(obduvRegister, 1); // включаем обдув
+                                                                                        // даём импульс (подстраивай под TOF на ПЛК)
+                                    try { await Task.Delay(blowPulseMs, ct); } catch (OperationCanceledException) { /*abort*/ }
+                                    modbusClient.WriteSingleRegister(obduvRegister, 0); // выключаем
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine($"Ошибка при отправке команды обдува: {ex.Message}");
+                            }
+                        }
+                        // loop -> следующая крышка
+                    }
+                }
+                catch (OperationCanceledException) { /*ок*/ }
+            }, ct);
+        }
+
+        private void StopBlowWorker()
+        {
+            try
+            {
+                if (capsQueue != null && !capsQueue.IsAddingCompleted)
+                    capsQueue.CompleteAdding();
+
+                blowCts?.Cancel();
+
+                if (blowTask != null)
+                {
+                    try { blowTask.Wait(300); } catch { /*ignore*/ }
+                }
+            }
+            finally
+            {
+                blowTask = null;
+                blowCts?.Dispose();
+                blowCts = null;
+                capsQueue = null; // будет пересоздан при следующем старте
+            }
+        }
+
 
         public int GetDefectFeatureFromRectifiedImage(Mat img0, Mat imgHSV, int radius, Point center, int rectW, int rectH, double threshold)
         {
@@ -1104,35 +1234,32 @@ namespace KrishkiForms
                                 await Task.WhenAll(ovalityTask, inclusionsTask, paintTask);
                                 // Проверяем только те задачи, которые были запущены
                                 bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
-                                               (inclusionCB.Checked && inclusionsTask.Result) ||
-                                               (inpaintCB.Checked && paintTask.Result);
+                                                 (inclusionCB.Checked && inclusionsTask.Result) ||
+                                                 (inpaintCB.Checked && paintTask.Result);
 
+                                // добавляем решение в очередь (каждой крышке соответствует одно добавление)
+                                var decision = new CapDecision
+                                {
+                                    IsDefective = anyDefect,
+                                    DetectedAtUtc = DateTime.UtcNow,
+                                    SequenceId = Interlocked.Increment(ref capSeq)
+                                };
+
+                                // добавляем — если очередь уже закрыта, просто игнорируем
+                                try { capsQueue?.Add(decision); } catch (InvalidOperationException) { /* queue closed */ }
+
+                                // UI: счётчик только при дефекте (как у тебя было)
                                 if (anyDefect)
                                 {
-                                    /*// Включить обдув только один раз при дефекте
-                                    SetObduv(true);*/
                                     BeginInvoke((Action)(() =>
                                     {
                                         blowTriggerCount++;
                                         textBox4.Text = blowTriggerCount.ToString();
                                     }));
                                 }
-                                else //нет дефекта
-                                {
-                                    Stopwatch stopwatch1 = Stopwatch.StartNew();
-                                    // Выключить обдув
-                                    await SetObduv(false);
-                                    await SetObduv(true);
-                                    stopwatch1.Stop();
-                                    UpdateTextBox(imageProcDelay, stopwatch1.ElapsedMilliseconds);
-                                    /*modbusClient.WriteSingleRegister(obduvRegister, 0);*/
-                                    /*SetObduv(false);
-                                    SetObduv(true);*/
-                                    //await PulseObduv();   // один вызов вместо двух
-                                }
 
                                 stopwatch.Stop();
-                                UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
+                                //UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
 
                             }
                             catch (OperationCanceledException)
@@ -1908,13 +2035,19 @@ namespace KrishkiForms
 
         public void GetImage(Mat img)
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow; // use UTC for stability
 
-            if (_lastImageReceivedTime.HasValue)
+            // обновляем интервал между крышками (скользящее усреднение)
+            if (_lastCapTime.HasValue)
             {
-                TimeSpan interval = now - _lastImageReceivedTime.Value;
-                string logEntry = $"{now:HH:mm:ss.fff} | Interval: {interval.TotalMilliseconds} ms";
+                double interval = (now - _lastCapTime.Value).TotalMilliseconds;
+                lock (intervalLock)
+                {
+                    // экспоненциальное усреднение (вес 0.2 для нового измерения)
+                    avgIntervalMs = (avgIntervalMs * 0.8) + (interval * 0.2);
+                }
 
+                string logEntry = $"{DateTime.Now:HH:mm:ss.fff} | Interval: {interval:F2} ms | Avg: {avgIntervalMs:F2} ms";
                 try
                 {
                     File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
@@ -1925,7 +2058,8 @@ namespace KrishkiForms
                 }
             }
 
-            _lastImageReceivedTime = now;
+            _lastCapTime = now;
+
             if (isStreamCam)
             {
 
@@ -2120,7 +2254,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    //modbusClient.WriteSingleRegister(obduvRegister, 1);
                 }
             }
             catch (Exception ex)
@@ -2413,7 +2547,7 @@ namespace KrishkiForms
                 if (modbusClient != null && modbusClient.Connected)
                 {
                     // Установить обдув в "отключен" при завершении работы
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    //modbusClient.WriteSingleRegister(obduvRegister, 1);
                 }
             }
             catch (Exception ex)
