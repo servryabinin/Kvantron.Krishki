@@ -115,9 +115,11 @@
             label42 = new Label();
             originPb = new PictureBox();
             panel10 = new Panel();
-            textBox8 = new TextBox();
-            label32 = new Label();
-            textBox7 = new TextBox();
+            imageProcDelay = new TextBox();
+            lan1 = new Label();
+            delayTb = new TextBox();
+            label44 = new Label();
+            generalTime = new TextBox();
             inpaintCB = new CheckBox();
             label31 = new Label();
             inpaintTime = new TextBox();
@@ -166,8 +168,6 @@
             panel8 = new Panel();
             button3 = new Button();
             loadImageButton = new Button();
-            delayTb = new TextBox();
-            label44 = new Label();
             tabParameter.SuspendLayout();
             tabParSearch.SuspendLayout();
             tabParCamera.SuspendLayout();
@@ -1053,11 +1053,11 @@
             // panel10
             // 
             panel10.BorderStyle = BorderStyle.Fixed3D;
+            panel10.Controls.Add(imageProcDelay);
+            panel10.Controls.Add(lan1);
             panel10.Controls.Add(delayTb);
             panel10.Controls.Add(label44);
-            panel10.Controls.Add(textBox8);
-            panel10.Controls.Add(label32);
-            panel10.Controls.Add(textBox7);
+            panel10.Controls.Add(generalTime);
             panel10.Controls.Add(inpaintCB);
             panel10.Controls.Add(label31);
             panel10.Controls.Add(inpaintTime);
@@ -1070,28 +1070,45 @@
             panel10.Size = new Size(527, 258);
             panel10.TabIndex = 5;
             // 
-            // textBox8
+            // imageProcDelay
             // 
-            textBox8.Location = new Point(328, 208);
-            textBox8.Name = "textBox8";
-            textBox8.Size = new Size(32, 23);
-            textBox8.TabIndex = 11;
+            imageProcDelay.Location = new Point(325, 214);
+            imageProcDelay.Name = "imageProcDelay";
+            imageProcDelay.Size = new Size(32, 23);
+            imageProcDelay.TabIndex = 15;
             // 
-            // label32
+            // lan1
             // 
-            label32.AutoSize = true;
-            label32.Location = new Point(328, 186);
-            label32.Name = "label32";
-            label32.Size = new Size(13, 15);
-            label32.TabIndex = 10;
-            label32.Text = "1";
+            lan1.AutoSize = true;
+            lan1.Location = new Point(325, 192);
+            lan1.Name = "lan1";
+            lan1.Size = new Size(23, 15);
+            lan1.TabIndex = 14;
+            lan1.Text = "GD";
             // 
-            // textBox7
+            // delayTb
             // 
-            textBox7.Location = new Point(277, 208);
-            textBox7.Name = "textBox7";
-            textBox7.Size = new Size(32, 23);
-            textBox7.TabIndex = 9;
+            delayTb.Location = new Point(277, 214);
+            delayTb.Name = "delayTb";
+            delayTb.Size = new Size(32, 23);
+            delayTb.TabIndex = 13;
+            delayTb.Text = "25";
+            // 
+            // label44
+            // 
+            label44.AutoSize = true;
+            label44.Location = new Point(277, 192);
+            label44.Name = "label44";
+            label44.Size = new Size(13, 15);
+            label44.TabIndex = 12;
+            label44.Text = "0";
+            // 
+            // generalTime
+            // 
+            generalTime.Location = new Point(379, 214);
+            generalTime.Name = "generalTime";
+            generalTime.Size = new Size(32, 23);
+            generalTime.TabIndex = 9;
             // 
             // inpaintCB
             // 
@@ -1111,11 +1128,11 @@
             // label31
             // 
             label31.AutoSize = true;
-            label31.Location = new Point(277, 186);
+            label31.Location = new Point(379, 192);
             label31.Name = "label31";
-            label31.Size = new Size(13, 15);
+            label31.Size = new Size(23, 15);
             label31.TabIndex = 8;
-            label31.Text = "0";
+            label31.Text = "GD";
             // 
             // inpaintTime
             // 
@@ -1583,22 +1600,6 @@
             loadImageButton.UseVisualStyleBackColor = false;
             loadImageButton.Click += loadImageButton_Click;
             // 
-            // delayTb
-            // 
-            delayTb.Location = new Point(388, 208);
-            delayTb.Name = "delayTb";
-            delayTb.Size = new Size(32, 23);
-            delayTb.TabIndex = 13;
-            // 
-            // label44
-            // 
-            label44.AutoSize = true;
-            label44.Location = new Point(388, 186);
-            label44.Name = "label44";
-            label44.Size = new Size(13, 15);
-            label44.TabIndex = 12;
-            label44.Text = "0";
-            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1800,13 +1801,13 @@
         private CheckBox inpaintCB;
         private CheckBox inclusionCB;
         private CheckBox checkBox1;
-        private TextBox textBox8;
-        private Label label32;
-        private TextBox textBox7;
+        private TextBox generalTime;
         private Label label31;
         private Label label43;
         private ComboBox comboBox1;
         private TextBox delayTb;
         private Label label44;
+        private TextBox imageProcDelay;
+        private Label lan1;
     }
 }

@@ -205,6 +205,7 @@ namespace KrishkiForms
         private byte capsColor = 0;
         private int delayValue;
 
+
                                        
 
         public Form2()
@@ -989,6 +990,7 @@ namespace KrishkiForms
             {
                 while (!token.IsCancellationRequested)
                 {
+                    Stopwatch stopwatch = Stopwatch.StartNew();
                     try
                     {
 
@@ -996,7 +998,7 @@ namespace KrishkiForms
                     catch (Exception ex)
                     {
                         _writeZeroFailCount++;
-                        UpdateTextBox(textBox7, _writeZeroFailCount);
+                        UpdateTextBox(generalTime, _writeZeroFailCount);
 
                         BeginInvoke((Action)(() =>
                             MessageBox.Show($"Ошибка инициализации обдува: {ex.Message}")));
@@ -1049,6 +1051,7 @@ namespace KrishkiForms
                     using (frameToProcess)
                     using (Mat gray = new Mat())
                     {
+  
                         Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
                         Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
 
@@ -1073,7 +1076,7 @@ namespace KrishkiForms
 
                         using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
-                            timeoutCts.CancelAfter(60);
+                            timeoutCts.CancelAfter(100);
 
                             try
                             {
@@ -1081,7 +1084,6 @@ namespace KrishkiForms
                                 var ovalityTask = Task.FromResult(false);
                                 var inclusionsTask = Task.FromResult(false);
                                 var paintTask = Task.FromResult(false);
-
                                 // Запускаем только если CheckBox активен
                                 if (ovalityCB.Checked)
                                 {
@@ -1098,8 +1100,8 @@ namespace KrishkiForms
                                     paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects);
                                 }
 
+                              
                                 await Task.WhenAll(ovalityTask, inclusionsTask, paintTask);
-
                                 // Проверяем только те задачи, которые были запущены
                                 bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
                                                (inclusionCB.Checked && inclusionsTask.Result) ||
@@ -1117,13 +1119,20 @@ namespace KrishkiForms
                                 }
                                 else //нет дефекта
                                 {
+                                    Stopwatch stopwatch1 = Stopwatch.StartNew();
                                     // Выключить обдув
                                     await SetObduv(false);
                                     await SetObduv(true);
+                                    stopwatch1.Stop();
+                                    UpdateTextBox(imageProcDelay, stopwatch1.ElapsedMilliseconds);
+                                    /*modbusClient.WriteSingleRegister(obduvRegister, 0);*/
                                     /*SetObduv(false);
                                     SetObduv(true);*/
                                     //await PulseObduv();   // один вызов вместо двух
                                 }
+
+                                stopwatch.Stop();
+                                UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
 
                             }
                             catch (OperationCanceledException)
