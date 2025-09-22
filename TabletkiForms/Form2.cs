@@ -166,7 +166,7 @@ namespace KrishkiForms
         private string fullPathForObloyDefect = "";
         private Point[] largestContourObloy;
         private Point capCenter;
-        private Mat CapRadiusMask = new Mat(536, 552, MatType.CV_8UC1);
+        private Mat CapRadiusMask = new Mat(532, 568, MatType.CV_8UC1);
         private const float STANDARD_CAP_MAX_RADIUS = 156.0f;
         private const float CAP_FLASH_OFFSET = 5.0f;
         private const int MIN_BINARY_PIXELS_FOR_FLASH_DECISION = 25;
@@ -265,6 +265,7 @@ namespace KrishkiForms
             ovalityDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "овальность");
             paintDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "непрокрас");
             inclusionDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "вкрапления");
+            obloyDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "облой");
 
             try
             {
@@ -600,6 +601,7 @@ namespace KrishkiForms
             }
             else
             {
+                ApplyRecognitionParameters();
                 if (originPb.Image == null)
                 {
                     MessageBox.Show("Пожалуйста, загрузите изображение перед распознаванием.");
@@ -1180,19 +1182,23 @@ namespace KrishkiForms
         {
             try
             {
-                var stopwatch = Stopwatch.StartNew();
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    var stopwatch = Stopwatch.StartNew();
 
-                // Включаем обдув
-                modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    // Включаем обдув
+                    modbusClient.WriteSingleRegister(obduvRegister, 1);
 
-                // Ждём в отдельном таске
-                await Task.Delay(delayMs, token);
+                    // Ждём в отдельном таске
+                    await Task.Delay(delayMs, token);
 
-                // Выключаем обдув
-                modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    // Выключаем обдув
+                    modbusClient.WriteSingleRegister(obduvRegister, 0);
 
-                stopwatch.Stop();
-                //UpdateTextBox(imageProcDelay, stopwatch.ElapsedMilliseconds);
+                    stopwatch.Stop();
+                    //UpdateTextBox(imageProcDelay, stopwatch.ElapsedMilliseconds);
+                }
+
             }
             catch (TaskCanceledException)
             {
@@ -1200,8 +1206,7 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                BeginInvoke((Action)(() =>
-                    MessageBox.Show($"Ошибка Modbus: {ex.Message}")));
+                
             }
         }
 
@@ -1353,7 +1358,6 @@ namespace KrishkiForms
             token.ThrowIfCancellationRequested();
 
             largestContourObloy = GetCapContour(gray, image);
-            token.ThrowIfCancellationRequested();
 
             bool isObloy = false;
 
@@ -1361,24 +1365,59 @@ namespace KrishkiForms
             {
                 capCenter = FindCapCenter(largestContourObloy);
 
+                // Если размеры маски не совпадают с размером изображения — пересоздаём
+                if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
+                {
+                    CapRadiusMask?.Dispose(); // освобождаем старую маску
+                    CapRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
+                }
+
                 // строим внешнее кольцо для анализа облоя
-                GetIdealCapMask(CapRadiusMask, capCenter, STANDARD_CAP_MAX_RADIUS, STANDARD_CAP_MAX_RADIUS + CAP_FLASH_OFFSET);
+                GetIdealCapMask(CapRadiusMask, capCenter,
+                                STANDARD_CAP_MAX_RADIUS,
+                                STANDARD_CAP_MAX_RADIUS + CAP_FLASH_OFFSET);
 
-                // Разделяем исходное изображение на каналы
-                Mat[] blurChannels = Cv2.Split(image); // image должен быть цветным (BGR)
+                // Разделяем исходное изображение на каналы (BGR)
+                Mat[] blurChannels = Cv2.Split(image);
 
-                // Логическое умножение (AND) кольца с синим каналом (аналог blur_channels[2])
+                // Логическое умножение (AND) кольца с красным каналом (аналог blur_channels[2] в C++)
                 Cv2.BitwiseAnd(CapRadiusMask, blurChannels[2], blurChannels[2]);
 
-                // Эрозия 3x3, результат в отдельный канал (аналог blur_channels[1])
+                // Эрозия 3x3: результат кладём во второй канал (аналог blur_channels[1] в C++)
                 Cv2.MorphologyEx(blurChannels[2], blurChannels[1], MorphTypes.Erode, elementMask);
 
-                // Проверка количества бинарных пикселей и решение о флеше
-                isObloy = CountBinaryPixelsAndFlashDecision(blurChannels[1], MIN_BINARY_PIXELS_FOR_FLASH_DECISION);
+                // Подсчёт бинарных пикселей
+                int pixCount = CountBinaryPixels(blurChannels[1]);
+                UpdateTextBox(pixelCount, pixCount);
+
+                if (pixCount > MIN_BINARY_PIXELS_FOR_FLASH_DECISION)
+                {
+                    isObloy = true;
+                }
+
+                // 🔹 Отрисовка найденного контура на image (зелёным, толщиной 2px)
+                Cv2.DrawContours(image, new[] { largestContourObloy }, -1,  new Scalar(0, 255, 0), 2);
+
+                foreach (var ch in blurChannels)
+                    ch.Dispose();
             }
 
             return isObloy;
         }
+
+
+
+
+        private int CountBinaryPixels(Mat img)
+        {
+            int count = 0;
+            for (int row = 0; row < img.Rows; row++)
+                for (int col = 0; col < img.Cols; col++)
+                    if (img.At<byte>(row, col) == 255)
+                        count++;
+            return count;
+        }
+
 
 
 
@@ -1424,7 +1463,7 @@ namespace KrishkiForms
             }
         }
 
-        private bool CountBinaryPixelsAndFlashDecision(Mat img, int thresholdCount)
+        private int CountBinaryPixelsAndFlashDecision(Mat img, int thresholdCount)
         {
             int count = 0;
 
@@ -1437,9 +1476,9 @@ namespace KrishkiForms
                         count++;
                 }
             }
-
+            
             // Возвращаем true, если количество пикселей больше порога
-            return count > thresholdCount;
+            return count;
         }
 
 
@@ -2245,6 +2284,20 @@ namespace KrishkiForms
             cam.SetTriggerMode();
             cam.SetExposureTime();*/
 
+            ApplyRecognitionParameters();
+
+            ovalityCoef.Enabled = false;
+            circleCoefTx.Enabled = false;
+            minSquareInclusion.Enabled = false;
+            maxSquareInclusion.Enabled = false;
+            minSquareInpaint.Enabled = false;
+            whiteThresoldTx.Enabled = false;
+
+            StartStop(true);
+        }
+
+        private void ApplyRecognitionParameters()
+        {
             if (!double.TryParse(ovalityCoef.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out ovalityThreshold))
             {
                 ovalityThreshold = 0.7;
@@ -2280,15 +2333,6 @@ namespace KrishkiForms
                 minInpaintWhiteTgreshold = 150.0; // значение по умолчанию
                 whiteThresoldTx.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
             }
-
-            ovalityCoef.Enabled = false;
-            circleCoefTx.Enabled = false;
-            minSquareInclusion.Enabled = false;
-            maxSquareInclusion.Enabled = false;
-            minSquareInpaint.Enabled = false;
-            whiteThresoldTx.Enabled = false;
-
-            StartStop(true);
         }
 
         private void endStream_Click(object sender, EventArgs e)

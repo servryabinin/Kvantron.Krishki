@@ -176,6 +176,7 @@
             panel8 = new Panel();
             button3 = new Button();
             loadImageButton = new Button();
+            pixelCount = new TextBox();
             tabParameter.SuspendLayout();
             tabParSearch.SuspendLayout();
             tabParCamera.SuspendLayout();
@@ -904,6 +905,7 @@
             // panel14
             // 
             panel14.BorderStyle = BorderStyle.Fixed3D;
+            panel14.Controls.Add(pixelCount);
             panel14.Controls.Add(obloyCB);
             panel14.Controls.Add(label32);
             panel14.Controls.Add(obloyPb);
@@ -1692,6 +1694,13 @@
             loadImageButton.UseVisualStyleBackColor = false;
             loadImageButton.Click += loadImageButton_Click;
             // 
+            // pixelCount
+            // 
+            pixelCount.Location = new Point(274, 170);
+            pixelCount.Name = "pixelCount";
+            pixelCount.Size = new Size(100, 23);
+            pixelCount.TabIndex = 7;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1912,5 +1921,6 @@
         private Label label45;
         private TextBox obloyDef;
         private Label label46;
+        private TextBox pixelCount;
     }
 }
