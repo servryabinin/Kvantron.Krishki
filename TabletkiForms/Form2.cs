@@ -1359,51 +1359,40 @@ namespace KrishkiForms
 
             largestContourObloy = GetCapContour(gray, image);
 
-            bool isObloy = false;
+            if (largestContourObloy == null || largestContourObloy.Length == 0)
+                return false;
 
-            if (largestContourObloy != null && largestContourObloy.Length > 0)
+            capCenter = FindCapCenter(largestContourObloy);
+
+            // Подгоняем маску под размер изображения
+            if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
             {
-                capCenter = FindCapCenter(largestContourObloy);
-
-                // Если размеры маски не совпадают с размером изображения — пересоздаём
-                if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
-                {
-                    CapRadiusMask?.Dispose(); // освобождаем старую маску
-                    CapRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
-                }
-
-                // строим внешнее кольцо для анализа облоя
-                GetIdealCapMask(CapRadiusMask, capCenter,
-                                STANDARD_CAP_MAX_RADIUS,
-                                STANDARD_CAP_MAX_RADIUS + CAP_FLASH_OFFSET);
-
-                // Разделяем исходное изображение на каналы (BGR)
-                Mat[] blurChannels = Cv2.Split(image);
-
-                // Логическое умножение (AND) кольца с красным каналом (аналог blur_channels[2] в C++)
-                Cv2.BitwiseAnd(CapRadiusMask, blurChannels[2], blurChannels[2]);
-
-                // Эрозия 3x3: результат кладём во второй канал (аналог blur_channels[1] в C++)
-                Cv2.MorphologyEx(blurChannels[2], blurChannels[1], MorphTypes.Erode, elementMask);
-
-                // Подсчёт бинарных пикселей
-                int pixCount = CountBinaryPixels(blurChannels[1]);
-                UpdateTextBox(pixelCount, pixCount);
-
-                if (pixCount > MIN_BINARY_PIXELS_FOR_FLASH_DECISION)
-                {
-                    isObloy = true;
-                }
-
-                // 🔹 Отрисовка найденного контура на image (зелёным, толщиной 2px)
-                Cv2.DrawContours(image, new[] { largestContourObloy }, -1,  new Scalar(0, 255, 0), 2);
-
-                foreach (var ch in blurChannels)
-                    ch.Dispose();
+                CapRadiusMask?.Dispose();
+                CapRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
             }
 
-            return isObloy;
+            // Строим внешнее кольцо для анализа облоя
+            GetIdealCapMask(CapRadiusMask, capCenter,
+                            STANDARD_CAP_MAX_RADIUS,
+                            STANDARD_CAP_MAX_RADIUS + CAP_FLASH_OFFSET);
+
+            // Берём только красный канал вместо Split
+            using var redChannel = new Mat();
+            Cv2.ExtractChannel(image, redChannel, 2);
+
+            // Логическое AND (маска * красный канал)
+            Cv2.BitwiseAnd(CapRadiusMask, redChannel, redChannel);
+
+            // Эрозия 3x3
+            using var eroded = new Mat();
+            Cv2.MorphologyEx(redChannel, eroded, MorphTypes.Erode, elementMask);
+
+            // Подсчёт бинарных пикселей (ускоренный)
+            int pixCount = CountBinaryPixels(eroded);
+            UpdateTextBox(pixelCount, pixCount);
+            return pixCount > MIN_BINARY_PIXELS_FOR_FLASH_DECISION;
         }
+
 
 
 
@@ -1424,44 +1413,33 @@ namespace KrishkiForms
         // Метод для нахождения центра контура
         private Point FindCapCenter(Point[] contour)
         {
-            int sumX = 0;
-            int sumY = 0;
-
-            foreach (var pt in contour)
+            var moments = Cv2.Moments(contour);
+            if (moments.M00 != 0)
             {
-                sumX += pt.X;
-                sumY += pt.Y;
+                int cx = (int)(moments.M10 / moments.M00);
+                int cy = (int)(moments.M01 / moments.M00);
+                return new Point(cx, cy);
             }
-
-            int centerX = sumX / contour.Length;
-            int centerY = sumY / contour.Length;
-
-            return new Point(centerX, centerY);
+            return new Point(0, 0);
         }
+
 
         // Метод для создания кольца крышки (аналог GetIdealCapMask)
-        private void GetIdealCapMask(Mat img, Point center, float capRadius, float flashRadius)
+        private void GetIdealCapMask(Mat mask, Point center, float innerRadius, float outerRadius)
         {
-            img.SetTo(0); // обнуляем изображение
+            mask.SetTo(0);
 
-            float r2Cap = capRadius * capRadius;
-            float r2Flash = flashRadius * flashRadius;
+            using var outer = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);
+            using var inner = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);
 
-            for (int j = 0; j < img.Rows; j++)
-            {
-                float dy = j - center.Y;
-                float dy2 = dy * dy;
+            // Заполняем круги
+            Cv2.Circle(outer, center, (int)outerRadius, Scalar.White, -1);
+            Cv2.Circle(inner, center, (int)innerRadius, Scalar.White, -1);
 
-                for (int i = 0; i < img.Cols; i++)
-                {
-                    float dx = i - center.X;
-                    float dist2 = dx * dx + dy2;
-
-                    if (dist2 >= r2Cap && dist2 <= r2Flash)
-                        img.Set<byte>(j, i, 255);
-                }
-            }
+            // Разность = кольцо
+            Cv2.Subtract(outer, inner, mask);
         }
+
 
         private int CountBinaryPixelsAndFlashDecision(Mat img, int thresholdCount)
         {
