@@ -1109,27 +1109,18 @@ namespace KrishkiForms
 
                                 if (anyDefect)
                                 {
-                                    /*// Включить обдув только один раз при дефекте
-                                    SetObduv(true);*/
                                     BeginInvoke((Action)(() =>
                                     {
                                         blowTriggerCount++;
                                         textBox4.Text = blowTriggerCount.ToString();
                                     }));
                                 }
-                                else //нет дефекта
+                                else // нет дефекта
                                 {
-                                    Stopwatch stopwatch1 = Stopwatch.StartNew();
-                                    // Выключить обдув
-                                    await SetObduv(false);
-                                    await SetObduv(true);
-                                    stopwatch1.Stop();
-                                    UpdateTextBox(imageProcDelay, stopwatch1.ElapsedMilliseconds);
-                                    /*modbusClient.WriteSingleRegister(obduvRegister, 0);*/
-                                    /*SetObduv(false);
-                                    SetObduv(true);*/
-                                    //await PulseObduv();   // один вызов вместо двух
+                                    // Запускаем Modbus-последовательность в отдельном таске
+                                    _ = Task.Run(() => PulseObduvAsync(delayValue, token));
                                 }
+
 
                                 stopwatch.Stop();
                                 UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
@@ -1149,6 +1140,37 @@ namespace KrishkiForms
                     MessageBox.Show($"Ошибка обработки: {ex.Message}")));
             }
         }
+
+        // Метод для работы с Modbus в отдельном потоке
+        private async Task PulseObduvAsync(int delayMs, CancellationToken token)
+        {
+            try
+            {
+                var stopwatch = Stopwatch.StartNew();
+
+                // Включаем обдув
+                modbusClient.WriteSingleRegister(obduvRegister, 1);
+
+                // Ждём в отдельном таске
+                await Task.Delay(delayMs, token);
+
+                // Выключаем обдув
+                modbusClient.WriteSingleRegister(obduvRegister, 0);
+
+                stopwatch.Stop();
+                //UpdateTextBox(imageProcDelay, stopwatch.ElapsedMilliseconds);
+            }
+            catch (TaskCanceledException)
+            {
+                // отмена - ничего страшного
+            }
+            catch (Exception ex)
+            {
+                BeginInvoke((Action)(() =>
+                    MessageBox.Show($"Ошибка Modbus: {ex.Message}")));
+            }
+        }
+
 
         private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, CancellationToken token, Func<Mat, Mat, CancellationToken, bool> checkFunc)
         {
