@@ -101,6 +101,14 @@
             heightTb = new TextBox();
             label22 = new Label();
             panel3 = new Panel();
+            panel14 = new Panel();
+            obloyCB = new CheckBox();
+            label32 = new Label();
+            obloyPb = new PictureBox();
+            obloyTime = new TextBox();
+            label45 = new Label();
+            obloyDef = new TextBox();
+            label46 = new Label();
             panel13 = new Panel();
             tabControl4 = new TabControl();
             tabPage5 = new TabPage();
@@ -184,6 +192,8 @@
             groupBox3.SuspendLayout();
             groupBox1.SuspendLayout();
             panel3.SuspendLayout();
+            panel14.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)obloyPb).BeginInit();
             panel13.SuspendLayout();
             tabControl4.SuspendLayout();
             tabPage5.SuspendLayout();
@@ -880,6 +890,7 @@
             // 
             panel3.BackColor = SystemColors.ButtonHighlight;
             panel3.BorderStyle = BorderStyle.Fixed3D;
+            panel3.Controls.Add(panel14);
             panel3.Controls.Add(panel13);
             panel3.Controls.Add(panel12);
             panel3.Controls.Add(panel10);
@@ -887,8 +898,89 @@
             panel3.Controls.Add(panel6);
             panel3.Location = new Point(356, 12);
             panel3.Name = "panel3";
-            panel3.Size = new Size(870, 752);
+            panel3.Size = new Size(1400, 752);
             panel3.TabIndex = 2;
+            // 
+            // panel14
+            // 
+            panel14.BorderStyle = BorderStyle.Fixed3D;
+            panel14.Controls.Add(obloyCB);
+            panel14.Controls.Add(label32);
+            panel14.Controls.Add(obloyPb);
+            panel14.Controls.Add(obloyTime);
+            panel14.Controls.Add(label45);
+            panel14.Controls.Add(obloyDef);
+            panel14.Controls.Add(label46);
+            panel14.Location = new Point(863, 3);
+            panel14.Name = "panel14";
+            panel14.Size = new Size(527, 232);
+            panel14.TabIndex = 36;
+            // 
+            // obloyCB
+            // 
+            obloyCB.AutoSize = true;
+            obloyCB.BackColor = Color.Lime;
+            obloyCB.Checked = true;
+            obloyCB.CheckState = CheckState.Checked;
+            obloyCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            obloyCB.Location = new Point(274, 18);
+            obloyCB.Name = "obloyCB";
+            obloyCB.Size = new Size(173, 25);
+            obloyCB.TabIndex = 6;
+            obloyCB.Text = "Определение облоя";
+            obloyCB.UseVisualStyleBackColor = false;
+            // 
+            // label32
+            // 
+            label32.AutoSize = true;
+            label32.BackColor = Color.Lime;
+            label32.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label32.Location = new Point(274, 22);
+            label32.Name = "label32";
+            label32.Size = new Size(0, 21);
+            label32.TabIndex = 5;
+            // 
+            // obloyPb
+            // 
+            obloyPb.BorderStyle = BorderStyle.Fixed3D;
+            obloyPb.Location = new Point(3, 4);
+            obloyPb.Name = "obloyPb";
+            obloyPb.Size = new Size(265, 218);
+            obloyPb.SizeMode = PictureBoxSizeMode.Zoom;
+            obloyPb.TabIndex = 0;
+            obloyPb.TabStop = false;
+            // 
+            // obloyTime
+            // 
+            obloyTime.Location = new Point(275, 81);
+            obloyTime.Name = "obloyTime";
+            obloyTime.Size = new Size(100, 23);
+            obloyTime.TabIndex = 4;
+            // 
+            // label45
+            // 
+            label45.AutoSize = true;
+            label45.Location = new Point(275, 59);
+            label45.Name = "label45";
+            label45.Size = new Size(183, 15);
+            label45.TabIndex = 3;
+            label45.Text = "Время обработки одного кадра:";
+            // 
+            // obloyDef
+            // 
+            obloyDef.Location = new Point(274, 133);
+            obloyDef.Name = "obloyDef";
+            obloyDef.Size = new Size(100, 23);
+            obloyDef.TabIndex = 2;
+            // 
+            // label46
+            // 
+            label46.AutoSize = true;
+            label46.Location = new Point(274, 111);
+            label46.Name = "label46";
+            label46.Size = new Size(200, 15);
+            label46.TabIndex = 1;
+            label46.Text = "Количество бракованных крышек:";
             // 
             // panel13
             // 
@@ -1604,7 +1696,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1232, 776);
+            ClientSize = new Size(1797, 776);
             Controls.Add(panel11);
             Controls.Add(obduvCB);
             Controls.Add(panel8);
@@ -1640,6 +1732,9 @@
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             panel3.ResumeLayout(false);
+            panel14.ResumeLayout(false);
+            panel14.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)obloyPb).EndInit();
             panel13.ResumeLayout(false);
             tabControl4.ResumeLayout(false);
             tabPage5.ResumeLayout(false);
@@ -1809,5 +1904,13 @@
         private Label label44;
         private TextBox imageProcDelay;
         private Label lan1;
+        private Panel panel14;
+        private CheckBox obloyCB;
+        private Label label32;
+        private PictureBox obloyPb;
+        private TextBox obloyTime;
+        private Label label45;
+        private TextBox obloyDef;
+        private Label label46;
     }
 }

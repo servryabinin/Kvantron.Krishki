@@ -98,6 +98,7 @@ namespace KrishkiForms
         private int ovalityCount = 0;
         private int inclusionCount = 0;
         private int paintDefectCount = 0;
+        private int obloyDefectCount = 0;
         private int underfillCount = 0;
         private int blowTriggerCount = 0; // счётчик срабатываний обдува
 
@@ -130,6 +131,8 @@ namespace KrishkiForms
         private Mat _grayForInclusions;
         private Mat _imageForPaintDefects;
         private Mat _grayForPaintDefects;
+        private Mat _imageForObloyDefects;
+        private Mat _grayForObloyDefects;
         private Mat _imageForUnderfill;
         private Mat _grayForUnderfill;
 
@@ -158,10 +161,20 @@ namespace KrishkiForms
         private double minAreaInclusion = 50.0;
         private double maxAreaInclusion = 500.0;
 
+        private readonly string obloyDefectPath;
+        private string fileNameForObloyDefect = $"obloy_{DateTime.Now:yyyyMMdd_HHmmss_fff}.bmp";
+        private string fullPathForObloyDefect = "";
+        private Point[] largestContourObloy;
+        private Point capCenter;
+        private Mat CapRadiusMask = new Mat(536, 552, MatType.CV_8UC1);
+        private const float STANDARD_CAP_MAX_RADIUS = 156.0f;
+        private const float CAP_FLASH_OFFSET = 5.0f;
+        private const int MIN_BINARY_PIXELS_FOR_FLASH_DECISION = 25;
+
         // Параметры обработки
-        private int window = 7;
-        private int morph_size = 4;
-        private int morph_size_2 = 4;
+        private int window = 15;
+        private int morph_size = 7;
+        private int morph_size_2 = 7;
 
         // Константы для деколоризации фона
         private const byte BLUE_CAPS = 80;
@@ -172,6 +185,7 @@ namespace KrishkiForms
 
         private Mat element1;
         private Mat element2;
+        private Mat elementMask;
 
         private double lowerSPercentile = 12.75;
         private double upperSPercentile = 242.75;
@@ -219,6 +233,8 @@ namespace KrishkiForms
             _grayForInclusions = new Mat();
             _imageForPaintDefects = new Mat();
             _grayForPaintDefects = new Mat();
+            _imageForObloyDefects = new Mat();
+            _grayForObloyDefects = new Mat();
             _imageForUnderfill = new Mat();
             _grayForUnderfill = new Mat();
 
@@ -235,6 +251,12 @@ namespace KrishkiForms
                 MorphShapes.Cross,
                 new Size(2 * morphSize2 + 1, 2 * morphSize2 + 1),
                 new Point(morphSize2, morphSize2)
+            );
+
+            elementMask = Cv2.GetStructuringElement(
+                MorphShapes.Rect,
+                new Size(3, 3),
+                new Point(1, 1)
             );
 
             Form1_Load();
@@ -1074,6 +1096,12 @@ namespace KrishkiForms
                             gray.CopyTo(_grayForPaintDefects);
                         }
 
+                        if (obloyCB.Checked)
+                        {
+                            frameToProcess.CopyTo(_imageForObloyDefects);
+                            gray.CopyTo(_grayForObloyDefects);
+                        }
+
                         using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
                             timeoutCts.CancelAfter(100);
@@ -1084,6 +1112,7 @@ namespace KrishkiForms
                                 var ovalityTask = Task.FromResult(false);
                                 var inclusionsTask = Task.FromResult(false);
                                 var paintTask = Task.FromResult(false);
+                                var obloyTask = Task.FromResult(false);
                                 // Запускаем только если CheckBox активен
                                 if (ovalityCB.Checked)
                                 {
@@ -1100,7 +1129,12 @@ namespace KrishkiForms
                                     paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects);
                                 }
 
-                              
+                                if (obloyCB.Checked)
+                                {
+                                    obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, timeoutCts.Token, RunCheckForObloyDefects);
+                                }
+
+
                                 await Task.WhenAll(ovalityTask, inclusionsTask, paintTask);
                                 // Проверяем только те задачи, которые были запущены
                                 bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
@@ -1288,6 +1322,127 @@ namespace KrishkiForms
 
             return hasPaintDefects;
         }
+
+        private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            bool hasObloyDefects = CheckForObloyDefects(gray, image, token); // true = дефект
+
+            if (hasObloyDefects)
+            {
+                obloyDefectCount++;
+                UpdateTextBox(obloyDef, obloyDefectCount);
+                fileNameForObloyDefect = $"obloy_{obloyDefectCount}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.bmp";
+                fullPathForObloyDefect = Path.Combine(obloyDefectPath, fileNameForObloyDefect);
+                image.SaveImage(fullPathForObloyDefect);
+            }
+
+            stopwatch.Stop();
+            UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds);
+            UpdatePictureBox(obloyPb, image);
+
+            return hasObloyDefects;
+        }
+
+        private bool CheckForObloyDefects(Mat gray, Mat image, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            largestContourObloy = GetCapContour(gray, image);
+            token.ThrowIfCancellationRequested();
+
+            bool isObloy = false;
+
+            if (largestContourObloy != null && largestContourObloy.Length > 0)
+            {
+                capCenter = FindCapCenter(largestContourObloy);
+
+                // строим внешнее кольцо для анализа облоя
+                GetIdealCapMask(CapRadiusMask, capCenter, STANDARD_CAP_MAX_RADIUS, STANDARD_CAP_MAX_RADIUS + CAP_FLASH_OFFSET);
+
+                // Разделяем исходное изображение на каналы
+                Mat[] blurChannels = Cv2.Split(image); // image должен быть цветным (BGR)
+
+                // Логическое умножение (AND) кольца с синим каналом (аналог blur_channels[2])
+                Cv2.BitwiseAnd(CapRadiusMask, blurChannels[2], blurChannels[2]);
+
+                // Эрозия 3x3, результат в отдельный канал (аналог blur_channels[1])
+                Cv2.MorphologyEx(blurChannels[2], blurChannels[1], MorphTypes.Erode, elementMask);
+
+                // Проверка количества бинарных пикселей и решение о флеше
+                isObloy = CountBinaryPixelsAndFlashDecision(blurChannels[1], MIN_BINARY_PIXELS_FOR_FLASH_DECISION);
+            }
+
+            return isObloy;
+        }
+
+
+
+        // Метод для нахождения центра контура
+        private Point FindCapCenter(Point[] contour)
+        {
+            int sumX = 0;
+            int sumY = 0;
+
+            foreach (var pt in contour)
+            {
+                sumX += pt.X;
+                sumY += pt.Y;
+            }
+
+            int centerX = sumX / contour.Length;
+            int centerY = sumY / contour.Length;
+
+            return new Point(centerX, centerY);
+        }
+
+        // Метод для создания кольца крышки (аналог GetIdealCapMask)
+        private void GetIdealCapMask(Mat img, Point center, float capRadius, float flashRadius)
+        {
+            img.SetTo(0); // обнуляем изображение
+
+            float r2Cap = capRadius * capRadius;
+            float r2Flash = flashRadius * flashRadius;
+
+            for (int j = 0; j < img.Rows; j++)
+            {
+                float dy = j - center.Y;
+                float dy2 = dy * dy;
+
+                for (int i = 0; i < img.Cols; i++)
+                {
+                    float dx = i - center.X;
+                    float dist2 = dx * dx + dy2;
+
+                    if (dist2 >= r2Cap && dist2 <= r2Flash)
+                        img.Set<byte>(j, i, 255);
+                }
+            }
+        }
+
+        private bool CountBinaryPixelsAndFlashDecision(Mat img, int thresholdCount)
+        {
+            int count = 0;
+
+            // Обход всех пикселей
+            for (int row = 0; row < img.Rows; row++)
+            {
+                for (int col = 0; col < img.Cols; col++)
+                {
+                    if (img.At<byte>(row, col) != 0)
+                        count++;
+                }
+            }
+
+            // Возвращаем true, если количество пикселей больше порога
+            return count > thresholdCount;
+        }
+
+
 
 
         // Потокобезопасное обновление PictureBox
