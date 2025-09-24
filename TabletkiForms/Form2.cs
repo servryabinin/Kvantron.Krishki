@@ -578,6 +578,7 @@ namespace KrishkiForms
             }
             else
             {
+                ApplyRecognitionParameters();
                 if (originPb.Image == null)
                 {
                     MessageBox.Show("Пожалуйста, загрузите изображение перед распознаванием.");
@@ -1146,19 +1147,24 @@ namespace KrishkiForms
         {
             try
             {
-                var stopwatch = Stopwatch.StartNew();
+                if (prConnected && modbusClient != null && modbusClient.Connected)
+                {
 
-                // Включаем обдув
-                modbusClient.WriteSingleRegister(obduvRegister, 1);
 
-                // Ждём в отдельном таске
-                await Task.Delay(delayMs, token);
+                    var stopwatch = Stopwatch.StartNew();
 
-                // Выключаем обдув
-                modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    // Включаем обдув
+                    modbusClient.WriteSingleRegister(obduvRegister, 1);
 
-                stopwatch.Stop();
-                //UpdateTextBox(imageProcDelay, stopwatch.ElapsedMilliseconds);
+                    // Ждём в отдельном таске
+                    await Task.Delay(delayMs, token);
+
+                    // Выключаем обдув
+                    modbusClient.WriteSingleRegister(obduvRegister, 0);
+
+                    stopwatch.Stop();
+                    //UpdateTextBox(imageProcDelay, stopwatch.ElapsedMilliseconds);
+                }
             }
             catch (TaskCanceledException)
             {
@@ -1166,8 +1172,7 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                BeginInvoke((Action)(() =>
-                    MessageBox.Show($"Ошибка Modbus: {ex.Message}")));
+                
             }
         }
 
@@ -2090,6 +2095,20 @@ namespace KrishkiForms
             cam.SetTriggerMode();
             cam.SetExposureTime();*/
 
+            ApplyRecognitionParameters();
+
+            ovalityCoef.Enabled = false;
+            circleCoefTx.Enabled = false;
+            minSquareInclusion.Enabled = false;
+            maxSquareInclusion.Enabled = false;
+            minSquareInpaint.Enabled = false;
+            whiteThresoldTx.Enabled = false;
+
+            StartStop(true);
+        }
+
+        private void ApplyRecognitionParameters()
+        {
             if (!double.TryParse(ovalityCoef.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out ovalityThreshold))
             {
                 ovalityThreshold = 0.7;
@@ -2125,15 +2144,6 @@ namespace KrishkiForms
                 minInpaintWhiteTgreshold = 150.0; // значение по умолчанию
                 whiteThresoldTx.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
             }
-
-            ovalityCoef.Enabled = false;
-            circleCoefTx.Enabled = false;
-            minSquareInclusion.Enabled = false;
-            maxSquareInclusion.Enabled = false;
-            minSquareInpaint.Enabled = false;
-            whiteThresoldTx.Enabled = false;
-
-            StartStop(true);
         }
 
         private void endStream_Click(object sender, EventArgs e)
