@@ -147,8 +147,8 @@ namespace KrishkiForms
 
         // Константы для деколоризации фона
         private const byte BLUE_CAPS = 80;
-        private const byte YELLOW_CAPS = 160;
-        private const byte GOLD_CAPS = 160; //Заменить на настоящие
+        private const byte YELLOW_CAPS = 128;
+        private const byte GOLD_CAPS = 128; //Заменить на настоящие
         private const byte WHITE_CAPS = 160; //Заменить на настоящие
         private static bool isColored = true;
 
@@ -1110,7 +1110,8 @@ namespace KrishkiForms
                                 // Проверяем только те задачи, которые были запущены
                                 bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
                                                (inclusionCB.Checked && inclusionsTask.Result) ||
-                                               (inpaintCB.Checked && paintTask.Result);
+                                               (inpaintCB.Checked && paintTask.Result) ||
+                                               (obloyCB.Checked && obloyTask.Result);
 
                                 if (anyDefect)
                                 {
