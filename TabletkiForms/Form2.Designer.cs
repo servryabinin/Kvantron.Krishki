@@ -101,7 +101,9 @@
             heightTb = new TextBox();
             label22 = new Label();
             panel3 = new Panel();
+            button1 = new Button();
             panel14 = new Panel();
+            pixelCount = new TextBox();
             obloyCB = new CheckBox();
             label32 = new Label();
             obloyPb = new PictureBox();
@@ -176,7 +178,6 @@
             panel8 = new Panel();
             button3 = new Button();
             loadImageButton = new Button();
-            pixelCount = new TextBox();
             tabParameter.SuspendLayout();
             tabParSearch.SuspendLayout();
             tabParCamera.SuspendLayout();
@@ -902,6 +903,16 @@
             panel3.Size = new Size(1400, 752);
             panel3.TabIndex = 2;
             // 
+            // button1
+            // 
+            button1.Location = new Point(1461, 848);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 37;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // panel14
             // 
             panel14.BorderStyle = BorderStyle.Fixed3D;
@@ -917,6 +928,13 @@
             panel14.Name = "panel14";
             panel14.Size = new Size(527, 232);
             panel14.TabIndex = 36;
+            // 
+            // pixelCount
+            // 
+            pixelCount.Location = new Point(274, 170);
+            pixelCount.Name = "pixelCount";
+            pixelCount.Size = new Size(100, 23);
+            pixelCount.TabIndex = 7;
             // 
             // obloyCB
             // 
@@ -1694,18 +1712,12 @@
             loadImageButton.UseVisualStyleBackColor = false;
             loadImageButton.Click += loadImageButton_Click;
             // 
-            // pixelCount
-            // 
-            pixelCount.Location = new Point(274, 170);
-            pixelCount.Name = "pixelCount";
-            pixelCount.Size = new Size(100, 23);
-            pixelCount.TabIndex = 7;
-            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1797, 776);
+            ClientSize = new Size(1797, 777);
+            Controls.Add(button1);
             Controls.Add(panel11);
             Controls.Add(obduvCB);
             Controls.Add(panel8);
@@ -1922,5 +1934,6 @@
         private TextBox obloyDef;
         private Label label46;
         private TextBox pixelCount;
+        private Button button1;
     }
 }
