@@ -138,6 +138,7 @@ namespace KrishkiForms
         private const float STANDARD_CAP_MAX_RADIUS = 156.0f;
         private const float CAP_FLASH_OFFSET = 5.0f;
         private const int MIN_BINARY_PIXELS_FOR_FLASH_DECISION = 15;
+        private double minBinaryPixelsForFlashDecision = 15.0;
 
         // Параметры обработки
         private int window = 15;
@@ -1392,10 +1393,11 @@ namespace KrishkiForms
 
             // 1. Получаем контур крышки
             largestContourObloy = GetCapContour(gray, image);
+            if (largestContourObloy == null || largestContourObloy.Length == 0)
+                return false;
 
             // 2. Считаем центр как среднее всех точек
-            double sumX = 0;
-            double sumY = 0;
+            double sumX = 0, sumY = 0;
             foreach (var pt in largestContourObloy)
             {
                 sumX += pt.X;
@@ -1406,7 +1408,7 @@ namespace KrishkiForms
                 (int)(sumY / largestContourObloy.Length)
             );
 
-            // 3. Считаем радиус как среднее расстояние до центра
+            // 3. Считаем радиус
             double radius = 0;
             foreach (var pt in largestContourObloy)
             {
@@ -1416,25 +1418,53 @@ namespace KrishkiForms
             }
             radius /= largestContourObloy.Length;
 
-            // 4. Подгоняем маску под размер изображения
+            // 4. Маска
             if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
             {
                 CapRadiusMask?.Dispose();
                 CapRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
             }
 
-            // 5. Строим внешнее кольцо для анализа облоя
-            GetIdealCapMask(CapRadiusMask, capCenter, (float)(radius + 3.0f), (float)(radius + 3.0f + CAP_FLASH_OFFSET));
+            // 5. Строим внешнее кольцо
+            GetIdealCapMask(CapRadiusMask, capCenter,
+                            (float)(radius + 3.0f),
+                            (float)(radius + 3.0f + CAP_FLASH_OFFSET));
 
+            // 6. Маскирование
             Cv2.BitwiseAnd(CapRadiusMask, blurChannel_2, blurChannel_2);
-            // 8. Эрозия 3x3: результат кладём во второй канал (аналог C++ blur_channels[1])
+
+            // 7. Эрозия
             Cv2.MorphologyEx(blurChannel_2, blurChannel_1, MorphTypes.Erode, elementMask);
 
-            // 9. Подсчёт бинарных пикселей
+            // 8. Поиск облоев как контуров в eroded
+            Point[][] obloyContours;
+            HierarchyIndex[] hierarchy;
+            Cv2.FindContours(
+                blurChannel_1,
+                out obloyContours,
+                out hierarchy,
+                RetrievalModes.External,
+                ContourApproximationModes.ApproxNone
+            );
+
+            // 9. Рисуем найденные облои на оригинальном изображении красным цветом
+            if (obloyContours.Length > 0)
+            {
+                Cv2.DrawContours(
+                    image,
+                    obloyContours,
+                    -1,                              // все контуры
+                    new Scalar(0, 0, 255),           // красный (BGR)
+                    2                                // толщина линии
+                );
+            }
+
+            // 10. Подсчёт бинарных пикселей
             int pixCount = Cv2.CountNonZero(blurChannel_1);
 
-            return pixCount > MIN_BINARY_PIXELS_FOR_FLASH_DECISION;
+            return pixCount > minBinaryPixelsForFlashDecision;
         }
+
 
         private int CountBinaryPixels(Mat img)
         {
@@ -2349,6 +2379,12 @@ namespace KrishkiForms
             {
                 minInpaintWhiteTgreshold = 150.0; // значение по умолчанию
                 whiteThresoldTx.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
+            }
+
+            if (!double.TryParse(obloyPixCount.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minBinaryPixelsForFlashDecision))
+            {
+                minBinaryPixelsForFlashDecision = 15; // значение по умолчанию
+                obloyPixCount.Text = minBinaryPixelsForFlashDecision.ToString(CultureInfo.InvariantCulture);
             }
         }
 

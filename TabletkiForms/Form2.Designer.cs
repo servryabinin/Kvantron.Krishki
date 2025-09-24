@@ -53,6 +53,9 @@
             panel2 = new Panel();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            groupBox5 = new GroupBox();
+            obloyPixCount = new TextBox();
+            label47 = new Label();
             tabControl6 = new TabControl();
             tabPage7 = new TabPage();
             label18 = new Label();
@@ -101,7 +104,6 @@
             heightTb = new TextBox();
             label22 = new Label();
             panel3 = new Panel();
-            button1 = new Button();
             panel14 = new Panel();
             pixelCount = new TextBox();
             obloyCB = new CheckBox();
@@ -139,7 +141,6 @@
             label24 = new Label();
             panel9 = new Panel();
             inclusionCB = new CheckBox();
-            checkBox1 = new CheckBox();
             conclusionTime = new TextBox();
             inclusionDef = new TextBox();
             label26 = new Label();
@@ -153,6 +154,7 @@
             label25 = new Label();
             ovalityDef = new TextBox();
             label2 = new Label();
+            button1 = new Button();
             obduvBatton = new Button();
             panel4 = new Panel();
             label33 = new Label();
@@ -185,6 +187,7 @@
             panel2.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
+            groupBox5.SuspendLayout();
             tabControl6.SuspendLayout();
             tabPage7.SuspendLayout();
             tabControl5.SuspendLayout();
@@ -361,7 +364,7 @@
             panel1.Controls.Add(tabParameter);
             panel1.Location = new Point(11, 12);
             panel1.Name = "panel1";
-            panel1.Size = new Size(340, 515);
+            panel1.Size = new Size(340, 587);
             panel1.TabIndex = 1;
             // 
             // panel2
@@ -371,7 +374,7 @@
             panel2.Controls.Add(tabControl1);
             panel2.Location = new Point(-2, -2);
             panel2.Name = "panel2";
-            panel2.Size = new Size(340, 510);
+            panel2.Size = new Size(340, 582);
             panel2.TabIndex = 2;
             // 
             // tabControl1
@@ -381,12 +384,13 @@
             tabControl1.Location = new Point(3, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(330, 500);
+            tabControl1.Size = new Size(330, 728);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
             tabPage1.BorderStyle = BorderStyle.Fixed3D;
+            tabPage1.Controls.Add(groupBox5);
             tabPage1.Controls.Add(tabControl6);
             tabPage1.Controls.Add(tabControl5);
             tabPage1.Controls.Add(groupBox4);
@@ -396,16 +400,45 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(322, 472);
+            tabPage1.Size = new Size(322, 700);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Параметры поиска";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(obloyPixCount);
+            groupBox5.Controls.Add(label47);
+            groupBox5.Location = new Point(7, 370);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(306, 69);
+            groupBox5.TabIndex = 38;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Параметры для определения облоя";
+            // 
+            // obloyPixCount
+            // 
+            obloyPixCount.Location = new Point(31, 40);
+            obloyPixCount.Name = "obloyPixCount";
+            obloyPixCount.Size = new Size(100, 21);
+            obloyPixCount.TabIndex = 6;
+            obloyPixCount.Text = "25";
+            // 
+            // label47
+            // 
+            label47.AutoSize = true;
+            label47.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label47.Location = new Point(28, 24);
+            label47.Name = "label47";
+            label47.Size = new Size(162, 13);
+            label47.TabIndex = 5;
+            label47.Text = "Минимальная площадь облоя:";
             // 
             // tabControl6
             // 
             tabControl6.Controls.Add(tabPage7);
             tabControl6.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            tabControl6.Location = new Point(178, 369);
+            tabControl6.Location = new Point(178, 445);
             tabControl6.Name = "tabControl6";
             tabControl6.SelectedIndex = 0;
             tabControl6.Size = new Size(139, 98);
@@ -443,7 +476,7 @@
             // tabControl5
             // 
             tabControl5.Controls.Add(tabPage6);
-            tabControl5.Location = new Point(6, 367);
+            tabControl5.Location = new Point(6, 443);
             tabControl5.Name = "tabControl5";
             tabControl5.SelectedIndex = 0;
             tabControl5.Size = new Size(170, 100);
@@ -669,7 +702,7 @@
             // obduvCB
             // 
             obduvCB.AutoSize = true;
-            obduvCB.Location = new Point(230, 909);
+            obduvCB.Location = new Point(222, 1105);
             obduvCB.Name = "obduvCB";
             obduvCB.Size = new Size(116, 19);
             obduvCB.TabIndex = 35;
@@ -900,18 +933,8 @@
             panel3.Controls.Add(panel6);
             panel3.Location = new Point(356, 12);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1400, 752);
+            panel3.Size = new Size(1360, 828);
             panel3.TabIndex = 2;
-            // 
-            // button1
-            // 
-            button1.Location = new Point(1461, 848);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 37;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
             // 
             // panel14
             // 
@@ -926,7 +949,7 @@
             panel14.Controls.Add(label46);
             panel14.Location = new Point(863, 3);
             panel14.Name = "panel14";
-            panel14.Size = new Size(527, 232);
+            panel14.Size = new Size(488, 232);
             panel14.TabIndex = 36;
             // 
             // pixelCount
@@ -1010,7 +1033,7 @@
             panel13.Controls.Add(tabControl2);
             panel13.Location = new Point(3, 285);
             panel13.Name = "panel13";
-            panel13.Size = new Size(324, 460);
+            panel13.Size = new Size(324, 467);
             panel13.TabIndex = 35;
             // 
             // tabControl4
@@ -1179,7 +1202,7 @@
             panel10.Controls.Add(label24);
             panel10.Location = new Point(330, 487);
             panel10.Name = "panel10";
-            panel10.Size = new Size(527, 258);
+            panel10.Size = new Size(527, 265);
             panel10.TabIndex = 5;
             // 
             // imageProcDelay
@@ -1292,7 +1315,6 @@
             // 
             panel9.BorderStyle = BorderStyle.Fixed3D;
             panel9.Controls.Add(inclusionCB);
-            panel9.Controls.Add(checkBox1);
             panel9.Controls.Add(conclusionTime);
             panel9.Controls.Add(inclusionDef);
             panel9.Controls.Add(label26);
@@ -1317,16 +1339,6 @@
             inclusionCB.Text = "Определение вкраплений";
             inclusionCB.UseVisualStyleBackColor = false;
             inclusionCB.CheckedChanged += inclusionCB_CheckedChanged;
-            // 
-            // checkBox1
-            // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(274, 170);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(164, 19);
-            checkBox1.TabIndex = 7;
-            checkBox1.Text = "Проверка на вкрапления";
-            checkBox1.UseVisualStyleBackColor = true;
             // 
             // conclusionTime
             // 
@@ -1452,12 +1464,22 @@
             label2.TabIndex = 1;
             label2.Text = "Количество бракованных крышек:";
             // 
+            // button1
+            // 
+            button1.Location = new Point(1453, 1044);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 37;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // obduvBatton
             // 
             obduvBatton.BackColor = Color.FromArgb(4, 85, 191);
             obduvBatton.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
             obduvBatton.ForeColor = SystemColors.Control;
-            obduvBatton.Location = new Point(202, 848);
+            obduvBatton.Location = new Point(194, 1044);
             obduvBatton.Name = "obduvBatton";
             obduvBatton.Size = new Size(148, 55);
             obduvBatton.TabIndex = 34;
@@ -1474,7 +1496,7 @@
             panel4.Controls.Add(textBox3);
             panel4.Controls.Add(label35);
             panel4.Controls.Add(pictureBox2);
-            panel4.Location = new Point(907, 848);
+            panel4.Location = new Point(899, 1044);
             panel4.Name = "panel4";
             panel4.Size = new Size(527, 257);
             panel4.TabIndex = 6;
@@ -1543,7 +1565,7 @@
             panel11.Controls.Add(underfillDef);
             panel11.Controls.Add(label38);
             panel11.Controls.Add(underfillPictureBox);
-            panel11.Location = new Point(361, 848);
+            panel11.Location = new Point(353, 1044);
             panel11.Name = "panel11";
             panel11.Size = new Size(527, 257);
             panel11.TabIndex = 7;
@@ -1620,9 +1642,9 @@
             panel7.BackColor = SystemColors.ButtonHighlight;
             panel7.BorderStyle = BorderStyle.Fixed3D;
             panel7.Controls.Add(recognizeButton);
-            panel7.Location = new Point(11, 677);
+            panel7.Location = new Point(12, 748);
             panel7.Name = "panel7";
-            panel7.Size = new Size(339, 87);
+            panel7.Size = new Size(339, 92);
             panel7.TabIndex = 5;
             // 
             // recognizeButton
@@ -1630,9 +1652,9 @@
             recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
             recognizeButton.Font = new Font("Microsoft Sans Serif", 12F, FontStyle.Bold, GraphicsUnit.Point, 204);
             recognizeButton.ForeColor = SystemColors.Control;
-            recognizeButton.Location = new Point(25, 16);
+            recognizeButton.Location = new Point(23, 17);
             recognizeButton.Name = "recognizeButton";
-            recognizeButton.Size = new Size(290, 55);
+            recognizeButton.Size = new Size(290, 52);
             recognizeButton.TabIndex = 22;
             recognizeButton.Text = "Начать анализ";
             recognizeButton.UseVisualStyleBackColor = false;
@@ -1644,7 +1666,7 @@
             panel5.BorderStyle = BorderStyle.Fixed3D;
             panel5.Controls.Add(endStream);
             panel5.Controls.Add(getImageButton);
-            panel5.Location = new Point(182, 533);
+            panel5.Location = new Point(182, 605);
             panel5.Name = "panel5";
             panel5.Size = new Size(168, 137);
             panel5.TabIndex = 4;
@@ -1681,7 +1703,7 @@
             panel8.BorderStyle = BorderStyle.Fixed3D;
             panel8.Controls.Add(button3);
             panel8.Controls.Add(loadImageButton);
-            panel8.Location = new Point(11, 533);
+            panel8.Location = new Point(11, 607);
             panel8.Name = "panel8";
             panel8.Size = new Size(165, 137);
             panel8.TabIndex = 25;
@@ -1716,7 +1738,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1797, 777);
+            ClientSize = new Size(1728, 857);
             Controls.Add(button1);
             Controls.Add(panel11);
             Controls.Add(obduvCB);
@@ -1739,6 +1761,8 @@
             panel2.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             tabControl6.ResumeLayout(false);
             tabPage7.ResumeLayout(false);
             tabPage7.PerformLayout();
@@ -1916,7 +1940,6 @@
         private CheckBox ovalityCB;
         private CheckBox inpaintCB;
         private CheckBox inclusionCB;
-        private CheckBox checkBox1;
         private TextBox generalTime;
         private Label label31;
         private Label label43;
@@ -1935,5 +1958,8 @@
         private Label label46;
         private TextBox pixelCount;
         private Button button1;
+        private GroupBox groupBox5;
+        private TextBox obloyPixCount;
+        private Label label47;
     }
 }
