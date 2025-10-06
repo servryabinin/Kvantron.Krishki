@@ -1092,7 +1092,7 @@
             delayTb.Name = "delayTb";
             delayTb.Size = new Size(32, 23);
             delayTb.TabIndex = 13;
-            delayTb.Text = "25";
+            delayTb.Text = "20";
             // 
             // label44
             // 

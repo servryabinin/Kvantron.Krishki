@@ -1077,7 +1077,7 @@ namespace KrishkiForms
 
                         using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
-                            timeoutCts.CancelAfter(100);
+                            timeoutCts.CancelAfter(60);
 
                             try
                             {
