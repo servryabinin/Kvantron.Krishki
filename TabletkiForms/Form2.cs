@@ -184,7 +184,8 @@ namespace KrishkiForms
         private readonly object frameLock = new object();
         private Mat latestFrame = null;
 
-        private readonly int obduvRegister = 16465;
+        private readonly int goodCapRegister = 16465;
+        private readonly int badCapRegister = 16468;
 
         private bool cameraConnected = false;
         private bool prConnected = false;
@@ -562,7 +563,7 @@ namespace KrishkiForms
                     {
                         if (modbusClient != null && modbusClient.Connected)
                         {
-                            modbusClient.WriteSingleRegister(obduvRegister, 1);
+                            //modbusClient.WriteSingleRegister(obduvRegister, 1);
                         }
                     }
                     catch (Exception ex)
@@ -589,7 +590,7 @@ namespace KrishkiForms
                 {
                     if (modbusClient != null && modbusClient.Connected)
                     {
-                        modbusClient.WriteSingleRegister(obduvRegister, 0);
+                        //modbusClient.WriteSingleRegister(obduvRegister, 0);
                     }
                 }
                 catch (Exception ex)
@@ -961,7 +962,7 @@ namespace KrishkiForms
             if (obduvState != newState)
             {
                 obduvState = newState;
-                modbusClient.WriteSingleRegister(obduvRegister, newState ? 0 : 1);
+                //modbusClient.WriteSingleRegister(obduvRegister, newState ? 0 : 1);
                 await Task.Delay(delayValue);
             }
         }
@@ -972,7 +973,7 @@ namespace KrishkiForms
             if (obduvState)
             {
                 obduvState = false;
-                modbusClient.WriteSingleRegister(obduvRegister, 1);
+                //modbusClient.WriteSingleRegister(obduvRegister, 1);
             }
 
             // Делаем одну паузу
@@ -980,7 +981,7 @@ namespace KrishkiForms
 
             // Теперь включаем снова
             obduvState = true;
-            modbusClient.WriteSingleRegister(obduvRegister, 0);
+           //modbusClient.WriteSingleRegister(obduvRegister, 0);
         }
 
 
@@ -1115,11 +1116,12 @@ namespace KrishkiForms
                                         blowTriggerCount++;
                                         textBox4.Text = blowTriggerCount.ToString();
                                     }));
+                                    _ = Task.Run(() => PulseObduvAsync(delayValue, badCapRegister, token));
                                 }
                                 else // нет дефекта
                                 {
                                     // Запускаем Modbus-последовательность в отдельном таске
-                                    _ = Task.Run(() => PulseObduvAsync(delayValue, token));
+                                    _ = Task.Run(() => PulseObduvAsync(delayValue, goodCapRegister, token));
                                 }
 
 
@@ -1143,7 +1145,7 @@ namespace KrishkiForms
         }
 
         // Метод для работы с Modbus в отдельном потоке
-        private async Task PulseObduvAsync(int delayMs, CancellationToken token)
+        private async Task PulseObduvAsync(int delayMs, int registerForSignal, CancellationToken token)
         {
             try
             {
@@ -1154,13 +1156,13 @@ namespace KrishkiForms
                     var stopwatch = Stopwatch.StartNew();
 
                     // Включаем обдув
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    modbusClient.WriteSingleRegister(registerForSignal, 1);
 
                     // Ждём в отдельном таске
                     await Task.Delay(delayMs, token);
 
                     // Выключаем обдув
-                    modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    modbusClient.WriteSingleRegister(registerForSignal, 0);
 
                     stopwatch.Stop();
                     //UpdateTextBox(imageProcDelay, stopwatch.ElapsedMilliseconds);
@@ -2152,7 +2154,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    //modbusClient.WriteSingleRegister(obduvRegister, 1);
                 }
             }
             catch (Exception ex)
@@ -2445,7 +2447,7 @@ namespace KrishkiForms
                 if (modbusClient != null && modbusClient.Connected)
                 {
                     // Установить обдув в "отключен" при завершении работы
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    //modbusClient.WriteSingleRegister(obduvRegister, 1);
                 }
             }
             catch (Exception ex)
