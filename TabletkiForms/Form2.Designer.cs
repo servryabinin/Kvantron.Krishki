@@ -154,7 +154,6 @@
             label25 = new Label();
             ovalityDef = new TextBox();
             label2 = new Label();
-            button1 = new Button();
             obduvBatton = new Button();
             panel4 = new Panel();
             label33 = new Label();
@@ -1464,16 +1463,6 @@
             label2.TabIndex = 1;
             label2.Text = "Количество бракованных крышек:";
             // 
-            // button1
-            // 
-            button1.Location = new Point(1453, 1044);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 37;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
             // obduvBatton
             // 
             obduvBatton.BackColor = Color.FromArgb(4, 85, 191);
@@ -1738,8 +1727,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1728, 857);
-            Controls.Add(button1);
+            ClientSize = new Size(1728, 854);
             Controls.Add(panel11);
             Controls.Add(obduvCB);
             Controls.Add(panel8);
@@ -1957,7 +1945,6 @@
         private TextBox obloyDef;
         private Label label46;
         private TextBox pixelCount;
-        private Button button1;
         private GroupBox groupBox5;
         private TextBox obloyPixCount;
         private Label label47;

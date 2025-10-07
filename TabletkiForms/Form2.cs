@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Numerics;
 using GetImageProject;
 using Kvantron.Hardware.SmartDio;
@@ -1075,7 +1076,7 @@ namespace KrishkiForms
 
                         using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
-                            timeoutCts.CancelAfter(1000000);
+                            timeoutCts.CancelAfter(60);
 
                             try
                             {
@@ -1325,66 +1326,71 @@ namespace KrishkiForms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string path = @"C:\Users\sergey\Desktop\Krishki\золотые крышки — копия\1.bmp";
-
-            // Загружаем изображение в цвете (BGR)
-            Mat image = Cv2.ImRead(path, ImreadModes.Color);
-
-            // Создаём ч/б версию
-            Mat gray = new Mat();
-            Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
-
-            // 1. Получаем контур крышки
-            capsColor = GetSelectedCapValue();
-
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            largestContourObloy = GetCapContour(gray, image);
-
-            // 2. Считаем центр как среднее всех точек
-            double sumX = 0;
-            double sumY = 0;
-            foreach (var pt in largestContourObloy)
+            for (int i = 1; i <= 17; i++)
             {
-                sumX += pt.X;
-                sumY += pt.Y;
+
+                // адрес для загрузки кадра
+                string path = "C:/Users/sergey/Desktop/Krishki/желтые крышки/" + i.ToString() + ".bmp"; // MVCS  blue
+
+                // Загружаем изображение в цвете (BGR)
+                Mat image = Cv2.ImRead(path, ImreadModes.Color);
+
+                // Создаём ч/б версию
+                Mat gray = new Mat();
+                Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
+
+                // 1. Получаем контур крышки
+                capsColor = GetSelectedCapValue();
+
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                largestContourObloy = GetCapContour(gray, image);
+
+                // 2. Считаем центр как среднее всех точек
+                double sumX = 0;
+                double sumY = 0;
+                foreach (var pt in largestContourObloy)
+                {
+                    sumX += pt.X;
+                    sumY += pt.Y;
+                }
+                var capCenter = new Point(
+                    (int)(sumX / largestContourObloy.Length),
+                    (int)(sumY / largestContourObloy.Length)
+                );
+
+                // 3. Считаем радиус как среднее расстояние до центра
+                double radius = 0;
+                foreach (var pt in largestContourObloy)
+                {
+                    double dx = pt.X - capCenter.X;
+                    double dy = pt.Y - capCenter.Y;
+                    radius += Math.Sqrt(dx * dx + dy * dy);
+                }
+                radius /= largestContourObloy.Length;
+
+                // 4. Подгоняем маску под размер изображения
+                if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
+                {
+                    CapRadiusMask?.Dispose();
+                    CapRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
+                }
+
+                // 5. Строим внешнее кольцо для анализа облоя
+                GetIdealCapMask(CapRadiusMask, capCenter, (float)(radius + 3.0f), (float)(radius + 3.0f + CAP_FLASH_OFFSET));
+
+                Cv2.BitwiseAnd(CapRadiusMask, blurChannel_2, blurChannel_2);
+                // 8. Эрозия 3x3: результат кладём во второй канал (аналог C++ blur_channels[1])
+                Cv2.MorphologyEx(blurChannel_2, blurChannel_1, MorphTypes.Erode, elementMask);
+
+                // 9. Подсчёт бинарных пикселей
+                int pixCount = Cv2.CountNonZero(blurChannel_1);
+                if (pixCount > MIN_BINARY_PIXELS_FOR_FLASH_DECISION)
+                {
+                    fullPathForObloyDefect = "C:/Users/sergey/Desktop/Krishki/TabletkiForms/TabletkiForms/дефектные крышки/облой/" + i.ToString() + ".bmp";
+                    Cv2.ImWrite(fullPathForObloyDefect, image);
+                }
+                stopwatch.Stop();
             }
-            var capCenter = new Point(
-                (int)(sumX / largestContourObloy.Length),
-                (int)(sumY / largestContourObloy.Length)
-            );
-
-            // 3. Считаем радиус как среднее расстояние до центра
-            double radius = 0;
-            foreach (var pt in largestContourObloy)
-            {
-                double dx = pt.X - capCenter.X;
-                double dy = pt.Y - capCenter.Y;
-                radius += Math.Sqrt(dx * dx + dy * dy);
-            }
-            radius /= largestContourObloy.Length;
-
-            // 4. Подгоняем маску под размер изображения
-            if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
-            {
-                CapRadiusMask?.Dispose();
-                CapRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
-            }
-
-            // 5. Строим внешнее кольцо для анализа облоя
-            GetIdealCapMask(CapRadiusMask, capCenter, (float)(radius + 3.0f), (float)(radius + 3.0f + CAP_FLASH_OFFSET));
-
-            Cv2.BitwiseAnd(CapRadiusMask, blurChannel_2, blurChannel_2);
-            // 8. Эрозия 3x3: результат кладём во второй канал (аналог C++ blur_channels[1])
-            Cv2.MorphologyEx(blurChannel_2, blurChannel_1, MorphTypes.Erode, elementMask);
-
-            // 9. Подсчёт бинарных пикселей
-            int pixCount = Cv2.CountNonZero(blurChannel_1);
-
-            stopwatch.Stop();
-            MessageBox.Show($"Время выполнения: {stopwatch.ElapsedMilliseconds} мс");
-            UpdateTextBox(pixelCount, pixCount);
-
-
         }
 
 
@@ -1393,31 +1399,78 @@ namespace KrishkiForms
             token.ThrowIfCancellationRequested();
 
             // 1. Получаем контур крышки
-            largestContourObloy = GetCapContour(gray, image);
-            if (largestContourObloy == null || largestContourObloy.Length == 0)
+            /*largestContourObloy = GetCapContour(gray, image);*/
+
+            #region Находим контур крышки для облоя
+            // Обработка изображения
+            Mat processed = image.Clone();
+            NonlinearBackgroundDecolorization(processed, capsColor);
+            //Fast_RGB_pseudo_color(processed, 64, HUE_LUT);
+            // Cv2.ImShow("sac", processed);
+
+            // Разделение каналов
+            Mat[] channels;
+            Cv2.Split(processed, out channels);
+
+            // Гауссово размытие (σ = 4) вместо Blur
+            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
+
+            // Бинаризация без инверсии (Otsu + Binary)
+            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
+
+            // Морфологические операции (как в C++)
+            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
+            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
+
+            // Поиск контуров
+            Point[][] contours;
+            HierarchyIndex[] hierarchy;
+            Cv2.FindContours(
+                channels[2],
+                out contours,
+                out hierarchy,
+                RetrievalModes.External,
+                ContourApproximationModes.ApproxNone
+            );
+
+            // Поиск самого длинного контура
+            int maxInd = 0;
+            int maxLength = 0;
+            for (int i = 0; i < contours.Length; i++)
+            {
+                if (contours[i].Length > maxLength)
+                {
+                    maxLength = contours[i].Length;
+                    maxInd = i;
+                }
+            }
+
+            if (contours[maxInd] == null || contours[maxInd].Length == 0)
                 return false;
+
+            #endregion Находим контур крышки для облоя
 
             // 2. Считаем центр как среднее всех точек
             double sumX = 0, sumY = 0;
-            foreach (var pt in largestContourObloy)
+            foreach (var pt in contours[maxInd])
             {
                 sumX += pt.X;
                 sumY += pt.Y;
             }
             var capCenter = new Point(
-                (int)(sumX / largestContourObloy.Length),
-                (int)(sumY / largestContourObloy.Length)
+                (int)(sumX / contours[maxInd].Length),
+                (int)(sumY / contours[maxInd].Length)
             );
 
             // 3. Считаем радиус
             double radius = 0;
-            foreach (var pt in largestContourObloy)
+            foreach (var pt in contours[maxInd])
             {
                 double dx = pt.X - capCenter.X;
                 double dy = pt.Y - capCenter.Y;
                 radius += Math.Sqrt(dx * dx + dy * dy);
             }
-            radius /= largestContourObloy.Length;
+            radius /= contours[maxInd].Length;
 
             // 4. Маска
             if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
@@ -1432,18 +1485,18 @@ namespace KrishkiForms
                             (float)(radius + 3.0f + CAP_FLASH_OFFSET));
 
             // 6. Маскирование
-            Cv2.BitwiseAnd(CapRadiusMask, blurChannel_2, blurChannel_2);
+            Cv2.BitwiseAnd(CapRadiusMask, channels[2], channels[2]);
 
             // 7. Эрозия
-            Cv2.MorphologyEx(blurChannel_2, blurChannel_1, MorphTypes.Erode, elementMask);
+            Cv2.MorphologyEx(channels[2], channels[1], MorphTypes.Erode, elementMask);
 
             // 8. Поиск облоев как контуров в eroded
             Point[][] obloyContours;
-            HierarchyIndex[] hierarchy;
+            HierarchyIndex[] hierarchyObloy;
             Cv2.FindContours(
-                blurChannel_1,
+                channels[1],
                 out obloyContours,
-                out hierarchy,
+                out hierarchyObloy,
                 RetrievalModes.External,
                 ContourApproximationModes.ApproxNone
             );
@@ -1461,7 +1514,7 @@ namespace KrishkiForms
             }
 
             // 10. Подсчёт бинарных пикселей
-            int pixCount = Cv2.CountNonZero(blurChannel_1);
+            int pixCount = Cv2.CountNonZero(channels[1]);
 
             return pixCount > minBinaryPixelsForFlashDecision;
         }
