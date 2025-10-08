@@ -1,6 +1,6 @@
 ﻿namespace KrishkiForms
 {
-    partial class Form2
+    partial class MainWorkForm
     {
         /// <summary>
         /// Required designer variable.

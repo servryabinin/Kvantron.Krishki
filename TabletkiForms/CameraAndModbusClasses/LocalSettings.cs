@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace GetImageProject
+namespace KrishkiForms.CameraAndModbusClasses
 {
 	public class LocalSettings
 	{
@@ -28,7 +28,7 @@ namespace GetImageProject
 					try
 					{
 
-						_instance = JsonSerializer.Deserialize<LocalSettings>(System.IO.File.ReadAllText("Settings.json"));
+						_instance = JsonSerializer.Deserialize<LocalSettings>(File.ReadAllText("Settings.json"));
 					}
 					catch (Exception ex)
 					{
@@ -45,7 +45,7 @@ namespace GetImageProject
 		public void Save()
 		{
 			string data = JsonSerializer.Serialize(this);
-			System.IO.File.WriteAllText("Settings.json", data);
+			File.WriteAllText("Settings.json", data);
 		}
 	}
 }

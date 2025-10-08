@@ -4,7 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace Kvantron.Ruberoid.Hardwares
+namespace KrishkiForms.CameraAndModbusClasses
 {
     public delegate void Image(Mat mat);
 
@@ -36,7 +36,7 @@ namespace Kvantron.Ruberoid.Hardwares
         public bool Streamed { get; set; } = false;
 
         public event Image SendImage;
-        private string SerialNumber { get; set; }        
+        public string SerialNumber { get; set; }        
         private MyCamera m_MyCamera = null;        
 
         bool isGrabbing = false;
@@ -45,19 +45,19 @@ namespace Kvantron.Ruberoid.Hardwares
 
         public HikCamera(string serialNumber)
         {
-            this.SerialNumber = serialNumber;
+            SerialNumber = serialNumber;
         }
 
         private bool SetAcquisitionMode()
         {            
             int nRet = m_MyCamera.MV_CC_SetEnumValue_NET("AcquisitionMode", (uint)AcquisitionMode);
-            return (MyCamera.MV_OK != nRet) ? false : true;            
+            return MyCamera.MV_OK != nRet ? false : true;            
         }
 
         public bool SetFrameRateControlEnable(bool FrameRateControlEnable)
         {            
             int nRet = m_MyCamera.MV_CC_SetBoolValue_NET("AcquisitionFrameRateEnable", FrameRateControlEnable);
-            return (MyCamera.MV_OK != nRet) ? false : true;
+            return MyCamera.MV_OK != nRet ? false : true;
         }
 
         public bool SetFrameRate(float FrameRate)
@@ -65,7 +65,7 @@ namespace Kvantron.Ruberoid.Hardwares
             if (FrameRate != 0)
             {                
                 int nRet = m_MyCamera.MV_CC_SetFrameRate_NET(FrameRate);
-                return (MyCamera.MV_OK == nRet);
+                return MyCamera.MV_OK == nRet;
             }
             else return false;            
         }
@@ -73,7 +73,7 @@ namespace Kvantron.Ruberoid.Hardwares
         public bool SetTriggerMode()
         {            
             int nRet = m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", Convert.ToUInt32(TriggerMode));
-            return (MyCamera.MV_OK == nRet);
+            return MyCamera.MV_OK == nRet;
         }
 
         public bool SetExposureTime()
@@ -81,7 +81,7 @@ namespace Kvantron.Ruberoid.Hardwares
             if (ExposureTime != 0)
             {               
                 int nRet = m_MyCamera.MV_CC_SetExposureTime_NET(ExposureTime);
-                return (MyCamera.MV_OK == nRet);
+                return MyCamera.MV_OK == nRet;
             }
             else return false;            
         }
@@ -89,7 +89,7 @@ namespace Kvantron.Ruberoid.Hardwares
         public bool SetGain()
         {            
             int nRet = m_MyCamera.MV_CC_SetGain_NET(Gain);
-            return (MyCamera.MV_OK == nRet);
+            return MyCamera.MV_OK == nRet;
         }
 
         public bool SetHeight()
@@ -97,7 +97,7 @@ namespace Kvantron.Ruberoid.Hardwares
             if (Height != 0)
             {
                 int nRet = m_MyCamera.MV_CC_SetHeight_NET(Height);
-                return (MyCamera.MV_OK == nRet);
+                return MyCamera.MV_OK == nRet;
             }
             else return false;
         }
@@ -107,7 +107,7 @@ namespace Kvantron.Ruberoid.Hardwares
             if (Width != 0)
             {
                 int nRet = m_MyCamera.MV_CC_SetWidth_NET(Width);
-                return (MyCamera.MV_OK == nRet);
+                return MyCamera.MV_OK == nRet;
             }
             else return false;
         }
@@ -117,7 +117,7 @@ namespace Kvantron.Ruberoid.Hardwares
             if (AOIWidth != 0)
             {                
                 int nRet = m_MyCamera.MV_CC_SetIntValue_NET("AutoFunctionAOIWidth", AOIWidth);
-                return (MyCamera.MV_OK == nRet);
+                return MyCamera.MV_OK == nRet;
             }
             else return false;            
         }
@@ -126,7 +126,7 @@ namespace Kvantron.Ruberoid.Hardwares
             if (AOIHeight != 0)
             {                
                 int nRet = m_MyCamera.MV_CC_SetIntValue_NET("AutoFunctionAOIHeight", AOIHeight);
-                return (MyCamera.MV_OK == nRet);
+                return MyCamera.MV_OK == nRet;
             }
             else return false;            
         }
@@ -134,13 +134,13 @@ namespace Kvantron.Ruberoid.Hardwares
         public bool SetAOIOffsetX()
         {            
             int nRet = m_MyCamera.MV_CC_SetIntValue_NET("AutoFunctionAOIOffsetX", AOIOffsetX);            
-            return (MyCamera.MV_OK == nRet);
+            return MyCamera.MV_OK == nRet;
         }
 
         public bool SetAOIOffsetY()
         {            
             int nRet = m_MyCamera.MV_CC_SetIntValue_NET("AutoFunctionAOIOffsetY", AOIOffsetY);
-            return (MyCamera.MV_OK == nRet);
+            return MyCamera.MV_OK == nRet;
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace Kvantron.Ruberoid.Hardwares
             i += Convert.ToInt32(SetAOIOffsetX());
             i += Convert.ToInt32(SetAOIOffsetY());
 
-            return (i != 0); 
+            return i != 0; 
         }
 
         /// <summary>
@@ -177,66 +177,89 @@ namespace Kvantron.Ruberoid.Hardwares
                     nDeviceNum = 0
                 };
                 int nRet = MyCamera.MV_CC_EnumDevices_NET(MyCamera.MV_GIGE_DEVICE | MyCamera.MV_USB_DEVICE, ref m_stDeviceList);
-                if (0 != nRet)
+                if (nRet != MyCamera.MV_OK)
                     return false;
 
                 if (m_stDeviceList.nDeviceNum == 0) return false;
-                
+
+                // Будем искать устройство с совпадающим серийником, если он задан.
+                bool opened = false;
+
                 for (int i = 0; i < m_stDeviceList.nDeviceNum; i++)
                 {
                     MyCamera.MV_CC_DEVICE_INFO device = (MyCamera.MV_CC_DEVICE_INFO)Marshal.PtrToStructure(m_stDeviceList.pDeviceInfo[i], typeof(MyCamera.MV_CC_DEVICE_INFO));
+
+                    string deviceSerial = string.Empty;
+
                     if (device.nTLayerType == MyCamera.MV_GIGE_DEVICE)
                     {
-                        MyCamera.MV_GIGE_DEVICE_INFO gigeInfo = (MyCamera.MV_GIGE_DEVICE_INFO)MyCamera.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MyCamera.MV_GIGE_DEVICE_INFO));                        
+                        MyCamera.MV_GIGE_DEVICE_INFO gigeInfo = (MyCamera.MV_GIGE_DEVICE_INFO)MyCamera.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MyCamera.MV_GIGE_DEVICE_INFO));
+                        deviceSerial = new string(gigeInfo.chSerialNumber).TrimEnd('\0');
+                    }
+                    else if (device.nTLayerType == MyCamera.MV_USB_DEVICE)
+                    {
+                        MyCamera.MV_USB3_DEVICE_INFO usbInfo = (MyCamera.MV_USB3_DEVICE_INFO)MyCamera.ByteToStruct(device.SpecialInfo.stUsb3VInfo, typeof(MyCamera.MV_USB3_DEVICE_INFO));
+                        deviceSerial = new string(usbInfo.chSerialNumber).TrimEnd('\0');
+                    }
 
-                        /*if(gigeInfo.chSerialNumber == SerialNumber)
-                        {*/
-                            //Open device
-                            m_MyCamera = new MyCamera();
-                            if (m_MyCamera == null)
-                                return false;                                                    
+                    // Если задан SerialNumber — пропускаем все, что не совпадает
+                    if (!string.IsNullOrEmpty(this.SerialNumber) && !string.Equals(deviceSerial, this.SerialNumber, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
 
-                            nRet = m_MyCamera.MV_CC_CreateDevice_NET(ref device);
-                            if (MyCamera.MV_OK != nRet)
-                                return false;                            
+                    // Попытка открыть устройство
+                    m_MyCamera = new MyCamera();
+                    if (m_MyCamera == null)
+                        continue;
 
-                            nRet = m_MyCamera.MV_CC_OpenDevice_NET();
+                    nRet = m_MyCamera.MV_CC_CreateDevice_NET(ref device);
+                    if (MyCamera.MV_OK != nRet)
+                    {
+                        m_MyCamera = null;
+                        continue;
+                    }
 
-                            MyCamera.MVCC_ENUMVALUE pix_format = new MyCamera.MVCC_ENUMVALUE();
-                            m_MyCamera.MV_CC_GetPixelFormat_NET(ref pix_format);
+                    nRet = m_MyCamera.MV_CC_OpenDevice_NET();
 
-                            if (MyCamera.MV_OK != nRet)
-                            {
-                                m_MyCamera.MV_CC_DestroyDevice_NET();                                
-                                return false;
-                            }
+                    if (MyCamera.MV_OK != nRet)
+                    {
+                        try
+                        {
+                            m_MyCamera.MV_CC_DestroyDevice_NET();
+                        }
+                        catch { }
+                        m_MyCamera = null;
+                        continue;
+                    }
 
+                    // Detection network optimal package size (for GigE)
+                    if (device.nTLayerType == MyCamera.MV_GIGE_DEVICE)
+                    {
+                        int nPacketSize = m_MyCamera.MV_CC_GetOptimalPacketSize_NET();
+                        if (nPacketSize > 0)
+                        {
+                            m_MyCamera.MV_CC_SetIntValue_NET("GevSCPSPacketSize", (uint)nPacketSize);
+                        }
+                    }
 
-
-                            //Detection network optimal package size(It only works for the GigE camera)
-                            if (device.nTLayerType == MyCamera.MV_GIGE_DEVICE)
-                            {
-                                int nPacketSize = m_MyCamera.MV_CC_GetOptimalPacketSize_NET();
-                                if (nPacketSize > 0)
-                                {
-                                    nRet = m_MyCamera.MV_CC_SetIntValue_NET("GevSCPSPacketSize", (uint)nPacketSize);                                    
-                                }                                
-                            }
-							Connected = true;
-							return true;						
-                        //}                        
-                    }                    
+                    // Всё успешно
+                    Connected = true;
+                    opened = true;
+                    break;
                 }
-                return false;
-                               
+
+                return opened;
             }
             catch (Exception ex)
             {
-                Connected = false;                
+                // Логируем, но не выбрасываем
+                Console.WriteLine($"HikCamera.Open exception: {ex.Message}");
+                Connected = false;
+                return false;
             }
+        }
 
-            return Connected;
-        }        
 
         /// <summary>
         /// Функция, которая запускает сьемку с камеры
@@ -293,7 +316,7 @@ namespace Kvantron.Ruberoid.Hardwares
         public bool ExecuteTrigger()
         {            
             int nRet = m_MyCamera.MV_CC_SetCommandValue_NET("TriggerSoftware");
-            return (MyCamera.MV_OK == nRet);
+            return MyCamera.MV_OK == nRet;
         }
 
         /// <summary>

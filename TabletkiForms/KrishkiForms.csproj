@@ -47,10 +47,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Kvantron.dll">
+    <None Update="DllFiles\Kvantron.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="MvCameraControl.Net.dll">
+    <None Update="DllFiles\MvCameraControl.Net.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

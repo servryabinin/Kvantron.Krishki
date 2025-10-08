@@ -5,9 +5,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kvantron.Hardware.SmartDio
+namespace KrishkiForms.CameraAndModbusClasses
 {
-    internal class ModbusTCP
+    public class ModbusTCP
     {
         private TcpClient tcpClient;
         private NetworkStream stream;
@@ -20,11 +20,11 @@ namespace Kvantron.Hardware.SmartDio
         public bool Connected { get { return connected; } }
         public ModbusTCP(string ip, int port)
         {
-            this.ipAddress = ip;
+            ipAddress = ip;
             this.port = port;
         }
 
-        public void Connect()
+        public bool Connect()
         {
             tcpClient = new TcpClient();
             IAsyncResult asyncResult = tcpClient.BeginConnect(ipAddress, port, null, null);
@@ -34,6 +34,14 @@ namespace Kvantron.Hardware.SmartDio
             stream = tcpClient.GetStream();
             stream.ReadTimeout = connectTimeout;
             connected = true;
+            if (connected)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Disconnect()
@@ -102,7 +110,7 @@ namespace Kvantron.Hardware.SmartDio
                     throw new Exception("Invalid Modbus response");
 
                 // Извлекаем значение регистра (16-битное число)
-                ushort value = (ushort)((response[9] << 8) | response[10]);
+                ushort value = (ushort)(response[9] << 8 | response[10]);
 
                 // Возвращаем 0 или 1 (если регистр хранит булево значение)
                 return value != 0 ? 1 : 0;
