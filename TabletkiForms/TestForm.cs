@@ -2280,7 +2280,7 @@ namespace KrishkiForms
 
             stopwatch.Stop();
             //UpdateTextBox(timeUnderfill, stopwatch.ElapsedMilliseconds);
-            UpdatePictureBox(underfillPictureBox, image);
+            //UpdatePictureBox(underfillPictureBox, image);
 
             return underfillResult;
         }

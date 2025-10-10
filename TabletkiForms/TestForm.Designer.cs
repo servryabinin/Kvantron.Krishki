@@ -63,20 +63,7 @@
             inclusionDef = new TextBox();
             label49 = new Label();
             imagesGroup = new GroupBox();
-            defectsTabControl = new TabControl();
-            originalTabPage = new TabPage();
             originPb = new PictureBox();
-            label27 = new Label();
-            ovalityTabPage = new TabPage();
-            ovalityPictureBox = new PictureBox();
-            inclusionTabPage = new TabPage();
-            inclusionPictureBox = new PictureBox();
-            inpaintTabPage = new TabPage();
-            inpaintPictureBox = new PictureBox();
-            obloyTabPage = new TabPage();
-            obloyPictureBox = new PictureBox();
-            underfillTabPage = new TabPage();
-            underfillPictureBox = new PictureBox();
             leftPanel = new Panel();
             panel1 = new Panel();
             recognizeButton = new Button();
@@ -191,19 +178,7 @@
             obloyDefectPanel.SuspendLayout();
             inclusionDefectPanel.SuspendLayout();
             imagesGroup.SuspendLayout();
-            defectsTabControl.SuspendLayout();
-            originalTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
-            ovalityTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)ovalityPictureBox).BeginInit();
-            inclusionTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)inclusionPictureBox).BeginInit();
-            inpaintTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)inpaintPictureBox).BeginInit();
-            obloyTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)obloyPictureBox).BeginInit();
-            underfillTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)underfillPictureBox).BeginInit();
             leftPanel.SuspendLayout();
             panel1.SuspendLayout();
             panel8.SuspendLayout();
@@ -236,10 +211,9 @@
             mainPanel.Controls.Add(rightPanel);
             mainPanel.Controls.Add(leftPanel);
             mainPanel.Controls.Add(controlPanel);
-            mainPanel.Dock = DockStyle.Fill;
             mainPanel.Location = new Point(0, 0);
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(1400, 858);
+            mainPanel.Size = new Size(1207, 765);
             mainPanel.TabIndex = 0;
             // 
             // rightPanel
@@ -247,10 +221,10 @@
             rightPanel.BackColor = Color.FromArgb(240, 245, 255);
             rightPanel.Controls.Add(resultsGroup);
             rightPanel.Controls.Add(imagesGroup);
-            rightPanel.Location = new Point(370, 0);
+            rightPanel.Location = new Point(371, 0);
             rightPanel.Name = "rightPanel";
             rightPanel.Padding = new Padding(10);
-            rightPanel.Size = new Size(1030, 821);
+            rightPanel.Size = new Size(824, 765);
             rightPanel.TabIndex = 2;
             // 
             // resultsGroup
@@ -263,13 +237,12 @@
             resultsGroup.Controls.Add(inpaintDefectPanel);
             resultsGroup.Controls.Add(obloyDefectPanel);
             resultsGroup.Controls.Add(inclusionDefectPanel);
-            resultsGroup.Dock = DockStyle.Top;
             resultsGroup.FlatStyle = FlatStyle.Flat;
             resultsGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
             resultsGroup.ForeColor = Color.FromArgb(4, 85, 191);
             resultsGroup.Location = new Point(10, 10);
             resultsGroup.Name = "resultsGroup";
-            resultsGroup.Size = new Size(1010, 166);
+            resultsGroup.Size = new Size(803, 168);
             resultsGroup.TabIndex = 1;
             resultsGroup.TabStop = false;
             resultsGroup.Text = "Результаты анализа";
@@ -333,7 +306,7 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.лого;
-            pictureBox1.Location = new Point(772, 36);
+            pictureBox1.Location = new Point(566, 36);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(231, 117);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -623,164 +596,25 @@
             // imagesGroup
             // 
             imagesGroup.BackColor = Color.White;
-            imagesGroup.Controls.Add(defectsTabControl);
+            imagesGroup.Controls.Add(originPb);
             imagesGroup.FlatStyle = FlatStyle.Flat;
             imagesGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
             imagesGroup.ForeColor = Color.FromArgb(4, 85, 191);
-            imagesGroup.Location = new Point(10, 10);
+            imagesGroup.Location = new Point(10, 177);
             imagesGroup.Name = "imagesGroup";
-            imagesGroup.Size = new Size(1010, 805);
+            imagesGroup.Size = new Size(803, 579);
             imagesGroup.TabIndex = 0;
             imagesGroup.TabStop = false;
-            imagesGroup.Text = "Изображения";
-            // 
-            // defectsTabControl
-            // 
-            defectsTabControl.Controls.Add(originalTabPage);
-            defectsTabControl.Controls.Add(ovalityTabPage);
-            defectsTabControl.Controls.Add(inclusionTabPage);
-            defectsTabControl.Controls.Add(inpaintTabPage);
-            defectsTabControl.Controls.Add(obloyTabPage);
-            defectsTabControl.Controls.Add(underfillTabPage);
-            defectsTabControl.Location = new Point(3, 21);
-            defectsTabControl.Name = "defectsTabControl";
-            defectsTabControl.SelectedIndex = 0;
-            defectsTabControl.Size = new Size(1004, 778);
-            defectsTabControl.TabIndex = 0;
-            // 
-            // originalTabPage
-            // 
-            originalTabPage.Controls.Add(originPb);
-            originalTabPage.Controls.Add(label27);
-            originalTabPage.Location = new Point(4, 26);
-            originalTabPage.Name = "originalTabPage";
-            originalTabPage.Padding = new Padding(3);
-            originalTabPage.Size = new Size(996, 748);
-            originalTabPage.TabIndex = 0;
-            originalTabPage.Text = "Оригинал";
-            originalTabPage.UseVisualStyleBackColor = true;
+            imagesGroup.Text = "Изображение с камеры";
             // 
             // originPb
             // 
-            originPb.BorderStyle = BorderStyle.Fixed3D;
-            originPb.Location = new Point(3, 125);
+            originPb.Location = new Point(15, 25);
             originPb.Name = "originPb";
-            originPb.Size = new Size(990, 626);
-            originPb.SizeMode = PictureBoxSizeMode.Zoom;
+            originPb.Size = new Size(774, 547);
+            originPb.SizeMode = PictureBoxSizeMode.StretchImage;
             originPb.TabIndex = 0;
             originPb.TabStop = false;
-            // 
-            // label27
-            // 
-            label27.AutoSize = true;
-            label27.Font = new Font("Segoe UI", 8.25F);
-            label27.ForeColor = Color.Black;
-            label27.Location = new Point(115, 256);
-            label27.Name = "label27";
-            label27.Size = new Size(78, 13);
-            label27.TabIndex = 10;
-            label27.Text = "Статус ПР205:";
-            // 
-            // ovalityTabPage
-            // 
-            ovalityTabPage.Controls.Add(ovalityPictureBox);
-            ovalityTabPage.Location = new Point(4, 26);
-            ovalityTabPage.Name = "ovalityTabPage";
-            ovalityTabPage.Padding = new Padding(3);
-            ovalityTabPage.Size = new Size(996, 748);
-            ovalityTabPage.TabIndex = 1;
-            ovalityTabPage.Text = "Овальность";
-            ovalityTabPage.UseVisualStyleBackColor = true;
-            // 
-            // ovalityPictureBox
-            // 
-            ovalityPictureBox.Dock = DockStyle.Fill;
-            ovalityPictureBox.Location = new Point(3, 3);
-            ovalityPictureBox.Name = "ovalityPictureBox";
-            ovalityPictureBox.Size = new Size(990, 742);
-            ovalityPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            ovalityPictureBox.TabIndex = 0;
-            ovalityPictureBox.TabStop = false;
-            // 
-            // inclusionTabPage
-            // 
-            inclusionTabPage.Controls.Add(inclusionPictureBox);
-            inclusionTabPage.Location = new Point(4, 26);
-            inclusionTabPage.Name = "inclusionTabPage";
-            inclusionTabPage.Size = new Size(996, 748);
-            inclusionTabPage.TabIndex = 2;
-            inclusionTabPage.Text = "Вкрапления";
-            inclusionTabPage.UseVisualStyleBackColor = true;
-            // 
-            // inclusionPictureBox
-            // 
-            inclusionPictureBox.Dock = DockStyle.Fill;
-            inclusionPictureBox.Location = new Point(0, 0);
-            inclusionPictureBox.Name = "inclusionPictureBox";
-            inclusionPictureBox.Size = new Size(996, 748);
-            inclusionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            inclusionPictureBox.TabIndex = 0;
-            inclusionPictureBox.TabStop = false;
-            // 
-            // inpaintTabPage
-            // 
-            inpaintTabPage.Controls.Add(inpaintPictureBox);
-            inpaintTabPage.Location = new Point(4, 26);
-            inpaintTabPage.Name = "inpaintTabPage";
-            inpaintTabPage.Size = new Size(996, 748);
-            inpaintTabPage.TabIndex = 3;
-            inpaintTabPage.Text = "Непрокрасы";
-            inpaintTabPage.UseVisualStyleBackColor = true;
-            // 
-            // inpaintPictureBox
-            // 
-            inpaintPictureBox.Dock = DockStyle.Fill;
-            inpaintPictureBox.Location = new Point(0, 0);
-            inpaintPictureBox.Name = "inpaintPictureBox";
-            inpaintPictureBox.Size = new Size(996, 748);
-            inpaintPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            inpaintPictureBox.TabIndex = 0;
-            inpaintPictureBox.TabStop = false;
-            // 
-            // obloyTabPage
-            // 
-            obloyTabPage.Controls.Add(obloyPictureBox);
-            obloyTabPage.Location = new Point(4, 26);
-            obloyTabPage.Name = "obloyTabPage";
-            obloyTabPage.Size = new Size(996, 748);
-            obloyTabPage.TabIndex = 4;
-            obloyTabPage.Text = "Облой";
-            obloyTabPage.UseVisualStyleBackColor = true;
-            // 
-            // obloyPictureBox
-            // 
-            obloyPictureBox.Dock = DockStyle.Fill;
-            obloyPictureBox.Location = new Point(0, 0);
-            obloyPictureBox.Name = "obloyPictureBox";
-            obloyPictureBox.Size = new Size(996, 748);
-            obloyPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            obloyPictureBox.TabIndex = 0;
-            obloyPictureBox.TabStop = false;
-            // 
-            // underfillTabPage
-            // 
-            underfillTabPage.Controls.Add(underfillPictureBox);
-            underfillTabPage.Location = new Point(4, 26);
-            underfillTabPage.Name = "underfillTabPage";
-            underfillTabPage.Size = new Size(996, 748);
-            underfillTabPage.TabIndex = 5;
-            underfillTabPage.Text = "Неполный залив";
-            underfillTabPage.UseVisualStyleBackColor = true;
-            // 
-            // underfillPictureBox
-            // 
-            underfillPictureBox.Dock = DockStyle.Fill;
-            underfillPictureBox.Location = new Point(0, 0);
-            underfillPictureBox.Name = "underfillPictureBox";
-            underfillPictureBox.Size = new Size(996, 748);
-            underfillPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            underfillPictureBox.TabIndex = 0;
-            underfillPictureBox.TabStop = false;
             // 
             // leftPanel
             // 
@@ -800,9 +634,9 @@
             panel1.BackColor = SystemColors.ButtonHighlight;
             panel1.BorderStyle = BorderStyle.Fixed3D;
             panel1.Controls.Add(recognizeButton);
-            panel1.Location = new Point(17, 739);
+            panel1.Location = new Point(17, 700);
             panel1.Name = "panel1";
-            panel1.Size = new Size(336, 76);
+            panel1.Size = new Size(336, 56);
             panel1.TabIndex = 28;
             // 
             // recognizeButton
@@ -811,7 +645,7 @@
             recognizeButton.FlatAppearance.BorderSize = 0;
             recognizeButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             recognizeButton.ForeColor = Color.White;
-            recognizeButton.Location = new Point(18, 20);
+            recognizeButton.Location = new Point(18, 7);
             recognizeButton.Name = "recognizeButton";
             recognizeButton.Size = new Size(295, 40);
             recognizeButton.TabIndex = 4;
@@ -827,7 +661,7 @@
             panel8.Controls.Add(button3);
             panel8.Location = new Point(17, 596);
             panel8.Name = "panel8";
-            panel8.Size = new Size(165, 137);
+            panel8.Size = new Size(165, 98);
             panel8.TabIndex = 27;
             // 
             // loadImageButton
@@ -836,7 +670,7 @@
             loadImageButton.FlatAppearance.BorderSize = 0;
             loadImageButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             loadImageButton.ForeColor = Color.White;
-            loadImageButton.Location = new Point(18, 12);
+            loadImageButton.Location = new Point(18, 3);
             loadImageButton.Name = "loadImageButton";
             loadImageButton.Size = new Size(120, 40);
             loadImageButton.TabIndex = 1;
@@ -850,7 +684,7 @@
             button3.FlatAppearance.BorderSize = 0;
             button3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             button3.ForeColor = Color.White;
-            button3.Location = new Point(18, 71);
+            button3.Location = new Point(18, 48);
             button3.Name = "button3";
             button3.Size = new Size(120, 40);
             button3.TabIndex = 0;
@@ -866,7 +700,7 @@
             panel5.Controls.Add(stopStreamButton);
             panel5.Location = new Point(188, 594);
             panel5.Name = "panel5";
-            panel5.Size = new Size(168, 137);
+            panel5.Size = new Size(168, 100);
             panel5.TabIndex = 26;
             // 
             // startStreamButton
@@ -875,7 +709,7 @@
             startStreamButton.FlatAppearance.BorderSize = 0;
             startStreamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             startStreamButton.ForeColor = Color.White;
-            startStreamButton.Location = new Point(22, 14);
+            startStreamButton.Location = new Point(22, 5);
             startStreamButton.Name = "startStreamButton";
             startStreamButton.Size = new Size(120, 40);
             startStreamButton.TabIndex = 2;
@@ -889,7 +723,7 @@
             stopStreamButton.FlatAppearance.BorderSize = 0;
             stopStreamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             stopStreamButton.ForeColor = Color.White;
-            stopStreamButton.Location = new Point(22, 73);
+            stopStreamButton.Location = new Point(22, 50);
             stopStreamButton.Name = "stopStreamButton";
             stopStreamButton.Size = new Size(120, 40);
             stopStreamButton.TabIndex = 3;
@@ -2043,7 +1877,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1400, 858);
+            ClientSize = new Size(1195, 767);
             Controls.Add(mainPanel);
             Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             MinimumSize = new Size(1200, 800);
@@ -2068,20 +1902,7 @@
             inclusionDefectPanel.ResumeLayout(false);
             inclusionDefectPanel.PerformLayout();
             imagesGroup.ResumeLayout(false);
-            defectsTabControl.ResumeLayout(false);
-            originalTabPage.ResumeLayout(false);
-            originalTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)originPb).EndInit();
-            ovalityTabPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)ovalityPictureBox).EndInit();
-            inclusionTabPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)inclusionPictureBox).EndInit();
-            inpaintTabPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)inpaintPictureBox).EndInit();
-            obloyTabPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)obloyPictureBox).EndInit();
-            underfillTabPage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)underfillPictureBox).EndInit();
             leftPanel.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel8.ResumeLayout(false);
@@ -2137,19 +1958,6 @@
         private System.Windows.Forms.GroupBox foldersGroup;
         private System.Windows.Forms.Panel statusPanel;
         private System.Windows.Forms.Panel controlButtonsPanel;
-        private System.Windows.Forms.TabControl defectsTabControl;
-        private System.Windows.Forms.TabPage originalTabPage;
-        private System.Windows.Forms.TabPage ovalityTabPage;
-        private System.Windows.Forms.TabPage inclusionTabPage;
-        private System.Windows.Forms.TabPage inpaintTabPage;
-        private System.Windows.Forms.TabPage obloyTabPage;
-        private System.Windows.Forms.TabPage underfillTabPage;
-        private System.Windows.Forms.PictureBox originPb;
-        private System.Windows.Forms.PictureBox ovalityPictureBox;
-        private System.Windows.Forms.PictureBox inclusionPictureBox;
-        private System.Windows.Forms.PictureBox inpaintPictureBox;
-        private System.Windows.Forms.PictureBox obloyPictureBox;
-        private System.Windows.Forms.PictureBox underfillPictureBox;
         private System.Windows.Forms.Label label51;
         private System.Windows.Forms.Label label50;
         private System.Windows.Forms.Label label49;
@@ -2254,7 +2062,6 @@
         private CheckBox obloyCB;
         private PictureBox pictureBox1;
         private Label prStatus;
-        private Label label27;
         private Panel pr205ParamPanel;
         private Label label40;
         private Button connectPrButton;
@@ -2274,5 +2081,6 @@
         private TextBox generalDefectsCountTb;
         private Label label33;
         private TextBox generalTime;
+        private PictureBox originPb;
     }
 }
