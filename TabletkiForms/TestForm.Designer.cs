@@ -1,0 +1,2276 @@
+﻿namespace KrishkiForms
+{
+    partial class TestForm
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            mainPanel = new Panel();
+            rightPanel = new Panel();
+            resultsGroup = new GroupBox();
+            generalPanel = new Panel();
+            label32 = new Label();
+            generalDefectsCountTb = new TextBox();
+            label33 = new Label();
+            generalTime = new TextBox();
+            pictureBox1 = new PictureBox();
+            nedolivDefectPanel = new Panel();
+            nedolivTime = new TextBox();
+            label20 = new Label();
+            nedolivDef = new TextBox();
+            label51 = new Label();
+            ovalityDefectPanel = new Panel();
+            timeOvality = new TextBox();
+            ovalityDef = new TextBox();
+            label17 = new Label();
+            label48 = new Label();
+            inpaintDefectPanel = new Panel();
+            inpaintTime = new TextBox();
+            label19 = new Label();
+            label50 = new Label();
+            InpaintDef = new TextBox();
+            obloyDefectPanel = new Panel();
+            label14 = new Label();
+            obloyTime = new TextBox();
+            label7 = new Label();
+            obloyDef = new TextBox();
+            inclusionDefectPanel = new Panel();
+            inclusionTime = new TextBox();
+            label18 = new Label();
+            inclusionDef = new TextBox();
+            label49 = new Label();
+            imagesGroup = new GroupBox();
+            defectsTabControl = new TabControl();
+            originalTabPage = new TabPage();
+            originPb = new PictureBox();
+            label27 = new Label();
+            ovalityTabPage = new TabPage();
+            ovalityPictureBox = new PictureBox();
+            inclusionTabPage = new TabPage();
+            inclusionPictureBox = new PictureBox();
+            inpaintTabPage = new TabPage();
+            inpaintPictureBox = new PictureBox();
+            obloyTabPage = new TabPage();
+            obloyPictureBox = new PictureBox();
+            underfillTabPage = new TabPage();
+            underfillPictureBox = new PictureBox();
+            leftPanel = new Panel();
+            panel1 = new Panel();
+            recognizeButton = new Button();
+            panel8 = new Panel();
+            loadImageButton = new Button();
+            button3 = new Button();
+            panel5 = new Panel();
+            startStreamButton = new Button();
+            stopStreamButton = new Button();
+            settingsTabControl = new TabControl();
+            defectsTabPage = new TabPage();
+            defectsSettingsGroup = new GroupBox();
+            inpaintDefectParamPanel = new Panel();
+            inpaintPb = new PictureBox();
+            whiteThresoldTx = new TextBox();
+            inpaintCB = new CheckBox();
+            label29 = new Label();
+            label28 = new Label();
+            minSquareInpaint = new TextBox();
+            inclusionParamDefectPanel = new Panel();
+            maxSquareInclusion = new TextBox();
+            inclusionCB = new CheckBox();
+            label22 = new Label();
+            inclusionPb = new PictureBox();
+            minSquareInclusion = new TextBox();
+            label24 = new Label();
+            label23 = new Label();
+            circleCoefTx = new TextBox();
+            comboBox1 = new ComboBox();
+            label43 = new Label();
+            obloyDefectParamPanel = new Panel();
+            obloyPixCount = new TextBox();
+            obloyPb = new PictureBox();
+            label47 = new Label();
+            obloyCB = new CheckBox();
+            defectTypeComboBox = new ComboBox();
+            label2 = new Label();
+            ovalityParamsPanel = new Panel();
+            ovalityCB = new CheckBox();
+            ovalityCoef = new TextBox();
+            ovalityPb = new PictureBox();
+            label21 = new Label();
+            applyDefectButton = new Button();
+            foldersTabPage = new TabPage();
+            foldersGroup = new GroupBox();
+            browseUnderfillButton = new Button();
+            underfillPathTextBox = new TextBox();
+            label13 = new Label();
+            browseObloyButton = new Button();
+            obloyPathTextBox = new TextBox();
+            label12 = new Label();
+            browseInpaintButton = new Button();
+            inpaintPathTextBox = new TextBox();
+            label11 = new Label();
+            browseInclusionButton = new Button();
+            inclusionPathTextBox = new TextBox();
+            label10 = new Label();
+            browseOvalityButton = new Button();
+            ovalityPathTextBox = new TextBox();
+            label9 = new Label();
+            browseOriginalButton = new Button();
+            originalPathTextBox = new TextBox();
+            label8 = new Label();
+            applyFoldersButton = new Button();
+            cameraTabPage = new TabPage();
+            cameraSettingsGroup = new GroupBox();
+            connectCameraButton = new Button();
+            cameraIpTextBox = new TextBox();
+            label1 = new Label();
+            cameraParamsPanel = new Panel();
+            prStatusLabel = new Label();
+            gainTb = new TextBox();
+            label16 = new Label();
+            camStatus = new Label();
+            label6 = new Label();
+            exposureTb = new TextBox();
+            label15 = new Label();
+            label5 = new Label();
+            widthTb = new TextBox();
+            label4 = new Label();
+            heightTb = new TextBox();
+            label3 = new Label();
+            applySettingsButton = new Button();
+            saveSettingsButton = new Button();
+            loadSettingsButton = new Button();
+            pr205TabPage = new TabPage();
+            pr205Group = new GroupBox();
+            prIpTextBox = new TextBox();
+            pr205ParamPanel = new Panel();
+            delayTb = new TextBox();
+            label25 = new Label();
+            pr205PortTb = new TextBox();
+            label26 = new Label();
+            label30 = new Label();
+            prStatus = new Label();
+            connectPrButton = new Button();
+            label40 = new Label();
+            ApplyPr = new Button();
+            savePrSettings = new Button();
+            loadPrSettings = new Button();
+            controlPanel = new Panel();
+            statusPanel = new Panel();
+            controlButtonsPanel = new Panel();
+            mainPanel.SuspendLayout();
+            rightPanel.SuspendLayout();
+            resultsGroup.SuspendLayout();
+            generalPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            nedolivDefectPanel.SuspendLayout();
+            ovalityDefectPanel.SuspendLayout();
+            inpaintDefectPanel.SuspendLayout();
+            obloyDefectPanel.SuspendLayout();
+            inclusionDefectPanel.SuspendLayout();
+            imagesGroup.SuspendLayout();
+            defectsTabControl.SuspendLayout();
+            originalTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
+            ovalityTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ovalityPictureBox).BeginInit();
+            inclusionTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)inclusionPictureBox).BeginInit();
+            inpaintTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)inpaintPictureBox).BeginInit();
+            obloyTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)obloyPictureBox).BeginInit();
+            underfillTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)underfillPictureBox).BeginInit();
+            leftPanel.SuspendLayout();
+            panel1.SuspendLayout();
+            panel8.SuspendLayout();
+            panel5.SuspendLayout();
+            settingsTabControl.SuspendLayout();
+            defectsTabPage.SuspendLayout();
+            defectsSettingsGroup.SuspendLayout();
+            inpaintDefectParamPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)inpaintPb).BeginInit();
+            inclusionParamDefectPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)inclusionPb).BeginInit();
+            obloyDefectParamPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)obloyPb).BeginInit();
+            ovalityParamsPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ovalityPb).BeginInit();
+            foldersTabPage.SuspendLayout();
+            foldersGroup.SuspendLayout();
+            cameraTabPage.SuspendLayout();
+            cameraSettingsGroup.SuspendLayout();
+            cameraParamsPanel.SuspendLayout();
+            pr205TabPage.SuspendLayout();
+            pr205Group.SuspendLayout();
+            pr205ParamPanel.SuspendLayout();
+            controlPanel.SuspendLayout();
+            SuspendLayout();
+            // 
+            // mainPanel
+            // 
+            mainPanel.BackColor = Color.White;
+            mainPanel.Controls.Add(rightPanel);
+            mainPanel.Controls.Add(leftPanel);
+            mainPanel.Controls.Add(controlPanel);
+            mainPanel.Dock = DockStyle.Fill;
+            mainPanel.Location = new Point(0, 0);
+            mainPanel.Name = "mainPanel";
+            mainPanel.Size = new Size(1400, 858);
+            mainPanel.TabIndex = 0;
+            // 
+            // rightPanel
+            // 
+            rightPanel.BackColor = Color.FromArgb(240, 245, 255);
+            rightPanel.Controls.Add(resultsGroup);
+            rightPanel.Controls.Add(imagesGroup);
+            rightPanel.Location = new Point(370, 0);
+            rightPanel.Name = "rightPanel";
+            rightPanel.Padding = new Padding(10);
+            rightPanel.Size = new Size(1030, 821);
+            rightPanel.TabIndex = 2;
+            // 
+            // resultsGroup
+            // 
+            resultsGroup.BackColor = Color.White;
+            resultsGroup.Controls.Add(generalPanel);
+            resultsGroup.Controls.Add(pictureBox1);
+            resultsGroup.Controls.Add(nedolivDefectPanel);
+            resultsGroup.Controls.Add(ovalityDefectPanel);
+            resultsGroup.Controls.Add(inpaintDefectPanel);
+            resultsGroup.Controls.Add(obloyDefectPanel);
+            resultsGroup.Controls.Add(inclusionDefectPanel);
+            resultsGroup.Dock = DockStyle.Top;
+            resultsGroup.FlatStyle = FlatStyle.Flat;
+            resultsGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            resultsGroup.ForeColor = Color.FromArgb(4, 85, 191);
+            resultsGroup.Location = new Point(10, 10);
+            resultsGroup.Name = "resultsGroup";
+            resultsGroup.Size = new Size(1010, 166);
+            resultsGroup.TabIndex = 1;
+            resultsGroup.TabStop = false;
+            resultsGroup.Text = "Результаты анализа";
+            // 
+            // generalPanel
+            // 
+            generalPanel.BackColor = Color.FromArgb(240, 245, 255);
+            generalPanel.Controls.Add(label32);
+            generalPanel.Controls.Add(generalDefectsCountTb);
+            generalPanel.Controls.Add(label33);
+            generalPanel.Controls.Add(generalTime);
+            generalPanel.Location = new Point(453, 36);
+            generalPanel.Name = "generalPanel";
+            generalPanel.Size = new Size(107, 117);
+            generalPanel.TabIndex = 11;
+            // 
+            // label32
+            // 
+            label32.AutoSize = true;
+            label32.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label32.ForeColor = Color.Black;
+            label32.Location = new Point(30, 68);
+            label32.Name = "label32";
+            label32.Size = new Size(42, 15);
+            label32.TabIndex = 9;
+            label32.Text = "Время";
+            // 
+            // generalDefectsCountTb
+            // 
+            generalDefectsCountTb.BackColor = Color.FromArgb(240, 245, 255);
+            generalDefectsCountTb.BorderStyle = BorderStyle.None;
+            generalDefectsCountTb.Location = new Point(16, 35);
+            generalDefectsCountTb.Name = "generalDefectsCountTb";
+            generalDefectsCountTb.Size = new Size(67, 18);
+            generalDefectsCountTb.TabIndex = 12;
+            generalDefectsCountTb.Text = "0";
+            generalDefectsCountTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label33
+            // 
+            label33.AutoSize = true;
+            label33.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label33.ForeColor = Color.Black;
+            label33.Location = new Point(8, 15);
+            label33.Name = "label33";
+            label33.Size = new Size(87, 15);
+            label33.TabIndex = 4;
+            label33.Text = "Общее кол-во";
+            // 
+            // generalTime
+            // 
+            generalTime.BackColor = Color.FromArgb(240, 245, 255);
+            generalTime.BorderStyle = BorderStyle.None;
+            generalTime.Location = new Point(23, 85);
+            generalTime.Name = "generalTime";
+            generalTime.Size = new Size(60, 18);
+            generalTime.TabIndex = 7;
+            generalTime.Text = "0";
+            generalTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = Properties.Resources.лого;
+            pictureBox1.Location = new Point(772, 36);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(231, 117);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 8;
+            pictureBox1.TabStop = false;
+            // 
+            // nedolivDefectPanel
+            // 
+            nedolivDefectPanel.BackColor = Color.FromArgb(240, 245, 255);
+            nedolivDefectPanel.Controls.Add(nedolivTime);
+            nedolivDefectPanel.Controls.Add(label20);
+            nedolivDefectPanel.Controls.Add(nedolivDef);
+            nedolivDefectPanel.Controls.Add(label51);
+            nedolivDefectPanel.Location = new Point(345, 36);
+            nedolivDefectPanel.Name = "nedolivDefectPanel";
+            nedolivDefectPanel.Size = new Size(107, 117);
+            nedolivDefectPanel.TabIndex = 4;
+            // 
+            // nedolivTime
+            // 
+            nedolivTime.BackColor = Color.FromArgb(240, 245, 255);
+            nedolivTime.BorderStyle = BorderStyle.None;
+            nedolivTime.Location = new Point(16, 85);
+            nedolivTime.Name = "nedolivTime";
+            nedolivTime.Size = new Size(67, 18);
+            nedolivTime.TabIndex = 13;
+            nedolivTime.Text = "0";
+            nedolivTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label20.ForeColor = Color.Black;
+            label20.Location = new Point(30, 68);
+            label20.Name = "label20";
+            label20.Size = new Size(42, 15);
+            label20.TabIndex = 9;
+            label20.Text = "Время";
+            // 
+            // nedolivDef
+            // 
+            nedolivDef.BackColor = Color.FromArgb(240, 245, 255);
+            nedolivDef.BorderStyle = BorderStyle.None;
+            nedolivDef.Location = new Point(16, 35);
+            nedolivDef.Name = "nedolivDef";
+            nedolivDef.Size = new Size(67, 18);
+            nedolivDef.TabIndex = 12;
+            nedolivDef.Text = "0";
+            nedolivDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label51
+            // 
+            label51.AutoSize = true;
+            label51.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label51.ForeColor = Color.Black;
+            label51.Location = new Point(3, 15);
+            label51.Name = "label51";
+            label51.Size = new Size(100, 15);
+            label51.TabIndex = 4;
+            label51.Text = "Неполный залив";
+            // 
+            // ovalityDefectPanel
+            // 
+            ovalityDefectPanel.BackColor = Color.FromArgb(240, 245, 255);
+            ovalityDefectPanel.Controls.Add(timeOvality);
+            ovalityDefectPanel.Controls.Add(ovalityDef);
+            ovalityDefectPanel.Controls.Add(label17);
+            ovalityDefectPanel.Controls.Add(label48);
+            ovalityDefectPanel.Location = new Point(104, 36);
+            ovalityDefectPanel.Name = "ovalityDefectPanel";
+            ovalityDefectPanel.Size = new Size(78, 117);
+            ovalityDefectPanel.TabIndex = 6;
+            // 
+            // timeOvality
+            // 
+            timeOvality.BackColor = Color.FromArgb(240, 245, 255);
+            timeOvality.BorderStyle = BorderStyle.None;
+            timeOvality.Location = new Point(4, 85);
+            timeOvality.Name = "timeOvality";
+            timeOvality.Size = new Size(69, 18);
+            timeOvality.TabIndex = 9;
+            timeOvality.Text = "0";
+            timeOvality.TextAlign = HorizontalAlignment.Center;
+            // 
+            // ovalityDef
+            // 
+            ovalityDef.BackColor = Color.FromArgb(240, 245, 255);
+            ovalityDef.BorderStyle = BorderStyle.None;
+            ovalityDef.Location = new Point(5, 35);
+            ovalityDef.Name = "ovalityDef";
+            ovalityDef.Size = new Size(69, 18);
+            ovalityDef.TabIndex = 8;
+            ovalityDef.Text = "0";
+            ovalityDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label17.ForeColor = Color.Black;
+            label17.Location = new Point(18, 67);
+            label17.Name = "label17";
+            label17.Size = new Size(42, 15);
+            label17.TabIndex = 9;
+            label17.Text = "Время";
+            // 
+            // label48
+            // 
+            label48.AutoSize = true;
+            label48.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label48.ForeColor = Color.Black;
+            label48.Location = new Point(2, 13);
+            label48.Name = "label48";
+            label48.Size = new Size(72, 15);
+            label48.TabIndex = 1;
+            label48.Text = "Овальность";
+            // 
+            // inpaintDefectPanel
+            // 
+            inpaintDefectPanel.BackColor = Color.FromArgb(240, 245, 255);
+            inpaintDefectPanel.Controls.Add(inpaintTime);
+            inpaintDefectPanel.Controls.Add(label19);
+            inpaintDefectPanel.Controls.Add(label50);
+            inpaintDefectPanel.Controls.Add(InpaintDef);
+            inpaintDefectPanel.Location = new Point(262, 36);
+            inpaintDefectPanel.Name = "inpaintDefectPanel";
+            inpaintDefectPanel.Size = new Size(82, 117);
+            inpaintDefectPanel.TabIndex = 4;
+            // 
+            // inpaintTime
+            // 
+            inpaintTime.BackColor = Color.FromArgb(240, 245, 255);
+            inpaintTime.BorderStyle = BorderStyle.None;
+            inpaintTime.Location = new Point(8, 85);
+            inpaintTime.Name = "inpaintTime";
+            inpaintTime.Size = new Size(67, 18);
+            inpaintTime.TabIndex = 12;
+            inpaintTime.Text = "0";
+            inpaintTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label19.ForeColor = Color.Black;
+            label19.Location = new Point(16, 68);
+            label19.Name = "label19";
+            label19.Size = new Size(42, 15);
+            label19.TabIndex = 9;
+            label19.Text = "Время";
+            // 
+            // label50
+            // 
+            label50.AutoSize = true;
+            label50.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label50.ForeColor = Color.Black;
+            label50.Location = new Point(2, 15);
+            label50.Name = "label50";
+            label50.Size = new Size(77, 15);
+            label50.TabIndex = 3;
+            label50.Text = "Непрокрасы";
+            // 
+            // InpaintDef
+            // 
+            InpaintDef.BackColor = Color.FromArgb(240, 245, 255);
+            InpaintDef.BorderStyle = BorderStyle.None;
+            InpaintDef.Location = new Point(8, 35);
+            InpaintDef.Name = "InpaintDef";
+            InpaintDef.Size = new Size(67, 18);
+            InpaintDef.TabIndex = 11;
+            InpaintDef.Text = "0";
+            InpaintDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // obloyDefectPanel
+            // 
+            obloyDefectPanel.BackColor = Color.FromArgb(240, 245, 255);
+            obloyDefectPanel.Controls.Add(label14);
+            obloyDefectPanel.Controls.Add(obloyTime);
+            obloyDefectPanel.Controls.Add(label7);
+            obloyDefectPanel.Controls.Add(obloyDef);
+            obloyDefectPanel.Location = new Point(25, 36);
+            obloyDefectPanel.Name = "obloyDefectPanel";
+            obloyDefectPanel.Size = new Size(78, 117);
+            obloyDefectPanel.TabIndex = 6;
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label14.ForeColor = Color.Black;
+            label14.Location = new Point(15, 67);
+            label14.Name = "label14";
+            label14.Size = new Size(42, 15);
+            label14.TabIndex = 8;
+            label14.Text = "Время";
+            // 
+            // obloyTime
+            // 
+            obloyTime.BackColor = Color.FromArgb(240, 245, 255);
+            obloyTime.BorderStyle = BorderStyle.None;
+            obloyTime.Location = new Point(8, 85);
+            obloyTime.Name = "obloyTime";
+            obloyTime.Size = new Size(67, 18);
+            obloyTime.TabIndex = 10;
+            obloyTime.Text = "0";
+            obloyTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label7.ForeColor = Color.Black;
+            label7.Location = new Point(13, 13);
+            label7.Name = "label7";
+            label7.Size = new Size(44, 15);
+            label7.TabIndex = 0;
+            label7.Text = "Облой";
+            // 
+            // obloyDef
+            // 
+            obloyDef.BackColor = Color.FromArgb(240, 245, 255);
+            obloyDef.BorderStyle = BorderStyle.None;
+            obloyDef.Location = new Point(6, 35);
+            obloyDef.Name = "obloyDef";
+            obloyDef.Size = new Size(69, 18);
+            obloyDef.TabIndex = 9;
+            obloyDef.Text = "0";
+            obloyDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // inclusionDefectPanel
+            // 
+            inclusionDefectPanel.BackColor = Color.FromArgb(240, 245, 255);
+            inclusionDefectPanel.Controls.Add(inclusionTime);
+            inclusionDefectPanel.Controls.Add(label18);
+            inclusionDefectPanel.Controls.Add(inclusionDef);
+            inclusionDefectPanel.Controls.Add(label49);
+            inclusionDefectPanel.Location = new Point(183, 36);
+            inclusionDefectPanel.Name = "inclusionDefectPanel";
+            inclusionDefectPanel.Size = new Size(78, 117);
+            inclusionDefectPanel.TabIndex = 4;
+            // 
+            // inclusionTime
+            // 
+            inclusionTime.BackColor = Color.FromArgb(240, 245, 255);
+            inclusionTime.BorderStyle = BorderStyle.None;
+            inclusionTime.Location = new Point(5, 85);
+            inclusionTime.Name = "inclusionTime";
+            inclusionTime.Size = new Size(68, 18);
+            inclusionTime.TabIndex = 11;
+            inclusionTime.Text = "0";
+            inclusionTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label18.ForeColor = Color.Black;
+            label18.Location = new Point(18, 68);
+            label18.Name = "label18";
+            label18.Size = new Size(42, 15);
+            label18.TabIndex = 9;
+            label18.Text = "Время";
+            // 
+            // inclusionDef
+            // 
+            inclusionDef.BackColor = Color.FromArgb(240, 245, 255);
+            inclusionDef.BorderStyle = BorderStyle.None;
+            inclusionDef.Location = new Point(5, 35);
+            inclusionDef.Name = "inclusionDef";
+            inclusionDef.Size = new Size(68, 18);
+            inclusionDef.TabIndex = 10;
+            inclusionDef.Text = "0";
+            inclusionDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label49
+            // 
+            label49.AutoSize = true;
+            label49.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label49.ForeColor = Color.Black;
+            label49.Location = new Point(2, 14);
+            label49.Name = "label49";
+            label49.Size = new Size(73, 15);
+            label49.TabIndex = 2;
+            label49.Text = "Вкрапления";
+            // 
+            // imagesGroup
+            // 
+            imagesGroup.BackColor = Color.White;
+            imagesGroup.Controls.Add(defectsTabControl);
+            imagesGroup.FlatStyle = FlatStyle.Flat;
+            imagesGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            imagesGroup.ForeColor = Color.FromArgb(4, 85, 191);
+            imagesGroup.Location = new Point(10, 10);
+            imagesGroup.Name = "imagesGroup";
+            imagesGroup.Size = new Size(1010, 805);
+            imagesGroup.TabIndex = 0;
+            imagesGroup.TabStop = false;
+            imagesGroup.Text = "Изображения";
+            // 
+            // defectsTabControl
+            // 
+            defectsTabControl.Controls.Add(originalTabPage);
+            defectsTabControl.Controls.Add(ovalityTabPage);
+            defectsTabControl.Controls.Add(inclusionTabPage);
+            defectsTabControl.Controls.Add(inpaintTabPage);
+            defectsTabControl.Controls.Add(obloyTabPage);
+            defectsTabControl.Controls.Add(underfillTabPage);
+            defectsTabControl.Location = new Point(3, 21);
+            defectsTabControl.Name = "defectsTabControl";
+            defectsTabControl.SelectedIndex = 0;
+            defectsTabControl.Size = new Size(1004, 778);
+            defectsTabControl.TabIndex = 0;
+            // 
+            // originalTabPage
+            // 
+            originalTabPage.Controls.Add(originPb);
+            originalTabPage.Controls.Add(label27);
+            originalTabPage.Location = new Point(4, 26);
+            originalTabPage.Name = "originalTabPage";
+            originalTabPage.Padding = new Padding(3);
+            originalTabPage.Size = new Size(996, 748);
+            originalTabPage.TabIndex = 0;
+            originalTabPage.Text = "Оригинал";
+            originalTabPage.UseVisualStyleBackColor = true;
+            // 
+            // originPb
+            // 
+            originPb.BorderStyle = BorderStyle.Fixed3D;
+            originPb.Location = new Point(3, 125);
+            originPb.Name = "originPb";
+            originPb.Size = new Size(990, 626);
+            originPb.SizeMode = PictureBoxSizeMode.Zoom;
+            originPb.TabIndex = 0;
+            originPb.TabStop = false;
+            // 
+            // label27
+            // 
+            label27.AutoSize = true;
+            label27.Font = new Font("Segoe UI", 8.25F);
+            label27.ForeColor = Color.Black;
+            label27.Location = new Point(115, 256);
+            label27.Name = "label27";
+            label27.Size = new Size(78, 13);
+            label27.TabIndex = 10;
+            label27.Text = "Статус ПР205:";
+            // 
+            // ovalityTabPage
+            // 
+            ovalityTabPage.Controls.Add(ovalityPictureBox);
+            ovalityTabPage.Location = new Point(4, 26);
+            ovalityTabPage.Name = "ovalityTabPage";
+            ovalityTabPage.Padding = new Padding(3);
+            ovalityTabPage.Size = new Size(996, 748);
+            ovalityTabPage.TabIndex = 1;
+            ovalityTabPage.Text = "Овальность";
+            ovalityTabPage.UseVisualStyleBackColor = true;
+            // 
+            // ovalityPictureBox
+            // 
+            ovalityPictureBox.Dock = DockStyle.Fill;
+            ovalityPictureBox.Location = new Point(3, 3);
+            ovalityPictureBox.Name = "ovalityPictureBox";
+            ovalityPictureBox.Size = new Size(990, 742);
+            ovalityPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            ovalityPictureBox.TabIndex = 0;
+            ovalityPictureBox.TabStop = false;
+            // 
+            // inclusionTabPage
+            // 
+            inclusionTabPage.Controls.Add(inclusionPictureBox);
+            inclusionTabPage.Location = new Point(4, 26);
+            inclusionTabPage.Name = "inclusionTabPage";
+            inclusionTabPage.Size = new Size(996, 748);
+            inclusionTabPage.TabIndex = 2;
+            inclusionTabPage.Text = "Вкрапления";
+            inclusionTabPage.UseVisualStyleBackColor = true;
+            // 
+            // inclusionPictureBox
+            // 
+            inclusionPictureBox.Dock = DockStyle.Fill;
+            inclusionPictureBox.Location = new Point(0, 0);
+            inclusionPictureBox.Name = "inclusionPictureBox";
+            inclusionPictureBox.Size = new Size(996, 748);
+            inclusionPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            inclusionPictureBox.TabIndex = 0;
+            inclusionPictureBox.TabStop = false;
+            // 
+            // inpaintTabPage
+            // 
+            inpaintTabPage.Controls.Add(inpaintPictureBox);
+            inpaintTabPage.Location = new Point(4, 26);
+            inpaintTabPage.Name = "inpaintTabPage";
+            inpaintTabPage.Size = new Size(996, 748);
+            inpaintTabPage.TabIndex = 3;
+            inpaintTabPage.Text = "Непрокрасы";
+            inpaintTabPage.UseVisualStyleBackColor = true;
+            // 
+            // inpaintPictureBox
+            // 
+            inpaintPictureBox.Dock = DockStyle.Fill;
+            inpaintPictureBox.Location = new Point(0, 0);
+            inpaintPictureBox.Name = "inpaintPictureBox";
+            inpaintPictureBox.Size = new Size(996, 748);
+            inpaintPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            inpaintPictureBox.TabIndex = 0;
+            inpaintPictureBox.TabStop = false;
+            // 
+            // obloyTabPage
+            // 
+            obloyTabPage.Controls.Add(obloyPictureBox);
+            obloyTabPage.Location = new Point(4, 26);
+            obloyTabPage.Name = "obloyTabPage";
+            obloyTabPage.Size = new Size(996, 748);
+            obloyTabPage.TabIndex = 4;
+            obloyTabPage.Text = "Облой";
+            obloyTabPage.UseVisualStyleBackColor = true;
+            // 
+            // obloyPictureBox
+            // 
+            obloyPictureBox.Dock = DockStyle.Fill;
+            obloyPictureBox.Location = new Point(0, 0);
+            obloyPictureBox.Name = "obloyPictureBox";
+            obloyPictureBox.Size = new Size(996, 748);
+            obloyPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            obloyPictureBox.TabIndex = 0;
+            obloyPictureBox.TabStop = false;
+            // 
+            // underfillTabPage
+            // 
+            underfillTabPage.Controls.Add(underfillPictureBox);
+            underfillTabPage.Location = new Point(4, 26);
+            underfillTabPage.Name = "underfillTabPage";
+            underfillTabPage.Size = new Size(996, 748);
+            underfillTabPage.TabIndex = 5;
+            underfillTabPage.Text = "Неполный залив";
+            underfillTabPage.UseVisualStyleBackColor = true;
+            // 
+            // underfillPictureBox
+            // 
+            underfillPictureBox.Dock = DockStyle.Fill;
+            underfillPictureBox.Location = new Point(0, 0);
+            underfillPictureBox.Name = "underfillPictureBox";
+            underfillPictureBox.Size = new Size(996, 748);
+            underfillPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            underfillPictureBox.TabIndex = 0;
+            underfillPictureBox.TabStop = false;
+            // 
+            // leftPanel
+            // 
+            leftPanel.BackColor = Color.FromArgb(240, 245, 255);
+            leftPanel.Controls.Add(panel1);
+            leftPanel.Controls.Add(panel8);
+            leftPanel.Controls.Add(panel5);
+            leftPanel.Controls.Add(settingsTabControl);
+            leftPanel.Location = new Point(0, 0);
+            leftPanel.Name = "leftPanel";
+            leftPanel.Padding = new Padding(10);
+            leftPanel.Size = new Size(374, 821);
+            leftPanel.TabIndex = 1;
+            // 
+            // panel1
+            // 
+            panel1.BackColor = SystemColors.ButtonHighlight;
+            panel1.BorderStyle = BorderStyle.Fixed3D;
+            panel1.Controls.Add(recognizeButton);
+            panel1.Location = new Point(17, 739);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(336, 76);
+            panel1.TabIndex = 28;
+            // 
+            // recognizeButton
+            // 
+            recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
+            recognizeButton.FlatAppearance.BorderSize = 0;
+            recognizeButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            recognizeButton.ForeColor = Color.White;
+            recognizeButton.Location = new Point(18, 20);
+            recognizeButton.Name = "recognizeButton";
+            recognizeButton.Size = new Size(295, 40);
+            recognizeButton.TabIndex = 4;
+            recognizeButton.Text = "Начать анализ";
+            recognizeButton.UseVisualStyleBackColor = false;
+            recognizeButton.Click += recognizeButton_Click;
+            // 
+            // panel8
+            // 
+            panel8.BackColor = SystemColors.ButtonHighlight;
+            panel8.BorderStyle = BorderStyle.Fixed3D;
+            panel8.Controls.Add(loadImageButton);
+            panel8.Controls.Add(button3);
+            panel8.Location = new Point(17, 596);
+            panel8.Name = "panel8";
+            panel8.Size = new Size(165, 137);
+            panel8.TabIndex = 27;
+            // 
+            // loadImageButton
+            // 
+            loadImageButton.BackColor = Color.FromArgb(66, 133, 244);
+            loadImageButton.FlatAppearance.BorderSize = 0;
+            loadImageButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            loadImageButton.ForeColor = Color.White;
+            loadImageButton.Location = new Point(18, 12);
+            loadImageButton.Name = "loadImageButton";
+            loadImageButton.Size = new Size(120, 40);
+            loadImageButton.TabIndex = 1;
+            loadImageButton.Text = "Загрузить";
+            loadImageButton.UseVisualStyleBackColor = false;
+            loadImageButton.Click += loadImageButton_Click;
+            // 
+            // button3
+            // 
+            button3.BackColor = Color.FromArgb(220, 53, 69);
+            button3.FlatAppearance.BorderSize = 0;
+            button3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            button3.ForeColor = Color.White;
+            button3.Location = new Point(18, 71);
+            button3.Name = "button3";
+            button3.Size = new Size(120, 40);
+            button3.TabIndex = 0;
+            button3.Text = "Очистить";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
+            // 
+            // panel5
+            // 
+            panel5.BackColor = SystemColors.ButtonHighlight;
+            panel5.BorderStyle = BorderStyle.Fixed3D;
+            panel5.Controls.Add(startStreamButton);
+            panel5.Controls.Add(stopStreamButton);
+            panel5.Location = new Point(188, 594);
+            panel5.Name = "panel5";
+            panel5.Size = new Size(168, 137);
+            panel5.TabIndex = 26;
+            // 
+            // startStreamButton
+            // 
+            startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
+            startStreamButton.FlatAppearance.BorderSize = 0;
+            startStreamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            startStreamButton.ForeColor = Color.White;
+            startStreamButton.Location = new Point(22, 14);
+            startStreamButton.Name = "startStreamButton";
+            startStreamButton.Size = new Size(120, 40);
+            startStreamButton.TabIndex = 2;
+            startStreamButton.Text = "Получить стрим";
+            startStreamButton.UseVisualStyleBackColor = false;
+            // 
+            // stopStreamButton
+            // 
+            stopStreamButton.BackColor = Color.FromArgb(66, 133, 244);
+            stopStreamButton.FlatAppearance.BorderSize = 0;
+            stopStreamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            stopStreamButton.ForeColor = Color.White;
+            stopStreamButton.Location = new Point(22, 73);
+            stopStreamButton.Name = "stopStreamButton";
+            stopStreamButton.Size = new Size(120, 40);
+            stopStreamButton.TabIndex = 3;
+            stopStreamButton.Text = "Закончить стрим";
+            stopStreamButton.UseVisualStyleBackColor = false;
+            // 
+            // settingsTabControl
+            // 
+            settingsTabControl.Controls.Add(defectsTabPage);
+            settingsTabControl.Controls.Add(foldersTabPage);
+            settingsTabControl.Controls.Add(cameraTabPage);
+            settingsTabControl.Controls.Add(pr205TabPage);
+            settingsTabControl.Location = new Point(10, 10);
+            settingsTabControl.Name = "settingsTabControl";
+            settingsTabControl.SelectedIndex = 0;
+            settingsTabControl.Size = new Size(350, 580);
+            settingsTabControl.TabIndex = 0;
+            // 
+            // defectsTabPage
+            // 
+            defectsTabPage.BackColor = Color.White;
+            defectsTabPage.Controls.Add(defectsSettingsGroup);
+            defectsTabPage.Location = new Point(4, 24);
+            defectsTabPage.Name = "defectsTabPage";
+            defectsTabPage.Padding = new Padding(3);
+            defectsTabPage.Size = new Size(342, 552);
+            defectsTabPage.TabIndex = 1;
+            defectsTabPage.Text = "Дефекты";
+            // 
+            // defectsSettingsGroup
+            // 
+            defectsSettingsGroup.Controls.Add(inpaintDefectParamPanel);
+            defectsSettingsGroup.Controls.Add(inclusionParamDefectPanel);
+            defectsSettingsGroup.Controls.Add(comboBox1);
+            defectsSettingsGroup.Controls.Add(label43);
+            defectsSettingsGroup.Controls.Add(obloyDefectParamPanel);
+            defectsSettingsGroup.Controls.Add(defectTypeComboBox);
+            defectsSettingsGroup.Controls.Add(label2);
+            defectsSettingsGroup.Controls.Add(ovalityParamsPanel);
+            defectsSettingsGroup.Controls.Add(applyDefectButton);
+            defectsSettingsGroup.Dock = DockStyle.Fill;
+            defectsSettingsGroup.FlatStyle = FlatStyle.Flat;
+            defectsSettingsGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            defectsSettingsGroup.ForeColor = Color.FromArgb(4, 85, 191);
+            defectsSettingsGroup.Location = new Point(3, 3);
+            defectsSettingsGroup.Name = "defectsSettingsGroup";
+            defectsSettingsGroup.Size = new Size(336, 546);
+            defectsSettingsGroup.TabIndex = 0;
+            defectsSettingsGroup.TabStop = false;
+            defectsSettingsGroup.Text = "Настройки методов";
+            // 
+            // inpaintDefectParamPanel
+            // 
+            inpaintDefectParamPanel.BackColor = Color.FromArgb(240, 245, 255);
+            inpaintDefectParamPanel.BorderStyle = BorderStyle.Fixed3D;
+            inpaintDefectParamPanel.Controls.Add(inpaintPb);
+            inpaintDefectParamPanel.Controls.Add(whiteThresoldTx);
+            inpaintDefectParamPanel.Controls.Add(inpaintCB);
+            inpaintDefectParamPanel.Controls.Add(label29);
+            inpaintDefectParamPanel.Controls.Add(label28);
+            inpaintDefectParamPanel.Controls.Add(minSquareInpaint);
+            inpaintDefectParamPanel.Location = new Point(20, 95);
+            inpaintDefectParamPanel.Name = "inpaintDefectParamPanel";
+            inpaintDefectParamPanel.Size = new Size(295, 396);
+            inpaintDefectParamPanel.TabIndex = 3;
+            // 
+            // inpaintPb
+            // 
+            inpaintPb.BorderStyle = BorderStyle.Fixed3D;
+            inpaintPb.Location = new Point(9, 178);
+            inpaintPb.Name = "inpaintPb";
+            inpaintPb.Size = new Size(270, 211);
+            inpaintPb.SizeMode = PictureBoxSizeMode.Zoom;
+            inpaintPb.TabIndex = 4;
+            inpaintPb.TabStop = false;
+            // 
+            // whiteThresoldTx
+            // 
+            whiteThresoldTx.Location = new Point(12, 103);
+            whiteThresoldTx.Name = "whiteThresoldTx";
+            whiteThresoldTx.Size = new Size(100, 25);
+            whiteThresoldTx.TabIndex = 39;
+            whiteThresoldTx.Text = "10";
+            // 
+            // inpaintCB
+            // 
+            inpaintCB.AutoSize = true;
+            inpaintCB.BackColor = Color.FromArgb(240, 245, 255);
+            inpaintCB.Checked = true;
+            inpaintCB.CheckState = CheckState.Checked;
+            inpaintCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inpaintCB.Location = new Point(15, 15);
+            inpaintCB.Name = "inpaintCB";
+            inpaintCB.Size = new Size(223, 25);
+            inpaintCB.TabIndex = 35;
+            inpaintCB.Text = "Определение непрокрасов";
+            inpaintCB.UseVisualStyleBackColor = false;
+            inpaintCB.CheckedChanged += inpaintCB_CheckedChanged;
+            // 
+            // label29
+            // 
+            label29.AutoSize = true;
+            label29.Font = new Font("Segoe UI", 8.25F);
+            label29.ForeColor = Color.Black;
+            label29.Location = new Point(9, 43);
+            label29.Name = "label29";
+            label29.Size = new Size(282, 13);
+            label29.TabIndex = 36;
+            label29.Text = "Минимальная площадь непрокраса (от 1 до 10000):";
+            // 
+            // label28
+            // 
+            label28.AutoSize = true;
+            label28.Font = new Font("Segoe UI", 8.25F);
+            label28.ForeColor = Color.Black;
+            label28.Location = new Point(9, 88);
+            label28.Name = "label28";
+            label28.Size = new Size(172, 13);
+            label28.TabIndex = 38;
+            label28.Text = "Близость к белому (от 1 до 255)";
+            // 
+            // minSquareInpaint
+            // 
+            minSquareInpaint.Location = new Point(12, 58);
+            minSquareInpaint.Name = "minSquareInpaint";
+            minSquareInpaint.Size = new Size(100, 25);
+            minSquareInpaint.TabIndex = 37;
+            minSquareInpaint.Text = "500";
+            // 
+            // inclusionParamDefectPanel
+            // 
+            inclusionParamDefectPanel.BackColor = Color.FromArgb(240, 245, 255);
+            inclusionParamDefectPanel.BorderStyle = BorderStyle.Fixed3D;
+            inclusionParamDefectPanel.Controls.Add(maxSquareInclusion);
+            inclusionParamDefectPanel.Controls.Add(inclusionCB);
+            inclusionParamDefectPanel.Controls.Add(label22);
+            inclusionParamDefectPanel.Controls.Add(inclusionPb);
+            inclusionParamDefectPanel.Controls.Add(minSquareInclusion);
+            inclusionParamDefectPanel.Controls.Add(label24);
+            inclusionParamDefectPanel.Controls.Add(label23);
+            inclusionParamDefectPanel.Controls.Add(circleCoefTx);
+            inclusionParamDefectPanel.Location = new Point(20, 100);
+            inclusionParamDefectPanel.Name = "inclusionParamDefectPanel";
+            inclusionParamDefectPanel.Size = new Size(295, 396);
+            inclusionParamDefectPanel.TabIndex = 2;
+            // 
+            // maxSquareInclusion
+            // 
+            maxSquareInclusion.Location = new Point(18, 147);
+            maxSquareInclusion.Name = "maxSquareInclusion";
+            maxSquareInclusion.Size = new Size(100, 25);
+            maxSquareInclusion.TabIndex = 17;
+            maxSquareInclusion.Text = "500";
+            // 
+            // inclusionCB
+            // 
+            inclusionCB.AutoSize = true;
+            inclusionCB.BackColor = Color.FromArgb(240, 245, 255);
+            inclusionCB.Checked = true;
+            inclusionCB.CheckState = CheckState.Checked;
+            inclusionCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inclusionCB.Location = new Point(18, 14);
+            inclusionCB.Name = "inclusionCB";
+            inclusionCB.Size = new Size(215, 25);
+            inclusionCB.TabIndex = 13;
+            inclusionCB.Text = "Определение вкраплений";
+            inclusionCB.UseVisualStyleBackColor = false;
+            inclusionCB.CheckedChanged += inclusionCB_CheckedChanged;
+            // 
+            // label22
+            // 
+            label22.AutoSize = true;
+            label22.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label22.ForeColor = Color.Black;
+            label22.Location = new Point(15, 131);
+            label22.Name = "label22";
+            label22.Size = new Size(275, 13);
+            label22.TabIndex = 16;
+            label22.Text = "Максимальная площадь вкрапления (от 1 до 10000):";
+            // 
+            // inclusionPb
+            // 
+            inclusionPb.BorderStyle = BorderStyle.Fixed3D;
+            inclusionPb.Location = new Point(8, 178);
+            inclusionPb.Name = "inclusionPb";
+            inclusionPb.Size = new Size(270, 211);
+            inclusionPb.SizeMode = PictureBoxSizeMode.Zoom;
+            inclusionPb.TabIndex = 0;
+            inclusionPb.TabStop = false;
+            // 
+            // minSquareInclusion
+            // 
+            minSquareInclusion.Location = new Point(18, 103);
+            minSquareInclusion.Name = "minSquareInclusion";
+            minSquareInclusion.Size = new Size(100, 25);
+            minSquareInclusion.TabIndex = 15;
+            minSquareInclusion.Text = "200";
+            // 
+            // label24
+            // 
+            label24.AutoSize = true;
+            label24.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label24.ForeColor = Color.Black;
+            label24.Location = new Point(15, 42);
+            label24.Name = "label24";
+            label24.Size = new Size(256, 13);
+            label24.TabIndex = 11;
+            label24.Text = "Коэффициент округлости вкраплений (от 0 до 1):";
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label23.ForeColor = Color.Black;
+            label23.Location = new Point(15, 87);
+            label23.Name = "label23";
+            label23.Size = new Size(269, 13);
+            label23.TabIndex = 14;
+            label23.Text = "Минимальная площадь вкрапления (от 1 до 10000):";
+            // 
+            // circleCoefTx
+            // 
+            circleCoefTx.Location = new Point(18, 58);
+            circleCoefTx.Name = "circleCoefTx";
+            circleCoefTx.Size = new Size(100, 25);
+            circleCoefTx.TabIndex = 12;
+            circleCoefTx.Text = "0,8";
+            // 
+            // comboBox1
+            // 
+            comboBox1.FlatStyle = FlatStyle.Flat;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые" });
+            comboBox1.Location = new Point(169, 51);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(105, 25);
+            comboBox1.TabIndex = 38;
+            // 
+            // label43
+            // 
+            label43.AutoSize = true;
+            label43.Font = new Font("Segoe UI", 9F);
+            label43.ForeColor = Color.Black;
+            label43.Location = new Point(167, 35);
+            label43.Name = "label43";
+            label43.Size = new Size(81, 15);
+            label43.TabIndex = 37;
+            label43.Text = "Цвет крышек";
+            // 
+            // obloyDefectParamPanel
+            // 
+            obloyDefectParamPanel.BackColor = Color.FromArgb(240, 245, 255);
+            obloyDefectParamPanel.BorderStyle = BorderStyle.Fixed3D;
+            obloyDefectParamPanel.Controls.Add(obloyPixCount);
+            obloyDefectParamPanel.Controls.Add(obloyPb);
+            obloyDefectParamPanel.Controls.Add(label47);
+            obloyDefectParamPanel.Controls.Add(obloyCB);
+            obloyDefectParamPanel.Location = new Point(20, 100);
+            obloyDefectParamPanel.Name = "obloyDefectParamPanel";
+            obloyDefectParamPanel.Size = new Size(295, 396);
+            obloyDefectParamPanel.TabIndex = 4;
+            // 
+            // obloyPixCount
+            // 
+            obloyPixCount.Location = new Point(18, 60);
+            obloyPixCount.Name = "obloyPixCount";
+            obloyPixCount.Size = new Size(100, 25);
+            obloyPixCount.TabIndex = 8;
+            obloyPixCount.Text = "25";
+            // 
+            // obloyPb
+            // 
+            obloyPb.BorderStyle = BorderStyle.Fixed3D;
+            obloyPb.Location = new Point(9, 178);
+            obloyPb.Name = "obloyPb";
+            obloyPb.Size = new Size(270, 211);
+            obloyPb.SizeMode = PictureBoxSizeMode.Zoom;
+            obloyPb.TabIndex = 4;
+            obloyPb.TabStop = false;
+            // 
+            // label47
+            // 
+            label47.AutoSize = true;
+            label47.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label47.ForeColor = Color.Black;
+            label47.Location = new Point(15, 44);
+            label47.Name = "label47";
+            label47.Size = new Size(172, 13);
+            label47.TabIndex = 7;
+            label47.Text = "Минимальная площадь облоя:";
+            // 
+            // obloyCB
+            // 
+            obloyCB.AutoSize = true;
+            obloyCB.BackColor = Color.FromArgb(240, 245, 255);
+            obloyCB.Checked = true;
+            obloyCB.CheckState = CheckState.Checked;
+            obloyCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            obloyCB.Location = new Point(15, 16);
+            obloyCB.Name = "obloyCB";
+            obloyCB.Size = new Size(173, 25);
+            obloyCB.TabIndex = 9;
+            obloyCB.Text = "Определение облоя";
+            obloyCB.UseVisualStyleBackColor = false;
+            obloyCB.CheckedChanged += obloyCB_CheckedChanged;
+            // 
+            // defectTypeComboBox
+            // 
+            defectTypeComboBox.BackColor = Color.White;
+            defectTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            defectTypeComboBox.FlatStyle = FlatStyle.Popup;
+            defectTypeComboBox.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            defectTypeComboBox.FormattingEnabled = true;
+            defectTypeComboBox.Items.AddRange(new object[] { "Овальность", "Вкрапления", "Непрокрас", "Облой", "Неполный залив" });
+            defectTypeComboBox.Location = new Point(20, 55);
+            defectTypeComboBox.Name = "defectTypeComboBox";
+            defectTypeComboBox.Size = new Size(120, 23);
+            defectTypeComboBox.TabIndex = 3;
+            defectTypeComboBox.SelectedIndexChanged += defectTypeComboBox_SelectedIndexChanged_1;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label2.ForeColor = Color.Black;
+            label2.Location = new Point(20, 35);
+            label2.Name = "label2";
+            label2.Size = new Size(77, 15);
+            label2.TabIndex = 2;
+            label2.Text = "Тип дефекта:";
+            // 
+            // ovalityParamsPanel
+            // 
+            ovalityParamsPanel.BackColor = Color.FromArgb(240, 245, 255);
+            ovalityParamsPanel.BorderStyle = BorderStyle.Fixed3D;
+            ovalityParamsPanel.Controls.Add(ovalityCB);
+            ovalityParamsPanel.Controls.Add(ovalityCoef);
+            ovalityParamsPanel.Controls.Add(ovalityPb);
+            ovalityParamsPanel.Controls.Add(label21);
+            ovalityParamsPanel.Location = new Point(20, 100);
+            ovalityParamsPanel.Name = "ovalityParamsPanel";
+            ovalityParamsPanel.Size = new Size(295, 396);
+            ovalityParamsPanel.TabIndex = 1;
+            // 
+            // ovalityCB
+            // 
+            ovalityCB.AutoSize = true;
+            ovalityCB.BackColor = Color.FromArgb(240, 245, 255);
+            ovalityCB.Checked = true;
+            ovalityCB.CheckState = CheckState.Checked;
+            ovalityCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            ovalityCB.Location = new Point(18, 14);
+            ovalityCB.Name = "ovalityCB";
+            ovalityCB.Size = new Size(212, 25);
+            ovalityCB.TabIndex = 9;
+            ovalityCB.Text = "Определение овальности";
+            ovalityCB.UseVisualStyleBackColor = false;
+            ovalityCB.CheckedChanged += ovalityCB_CheckedChanged;
+            // 
+            // ovalityCoef
+            // 
+            ovalityCoef.Location = new Point(18, 63);
+            ovalityCoef.Name = "ovalityCoef";
+            ovalityCoef.Size = new Size(100, 25);
+            ovalityCoef.TabIndex = 8;
+            ovalityCoef.Text = "0,7";
+            // 
+            // ovalityPb
+            // 
+            ovalityPb.BorderStyle = BorderStyle.Fixed3D;
+            ovalityPb.Location = new Point(9, 178);
+            ovalityPb.Name = "ovalityPb";
+            ovalityPb.Size = new Size(270, 211);
+            ovalityPb.SizeMode = PictureBoxSizeMode.Zoom;
+            ovalityPb.TabIndex = 0;
+            ovalityPb.TabStop = false;
+            // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label21.ForeColor = SystemColors.ActiveCaptionText;
+            label21.Location = new Point(15, 42);
+            label21.Name = "label21";
+            label21.Size = new Size(150, 13);
+            label21.TabIndex = 7;
+            label21.Text = "Коэффициент овальности:";
+            // 
+            // applyDefectButton
+            // 
+            applyDefectButton.BackColor = Color.FromArgb(4, 85, 191);
+            applyDefectButton.FlatAppearance.BorderSize = 0;
+            applyDefectButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            applyDefectButton.ForeColor = Color.White;
+            applyDefectButton.Location = new Point(20, 502);
+            applyDefectButton.Name = "applyDefectButton";
+            applyDefectButton.Size = new Size(280, 35);
+            applyDefectButton.TabIndex = 0;
+            applyDefectButton.Text = "Применить настройки";
+            applyDefectButton.UseVisualStyleBackColor = false;
+            // 
+            // foldersTabPage
+            // 
+            foldersTabPage.BackColor = Color.White;
+            foldersTabPage.Controls.Add(foldersGroup);
+            foldersTabPage.Location = new Point(4, 24);
+            foldersTabPage.Name = "foldersTabPage";
+            foldersTabPage.Size = new Size(342, 552);
+            foldersTabPage.TabIndex = 2;
+            foldersTabPage.Text = "Папки";
+            // 
+            // foldersGroup
+            // 
+            foldersGroup.Controls.Add(browseUnderfillButton);
+            foldersGroup.Controls.Add(underfillPathTextBox);
+            foldersGroup.Controls.Add(label13);
+            foldersGroup.Controls.Add(browseObloyButton);
+            foldersGroup.Controls.Add(obloyPathTextBox);
+            foldersGroup.Controls.Add(label12);
+            foldersGroup.Controls.Add(browseInpaintButton);
+            foldersGroup.Controls.Add(inpaintPathTextBox);
+            foldersGroup.Controls.Add(label11);
+            foldersGroup.Controls.Add(browseInclusionButton);
+            foldersGroup.Controls.Add(inclusionPathTextBox);
+            foldersGroup.Controls.Add(label10);
+            foldersGroup.Controls.Add(browseOvalityButton);
+            foldersGroup.Controls.Add(ovalityPathTextBox);
+            foldersGroup.Controls.Add(label9);
+            foldersGroup.Controls.Add(browseOriginalButton);
+            foldersGroup.Controls.Add(originalPathTextBox);
+            foldersGroup.Controls.Add(label8);
+            foldersGroup.Controls.Add(applyFoldersButton);
+            foldersGroup.Dock = DockStyle.Fill;
+            foldersGroup.FlatStyle = FlatStyle.Flat;
+            foldersGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            foldersGroup.ForeColor = Color.FromArgb(4, 85, 191);
+            foldersGroup.Location = new Point(0, 0);
+            foldersGroup.Name = "foldersGroup";
+            foldersGroup.Size = new Size(342, 552);
+            foldersGroup.TabIndex = 0;
+            foldersGroup.TabStop = false;
+            foldersGroup.Text = "Настройки папок";
+            // 
+            // browseUnderfillButton
+            // 
+            browseUnderfillButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseUnderfillButton.FlatAppearance.BorderSize = 0;
+            browseUnderfillButton.FlatStyle = FlatStyle.Popup;
+            browseUnderfillButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseUnderfillButton.ForeColor = Color.White;
+            browseUnderfillButton.Location = new Point(263, 383);
+            browseUnderfillButton.Name = "browseUnderfillButton";
+            browseUnderfillButton.Size = new Size(40, 23);
+            browseUnderfillButton.TabIndex = 18;
+            browseUnderfillButton.Text = "...";
+            browseUnderfillButton.UseVisualStyleBackColor = false;
+            browseUnderfillButton.Click += browseUnderfillButton_Click;
+            // 
+            // underfillPathTextBox
+            // 
+            underfillPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            underfillPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            underfillPathTextBox.Font = new Font("Segoe UI", 8F);
+            underfillPathTextBox.Location = new Point(20, 384);
+            underfillPathTextBox.Name = "underfillPathTextBox";
+            underfillPathTextBox.Size = new Size(240, 22);
+            underfillPathTextBox.TabIndex = 17;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label13.ForeColor = Color.Black;
+            label13.Location = new Point(20, 364);
+            label13.Name = "label13";
+            label13.Size = new Size(103, 15);
+            label13.TabIndex = 16;
+            label13.Text = "Неполный залив:";
+            // 
+            // browseObloyButton
+            // 
+            browseObloyButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseObloyButton.FlatAppearance.BorderSize = 0;
+            browseObloyButton.FlatStyle = FlatStyle.Popup;
+            browseObloyButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseObloyButton.ForeColor = Color.White;
+            browseObloyButton.Location = new Point(263, 323);
+            browseObloyButton.Name = "browseObloyButton";
+            browseObloyButton.Size = new Size(40, 23);
+            browseObloyButton.TabIndex = 15;
+            browseObloyButton.Text = "...";
+            browseObloyButton.UseVisualStyleBackColor = false;
+            browseObloyButton.Click += browseObloyButton_Click;
+            // 
+            // obloyPathTextBox
+            // 
+            obloyPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            obloyPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            obloyPathTextBox.Font = new Font("Segoe UI", 8F);
+            obloyPathTextBox.Location = new Point(20, 324);
+            obloyPathTextBox.Name = "obloyPathTextBox";
+            obloyPathTextBox.Size = new Size(240, 22);
+            obloyPathTextBox.TabIndex = 14;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label12.ForeColor = Color.Black;
+            label12.Location = new Point(20, 304);
+            label12.Name = "label12";
+            label12.Size = new Size(47, 15);
+            label12.TabIndex = 13;
+            label12.Text = "Облой:";
+            // 
+            // browseInpaintButton
+            // 
+            browseInpaintButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseInpaintButton.FlatAppearance.BorderSize = 0;
+            browseInpaintButton.FlatStyle = FlatStyle.Popup;
+            browseInpaintButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseInpaintButton.ForeColor = Color.White;
+            browseInpaintButton.Location = new Point(263, 263);
+            browseInpaintButton.Name = "browseInpaintButton";
+            browseInpaintButton.Size = new Size(40, 23);
+            browseInpaintButton.TabIndex = 12;
+            browseInpaintButton.Text = "...";
+            browseInpaintButton.UseVisualStyleBackColor = false;
+            browseInpaintButton.Click += browseInpaintButton_Click;
+            // 
+            // inpaintPathTextBox
+            // 
+            inpaintPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            inpaintPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            inpaintPathTextBox.Font = new Font("Segoe UI", 8F);
+            inpaintPathTextBox.Location = new Point(20, 264);
+            inpaintPathTextBox.Name = "inpaintPathTextBox";
+            inpaintPathTextBox.Size = new Size(240, 22);
+            inpaintPathTextBox.TabIndex = 11;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label11.ForeColor = Color.Black;
+            label11.Location = new Point(20, 244);
+            label11.Name = "label11";
+            label11.Size = new Size(80, 15);
+            label11.TabIndex = 10;
+            label11.Text = "Непрокрасы:";
+            // 
+            // browseInclusionButton
+            // 
+            browseInclusionButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseInclusionButton.FlatAppearance.BorderSize = 0;
+            browseInclusionButton.FlatStyle = FlatStyle.Popup;
+            browseInclusionButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseInclusionButton.ForeColor = Color.White;
+            browseInclusionButton.Location = new Point(263, 203);
+            browseInclusionButton.Name = "browseInclusionButton";
+            browseInclusionButton.Size = new Size(40, 23);
+            browseInclusionButton.TabIndex = 9;
+            browseInclusionButton.Text = "...";
+            browseInclusionButton.UseVisualStyleBackColor = false;
+            browseInclusionButton.Click += browseInclusionButton_Click;
+            // 
+            // inclusionPathTextBox
+            // 
+            inclusionPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            inclusionPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            inclusionPathTextBox.Font = new Font("Segoe UI", 8F);
+            inclusionPathTextBox.Location = new Point(20, 204);
+            inclusionPathTextBox.Name = "inclusionPathTextBox";
+            inclusionPathTextBox.Size = new Size(240, 22);
+            inclusionPathTextBox.TabIndex = 8;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label10.ForeColor = Color.Black;
+            label10.Location = new Point(20, 184);
+            label10.Name = "label10";
+            label10.Size = new Size(76, 15);
+            label10.TabIndex = 7;
+            label10.Text = "Вкрапления:";
+            // 
+            // browseOvalityButton
+            // 
+            browseOvalityButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseOvalityButton.FlatAppearance.BorderSize = 0;
+            browseOvalityButton.FlatStyle = FlatStyle.Popup;
+            browseOvalityButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseOvalityButton.ForeColor = Color.White;
+            browseOvalityButton.Location = new Point(263, 143);
+            browseOvalityButton.Name = "browseOvalityButton";
+            browseOvalityButton.Size = new Size(40, 23);
+            browseOvalityButton.TabIndex = 6;
+            browseOvalityButton.Text = "...";
+            browseOvalityButton.UseVisualStyleBackColor = false;
+            browseOvalityButton.Click += browseOvalityButton_Click;
+            // 
+            // ovalityPathTextBox
+            // 
+            ovalityPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            ovalityPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            ovalityPathTextBox.Font = new Font("Segoe UI", 8F);
+            ovalityPathTextBox.Location = new Point(20, 144);
+            ovalityPathTextBox.Name = "ovalityPathTextBox";
+            ovalityPathTextBox.Size = new Size(240, 22);
+            ovalityPathTextBox.TabIndex = 5;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label9.ForeColor = Color.Black;
+            label9.Location = new Point(20, 124);
+            label9.Name = "label9";
+            label9.Size = new Size(75, 15);
+            label9.TabIndex = 4;
+            label9.Text = "Овальность:";
+            // 
+            // browseOriginalButton
+            // 
+            browseOriginalButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseOriginalButton.FlatAppearance.BorderSize = 0;
+            browseOriginalButton.FlatStyle = FlatStyle.Popup;
+            browseOriginalButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseOriginalButton.ForeColor = Color.White;
+            browseOriginalButton.Location = new Point(263, 83);
+            browseOriginalButton.Name = "browseOriginalButton";
+            browseOriginalButton.Size = new Size(40, 23);
+            browseOriginalButton.TabIndex = 3;
+            browseOriginalButton.Text = "...";
+            browseOriginalButton.UseVisualStyleBackColor = false;
+            browseOriginalButton.Click += browseOriginalButton_Click;
+            // 
+            // originalPathTextBox
+            // 
+            originalPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            originalPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            originalPathTextBox.Font = new Font("Segoe UI", 8F);
+            originalPathTextBox.Location = new Point(20, 84);
+            originalPathTextBox.Name = "originalPathTextBox";
+            originalPathTextBox.Size = new Size(240, 22);
+            originalPathTextBox.TabIndex = 2;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label8.ForeColor = Color.Black;
+            label8.Location = new Point(20, 64);
+            label8.Name = "label8";
+            label8.Size = new Size(111, 15);
+            label8.TabIndex = 1;
+            label8.Text = "Исходные снимки:";
+            // 
+            // applyFoldersButton
+            // 
+            applyFoldersButton.BackColor = Color.FromArgb(4, 85, 191);
+            applyFoldersButton.FlatAppearance.BorderSize = 0;
+            applyFoldersButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            applyFoldersButton.ForeColor = Color.White;
+            applyFoldersButton.Location = new Point(20, 453);
+            applyFoldersButton.Name = "applyFoldersButton";
+            applyFoldersButton.Size = new Size(280, 35);
+            applyFoldersButton.TabIndex = 0;
+            applyFoldersButton.Text = "Применить настройки";
+            applyFoldersButton.UseVisualStyleBackColor = false;
+            applyFoldersButton.Click += applyFoldersButton_Click;
+            // 
+            // cameraTabPage
+            // 
+            cameraTabPage.BackColor = Color.White;
+            cameraTabPage.Controls.Add(cameraSettingsGroup);
+            cameraTabPage.Location = new Point(4, 24);
+            cameraTabPage.Name = "cameraTabPage";
+            cameraTabPage.Padding = new Padding(3);
+            cameraTabPage.Size = new Size(342, 552);
+            cameraTabPage.TabIndex = 0;
+            cameraTabPage.Text = "Камера";
+            // 
+            // cameraSettingsGroup
+            // 
+            cameraSettingsGroup.Controls.Add(connectCameraButton);
+            cameraSettingsGroup.Controls.Add(cameraIpTextBox);
+            cameraSettingsGroup.Controls.Add(label1);
+            cameraSettingsGroup.Controls.Add(cameraParamsPanel);
+            cameraSettingsGroup.Controls.Add(applySettingsButton);
+            cameraSettingsGroup.Controls.Add(saveSettingsButton);
+            cameraSettingsGroup.Controls.Add(loadSettingsButton);
+            cameraSettingsGroup.Dock = DockStyle.Fill;
+            cameraSettingsGroup.FlatStyle = FlatStyle.Flat;
+            cameraSettingsGroup.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            cameraSettingsGroup.ForeColor = Color.FromArgb(4, 85, 191);
+            cameraSettingsGroup.Location = new Point(3, 3);
+            cameraSettingsGroup.Name = "cameraSettingsGroup";
+            cameraSettingsGroup.Size = new Size(336, 546);
+            cameraSettingsGroup.TabIndex = 0;
+            cameraSettingsGroup.TabStop = false;
+            cameraSettingsGroup.Text = "Настройки камеры и ПР205";
+            // 
+            // connectCameraButton
+            // 
+            connectCameraButton.BackColor = Color.FromArgb(4, 85, 191);
+            connectCameraButton.FlatAppearance.BorderSize = 0;
+            connectCameraButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            connectCameraButton.ForeColor = Color.White;
+            connectCameraButton.Location = new Point(171, 48);
+            connectCameraButton.Name = "connectCameraButton";
+            connectCameraButton.Size = new Size(129, 38);
+            connectCameraButton.TabIndex = 6;
+            connectCameraButton.Text = "Подключить";
+            connectCameraButton.UseVisualStyleBackColor = false;
+            connectCameraButton.Click += connectCameraButton_Click;
+            // 
+            // cameraIpTextBox
+            // 
+            cameraIpTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
+            cameraIpTextBox.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            cameraIpTextBox.Location = new Point(20, 55);
+            cameraIpTextBox.Name = "cameraIpTextBox";
+            cameraIpTextBox.Size = new Size(135, 23);
+            cameraIpTextBox.TabIndex = 5;
+            cameraIpTextBox.Text = "169.254.205.254";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Microsoft Sans Serif", 9F);
+            label1.ForeColor = Color.Black;
+            label1.Location = new Point(20, 35);
+            label1.Name = "label1";
+            label1.Size = new Size(106, 15);
+            label1.TabIndex = 4;
+            label1.Text = "IP адрес камеры:";
+            // 
+            // cameraParamsPanel
+            // 
+            cameraParamsPanel.BackColor = Color.FromArgb(240, 245, 255);
+            cameraParamsPanel.BorderStyle = BorderStyle.Fixed3D;
+            cameraParamsPanel.Controls.Add(prStatusLabel);
+            cameraParamsPanel.Controls.Add(gainTb);
+            cameraParamsPanel.Controls.Add(label16);
+            cameraParamsPanel.Controls.Add(camStatus);
+            cameraParamsPanel.Controls.Add(label6);
+            cameraParamsPanel.Controls.Add(exposureTb);
+            cameraParamsPanel.Controls.Add(label15);
+            cameraParamsPanel.Controls.Add(label5);
+            cameraParamsPanel.Controls.Add(widthTb);
+            cameraParamsPanel.Controls.Add(label4);
+            cameraParamsPanel.Controls.Add(heightTb);
+            cameraParamsPanel.Controls.Add(label3);
+            cameraParamsPanel.Location = new Point(20, 100);
+            cameraParamsPanel.Name = "cameraParamsPanel";
+            cameraParamsPanel.Size = new Size(280, 200);
+            cameraParamsPanel.TabIndex = 3;
+            // 
+            // prStatusLabel
+            // 
+            prStatusLabel.AutoSize = true;
+            prStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            prStatusLabel.ForeColor = Color.Black;
+            prStatusLabel.Location = new Point(150, 14);
+            prStatusLabel.Name = "prStatusLabel";
+            prStatusLabel.Size = new Size(77, 13);
+            prStatusLabel.TabIndex = 3;
+            prStatusLabel.Text = "Не запущена";
+            // 
+            // gainTb
+            // 
+            gainTb.BackColor = Color.White;
+            gainTb.BorderStyle = BorderStyle.FixedSingle;
+            gainTb.Font = new Font("Segoe UI", 9F);
+            gainTb.Location = new Point(150, 150);
+            gainTb.Name = "gainTb";
+            gainTb.Size = new Size(100, 23);
+            gainTb.TabIndex = 7;
+            gainTb.Text = "100";
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Font = new Font("Segoe UI", 8.25F);
+            label16.ForeColor = Color.Black;
+            label16.Location = new Point(20, 13);
+            label16.Name = "label16";
+            label16.Size = new Size(105, 13);
+            label16.TabIndex = 1;
+            label16.Text = "Обработка видео:";
+            // 
+            // camStatus
+            // 
+            camStatus.AutoSize = true;
+            camStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            camStatus.ForeColor = Color.Black;
+            camStatus.Location = new Point(149, 46);
+            camStatus.Name = "camStatus";
+            camStatus.Size = new Size(94, 13);
+            camStatus.TabIndex = 2;
+            camStatus.Text = "Не подключена";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 9F);
+            label6.ForeColor = Color.Black;
+            label6.Location = new Point(150, 130);
+            label6.Name = "label6";
+            label6.Size = new Size(95, 15);
+            label6.TabIndex = 6;
+            label6.Text = "Насыщенность:";
+            // 
+            // exposureTb
+            // 
+            exposureTb.BackColor = Color.White;
+            exposureTb.BorderStyle = BorderStyle.FixedSingle;
+            exposureTb.Font = new Font("Segoe UI", 9F);
+            exposureTb.Location = new Point(20, 150);
+            exposureTb.Name = "exposureTb";
+            exposureTb.Size = new Size(100, 23);
+            exposureTb.TabIndex = 5;
+            exposureTb.Text = "10000";
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Font = new Font("Segoe UI", 8.25F);
+            label15.ForeColor = Color.Black;
+            label15.Location = new Point(20, 46);
+            label15.Name = "label15";
+            label15.Size = new Size(87, 13);
+            label15.TabIndex = 0;
+            label15.Text = "Статус камеры:";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 9F);
+            label5.ForeColor = Color.Black;
+            label5.Location = new Point(20, 130);
+            label5.Name = "label5";
+            label5.Size = new Size(75, 15);
+            label5.TabIndex = 4;
+            label5.Text = "Экспозиция:";
+            // 
+            // widthTb
+            // 
+            widthTb.BackColor = Color.White;
+            widthTb.BorderStyle = BorderStyle.FixedSingle;
+            widthTb.Font = new Font("Segoe UI", 9F);
+            widthTb.Location = new Point(150, 97);
+            widthTb.Name = "widthTb";
+            widthTb.Size = new Size(100, 23);
+            widthTb.TabIndex = 3;
+            widthTb.Text = "1920";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 9F);
+            label4.ForeColor = Color.Black;
+            label4.Location = new Point(150, 77);
+            label4.Name = "label4";
+            label4.Size = new Size(55, 15);
+            label4.TabIndex = 2;
+            label4.Text = "Ширина:";
+            // 
+            // heightTb
+            // 
+            heightTb.BackColor = Color.White;
+            heightTb.BorderStyle = BorderStyle.FixedSingle;
+            heightTb.Font = new Font("Segoe UI", 9F);
+            heightTb.Location = new Point(20, 97);
+            heightTb.Name = "heightTb";
+            heightTb.Size = new Size(100, 23);
+            heightTb.TabIndex = 1;
+            heightTb.Text = "1080";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 9F);
+            label3.ForeColor = Color.Black;
+            label3.Location = new Point(20, 77);
+            label3.Name = "label3";
+            label3.Size = new Size(50, 15);
+            label3.TabIndex = 0;
+            label3.Text = "Высота:";
+            // 
+            // applySettingsButton
+            // 
+            applySettingsButton.BackColor = Color.FromArgb(4, 85, 191);
+            applySettingsButton.FlatAppearance.BorderSize = 0;
+            applySettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            applySettingsButton.ForeColor = Color.White;
+            applySettingsButton.Location = new Point(20, 320);
+            applySettingsButton.Name = "applySettingsButton";
+            applySettingsButton.Size = new Size(280, 43);
+            applySettingsButton.TabIndex = 2;
+            applySettingsButton.Text = "Применить настройки";
+            applySettingsButton.UseVisualStyleBackColor = false;
+            applySettingsButton.Click += applySettingsButton_Click;
+            // 
+            // saveSettingsButton
+            // 
+            saveSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
+            saveSettingsButton.FlatAppearance.BorderSize = 0;
+            saveSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            saveSettingsButton.ForeColor = Color.White;
+            saveSettingsButton.Location = new Point(171, 380);
+            saveSettingsButton.Name = "saveSettingsButton";
+            saveSettingsButton.Size = new Size(129, 52);
+            saveSettingsButton.TabIndex = 1;
+            saveSettingsButton.Text = "Сохранить";
+            saveSettingsButton.UseVisualStyleBackColor = false;
+            saveSettingsButton.Click += saveSettingsButton_Click;
+            // 
+            // loadSettingsButton
+            // 
+            loadSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
+            loadSettingsButton.FlatAppearance.BorderSize = 0;
+            loadSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            loadSettingsButton.ForeColor = Color.White;
+            loadSettingsButton.Location = new Point(20, 380);
+            loadSettingsButton.Name = "loadSettingsButton";
+            loadSettingsButton.Size = new Size(134, 52);
+            loadSettingsButton.TabIndex = 0;
+            loadSettingsButton.Text = "Загрузить настройки";
+            loadSettingsButton.UseVisualStyleBackColor = false;
+            loadSettingsButton.Click += loadSettingsButton_Click;
+            // 
+            // pr205TabPage
+            // 
+            pr205TabPage.Controls.Add(pr205Group);
+            pr205TabPage.Location = new Point(4, 24);
+            pr205TabPage.Name = "pr205TabPage";
+            pr205TabPage.Padding = new Padding(3);
+            pr205TabPage.Size = new Size(342, 552);
+            pr205TabPage.TabIndex = 3;
+            pr205TabPage.Text = "ПР205";
+            pr205TabPage.UseVisualStyleBackColor = true;
+            // 
+            // pr205Group
+            // 
+            pr205Group.Controls.Add(prIpTextBox);
+            pr205Group.Controls.Add(pr205ParamPanel);
+            pr205Group.Controls.Add(connectPrButton);
+            pr205Group.Controls.Add(label40);
+            pr205Group.Controls.Add(ApplyPr);
+            pr205Group.Controls.Add(savePrSettings);
+            pr205Group.Controls.Add(loadPrSettings);
+            pr205Group.Dock = DockStyle.Fill;
+            pr205Group.FlatStyle = FlatStyle.Flat;
+            pr205Group.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            pr205Group.ForeColor = Color.FromArgb(4, 85, 191);
+            pr205Group.Location = new Point(3, 3);
+            pr205Group.Name = "pr205Group";
+            pr205Group.Size = new Size(336, 546);
+            pr205Group.TabIndex = 1;
+            pr205Group.TabStop = false;
+            pr205Group.Text = "Настройки ПР205";
+            // 
+            // prIpTextBox
+            // 
+            prIpTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            prIpTextBox.Font = new Font("Segoe UI", 9F);
+            prIpTextBox.Location = new Point(20, 51);
+            prIpTextBox.Name = "prIpTextBox";
+            prIpTextBox.Size = new Size(138, 23);
+            prIpTextBox.TabIndex = 31;
+            prIpTextBox.Text = "10.10.69.38";
+            // 
+            // pr205ParamPanel
+            // 
+            pr205ParamPanel.BackColor = Color.FromArgb(240, 245, 255);
+            pr205ParamPanel.BorderStyle = BorderStyle.Fixed3D;
+            pr205ParamPanel.Controls.Add(delayTb);
+            pr205ParamPanel.Controls.Add(label25);
+            pr205ParamPanel.Controls.Add(pr205PortTb);
+            pr205ParamPanel.Controls.Add(label26);
+            pr205ParamPanel.Controls.Add(label30);
+            pr205ParamPanel.Controls.Add(prStatus);
+            pr205ParamPanel.Location = new Point(20, 94);
+            pr205ParamPanel.Name = "pr205ParamPanel";
+            pr205ParamPanel.Size = new Size(280, 200);
+            pr205ParamPanel.TabIndex = 11;
+            // 
+            // delayTb
+            // 
+            delayTb.BackColor = Color.White;
+            delayTb.BorderStyle = BorderStyle.FixedSingle;
+            delayTb.Font = new Font("Segoe UI", 9F);
+            delayTb.Location = new Point(155, 80);
+            delayTb.Name = "delayTb";
+            delayTb.Size = new Size(100, 23);
+            delayTb.TabIndex = 16;
+            delayTb.Text = "25";
+            // 
+            // label25
+            // 
+            label25.AutoSize = true;
+            label25.Font = new Font("Segoe UI", 9F);
+            label25.ForeColor = Color.Black;
+            label25.Location = new Point(155, 60);
+            label25.Name = "label25";
+            label25.Size = new Size(63, 15);
+            label25.TabIndex = 15;
+            label25.Text = "Задержка:";
+            // 
+            // pr205PortTb
+            // 
+            pr205PortTb.BackColor = Color.White;
+            pr205PortTb.BorderStyle = BorderStyle.FixedSingle;
+            pr205PortTb.Font = new Font("Segoe UI", 9F);
+            pr205PortTb.Location = new Point(31, 80);
+            pr205PortTb.Name = "pr205PortTb";
+            pr205PortTb.Size = new Size(100, 23);
+            pr205PortTb.TabIndex = 14;
+            pr205PortTb.Text = "502";
+            // 
+            // label26
+            // 
+            label26.AutoSize = true;
+            label26.Font = new Font("Segoe UI", 9F);
+            label26.ForeColor = Color.Black;
+            label26.Location = new Point(31, 60);
+            label26.Name = "label26";
+            label26.Size = new Size(72, 15);
+            label26.TabIndex = 13;
+            label26.Text = "Порт ПР205";
+            // 
+            // label30
+            // 
+            label30.AutoSize = true;
+            label30.Font = new Font("Segoe UI", 8.25F);
+            label30.ForeColor = Color.Black;
+            label30.Location = new Point(53, 17);
+            label30.Name = "label30";
+            label30.Size = new Size(78, 13);
+            label30.TabIndex = 12;
+            label30.Text = "Статус ПР205:";
+            // 
+            // prStatus
+            // 
+            prStatus.AutoSize = true;
+            prStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            prStatus.ForeColor = Color.Black;
+            prStatus.Location = new Point(155, 17);
+            prStatus.Name = "prStatus";
+            prStatus.Size = new Size(94, 13);
+            prStatus.TabIndex = 11;
+            prStatus.Text = "Не подключена";
+            // 
+            // connectPrButton
+            // 
+            connectPrButton.BackColor = Color.FromArgb(4, 85, 191);
+            connectPrButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            connectPrButton.ForeColor = SystemColors.Control;
+            connectPrButton.Location = new Point(172, 44);
+            connectPrButton.Name = "connectPrButton";
+            connectPrButton.Size = new Size(128, 36);
+            connectPrButton.TabIndex = 32;
+            connectPrButton.Text = "Подключиться ПР";
+            connectPrButton.UseVisualStyleBackColor = false;
+            connectPrButton.Click += connectPrButton_Click;
+            // 
+            // label40
+            // 
+            label40.AutoSize = true;
+            label40.Font = new Font("Segoe UI", 9F);
+            label40.ForeColor = Color.Black;
+            label40.Location = new Point(20, 33);
+            label40.Name = "label40";
+            label40.Size = new Size(92, 15);
+            label40.TabIndex = 30;
+            label40.Text = "Ip адрес обдува";
+            // 
+            // ApplyPr
+            // 
+            ApplyPr.BackColor = Color.FromArgb(4, 85, 191);
+            ApplyPr.FlatAppearance.BorderSize = 0;
+            ApplyPr.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            ApplyPr.ForeColor = Color.White;
+            ApplyPr.Location = new Point(20, 320);
+            ApplyPr.Name = "ApplyPr";
+            ApplyPr.Size = new Size(280, 43);
+            ApplyPr.TabIndex = 2;
+            ApplyPr.Text = "Применить настройки";
+            ApplyPr.UseVisualStyleBackColor = false;
+            // 
+            // savePrSettings
+            // 
+            savePrSettings.BackColor = Color.FromArgb(66, 133, 244);
+            savePrSettings.FlatAppearance.BorderSize = 0;
+            savePrSettings.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            savePrSettings.ForeColor = Color.White;
+            savePrSettings.Location = new Point(171, 380);
+            savePrSettings.Name = "savePrSettings";
+            savePrSettings.Size = new Size(129, 52);
+            savePrSettings.TabIndex = 1;
+            savePrSettings.Text = "Сохранить";
+            savePrSettings.UseVisualStyleBackColor = false;
+            savePrSettings.Click += savePrSettings_Click;
+            // 
+            // loadPrSettings
+            // 
+            loadPrSettings.BackColor = Color.FromArgb(66, 133, 244);
+            loadPrSettings.FlatAppearance.BorderSize = 0;
+            loadPrSettings.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            loadPrSettings.ForeColor = Color.White;
+            loadPrSettings.Location = new Point(20, 380);
+            loadPrSettings.Name = "loadPrSettings";
+            loadPrSettings.Size = new Size(134, 52);
+            loadPrSettings.TabIndex = 0;
+            loadPrSettings.Text = "Загрузить настройки";
+            loadPrSettings.UseVisualStyleBackColor = false;
+            loadPrSettings.Click += loadPrSettings_Click;
+            // 
+            // controlPanel
+            // 
+            controlPanel.BackColor = Color.FromArgb(4, 85, 191);
+            controlPanel.Controls.Add(statusPanel);
+            controlPanel.Controls.Add(controlButtonsPanel);
+            controlPanel.Location = new Point(0, 800);
+            controlPanel.Name = "controlPanel";
+            controlPanel.Size = new Size(1400, 100);
+            controlPanel.TabIndex = 0;
+            // 
+            // statusPanel
+            // 
+            statusPanel.BackColor = Color.FromArgb(240, 245, 255);
+            statusPanel.Location = new Point(700, 0);
+            statusPanel.Name = "statusPanel";
+            statusPanel.Size = new Size(700, 100);
+            statusPanel.TabIndex = 1;
+            // 
+            // controlButtonsPanel
+            // 
+            controlButtonsPanel.BackColor = Color.FromArgb(240, 245, 255);
+            controlButtonsPanel.Location = new Point(0, 19);
+            controlButtonsPanel.Name = "controlButtonsPanel";
+            controlButtonsPanel.Size = new Size(700, 81);
+            controlButtonsPanel.TabIndex = 0;
+            // 
+            // TestForm
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1400, 858);
+            Controls.Add(mainPanel);
+            Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            MinimumSize = new Size(1200, 800);
+            Name = "TestForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Krishki - Анализ дефектов";
+            FormClosing += Form2_FormClosing;
+            mainPanel.ResumeLayout(false);
+            rightPanel.ResumeLayout(false);
+            resultsGroup.ResumeLayout(false);
+            generalPanel.ResumeLayout(false);
+            generalPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            nedolivDefectPanel.ResumeLayout(false);
+            nedolivDefectPanel.PerformLayout();
+            ovalityDefectPanel.ResumeLayout(false);
+            ovalityDefectPanel.PerformLayout();
+            inpaintDefectPanel.ResumeLayout(false);
+            inpaintDefectPanel.PerformLayout();
+            obloyDefectPanel.ResumeLayout(false);
+            obloyDefectPanel.PerformLayout();
+            inclusionDefectPanel.ResumeLayout(false);
+            inclusionDefectPanel.PerformLayout();
+            imagesGroup.ResumeLayout(false);
+            defectsTabControl.ResumeLayout(false);
+            originalTabPage.ResumeLayout(false);
+            originalTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)originPb).EndInit();
+            ovalityTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ovalityPictureBox).EndInit();
+            inclusionTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)inclusionPictureBox).EndInit();
+            inpaintTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)inpaintPictureBox).EndInit();
+            obloyTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)obloyPictureBox).EndInit();
+            underfillTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)underfillPictureBox).EndInit();
+            leftPanel.ResumeLayout(false);
+            panel1.ResumeLayout(false);
+            panel8.ResumeLayout(false);
+            panel5.ResumeLayout(false);
+            settingsTabControl.ResumeLayout(false);
+            defectsTabPage.ResumeLayout(false);
+            defectsSettingsGroup.ResumeLayout(false);
+            defectsSettingsGroup.PerformLayout();
+            inpaintDefectParamPanel.ResumeLayout(false);
+            inpaintDefectParamPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)inpaintPb).EndInit();
+            inclusionParamDefectPanel.ResumeLayout(false);
+            inclusionParamDefectPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)inclusionPb).EndInit();
+            obloyDefectParamPanel.ResumeLayout(false);
+            obloyDefectParamPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)obloyPb).EndInit();
+            ovalityParamsPanel.ResumeLayout(false);
+            ovalityParamsPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)ovalityPb).EndInit();
+            foldersTabPage.ResumeLayout(false);
+            foldersGroup.ResumeLayout(false);
+            foldersGroup.PerformLayout();
+            cameraTabPage.ResumeLayout(false);
+            cameraSettingsGroup.ResumeLayout(false);
+            cameraSettingsGroup.PerformLayout();
+            cameraParamsPanel.ResumeLayout(false);
+            cameraParamsPanel.PerformLayout();
+            pr205TabPage.ResumeLayout(false);
+            pr205Group.ResumeLayout(false);
+            pr205Group.PerformLayout();
+            pr205ParamPanel.ResumeLayout(false);
+            pr205ParamPanel.PerformLayout();
+            controlPanel.ResumeLayout(false);
+            ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Panel mainPanel;
+        private System.Windows.Forms.Panel rightPanel;
+        private System.Windows.Forms.Panel leftPanel;
+        private System.Windows.Forms.Panel controlPanel;
+        private System.Windows.Forms.GroupBox resultsGroup;
+        private System.Windows.Forms.GroupBox imagesGroup;
+        private System.Windows.Forms.TabControl settingsTabControl;
+        private System.Windows.Forms.TabPage cameraTabPage;
+        private System.Windows.Forms.TabPage defectsTabPage;
+        private System.Windows.Forms.TabPage foldersTabPage;
+        private System.Windows.Forms.GroupBox cameraSettingsGroup;
+        private System.Windows.Forms.GroupBox defectsSettingsGroup;
+        private System.Windows.Forms.GroupBox foldersGroup;
+        private System.Windows.Forms.Panel statusPanel;
+        private System.Windows.Forms.Panel controlButtonsPanel;
+        private System.Windows.Forms.TabControl defectsTabControl;
+        private System.Windows.Forms.TabPage originalTabPage;
+        private System.Windows.Forms.TabPage ovalityTabPage;
+        private System.Windows.Forms.TabPage inclusionTabPage;
+        private System.Windows.Forms.TabPage inpaintTabPage;
+        private System.Windows.Forms.TabPage obloyTabPage;
+        private System.Windows.Forms.TabPage underfillTabPage;
+        private System.Windows.Forms.PictureBox originPb;
+        private System.Windows.Forms.PictureBox ovalityPictureBox;
+        private System.Windows.Forms.PictureBox inclusionPictureBox;
+        private System.Windows.Forms.PictureBox inpaintPictureBox;
+        private System.Windows.Forms.PictureBox obloyPictureBox;
+        private System.Windows.Forms.PictureBox underfillPictureBox;
+        private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.Button connectCameraButton;
+        private System.Windows.Forms.TextBox cameraIpTextBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel cameraParamsPanel;
+        private System.Windows.Forms.TextBox gainTb;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox exposureTb;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox widthTb;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox heightTb;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button applySettingsButton;
+        private System.Windows.Forms.Button saveSettingsButton;
+        private System.Windows.Forms.Button loadSettingsButton;
+        private System.Windows.Forms.ComboBox defectTypeComboBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Panel ovalityParamsPanel;
+        private System.Windows.Forms.Button applyDefectButton;
+        private System.Windows.Forms.Button browseUnderfillButton;
+        private System.Windows.Forms.TextBox underfillPathTextBox;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Button browseObloyButton;
+        private System.Windows.Forms.TextBox obloyPathTextBox;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button browseInpaintButton;
+        private System.Windows.Forms.TextBox inpaintPathTextBox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button browseInclusionButton;
+        private System.Windows.Forms.TextBox inclusionPathTextBox;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button browseOvalityButton;
+        private System.Windows.Forms.TextBox ovalityPathTextBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button browseOriginalButton;
+        private System.Windows.Forms.TextBox originalPathTextBox;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button applyFoldersButton;
+        private System.Windows.Forms.Label prStatusLabel;
+        private System.Windows.Forms.Label camStatus;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button recognizeButton;
+        private System.Windows.Forms.Button stopStreamButton;
+        private System.Windows.Forms.Button startStreamButton;
+        private Panel panel8;
+        private Panel panel5;
+        private Button button3;
+        private Button loadImageButton;
+        private Panel panel1;
+        private Panel nedolivDefectPanel;
+        private Panel ovalityDefectPanel;
+        private Panel inpaintDefectPanel;
+        private Panel obloyDefectPanel;
+        private Label label7;
+        private Panel inclusionDefectPanel;
+        private PictureBox ovalityPb;
+        private TextBox nedolivDef;
+        private Label label17;
+        private TextBox obloyDef;
+        private TextBox InpaintDef;
+        private Label label14;
+        private TextBox ovalityDef;
+        private Label label18;
+        private TextBox inclusionDef;
+        private Label label20;
+        private Label label19;
+        private TextBox nedolivTime;
+        private TextBox timeOvality;
+        private TextBox inpaintTime;
+        private TextBox obloyTime;
+        private TextBox inclusionTime;
+        private ComboBox comboBox1;
+        private Label label43;
+        private CheckBox ovalityCB;
+        private TextBox ovalityCoef;
+        private Label label21;
+        private Panel inclusionParamDefectPanel;
+        private PictureBox inclusionPb;
+        private CheckBox inclusionCB;
+        private TextBox maxSquareInclusion;
+        private Label label22;
+        private TextBox minSquareInclusion;
+        private Label label24;
+        private Label label23;
+        private TextBox circleCoefTx;
+        private Panel inpaintDefectParamPanel;
+        private TextBox whiteThresoldTx;
+        private CheckBox inpaintCB;
+        private Label label29;
+        private Label label28;
+        private TextBox minSquareInpaint;
+        private PictureBox inpaintPb;
+        private Panel obloyDefectParamPanel;
+        private PictureBox obloyPb;
+        private TextBox obloyPixCount;
+        private Label label47;
+        private CheckBox obloyCB;
+        private PictureBox pictureBox1;
+        private Label prStatus;
+        private Label label27;
+        private Panel pr205ParamPanel;
+        private Label label40;
+        private Button connectPrButton;
+        private TextBox prIpTextBox;
+        private TabPage pr205TabPage;
+        private GroupBox pr205Group;
+        private Label label30;
+        private Button ApplyPr;
+        private Button savePrSettings;
+        private Button loadPrSettings;
+        private TextBox delayTb;
+        private Label label25;
+        private TextBox pr205PortTb;
+        private Label label26;
+        private Panel generalPanel;
+        private Label label32;
+        private TextBox generalDefectsCountTb;
+        private Label label33;
+        private TextBox generalTime;
+    }
+}

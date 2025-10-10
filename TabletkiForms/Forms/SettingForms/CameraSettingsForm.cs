@@ -58,7 +58,7 @@ namespace KrishkiForms
 
                         // <-- исправлённое получение IP (как ты предложил)
                         uint ip = gigeInfo.nCurrentIp;
-                        ipAddress = $"{ip & 0xFF}.{(ip >> 8) & 0xFF}.{(ip >> 16) & 0xFF}.{(ip >> 24) & 0xFF}";
+                        ipAddress = $"{(ip >> 24) & 0xFF}.{(ip >> 16) & 0xFF}.{(ip >> 8) & 0xFF}.{ip & 0xFF}";
 
                         connType = "GigE";
                     }
@@ -246,14 +246,16 @@ namespace KrishkiForms
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            // Если камера не выбрана, устанавливаем SelectedCamera в null
             if (string.IsNullOrEmpty(SelectedCameraSN) || currentCamera == null)
             {
-                MessageBox.Show("Выберите камеру или введите серийный номер вручную.", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                SelectedCamera = null;
             }
-
-            // Передаём текущую камеру наружу
-            SelectedCamera = currentCamera;
+            else
+            {
+                // Передаём текущую камеру наружу
+                SelectedCamera = currentCamera;
+            }
 
             DialogResult = DialogResult.OK;
             Close();

@@ -63,6 +63,16 @@ namespace KrishkiForms.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap KvantronLogo {
+            get {
+                object obj = ResourceManager.GetObject("KvantronLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap лого {
             get {
                 object obj = ResourceManager.GetObject("лого", resourceCulture);

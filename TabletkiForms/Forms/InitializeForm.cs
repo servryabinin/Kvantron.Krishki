@@ -88,11 +88,16 @@ namespace KrishkiForms
                 }
                 else
                 {
+                    // Если не удалось подключиться, зануляем объект камеры
+                    Camera = null;
+                    CameraConnected = false;
                     throw new Exception("Не удалось открыть камеру");
                 }
             }
             catch (Exception ex)
             {
+                // При любой ошибке зануляем объект камеры
+                Camera = null;
                 CameraConnected = false;
                 this.Invoke(new Action(() =>
                 {
@@ -177,13 +182,18 @@ namespace KrishkiForms
                 if (Camera != null && CameraConnected)
                 {
                     Camera.Close();
-                    CameraConnected = false;
-                    Console.WriteLine("Камера отключена");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка при отключении камеры: {ex.Message}");
+            }
+            finally
+            {
+                // Всегда зануляем объект камеры после отключения
+                Camera = null;
+                CameraConnected = false;
+                Console.WriteLine("Камера отключена");
             }
         }
 
@@ -225,7 +235,10 @@ namespace KrishkiForms
             }
 
             // Передаем камеру и Modbus в MainWorkForm
-            var mainForm = new MainWorkForm(Camera, ModbusClient);
+            /*var mainForm = new MainWorkForm(Camera, ModbusClient);
+            mainForm.Show();*/
+
+            var mainForm = new TestForm(Camera, ModbusClient);
             mainForm.Show();
 
             this.Hide(); // скрываем InitializeForm
@@ -244,7 +257,7 @@ namespace KrishkiForms
             prConnectLabel.Text = "[...] Подключение ПР205...";
             prConnectLabel.ForeColor = SystemColors.ControlDarkDark;
 
-            // Обнуляем объекты
+            // Убеждаемся, что объекты занулены
             Camera = null;
             ModbusClient = null;
             CameraConnected = false;
@@ -303,11 +316,20 @@ namespace KrishkiForms
                     LocalSettings.Instance.Cam1SN = cameraSettingsForm.SelectedCameraSN;
                     LocalSettings.Instance.Save();
 
-                    // Получаем подключенную камеру
+                    // Получаем подключенную камеру (может быть null если подключение не удалось)
                     Camera = cameraSettingsForm.SelectedCamera;
+                    CameraConnected = (Camera != null);
 
-                    MessageBox.Show($"Выбрана камера: {Camera.SerialNumber}",
-                                    "Настройки сохранены", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (Camera != null)
+                    {
+                        MessageBox.Show($"Выбрана камера: {Camera.SerialNumber}",
+                                        "Настройки сохранены", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Камера не подключена",
+                                        "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
             }
         }

@@ -3,7 +3,6 @@
     partial class CameraSettingsForm
     {
         private System.ComponentModel.IContainer components = null;
-
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -12,11 +11,10 @@
             }
             base.Dispose(disposing);
         }
-
         #region Windows Form Designer generated code
-
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CameraSettingsForm));
             camerasDataGridView = new DataGridView();
             ConnectColumn = new DataGridViewCheckBoxColumn();
@@ -38,12 +36,28 @@
             // 
             camerasDataGridView.AllowUserToAddRows = false;
             camerasDataGridView.AllowUserToDeleteRows = false;
+            camerasDataGridView.BackgroundColor = Color.White;
+            camerasDataGridView.BorderStyle = BorderStyle.None;
+            camerasDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(0, 120, 215);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            camerasDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             camerasDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             camerasDataGridView.Columns.AddRange(new DataGridViewColumn[] { ConnectColumn, ModelColumn, SerialNumberColumn, IPAddressColumn, ConnectionTypeColumn, AvailabilityColumn });
+            camerasDataGridView.EnableHeadersVisualStyles = false;
+            camerasDataGridView.GridColor = Color.FromArgb(200, 200, 200);
             camerasDataGridView.Location = new Point(12, 27);
             camerasDataGridView.MultiSelect = false;
             camerasDataGridView.Name = "camerasDataGridView";
             camerasDataGridView.RowHeadersVisible = false;
+            camerasDataGridView.RowTemplate.DefaultCellStyle.BackColor = Color.White;
+            camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
+            camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
             camerasDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             camerasDataGridView.Size = new Size(744, 200);
             camerasDataGridView.TabIndex = 0;
@@ -55,7 +69,6 @@
             // 
             ConnectColumn.HeaderText = "Подключиться";
             ConnectColumn.Name = "ConnectColumn";
-            ConnectColumn.Width = 100;
             // 
             // ModelColumn
             // 
@@ -95,17 +108,20 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 9F);
+            label1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            label1.ForeColor = Color.FromArgb(0, 51, 102);
             label1.Location = new Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new Size(119, 15);
+            label1.Size = new Size(150, 19);
             label1.TabIndex = 1;
             label1.Text = "Доступные камеры:";
             // 
             // manualSNTextBox
             // 
+            manualSNTextBox.BackColor = Color.White;
+            manualSNTextBox.BorderStyle = BorderStyle.FixedSingle;
             manualSNTextBox.Font = new Font("Segoe UI", 9F);
-            manualSNTextBox.Location = new Point(12, 250);
+            manualSNTextBox.Location = new Point(12, 255);
             manualSNTextBox.Name = "manualSNTextBox";
             manualSNTextBox.PlaceholderText = "Введите серийный номер камеры";
             manualSNTextBox.Size = new Size(744, 23);
@@ -115,20 +131,24 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 9F);
+            label2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            label2.ForeColor = Color.FromArgb(0, 51, 102);
             label2.Location = new Point(12, 232);
             label2.Name = "label2";
-            label2.Size = new Size(209, 15);
+            label2.Size = new Size(292, 19);
             label2.TabIndex = 3;
             label2.Text = "Или введите серийный номер вручную:";
             // 
             // okButton
             // 
-            okButton.BackColor = Color.Lime;
-            okButton.Font = new Font("Segoe UI", 9F);
+            okButton.BackColor = Color.FromArgb(0, 120, 215);
+            okButton.FlatAppearance.BorderSize = 0;
+            okButton.FlatStyle = FlatStyle.Flat;
+            okButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            okButton.ForeColor = Color.White;
             okButton.Location = new Point(681, 289);
             okButton.Name = "okButton";
-            okButton.Size = new Size(75, 23);
+            okButton.Size = new Size(75, 28);
             okButton.TabIndex = 4;
             okButton.Text = "OK";
             okButton.UseVisualStyleBackColor = false;
@@ -136,11 +156,14 @@
             // 
             // cancelButton
             // 
-            cancelButton.BackColor = Color.OrangeRed;
-            cancelButton.Font = new Font("Segoe UI", 9F);
+            cancelButton.BackColor = Color.FromArgb(220, 53, 69);
+            cancelButton.FlatAppearance.BorderSize = 0;
+            cancelButton.FlatStyle = FlatStyle.Flat;
+            cancelButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            cancelButton.ForeColor = Color.White;
             cancelButton.Location = new Point(600, 289);
             cancelButton.Name = "cancelButton";
-            cancelButton.Size = new Size(75, 23);
+            cancelButton.Size = new Size(75, 28);
             cancelButton.TabIndex = 5;
             cancelButton.Text = "Отмена";
             cancelButton.UseVisualStyleBackColor = false;
@@ -148,11 +171,14 @@
             // 
             // refreshButton
             // 
-            refreshButton.BackColor = Color.FromArgb(255, 128, 0);
-            refreshButton.Font = new Font("Segoe UI", 9F);
+            refreshButton.BackColor = Color.FromArgb(0, 120, 215);
+            refreshButton.FlatAppearance.BorderSize = 0;
+            refreshButton.FlatStyle = FlatStyle.Flat;
+            refreshButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            refreshButton.ForeColor = Color.White;
             refreshButton.Location = new Point(12, 289);
             refreshButton.Name = "refreshButton";
-            refreshButton.Size = new Size(75, 23);
+            refreshButton.Size = new Size(75, 28);
             refreshButton.TabIndex = 6;
             refreshButton.Text = "Обновить";
             refreshButton.UseVisualStyleBackColor = false;
@@ -162,6 +188,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(240, 245, 250);
             ClientSize = new Size(768, 324);
             Controls.Add(refreshButton);
             Controls.Add(cancelButton);
@@ -182,9 +209,7 @@
             ResumeLayout(false);
             PerformLayout();
         }
-
         #endregion
-
         private DataGridView camerasDataGridView;
         private Label label1;
         private TextBox manualSNTextBox;

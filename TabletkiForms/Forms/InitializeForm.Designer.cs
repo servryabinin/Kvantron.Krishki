@@ -1,19 +1,8 @@
-﻿using System.Xml.Linq;
-using static Guna.UI2.WinForms.Suite.Descriptions;
-
-namespace KrishkiForms
+﻿namespace KrishkiForms
 {
     partial class InitializeForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,13 +11,7 @@ namespace KrishkiForms
             }
             base.Dispose(disposing);
         }
-
         #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             pictureBox1 = new PictureBox();
@@ -78,89 +61,101 @@ namespace KrishkiForms
             // 
             // paramPrConnect
             // 
-            paramPrConnect.FlatStyle = FlatStyle.Flat;
+            paramPrConnect.BackColor = Color.White;
+            paramPrConnect.FlatAppearance.BorderSize = 0;
+            paramPrConnect.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            paramPrConnect.ForeColor = Color.Black;
             paramPrConnect.Location = new Point(85, 175);
             paramPrConnect.Name = "paramPrConnect";
-            paramPrConnect.Size = new Size(41, 23);
+            paramPrConnect.Size = new Size(41, 28);
             paramPrConnect.TabIndex = 41;
             paramPrConnect.Text = "...";
-            paramPrConnect.UseVisualStyleBackColor = true;
+            paramPrConnect.UseVisualStyleBackColor = false;
             paramPrConnect.Click += paramPrConnect_Click;
             // 
             // paramCameraConnect
             // 
-            paramCameraConnect.FlatStyle = FlatStyle.Flat;
+            paramCameraConnect.BackColor = Color.White;
+            paramCameraConnect.FlatAppearance.BorderSize = 0;
+            paramCameraConnect.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            paramCameraConnect.ForeColor = Color.Black;
             paramCameraConnect.Location = new Point(85, 142);
             paramCameraConnect.Name = "paramCameraConnect";
-            paramCameraConnect.Size = new Size(41, 23);
+            paramCameraConnect.Size = new Size(41, 28);
             paramCameraConnect.TabIndex = 40;
             paramCameraConnect.Text = "...";
-            paramCameraConnect.UseVisualStyleBackColor = true;
+            paramCameraConnect.UseVisualStyleBackColor = false;
             paramCameraConnect.Click += paramCameraConnect_Click;
             // 
             // btnRetry
             // 
+            btnRetry.BackColor = Color.White;
             btnRetry.FlatAppearance.BorderSize = 0;
-            btnRetry.FlatStyle = FlatStyle.Flat;
             btnRetry.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            btnRetry.Location = new Point(183, 239);
+            btnRetry.ForeColor = Color.Black;
+            btnRetry.Location = new Point(177, 239);
             btnRetry.Name = "btnRetry";
-            btnRetry.Size = new Size(53, 51);
+            btnRetry.Size = new Size(65, 51);
             btnRetry.TabIndex = 39;
             btnRetry.Text = "↺";
-            btnRetry.UseVisualStyleBackColor = true;
+            btnRetry.UseVisualStyleBackColor = false;
             btnRetry.Click += btnRetry_Click;
             // 
             // btnExit
             // 
-            btnExit.BackColor = Color.Tomato;
-            btnExit.Font = new Font("Segoe MDL2 Assets", 21.75F, FontStyle.Bold);
+            btnExit.BackColor = Color.FromArgb(220, 53, 69);
+            btnExit.FlatAppearance.BorderSize = 0;
+            btnExit.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             btnExit.ForeColor = Color.White;
             btnExit.Location = new Point(80, 239);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(85, 51);
             btnExit.TabIndex = 38;
-            btnExit.Text = "";
+            btnExit.Text = "✖";
             btnExit.UseVisualStyleBackColor = false;
             btnExit.Click += btnExit_Click;
             // 
             // btnContinue
             // 
-            btnContinue.BackColor = Color.LimeGreen;
-            btnContinue.Font = new Font("Segoe MDL2 Assets", 21.75F, FontStyle.Bold);
+            btnContinue.BackColor = Color.FromArgb(0, 120, 215);
+            btnContinue.FlatAppearance.BorderSize = 0;
+            btnContinue.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             btnContinue.ForeColor = Color.White;
             btnContinue.Location = new Point(251, 239);
             btnContinue.Name = "btnContinue";
             btnContinue.Size = new Size(85, 51);
             btnContinue.TabIndex = 37;
-            btnContinue.Text = "";
+            btnContinue.Text = "➔";
             btnContinue.UseVisualStyleBackColor = false;
             btnContinue.Click += btnContinue_Click;
             // 
             // prConnectLabel
             // 
             prConnectLabel.AutoSize = true;
-            prConnectLabel.ForeColor = SystemColors.ControlDarkDark;
+            prConnectLabel.Font = new Font("Segoe UI", 9F);
+            prConnectLabel.ForeColor = Color.FromArgb(0, 51, 102);
             prConnectLabel.Location = new Point(132, 179);
             prConnectLabel.Name = "prConnectLabel";
-            prConnectLabel.Size = new Size(151, 15);
+            prConnectLabel.Size = new Size(131, 15);
             prConnectLabel.TabIndex = 5;
-            prConnectLabel.Text = "[...] Подключение ПР205...";
+            prConnectLabel.Text = "Подключение ПР205...";
             // 
             // cameraConectLabel
             // 
             cameraConectLabel.AutoSize = true;
-            cameraConectLabel.ForeColor = SystemColors.ControlDarkDark;
+            cameraConectLabel.Font = new Font("Segoe UI", 9F);
+            cameraConectLabel.ForeColor = Color.FromArgb(0, 51, 102);
             cameraConectLabel.Location = new Point(132, 146);
             cameraConectLabel.Name = "cameraConectLabel";
-            cameraConectLabel.Size = new Size(160, 15);
+            cameraConectLabel.Size = new Size(140, 15);
             cameraConectLabel.TabIndex = 4;
-            cameraConectLabel.Text = "[...] Подключение камеры...";
+            cameraConectLabel.Text = "Подключение камеры...";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            label1.ForeColor = Color.FromArgb(0, 51, 102);
             label1.Location = new Point(45, 96);
             label1.Name = "label1";
             label1.Size = new Size(331, 32);
@@ -170,7 +165,8 @@ namespace KrishkiForms
             // HeaderInitializeForm
             // 
             HeaderInitializeForm.AutoSize = true;
-            HeaderInitializeForm.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            HeaderInitializeForm.Font = new Font("Segoe UI", 18F);
+            HeaderInitializeForm.ForeColor = Color.FromArgb(0, 51, 102);
             HeaderInitializeForm.Location = new Point(99, 32);
             HeaderInitializeForm.Name = "HeaderInitializeForm";
             HeaderInitializeForm.Size = new Size(322, 32);
@@ -181,6 +177,7 @@ namespace KrishkiForms
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(240, 245, 250);
             ClientSize = new Size(434, 357);
             Controls.Add(mainPanel);
             FormBorderStyle = FormBorderStyle.None;
@@ -192,7 +189,6 @@ namespace KrishkiForms
             mainPanel.PerformLayout();
             ResumeLayout(false);
         }
-
         #endregion
         private Panel mainPanel;
         private PictureBox pictureBox1;
