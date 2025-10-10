@@ -480,7 +480,7 @@ namespace KrishkiForms
             inclusionPb.Image = null;
         }
 
-        private void getImageButton_Click_1(object sender, EventArgs e)
+        private void startStreamButton_Click(object sender, EventArgs e)
         {
             if (originalImage != null)
             {
@@ -1457,7 +1457,7 @@ namespace KrishkiForms
                     cam.SetGain();
                     cam.SetExposureTime();
 
-                    getImageButton_Click_1(null, null);
+                    startStreamButton_Click(null, null);
                 }
             }
             catch (Exception ex)

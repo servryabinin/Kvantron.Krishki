@@ -881,6 +881,7 @@
             startStreamButton.TabIndex = 2;
             startStreamButton.Text = "Получить стрим";
             startStreamButton.UseVisualStyleBackColor = false;
+            startStreamButton.Click += startStreamButton_Click;
             // 
             // stopStreamButton
             // 
@@ -894,6 +895,7 @@
             stopStreamButton.TabIndex = 3;
             stopStreamButton.Text = "Закончить стрим";
             stopStreamButton.UseVisualStyleBackColor = false;
+            stopStreamButton.Click += endStream_Click;
             // 
             // settingsTabControl
             // 
