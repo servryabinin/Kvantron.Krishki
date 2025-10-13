@@ -41,6 +41,9 @@ namespace KrishkiForms
         private bool obduvEnabled = false;
         private bool obduvState = false;
         private bool isProcessingFromFolder = false;
+        private bool isImageLoaded = false;
+        private bool isStreamRunning = false;
+
 
         // Изображения и обработка
         private Mat img1 = new Mat();
@@ -62,6 +65,7 @@ namespace KrishkiForms
         private readonly object imageListLock = new object();
         private volatile bool newFrameAvailable = false;
         private Mat latestFrame = null;
+        private Mat pictureForOutput;
 
         // Счетчики дефектов
         private int ovalityCount = 0;
@@ -449,38 +453,67 @@ namespace KrishkiForms
 
         private void loadImageButton_Click(object sender, EventArgs e)
         {
-            isStreamCam = false;
-
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            if (isImageLoaded)
             {
-                openFileDialog.Multiselect = true;
-                openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif";
+                // Очистка
+                isStreamCam = false;
+                originPb.Image?.Dispose();
+                originPb.Image = null;
+                inclusionPb.Image?.Dispose();
+                inclusionPb.Image = null;
 
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                lock (imageListLock)
                 {
-                    lock (imageListLock)
-                    {
-                        imageFiles = new List<string>(openFileDialog.FileNames);
-                        currentImageIndex = 0;
-                        isProcessingFromFolder = imageFiles.Count > 0;
-                    }
+                    imageFiles?.Clear();
+                    isProcessingFromFolder = false;
+                }
 
-                    if (imageFiles.Count > 0)
+                loadImageButton.Text = "Загрузить";
+                loadImageButton.BackColor = Color.FromArgb(66, 133, 244); // Синий
+                isImageLoaded = false;
+            }
+            else
+            {
+                // Загрузка
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Multiselect = true;
+                    openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif";
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        LoadAndDisplayCurrentImage();
+                        lock (imageListLock)
+                        {
+                            imageFiles = new List<string>(openFileDialog.FileNames);
+                            currentImageIndex = 0;
+                            isProcessingFromFolder = imageFiles.Count > 0;
+                        }
+
+                        if (imageFiles.Count > 0)
+                        {
+                            LoadAndDisplayCurrentImage();
+                            loadImageButton.Text = "Очистить";
+                            loadImageButton.BackColor = Color.FromArgb(220, 53, 69); // Красный
+                            isImageLoaded = true;
+                        }
                     }
                 }
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void startStreamButton_Click(object sender, EventArgs e)
         {
-            isStreamCam = false;
-            originPb.Image = null;
-            inclusionPb.Image = null;
+            if (!isStreamRunning)
+            {
+                StartStream();
+            }
+            else
+            {
+                StopStream();
+            }
         }
 
-        private void startStreamButton_Click(object sender, EventArgs e)
+        private void StartStream()
         {
             if (originalImage != null)
             {
@@ -489,6 +522,7 @@ namespace KrishkiForms
             isStreamCam = true;
             ApplyRecognitionParameters();
 
+            // Блокируем настройки во время стрима
             ovalityCoef.Enabled = false;
             circleCoefTx.Enabled = false;
             minSquareInclusion.Enabled = false;
@@ -498,9 +532,13 @@ namespace KrishkiForms
             obloyPixCount.Enabled = false;
 
             StartStop(true);
+
+            startStreamButton.Text = "Остановить";
+            startStreamButton.BackColor = Color.FromArgb(220, 53, 69);
+            isStreamRunning = true;
         }
 
-        private void endStream_Click(object sender, EventArgs e)
+        private void StopStream()
         {
             try
             {
@@ -517,6 +555,7 @@ namespace KrishkiForms
             isRoiProduce = false;
             isROISelected = false;
             isStreamCam = false;
+            originPb.Image?.Dispose();
             originPb.Image = null;
 
             ovalityCoef.Enabled = true;
@@ -528,7 +567,12 @@ namespace KrishkiForms
             obloyPixCount.Enabled = true;
 
             StartStop(false);
+
+            startStreamButton.Text = "Запустить";
+            startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
+            isStreamRunning = false;
         }
+
 
         #endregion
 
@@ -1443,7 +1487,7 @@ namespace KrishkiForms
             {
                 if (!img1.Empty())
                 {
-                    endStream_Click(null, null);
+                    StopStream();
                     uint width = uint.Parse(widthTb.Text);
                     uint height = uint.Parse(heightTb.Text);
                     uint exposure = uint.Parse(exposureTb.Text);
@@ -1457,7 +1501,7 @@ namespace KrishkiForms
                     cam.SetGain();
                     cam.SetExposureTime();
 
-                    startStreamButton_Click(null, null);
+                    StartStream();
                 }
             }
             catch (Exception ex)

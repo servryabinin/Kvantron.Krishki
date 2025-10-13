@@ -30,6 +30,8 @@
         {
             mainPanel = new Panel();
             rightPanel = new Panel();
+            startStreamButton = new Button();
+            recognizeButton = new Button();
             resultsGroup = new GroupBox();
             generalPanel = new Panel();
             label32 = new Label();
@@ -62,20 +64,7 @@
             label18 = new Label();
             inclusionDef = new TextBox();
             label49 = new Label();
-            imagesGroup = new GroupBox();
-            originPb = new PictureBox();
-            leftPanel = new Panel();
-            panel1 = new Panel();
-            recognizeButton = new Button();
-            panel8 = new Panel();
-            loadImageButton = new Button();
-            button3 = new Button();
-            panel5 = new Panel();
-            startStreamButton = new Button();
-            stopStreamButton = new Button();
             settingsTabControl = new TabControl();
-            defectsTabPage = new TabPage();
-            defectsSettingsGroup = new GroupBox();
             inpaintDefectParamPanel = new Panel();
             inpaintPb = new PictureBox();
             whiteThresoldTx = new TextBox();
@@ -128,27 +117,6 @@
             originalPathTextBox = new TextBox();
             label8 = new Label();
             applyFoldersButton = new Button();
-            cameraTabPage = new TabPage();
-            cameraSettingsGroup = new GroupBox();
-            connectCameraButton = new Button();
-            cameraIpTextBox = new TextBox();
-            label1 = new Label();
-            cameraParamsPanel = new Panel();
-            prStatusLabel = new Label();
-            gainTb = new TextBox();
-            label16 = new Label();
-            camStatus = new Label();
-            label6 = new Label();
-            exposureTb = new TextBox();
-            label15 = new Label();
-            label5 = new Label();
-            widthTb = new TextBox();
-            label4 = new Label();
-            heightTb = new TextBox();
-            label3 = new Label();
-            applySettingsButton = new Button();
-            saveSettingsButton = new Button();
-            loadSettingsButton = new Button();
             pr205TabPage = new TabPage();
             pr205Group = new GroupBox();
             prIpTextBox = new TextBox();
@@ -164,9 +132,37 @@
             ApplyPr = new Button();
             savePrSettings = new Button();
             loadPrSettings = new Button();
+            leftPanel = new Panel();
+            imagesGroup = new GroupBox();
+            tabControl1 = new TabControl();
+            cameraTabSettings = new TabPage();
+            connectCameraButton = new Button();
+            label1 = new Label();
+            cameraIpTextBox = new TextBox();
+            loadSettingsButton = new Button();
+            saveSettingsButton = new Button();
+            cameraParamsPanel = new Panel();
+            prStatusLabel = new Label();
+            gainTb = new TextBox();
+            label16 = new Label();
+            camStatus = new Label();
+            label6 = new Label();
+            exposureTb = new TextBox();
+            label15 = new Label();
+            label5 = new Label();
+            widthTb = new TextBox();
+            label4 = new Label();
+            heightTb = new TextBox();
+            label3 = new Label();
+            applySettingsButton = new Button();
+            originPb = new PictureBox();
+            panel8 = new Panel();
+            loadImageButton = new Button();
             controlPanel = new Panel();
             statusPanel = new Panel();
             controlButtonsPanel = new Panel();
+            tabControl2 = new TabControl();
+            tabPage1 = new TabPage();
             mainPanel.SuspendLayout();
             rightPanel.SuspendLayout();
             resultsGroup.SuspendLayout();
@@ -177,15 +173,7 @@
             inpaintDefectPanel.SuspendLayout();
             obloyDefectPanel.SuspendLayout();
             inclusionDefectPanel.SuspendLayout();
-            imagesGroup.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
-            leftPanel.SuspendLayout();
-            panel1.SuspendLayout();
-            panel8.SuspendLayout();
-            panel5.SuspendLayout();
             settingsTabControl.SuspendLayout();
-            defectsTabPage.SuspendLayout();
-            defectsSettingsGroup.SuspendLayout();
             inpaintDefectParamPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inpaintPb).BeginInit();
             inclusionParamDefectPanel.SuspendLayout();
@@ -196,13 +184,19 @@
             ((System.ComponentModel.ISupportInitialize)ovalityPb).BeginInit();
             foldersTabPage.SuspendLayout();
             foldersGroup.SuspendLayout();
-            cameraTabPage.SuspendLayout();
-            cameraSettingsGroup.SuspendLayout();
-            cameraParamsPanel.SuspendLayout();
             pr205TabPage.SuspendLayout();
             pr205Group.SuspendLayout();
             pr205ParamPanel.SuspendLayout();
+            leftPanel.SuspendLayout();
+            imagesGroup.SuspendLayout();
+            tabControl1.SuspendLayout();
+            cameraTabSettings.SuspendLayout();
+            cameraParamsPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
+            panel8.SuspendLayout();
             controlPanel.SuspendLayout();
+            tabControl2.SuspendLayout();
+            tabPage1.SuspendLayout();
             SuspendLayout();
             // 
             // mainPanel
@@ -219,13 +213,42 @@
             // rightPanel
             // 
             rightPanel.BackColor = Color.FromArgb(240, 245, 255);
+            rightPanel.Controls.Add(tabControl2);
             rightPanel.Controls.Add(resultsGroup);
-            rightPanel.Controls.Add(imagesGroup);
+            rightPanel.Controls.Add(settingsTabControl);
             rightPanel.Location = new Point(371, 0);
             rightPanel.Name = "rightPanel";
             rightPanel.Padding = new Padding(10);
             rightPanel.Size = new Size(824, 765);
             rightPanel.TabIndex = 2;
+            // 
+            // startStreamButton
+            // 
+            startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
+            startStreamButton.FlatAppearance.BorderSize = 0;
+            startStreamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            startStreamButton.ForeColor = Color.White;
+            startStreamButton.Location = new Point(93, 3);
+            startStreamButton.Name = "startStreamButton";
+            startStreamButton.Size = new Size(109, 27);
+            startStreamButton.TabIndex = 2;
+            startStreamButton.Text = "Получить";
+            startStreamButton.UseVisualStyleBackColor = false;
+            startStreamButton.Click += startStreamButton_Click;
+            // 
+            // recognizeButton
+            // 
+            recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
+            recognizeButton.FlatAppearance.BorderSize = 0;
+            recognizeButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            recognizeButton.ForeColor = Color.White;
+            recognizeButton.Location = new Point(203, 3);
+            recognizeButton.Name = "recognizeButton";
+            recognizeButton.Size = new Size(99, 27);
+            recognizeButton.TabIndex = 4;
+            recognizeButton.Text = "Начать анализ";
+            recognizeButton.UseVisualStyleBackColor = false;
+            recognizeButton.Click += recognizeButton_Click;
             // 
             // resultsGroup
             // 
@@ -240,9 +263,9 @@
             resultsGroup.FlatStyle = FlatStyle.Flat;
             resultsGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
             resultsGroup.ForeColor = Color.FromArgb(4, 85, 191);
-            resultsGroup.Location = new Point(10, 10);
+            resultsGroup.Location = new Point(10, 13);
             resultsGroup.Name = "resultsGroup";
-            resultsGroup.Size = new Size(803, 168);
+            resultsGroup.Size = new Size(802, 165);
             resultsGroup.TabIndex = 1;
             resultsGroup.TabStop = false;
             resultsGroup.Text = "Результаты анализа";
@@ -593,188 +616,15 @@
             label49.TabIndex = 2;
             label49.Text = "Вкрапления";
             // 
-            // imagesGroup
-            // 
-            imagesGroup.BackColor = Color.White;
-            imagesGroup.Controls.Add(originPb);
-            imagesGroup.FlatStyle = FlatStyle.Flat;
-            imagesGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            imagesGroup.ForeColor = Color.FromArgb(4, 85, 191);
-            imagesGroup.Location = new Point(10, 177);
-            imagesGroup.Name = "imagesGroup";
-            imagesGroup.Size = new Size(803, 579);
-            imagesGroup.TabIndex = 0;
-            imagesGroup.TabStop = false;
-            imagesGroup.Text = "Изображение с камеры";
-            // 
-            // originPb
-            // 
-            originPb.Location = new Point(15, 25);
-            originPb.Name = "originPb";
-            originPb.Size = new Size(774, 547);
-            originPb.SizeMode = PictureBoxSizeMode.StretchImage;
-            originPb.TabIndex = 0;
-            originPb.TabStop = false;
-            // 
-            // leftPanel
-            // 
-            leftPanel.BackColor = Color.FromArgb(240, 245, 255);
-            leftPanel.Controls.Add(panel1);
-            leftPanel.Controls.Add(panel8);
-            leftPanel.Controls.Add(panel5);
-            leftPanel.Controls.Add(settingsTabControl);
-            leftPanel.Location = new Point(0, 0);
-            leftPanel.Name = "leftPanel";
-            leftPanel.Padding = new Padding(10);
-            leftPanel.Size = new Size(374, 821);
-            leftPanel.TabIndex = 1;
-            // 
-            // panel1
-            // 
-            panel1.BackColor = SystemColors.ButtonHighlight;
-            panel1.BorderStyle = BorderStyle.Fixed3D;
-            panel1.Controls.Add(recognizeButton);
-            panel1.Location = new Point(17, 700);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(336, 56);
-            panel1.TabIndex = 28;
-            // 
-            // recognizeButton
-            // 
-            recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
-            recognizeButton.FlatAppearance.BorderSize = 0;
-            recognizeButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            recognizeButton.ForeColor = Color.White;
-            recognizeButton.Location = new Point(18, 7);
-            recognizeButton.Name = "recognizeButton";
-            recognizeButton.Size = new Size(295, 40);
-            recognizeButton.TabIndex = 4;
-            recognizeButton.Text = "Начать анализ";
-            recognizeButton.UseVisualStyleBackColor = false;
-            recognizeButton.Click += recognizeButton_Click;
-            // 
-            // panel8
-            // 
-            panel8.BackColor = SystemColors.ButtonHighlight;
-            panel8.BorderStyle = BorderStyle.Fixed3D;
-            panel8.Controls.Add(loadImageButton);
-            panel8.Controls.Add(button3);
-            panel8.Location = new Point(17, 596);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(165, 98);
-            panel8.TabIndex = 27;
-            // 
-            // loadImageButton
-            // 
-            loadImageButton.BackColor = Color.FromArgb(66, 133, 244);
-            loadImageButton.FlatAppearance.BorderSize = 0;
-            loadImageButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            loadImageButton.ForeColor = Color.White;
-            loadImageButton.Location = new Point(18, 3);
-            loadImageButton.Name = "loadImageButton";
-            loadImageButton.Size = new Size(120, 40);
-            loadImageButton.TabIndex = 1;
-            loadImageButton.Text = "Загрузить";
-            loadImageButton.UseVisualStyleBackColor = false;
-            loadImageButton.Click += loadImageButton_Click;
-            // 
-            // button3
-            // 
-            button3.BackColor = Color.FromArgb(220, 53, 69);
-            button3.FlatAppearance.BorderSize = 0;
-            button3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(18, 48);
-            button3.Name = "button3";
-            button3.Size = new Size(120, 40);
-            button3.TabIndex = 0;
-            button3.Text = "Очистить";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
-            // 
-            // panel5
-            // 
-            panel5.BackColor = SystemColors.ButtonHighlight;
-            panel5.BorderStyle = BorderStyle.Fixed3D;
-            panel5.Controls.Add(startStreamButton);
-            panel5.Controls.Add(stopStreamButton);
-            panel5.Location = new Point(188, 594);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(168, 100);
-            panel5.TabIndex = 26;
-            // 
-            // startStreamButton
-            // 
-            startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
-            startStreamButton.FlatAppearance.BorderSize = 0;
-            startStreamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            startStreamButton.ForeColor = Color.White;
-            startStreamButton.Location = new Point(22, 5);
-            startStreamButton.Name = "startStreamButton";
-            startStreamButton.Size = new Size(120, 40);
-            startStreamButton.TabIndex = 2;
-            startStreamButton.Text = "Получить стрим";
-            startStreamButton.UseVisualStyleBackColor = false;
-            startStreamButton.Click += startStreamButton_Click;
-            // 
-            // stopStreamButton
-            // 
-            stopStreamButton.BackColor = Color.FromArgb(66, 133, 244);
-            stopStreamButton.FlatAppearance.BorderSize = 0;
-            stopStreamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            stopStreamButton.ForeColor = Color.White;
-            stopStreamButton.Location = new Point(22, 50);
-            stopStreamButton.Name = "stopStreamButton";
-            stopStreamButton.Size = new Size(120, 40);
-            stopStreamButton.TabIndex = 3;
-            stopStreamButton.Text = "Закончить стрим";
-            stopStreamButton.UseVisualStyleBackColor = false;
-            stopStreamButton.Click += endStream_Click;
-            // 
             // settingsTabControl
             // 
-            settingsTabControl.Controls.Add(defectsTabPage);
             settingsTabControl.Controls.Add(foldersTabPage);
-            settingsTabControl.Controls.Add(cameraTabPage);
             settingsTabControl.Controls.Add(pr205TabPage);
-            settingsTabControl.Location = new Point(10, 10);
+            settingsTabControl.Location = new Point(358, 185);
             settingsTabControl.Name = "settingsTabControl";
             settingsTabControl.SelectedIndex = 0;
-            settingsTabControl.Size = new Size(350, 580);
+            settingsTabControl.Size = new Size(454, 570);
             settingsTabControl.TabIndex = 0;
-            // 
-            // defectsTabPage
-            // 
-            defectsTabPage.BackColor = Color.White;
-            defectsTabPage.Controls.Add(defectsSettingsGroup);
-            defectsTabPage.Location = new Point(4, 24);
-            defectsTabPage.Name = "defectsTabPage";
-            defectsTabPage.Padding = new Padding(3);
-            defectsTabPage.Size = new Size(342, 552);
-            defectsTabPage.TabIndex = 1;
-            defectsTabPage.Text = "Дефекты";
-            // 
-            // defectsSettingsGroup
-            // 
-            defectsSettingsGroup.Controls.Add(inpaintDefectParamPanel);
-            defectsSettingsGroup.Controls.Add(inclusionParamDefectPanel);
-            defectsSettingsGroup.Controls.Add(comboBox1);
-            defectsSettingsGroup.Controls.Add(label43);
-            defectsSettingsGroup.Controls.Add(obloyDefectParamPanel);
-            defectsSettingsGroup.Controls.Add(defectTypeComboBox);
-            defectsSettingsGroup.Controls.Add(label2);
-            defectsSettingsGroup.Controls.Add(ovalityParamsPanel);
-            defectsSettingsGroup.Controls.Add(applyDefectButton);
-            defectsSettingsGroup.Dock = DockStyle.Fill;
-            defectsSettingsGroup.FlatStyle = FlatStyle.Flat;
-            defectsSettingsGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            defectsSettingsGroup.ForeColor = Color.FromArgb(4, 85, 191);
-            defectsSettingsGroup.Location = new Point(3, 3);
-            defectsSettingsGroup.Name = "defectsSettingsGroup";
-            defectsSettingsGroup.Size = new Size(336, 546);
-            defectsSettingsGroup.TabIndex = 0;
-            defectsSettingsGroup.TabStop = false;
-            defectsSettingsGroup.Text = "Настройки методов";
             // 
             // inpaintDefectParamPanel
             // 
@@ -786,9 +636,9 @@
             inpaintDefectParamPanel.Controls.Add(label29);
             inpaintDefectParamPanel.Controls.Add(label28);
             inpaintDefectParamPanel.Controls.Add(minSquareInpaint);
-            inpaintDefectParamPanel.Location = new Point(20, 95);
+            inpaintDefectParamPanel.Location = new Point(19, 75);
             inpaintDefectParamPanel.Name = "inpaintDefectParamPanel";
-            inpaintDefectParamPanel.Size = new Size(295, 396);
+            inpaintDefectParamPanel.Size = new Size(295, 401);
             inpaintDefectParamPanel.TabIndex = 3;
             // 
             // inpaintPb
@@ -805,7 +655,7 @@
             // 
             whiteThresoldTx.Location = new Point(12, 103);
             whiteThresoldTx.Name = "whiteThresoldTx";
-            whiteThresoldTx.Size = new Size(100, 25);
+            whiteThresoldTx.Size = new Size(100, 23);
             whiteThresoldTx.TabIndex = 39;
             whiteThresoldTx.Text = "10";
             // 
@@ -816,6 +666,7 @@
             inpaintCB.Checked = true;
             inpaintCB.CheckState = CheckState.Checked;
             inpaintCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inpaintCB.ForeColor = Color.FromArgb(4, 85, 191);
             inpaintCB.Location = new Point(15, 15);
             inpaintCB.Name = "inpaintCB";
             inpaintCB.Size = new Size(223, 25);
@@ -850,7 +701,7 @@
             // 
             minSquareInpaint.Location = new Point(12, 58);
             minSquareInpaint.Name = "minSquareInpaint";
-            minSquareInpaint.Size = new Size(100, 25);
+            minSquareInpaint.Size = new Size(100, 23);
             minSquareInpaint.TabIndex = 37;
             minSquareInpaint.Text = "500";
             // 
@@ -866,16 +717,16 @@
             inclusionParamDefectPanel.Controls.Add(label24);
             inclusionParamDefectPanel.Controls.Add(label23);
             inclusionParamDefectPanel.Controls.Add(circleCoefTx);
-            inclusionParamDefectPanel.Location = new Point(20, 100);
+            inclusionParamDefectPanel.Location = new Point(18, 75);
             inclusionParamDefectPanel.Name = "inclusionParamDefectPanel";
-            inclusionParamDefectPanel.Size = new Size(295, 396);
+            inclusionParamDefectPanel.Size = new Size(295, 401);
             inclusionParamDefectPanel.TabIndex = 2;
             // 
             // maxSquareInclusion
             // 
             maxSquareInclusion.Location = new Point(18, 147);
             maxSquareInclusion.Name = "maxSquareInclusion";
-            maxSquareInclusion.Size = new Size(100, 25);
+            maxSquareInclusion.Size = new Size(100, 23);
             maxSquareInclusion.TabIndex = 17;
             maxSquareInclusion.Text = "500";
             // 
@@ -886,6 +737,7 @@
             inclusionCB.Checked = true;
             inclusionCB.CheckState = CheckState.Checked;
             inclusionCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inclusionCB.ForeColor = Color.FromArgb(4, 85, 191);
             inclusionCB.Location = new Point(18, 14);
             inclusionCB.Name = "inclusionCB";
             inclusionCB.Size = new Size(215, 25);
@@ -919,7 +771,7 @@
             // 
             minSquareInclusion.Location = new Point(18, 103);
             minSquareInclusion.Name = "minSquareInclusion";
-            minSquareInclusion.Size = new Size(100, 25);
+            minSquareInclusion.Size = new Size(100, 23);
             minSquareInclusion.TabIndex = 15;
             minSquareInclusion.Text = "200";
             // 
@@ -949,7 +801,7 @@
             // 
             circleCoefTx.Location = new Point(18, 58);
             circleCoefTx.Name = "circleCoefTx";
-            circleCoefTx.Size = new Size(100, 25);
+            circleCoefTx.Size = new Size(100, 23);
             circleCoefTx.TabIndex = 12;
             circleCoefTx.Text = "0,8";
             // 
@@ -958,9 +810,9 @@
             comboBox1.FlatStyle = FlatStyle.Flat;
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые" });
-            comboBox1.Location = new Point(169, 51);
+            comboBox1.Location = new Point(168, 31);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(105, 25);
+            comboBox1.Size = new Size(105, 23);
             comboBox1.TabIndex = 38;
             // 
             // label43
@@ -968,7 +820,7 @@
             label43.AutoSize = true;
             label43.Font = new Font("Segoe UI", 9F);
             label43.ForeColor = Color.Black;
-            label43.Location = new Point(167, 35);
+            label43.Location = new Point(166, 15);
             label43.Name = "label43";
             label43.Size = new Size(81, 15);
             label43.TabIndex = 37;
@@ -978,20 +830,21 @@
             // 
             obloyDefectParamPanel.BackColor = Color.FromArgb(240, 245, 255);
             obloyDefectParamPanel.BorderStyle = BorderStyle.Fixed3D;
+            obloyDefectParamPanel.Controls.Add(ovalityParamsPanel);
             obloyDefectParamPanel.Controls.Add(obloyPixCount);
             obloyDefectParamPanel.Controls.Add(obloyPb);
             obloyDefectParamPanel.Controls.Add(label47);
             obloyDefectParamPanel.Controls.Add(obloyCB);
-            obloyDefectParamPanel.Location = new Point(20, 100);
+            obloyDefectParamPanel.Location = new Point(17, 75);
             obloyDefectParamPanel.Name = "obloyDefectParamPanel";
-            obloyDefectParamPanel.Size = new Size(295, 396);
+            obloyDefectParamPanel.Size = new Size(295, 401);
             obloyDefectParamPanel.TabIndex = 4;
             // 
             // obloyPixCount
             // 
             obloyPixCount.Location = new Point(18, 60);
             obloyPixCount.Name = "obloyPixCount";
-            obloyPixCount.Size = new Size(100, 25);
+            obloyPixCount.Size = new Size(100, 23);
             obloyPixCount.TabIndex = 8;
             obloyPixCount.Text = "25";
             // 
@@ -1023,6 +876,7 @@
             obloyCB.Checked = true;
             obloyCB.CheckState = CheckState.Checked;
             obloyCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            obloyCB.ForeColor = Color.FromArgb(4, 85, 191);
             obloyCB.Location = new Point(15, 16);
             obloyCB.Name = "obloyCB";
             obloyCB.Size = new Size(173, 25);
@@ -1039,7 +893,7 @@
             defectTypeComboBox.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             defectTypeComboBox.FormattingEnabled = true;
             defectTypeComboBox.Items.AddRange(new object[] { "Овальность", "Вкрапления", "Непрокрас", "Облой", "Неполный залив" });
-            defectTypeComboBox.Location = new Point(20, 55);
+            defectTypeComboBox.Location = new Point(19, 35);
             defectTypeComboBox.Name = "defectTypeComboBox";
             defectTypeComboBox.Size = new Size(120, 23);
             defectTypeComboBox.TabIndex = 3;
@@ -1050,7 +904,7 @@
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label2.ForeColor = Color.Black;
-            label2.Location = new Point(20, 35);
+            label2.Location = new Point(19, 15);
             label2.Name = "label2";
             label2.Size = new Size(77, 15);
             label2.TabIndex = 2;
@@ -1064,9 +918,9 @@
             ovalityParamsPanel.Controls.Add(ovalityCoef);
             ovalityParamsPanel.Controls.Add(ovalityPb);
             ovalityParamsPanel.Controls.Add(label21);
-            ovalityParamsPanel.Location = new Point(20, 100);
+            ovalityParamsPanel.Location = new Point(-2, -2);
             ovalityParamsPanel.Name = "ovalityParamsPanel";
-            ovalityParamsPanel.Size = new Size(295, 396);
+            ovalityParamsPanel.Size = new Size(295, 401);
             ovalityParamsPanel.TabIndex = 1;
             // 
             // ovalityCB
@@ -1088,7 +942,7 @@
             // 
             ovalityCoef.Location = new Point(18, 63);
             ovalityCoef.Name = "ovalityCoef";
-            ovalityCoef.Size = new Size(100, 25);
+            ovalityCoef.Size = new Size(100, 23);
             ovalityCoef.TabIndex = 8;
             ovalityCoef.Text = "0,7";
             // 
@@ -1119,7 +973,7 @@
             applyDefectButton.FlatAppearance.BorderSize = 0;
             applyDefectButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             applyDefectButton.ForeColor = Color.White;
-            applyDefectButton.Location = new Point(20, 502);
+            applyDefectButton.Location = new Point(24, 490);
             applyDefectButton.Name = "applyDefectButton";
             applyDefectButton.Size = new Size(280, 35);
             applyDefectButton.TabIndex = 0;
@@ -1132,7 +986,7 @@
             foldersTabPage.Controls.Add(foldersGroup);
             foldersTabPage.Location = new Point(4, 24);
             foldersTabPage.Name = "foldersTabPage";
-            foldersTabPage.Size = new Size(342, 552);
+            foldersTabPage.Size = new Size(446, 542);
             foldersTabPage.TabIndex = 2;
             foldersTabPage.Text = "Папки";
             // 
@@ -1163,7 +1017,7 @@
             foldersGroup.ForeColor = Color.FromArgb(4, 85, 191);
             foldersGroup.Location = new Point(0, 0);
             foldersGroup.Name = "foldersGroup";
-            foldersGroup.Size = new Size(342, 552);
+            foldersGroup.Size = new Size(446, 542);
             foldersGroup.TabIndex = 0;
             foldersGroup.TabStop = false;
             foldersGroup.Text = "Настройки папок";
@@ -1175,7 +1029,7 @@
             browseUnderfillButton.FlatStyle = FlatStyle.Popup;
             browseUnderfillButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             browseUnderfillButton.ForeColor = Color.White;
-            browseUnderfillButton.Location = new Point(263, 383);
+            browseUnderfillButton.Location = new Point(373, 383);
             browseUnderfillButton.Name = "browseUnderfillButton";
             browseUnderfillButton.Size = new Size(40, 23);
             browseUnderfillButton.TabIndex = 18;
@@ -1190,7 +1044,7 @@
             underfillPathTextBox.Font = new Font("Segoe UI", 8F);
             underfillPathTextBox.Location = new Point(20, 384);
             underfillPathTextBox.Name = "underfillPathTextBox";
-            underfillPathTextBox.Size = new Size(240, 22);
+            underfillPathTextBox.Size = new Size(347, 22);
             underfillPathTextBox.TabIndex = 17;
             // 
             // label13
@@ -1211,7 +1065,7 @@
             browseObloyButton.FlatStyle = FlatStyle.Popup;
             browseObloyButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             browseObloyButton.ForeColor = Color.White;
-            browseObloyButton.Location = new Point(263, 323);
+            browseObloyButton.Location = new Point(373, 323);
             browseObloyButton.Name = "browseObloyButton";
             browseObloyButton.Size = new Size(40, 23);
             browseObloyButton.TabIndex = 15;
@@ -1226,7 +1080,7 @@
             obloyPathTextBox.Font = new Font("Segoe UI", 8F);
             obloyPathTextBox.Location = new Point(20, 324);
             obloyPathTextBox.Name = "obloyPathTextBox";
-            obloyPathTextBox.Size = new Size(240, 22);
+            obloyPathTextBox.Size = new Size(347, 22);
             obloyPathTextBox.TabIndex = 14;
             // 
             // label12
@@ -1247,7 +1101,7 @@
             browseInpaintButton.FlatStyle = FlatStyle.Popup;
             browseInpaintButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             browseInpaintButton.ForeColor = Color.White;
-            browseInpaintButton.Location = new Point(263, 263);
+            browseInpaintButton.Location = new Point(373, 263);
             browseInpaintButton.Name = "browseInpaintButton";
             browseInpaintButton.Size = new Size(40, 23);
             browseInpaintButton.TabIndex = 12;
@@ -1262,7 +1116,7 @@
             inpaintPathTextBox.Font = new Font("Segoe UI", 8F);
             inpaintPathTextBox.Location = new Point(20, 264);
             inpaintPathTextBox.Name = "inpaintPathTextBox";
-            inpaintPathTextBox.Size = new Size(240, 22);
+            inpaintPathTextBox.Size = new Size(347, 22);
             inpaintPathTextBox.TabIndex = 11;
             // 
             // label11
@@ -1283,7 +1137,7 @@
             browseInclusionButton.FlatStyle = FlatStyle.Popup;
             browseInclusionButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             browseInclusionButton.ForeColor = Color.White;
-            browseInclusionButton.Location = new Point(263, 203);
+            browseInclusionButton.Location = new Point(373, 203);
             browseInclusionButton.Name = "browseInclusionButton";
             browseInclusionButton.Size = new Size(40, 23);
             browseInclusionButton.TabIndex = 9;
@@ -1298,7 +1152,7 @@
             inclusionPathTextBox.Font = new Font("Segoe UI", 8F);
             inclusionPathTextBox.Location = new Point(20, 204);
             inclusionPathTextBox.Name = "inclusionPathTextBox";
-            inclusionPathTextBox.Size = new Size(240, 22);
+            inclusionPathTextBox.Size = new Size(347, 22);
             inclusionPathTextBox.TabIndex = 8;
             // 
             // label10
@@ -1319,7 +1173,7 @@
             browseOvalityButton.FlatStyle = FlatStyle.Popup;
             browseOvalityButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             browseOvalityButton.ForeColor = Color.White;
-            browseOvalityButton.Location = new Point(263, 143);
+            browseOvalityButton.Location = new Point(373, 143);
             browseOvalityButton.Name = "browseOvalityButton";
             browseOvalityButton.Size = new Size(40, 23);
             browseOvalityButton.TabIndex = 6;
@@ -1334,7 +1188,7 @@
             ovalityPathTextBox.Font = new Font("Segoe UI", 8F);
             ovalityPathTextBox.Location = new Point(20, 144);
             ovalityPathTextBox.Name = "ovalityPathTextBox";
-            ovalityPathTextBox.Size = new Size(240, 22);
+            ovalityPathTextBox.Size = new Size(347, 22);
             ovalityPathTextBox.TabIndex = 5;
             // 
             // label9
@@ -1355,7 +1209,7 @@
             browseOriginalButton.FlatStyle = FlatStyle.Popup;
             browseOriginalButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             browseOriginalButton.ForeColor = Color.White;
-            browseOriginalButton.Location = new Point(263, 83);
+            browseOriginalButton.Location = new Point(373, 83);
             browseOriginalButton.Name = "browseOriginalButton";
             browseOriginalButton.Size = new Size(40, 23);
             browseOriginalButton.TabIndex = 3;
@@ -1370,7 +1224,7 @@
             originalPathTextBox.Font = new Font("Segoe UI", 8F);
             originalPathTextBox.Location = new Point(20, 84);
             originalPathTextBox.Name = "originalPathTextBox";
-            originalPathTextBox.Size = new Size(240, 22);
+            originalPathTextBox.Size = new Size(347, 22);
             originalPathTextBox.TabIndex = 2;
             // 
             // label8
@@ -1390,7 +1244,7 @@
             applyFoldersButton.FlatAppearance.BorderSize = 0;
             applyFoldersButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             applyFoldersButton.ForeColor = Color.White;
-            applyFoldersButton.Location = new Point(20, 453);
+            applyFoldersButton.Location = new Point(87, 489);
             applyFoldersButton.Name = "applyFoldersButton";
             applyFoldersButton.Size = new Size(280, 35);
             applyFoldersButton.TabIndex = 0;
@@ -1398,275 +1252,13 @@
             applyFoldersButton.UseVisualStyleBackColor = false;
             applyFoldersButton.Click += applyFoldersButton_Click;
             // 
-            // cameraTabPage
-            // 
-            cameraTabPage.BackColor = Color.White;
-            cameraTabPage.Controls.Add(cameraSettingsGroup);
-            cameraTabPage.Location = new Point(4, 24);
-            cameraTabPage.Name = "cameraTabPage";
-            cameraTabPage.Padding = new Padding(3);
-            cameraTabPage.Size = new Size(342, 552);
-            cameraTabPage.TabIndex = 0;
-            cameraTabPage.Text = "Камера";
-            // 
-            // cameraSettingsGroup
-            // 
-            cameraSettingsGroup.Controls.Add(connectCameraButton);
-            cameraSettingsGroup.Controls.Add(cameraIpTextBox);
-            cameraSettingsGroup.Controls.Add(label1);
-            cameraSettingsGroup.Controls.Add(cameraParamsPanel);
-            cameraSettingsGroup.Controls.Add(applySettingsButton);
-            cameraSettingsGroup.Controls.Add(saveSettingsButton);
-            cameraSettingsGroup.Controls.Add(loadSettingsButton);
-            cameraSettingsGroup.Dock = DockStyle.Fill;
-            cameraSettingsGroup.FlatStyle = FlatStyle.Flat;
-            cameraSettingsGroup.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            cameraSettingsGroup.ForeColor = Color.FromArgb(4, 85, 191);
-            cameraSettingsGroup.Location = new Point(3, 3);
-            cameraSettingsGroup.Name = "cameraSettingsGroup";
-            cameraSettingsGroup.Size = new Size(336, 546);
-            cameraSettingsGroup.TabIndex = 0;
-            cameraSettingsGroup.TabStop = false;
-            cameraSettingsGroup.Text = "Настройки камеры и ПР205";
-            // 
-            // connectCameraButton
-            // 
-            connectCameraButton.BackColor = Color.FromArgb(4, 85, 191);
-            connectCameraButton.FlatAppearance.BorderSize = 0;
-            connectCameraButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            connectCameraButton.ForeColor = Color.White;
-            connectCameraButton.Location = new Point(171, 48);
-            connectCameraButton.Name = "connectCameraButton";
-            connectCameraButton.Size = new Size(129, 38);
-            connectCameraButton.TabIndex = 6;
-            connectCameraButton.Text = "Подключить";
-            connectCameraButton.UseVisualStyleBackColor = false;
-            connectCameraButton.Click += connectCameraButton_Click;
-            // 
-            // cameraIpTextBox
-            // 
-            cameraIpTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
-            cameraIpTextBox.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            cameraIpTextBox.Location = new Point(20, 55);
-            cameraIpTextBox.Name = "cameraIpTextBox";
-            cameraIpTextBox.Size = new Size(135, 23);
-            cameraIpTextBox.TabIndex = 5;
-            cameraIpTextBox.Text = "169.254.205.254";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Microsoft Sans Serif", 9F);
-            label1.ForeColor = Color.Black;
-            label1.Location = new Point(20, 35);
-            label1.Name = "label1";
-            label1.Size = new Size(106, 15);
-            label1.TabIndex = 4;
-            label1.Text = "IP адрес камеры:";
-            // 
-            // cameraParamsPanel
-            // 
-            cameraParamsPanel.BackColor = Color.FromArgb(240, 245, 255);
-            cameraParamsPanel.BorderStyle = BorderStyle.Fixed3D;
-            cameraParamsPanel.Controls.Add(prStatusLabel);
-            cameraParamsPanel.Controls.Add(gainTb);
-            cameraParamsPanel.Controls.Add(label16);
-            cameraParamsPanel.Controls.Add(camStatus);
-            cameraParamsPanel.Controls.Add(label6);
-            cameraParamsPanel.Controls.Add(exposureTb);
-            cameraParamsPanel.Controls.Add(label15);
-            cameraParamsPanel.Controls.Add(label5);
-            cameraParamsPanel.Controls.Add(widthTb);
-            cameraParamsPanel.Controls.Add(label4);
-            cameraParamsPanel.Controls.Add(heightTb);
-            cameraParamsPanel.Controls.Add(label3);
-            cameraParamsPanel.Location = new Point(20, 100);
-            cameraParamsPanel.Name = "cameraParamsPanel";
-            cameraParamsPanel.Size = new Size(280, 200);
-            cameraParamsPanel.TabIndex = 3;
-            // 
-            // prStatusLabel
-            // 
-            prStatusLabel.AutoSize = true;
-            prStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
-            prStatusLabel.ForeColor = Color.Black;
-            prStatusLabel.Location = new Point(150, 14);
-            prStatusLabel.Name = "prStatusLabel";
-            prStatusLabel.Size = new Size(77, 13);
-            prStatusLabel.TabIndex = 3;
-            prStatusLabel.Text = "Не запущена";
-            // 
-            // gainTb
-            // 
-            gainTb.BackColor = Color.White;
-            gainTb.BorderStyle = BorderStyle.FixedSingle;
-            gainTb.Font = new Font("Segoe UI", 9F);
-            gainTb.Location = new Point(150, 150);
-            gainTb.Name = "gainTb";
-            gainTb.Size = new Size(100, 23);
-            gainTb.TabIndex = 7;
-            gainTb.Text = "100";
-            // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Font = new Font("Segoe UI", 8.25F);
-            label16.ForeColor = Color.Black;
-            label16.Location = new Point(20, 13);
-            label16.Name = "label16";
-            label16.Size = new Size(105, 13);
-            label16.TabIndex = 1;
-            label16.Text = "Обработка видео:";
-            // 
-            // camStatus
-            // 
-            camStatus.AutoSize = true;
-            camStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
-            camStatus.ForeColor = Color.Black;
-            camStatus.Location = new Point(149, 46);
-            camStatus.Name = "camStatus";
-            camStatus.Size = new Size(94, 13);
-            camStatus.TabIndex = 2;
-            camStatus.Text = "Не подключена";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 9F);
-            label6.ForeColor = Color.Black;
-            label6.Location = new Point(150, 130);
-            label6.Name = "label6";
-            label6.Size = new Size(95, 15);
-            label6.TabIndex = 6;
-            label6.Text = "Насыщенность:";
-            // 
-            // exposureTb
-            // 
-            exposureTb.BackColor = Color.White;
-            exposureTb.BorderStyle = BorderStyle.FixedSingle;
-            exposureTb.Font = new Font("Segoe UI", 9F);
-            exposureTb.Location = new Point(20, 150);
-            exposureTb.Name = "exposureTb";
-            exposureTb.Size = new Size(100, 23);
-            exposureTb.TabIndex = 5;
-            exposureTb.Text = "10000";
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Font = new Font("Segoe UI", 8.25F);
-            label15.ForeColor = Color.Black;
-            label15.Location = new Point(20, 46);
-            label15.Name = "label15";
-            label15.Size = new Size(87, 13);
-            label15.TabIndex = 0;
-            label15.Text = "Статус камеры:";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 9F);
-            label5.ForeColor = Color.Black;
-            label5.Location = new Point(20, 130);
-            label5.Name = "label5";
-            label5.Size = new Size(75, 15);
-            label5.TabIndex = 4;
-            label5.Text = "Экспозиция:";
-            // 
-            // widthTb
-            // 
-            widthTb.BackColor = Color.White;
-            widthTb.BorderStyle = BorderStyle.FixedSingle;
-            widthTb.Font = new Font("Segoe UI", 9F);
-            widthTb.Location = new Point(150, 97);
-            widthTb.Name = "widthTb";
-            widthTb.Size = new Size(100, 23);
-            widthTb.TabIndex = 3;
-            widthTb.Text = "1920";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 9F);
-            label4.ForeColor = Color.Black;
-            label4.Location = new Point(150, 77);
-            label4.Name = "label4";
-            label4.Size = new Size(55, 15);
-            label4.TabIndex = 2;
-            label4.Text = "Ширина:";
-            // 
-            // heightTb
-            // 
-            heightTb.BackColor = Color.White;
-            heightTb.BorderStyle = BorderStyle.FixedSingle;
-            heightTb.Font = new Font("Segoe UI", 9F);
-            heightTb.Location = new Point(20, 97);
-            heightTb.Name = "heightTb";
-            heightTb.Size = new Size(100, 23);
-            heightTb.TabIndex = 1;
-            heightTb.Text = "1080";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 9F);
-            label3.ForeColor = Color.Black;
-            label3.Location = new Point(20, 77);
-            label3.Name = "label3";
-            label3.Size = new Size(50, 15);
-            label3.TabIndex = 0;
-            label3.Text = "Высота:";
-            // 
-            // applySettingsButton
-            // 
-            applySettingsButton.BackColor = Color.FromArgb(4, 85, 191);
-            applySettingsButton.FlatAppearance.BorderSize = 0;
-            applySettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            applySettingsButton.ForeColor = Color.White;
-            applySettingsButton.Location = new Point(20, 320);
-            applySettingsButton.Name = "applySettingsButton";
-            applySettingsButton.Size = new Size(280, 43);
-            applySettingsButton.TabIndex = 2;
-            applySettingsButton.Text = "Применить настройки";
-            applySettingsButton.UseVisualStyleBackColor = false;
-            applySettingsButton.Click += applySettingsButton_Click;
-            // 
-            // saveSettingsButton
-            // 
-            saveSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
-            saveSettingsButton.FlatAppearance.BorderSize = 0;
-            saveSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            saveSettingsButton.ForeColor = Color.White;
-            saveSettingsButton.Location = new Point(171, 380);
-            saveSettingsButton.Name = "saveSettingsButton";
-            saveSettingsButton.Size = new Size(129, 52);
-            saveSettingsButton.TabIndex = 1;
-            saveSettingsButton.Text = "Сохранить";
-            saveSettingsButton.UseVisualStyleBackColor = false;
-            saveSettingsButton.Click += saveSettingsButton_Click;
-            // 
-            // loadSettingsButton
-            // 
-            loadSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
-            loadSettingsButton.FlatAppearance.BorderSize = 0;
-            loadSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            loadSettingsButton.ForeColor = Color.White;
-            loadSettingsButton.Location = new Point(20, 380);
-            loadSettingsButton.Name = "loadSettingsButton";
-            loadSettingsButton.Size = new Size(134, 52);
-            loadSettingsButton.TabIndex = 0;
-            loadSettingsButton.Text = "Загрузить настройки";
-            loadSettingsButton.UseVisualStyleBackColor = false;
-            loadSettingsButton.Click += loadSettingsButton_Click;
-            // 
             // pr205TabPage
             // 
             pr205TabPage.Controls.Add(pr205Group);
             pr205TabPage.Location = new Point(4, 24);
             pr205TabPage.Name = "pr205TabPage";
             pr205TabPage.Padding = new Padding(3);
-            pr205TabPage.Size = new Size(342, 552);
+            pr205TabPage.Size = new Size(446, 542);
             pr205TabPage.TabIndex = 3;
             pr205TabPage.Text = "ПР205";
             pr205TabPage.UseVisualStyleBackColor = true;
@@ -1686,7 +1278,7 @@
             pr205Group.ForeColor = Color.FromArgb(4, 85, 191);
             pr205Group.Location = new Point(3, 3);
             pr205Group.Name = "pr205Group";
-            pr205Group.Size = new Size(336, 546);
+            pr205Group.Size = new Size(440, 536);
             pr205Group.TabIndex = 1;
             pr205Group.TabStop = false;
             pr205Group.Text = "Настройки ПР205";
@@ -1847,6 +1439,325 @@
             loadPrSettings.UseVisualStyleBackColor = false;
             loadPrSettings.Click += loadPrSettings_Click;
             // 
+            // leftPanel
+            // 
+            leftPanel.BackColor = Color.FromArgb(240, 245, 255);
+            leftPanel.Controls.Add(imagesGroup);
+            leftPanel.Location = new Point(3, 0);
+            leftPanel.Name = "leftPanel";
+            leftPanel.Padding = new Padding(10);
+            leftPanel.Size = new Size(371, 821);
+            leftPanel.TabIndex = 1;
+            // 
+            // imagesGroup
+            // 
+            imagesGroup.BackColor = Color.White;
+            imagesGroup.Controls.Add(tabControl1);
+            imagesGroup.Controls.Add(originPb);
+            imagesGroup.Controls.Add(panel8);
+            imagesGroup.FlatStyle = FlatStyle.Flat;
+            imagesGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            imagesGroup.ForeColor = Color.FromArgb(4, 85, 191);
+            imagesGroup.Location = new Point(13, 13);
+            imagesGroup.Name = "imagesGroup";
+            imagesGroup.Size = new Size(329, 745);
+            imagesGroup.TabIndex = 0;
+            imagesGroup.TabStop = false;
+            imagesGroup.Text = "Камера";
+            // 
+            // tabControl1
+            // 
+            tabControl1.Controls.Add(cameraTabSettings);
+            tabControl1.Location = new Point(10, 293);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(313, 446);
+            tabControl1.TabIndex = 2;
+            // 
+            // cameraTabSettings
+            // 
+            cameraTabSettings.Controls.Add(connectCameraButton);
+            cameraTabSettings.Controls.Add(label1);
+            cameraTabSettings.Controls.Add(cameraIpTextBox);
+            cameraTabSettings.Controls.Add(loadSettingsButton);
+            cameraTabSettings.Controls.Add(saveSettingsButton);
+            cameraTabSettings.Controls.Add(cameraParamsPanel);
+            cameraTabSettings.Controls.Add(applySettingsButton);
+            cameraTabSettings.Font = new Font("Segoe UI Semilight", 9F, FontStyle.Italic, GraphicsUnit.Point, 204);
+            cameraTabSettings.Location = new Point(4, 26);
+            cameraTabSettings.Name = "cameraTabSettings";
+            cameraTabSettings.Padding = new Padding(3);
+            cameraTabSettings.Size = new Size(305, 416);
+            cameraTabSettings.TabIndex = 0;
+            cameraTabSettings.Text = "Настройки камеры";
+            cameraTabSettings.UseVisualStyleBackColor = true;
+            // 
+            // connectCameraButton
+            // 
+            connectCameraButton.BackColor = Color.FromArgb(4, 85, 191);
+            connectCameraButton.FlatAppearance.BorderSize = 0;
+            connectCameraButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            connectCameraButton.ForeColor = Color.White;
+            connectCameraButton.Location = new Point(157, 25);
+            connectCameraButton.Name = "connectCameraButton";
+            connectCameraButton.Size = new Size(129, 38);
+            connectCameraButton.TabIndex = 6;
+            connectCameraButton.Text = "Подключиться";
+            connectCameraButton.UseVisualStyleBackColor = false;
+            connectCameraButton.Click += connectCameraButton_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Microsoft Sans Serif", 9F);
+            label1.ForeColor = Color.Black;
+            label1.Location = new Point(6, 12);
+            label1.Name = "label1";
+            label1.Size = new Size(106, 15);
+            label1.TabIndex = 4;
+            label1.Text = "IP адрес камеры:";
+            // 
+            // cameraIpTextBox
+            // 
+            cameraIpTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
+            cameraIpTextBox.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            cameraIpTextBox.Location = new Point(6, 32);
+            cameraIpTextBox.Name = "cameraIpTextBox";
+            cameraIpTextBox.Size = new Size(135, 23);
+            cameraIpTextBox.TabIndex = 5;
+            cameraIpTextBox.Text = "169.254.205.254";
+            // 
+            // loadSettingsButton
+            // 
+            loadSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
+            loadSettingsButton.FlatAppearance.BorderSize = 0;
+            loadSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            loadSettingsButton.ForeColor = Color.White;
+            loadSettingsButton.Location = new Point(6, 357);
+            loadSettingsButton.Name = "loadSettingsButton";
+            loadSettingsButton.Size = new Size(134, 52);
+            loadSettingsButton.TabIndex = 0;
+            loadSettingsButton.Text = "Загрузить настройки";
+            loadSettingsButton.UseVisualStyleBackColor = false;
+            loadSettingsButton.Click += loadSettingsButton_Click;
+            // 
+            // saveSettingsButton
+            // 
+            saveSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
+            saveSettingsButton.FlatAppearance.BorderSize = 0;
+            saveSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            saveSettingsButton.ForeColor = Color.White;
+            saveSettingsButton.Location = new Point(157, 357);
+            saveSettingsButton.Name = "saveSettingsButton";
+            saveSettingsButton.Size = new Size(129, 52);
+            saveSettingsButton.TabIndex = 1;
+            saveSettingsButton.Text = "Сохранить";
+            saveSettingsButton.UseVisualStyleBackColor = false;
+            saveSettingsButton.Click += saveSettingsButton_Click;
+            // 
+            // cameraParamsPanel
+            // 
+            cameraParamsPanel.BackColor = Color.FromArgb(240, 245, 255);
+            cameraParamsPanel.BorderStyle = BorderStyle.Fixed3D;
+            cameraParamsPanel.Controls.Add(prStatusLabel);
+            cameraParamsPanel.Controls.Add(gainTb);
+            cameraParamsPanel.Controls.Add(label16);
+            cameraParamsPanel.Controls.Add(camStatus);
+            cameraParamsPanel.Controls.Add(label6);
+            cameraParamsPanel.Controls.Add(exposureTb);
+            cameraParamsPanel.Controls.Add(label15);
+            cameraParamsPanel.Controls.Add(label5);
+            cameraParamsPanel.Controls.Add(widthTb);
+            cameraParamsPanel.Controls.Add(label4);
+            cameraParamsPanel.Controls.Add(heightTb);
+            cameraParamsPanel.Controls.Add(label3);
+            cameraParamsPanel.Location = new Point(6, 77);
+            cameraParamsPanel.Name = "cameraParamsPanel";
+            cameraParamsPanel.Size = new Size(280, 200);
+            cameraParamsPanel.TabIndex = 3;
+            // 
+            // prStatusLabel
+            // 
+            prStatusLabel.AutoSize = true;
+            prStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            prStatusLabel.ForeColor = Color.Black;
+            prStatusLabel.Location = new Point(150, 14);
+            prStatusLabel.Name = "prStatusLabel";
+            prStatusLabel.Size = new Size(77, 13);
+            prStatusLabel.TabIndex = 3;
+            prStatusLabel.Text = "Не запущена";
+            // 
+            // gainTb
+            // 
+            gainTb.BackColor = Color.White;
+            gainTb.BorderStyle = BorderStyle.FixedSingle;
+            gainTb.Font = new Font("Segoe UI", 9F);
+            gainTb.Location = new Point(150, 150);
+            gainTb.Name = "gainTb";
+            gainTb.Size = new Size(100, 23);
+            gainTb.TabIndex = 7;
+            gainTb.Text = "100";
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Font = new Font("Segoe UI", 8.25F);
+            label16.ForeColor = Color.Black;
+            label16.Location = new Point(20, 13);
+            label16.Name = "label16";
+            label16.Size = new Size(105, 13);
+            label16.TabIndex = 1;
+            label16.Text = "Обработка видео:";
+            // 
+            // camStatus
+            // 
+            camStatus.AutoSize = true;
+            camStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            camStatus.ForeColor = Color.Black;
+            camStatus.Location = new Point(149, 46);
+            camStatus.Name = "camStatus";
+            camStatus.Size = new Size(94, 13);
+            camStatus.TabIndex = 2;
+            camStatus.Text = "Не подключена";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 9F);
+            label6.ForeColor = Color.Black;
+            label6.Location = new Point(150, 130);
+            label6.Name = "label6";
+            label6.Size = new Size(95, 15);
+            label6.TabIndex = 6;
+            label6.Text = "Насыщенность:";
+            // 
+            // exposureTb
+            // 
+            exposureTb.BackColor = Color.White;
+            exposureTb.BorderStyle = BorderStyle.FixedSingle;
+            exposureTb.Font = new Font("Segoe UI", 9F);
+            exposureTb.Location = new Point(20, 150);
+            exposureTb.Name = "exposureTb";
+            exposureTb.Size = new Size(100, 23);
+            exposureTb.TabIndex = 5;
+            exposureTb.Text = "10000";
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Font = new Font("Segoe UI", 8.25F);
+            label15.ForeColor = Color.Black;
+            label15.Location = new Point(20, 46);
+            label15.Name = "label15";
+            label15.Size = new Size(87, 13);
+            label15.TabIndex = 0;
+            label15.Text = "Статус камеры:";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 9F);
+            label5.ForeColor = Color.Black;
+            label5.Location = new Point(20, 130);
+            label5.Name = "label5";
+            label5.Size = new Size(75, 15);
+            label5.TabIndex = 4;
+            label5.Text = "Экспозиция:";
+            // 
+            // widthTb
+            // 
+            widthTb.BackColor = Color.White;
+            widthTb.BorderStyle = BorderStyle.FixedSingle;
+            widthTb.Font = new Font("Segoe UI", 9F);
+            widthTb.Location = new Point(150, 97);
+            widthTb.Name = "widthTb";
+            widthTb.Size = new Size(100, 23);
+            widthTb.TabIndex = 3;
+            widthTb.Text = "1920";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 9F);
+            label4.ForeColor = Color.Black;
+            label4.Location = new Point(150, 77);
+            label4.Name = "label4";
+            label4.Size = new Size(55, 15);
+            label4.TabIndex = 2;
+            label4.Text = "Ширина:";
+            // 
+            // heightTb
+            // 
+            heightTb.BackColor = Color.White;
+            heightTb.BorderStyle = BorderStyle.FixedSingle;
+            heightTb.Font = new Font("Segoe UI", 9F);
+            heightTb.Location = new Point(20, 97);
+            heightTb.Name = "heightTb";
+            heightTb.Size = new Size(100, 23);
+            heightTb.TabIndex = 1;
+            heightTb.Text = "1080";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 9F);
+            label3.ForeColor = Color.Black;
+            label3.Location = new Point(20, 77);
+            label3.Name = "label3";
+            label3.Size = new Size(50, 15);
+            label3.TabIndex = 0;
+            label3.Text = "Высота:";
+            // 
+            // applySettingsButton
+            // 
+            applySettingsButton.BackColor = Color.FromArgb(4, 85, 191);
+            applySettingsButton.FlatAppearance.BorderSize = 0;
+            applySettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            applySettingsButton.ForeColor = Color.White;
+            applySettingsButton.Location = new Point(6, 297);
+            applySettingsButton.Name = "applySettingsButton";
+            applySettingsButton.Size = new Size(280, 43);
+            applySettingsButton.TabIndex = 2;
+            applySettingsButton.Text = "Применить настройки";
+            applySettingsButton.UseVisualStyleBackColor = false;
+            applySettingsButton.Click += applySettingsButton_Click;
+            // 
+            // originPb
+            // 
+            originPb.Location = new Point(10, 24);
+            originPb.Name = "originPb";
+            originPb.Size = new Size(309, 223);
+            originPb.SizeMode = PictureBoxSizeMode.Zoom;
+            originPb.TabIndex = 0;
+            originPb.TabStop = false;
+            // 
+            // panel8
+            // 
+            panel8.BackColor = SystemColors.ButtonHighlight;
+            panel8.BorderStyle = BorderStyle.Fixed3D;
+            panel8.Controls.Add(recognizeButton);
+            panel8.Controls.Add(startStreamButton);
+            panel8.Controls.Add(loadImageButton);
+            panel8.Location = new Point(10, 251);
+            panel8.Name = "panel8";
+            panel8.Size = new Size(309, 36);
+            panel8.TabIndex = 27;
+            // 
+            // loadImageButton
+            // 
+            loadImageButton.BackColor = Color.FromArgb(66, 133, 244);
+            loadImageButton.FlatAppearance.BorderSize = 0;
+            loadImageButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            loadImageButton.ForeColor = Color.White;
+            loadImageButton.Location = new Point(3, 2);
+            loadImageButton.Name = "loadImageButton";
+            loadImageButton.Size = new Size(88, 28);
+            loadImageButton.TabIndex = 1;
+            loadImageButton.Text = "Загрузить";
+            loadImageButton.UseVisualStyleBackColor = false;
+            loadImageButton.Click += loadImageButton_Click;
+            // 
             // controlPanel
             // 
             controlPanel.BackColor = Color.FromArgb(4, 85, 191);
@@ -1872,6 +1783,33 @@
             controlButtonsPanel.Name = "controlButtonsPanel";
             controlButtonsPanel.Size = new Size(700, 81);
             controlButtonsPanel.TabIndex = 0;
+            // 
+            // tabControl2
+            // 
+            tabControl2.Controls.Add(tabPage1);
+            tabControl2.Location = new Point(10, 184);
+            tabControl2.Name = "tabControl2";
+            tabControl2.SelectedIndex = 0;
+            tabControl2.Size = new Size(341, 571);
+            tabControl2.TabIndex = 2;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(applyDefectButton);
+            tabPage1.Controls.Add(obloyDefectParamPanel);
+            tabPage1.Controls.Add(inclusionParamDefectPanel);
+            tabPage1.Controls.Add(inpaintDefectParamPanel);
+            tabPage1.Controls.Add(label2);
+            tabPage1.Controls.Add(defectTypeComboBox);
+            tabPage1.Controls.Add(comboBox1);
+            tabPage1.Controls.Add(label43);
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(333, 543);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Дефекты";
+            tabPage1.UseVisualStyleBackColor = true;
             // 
             // TestForm
             // 
@@ -1901,16 +1839,7 @@
             obloyDefectPanel.PerformLayout();
             inclusionDefectPanel.ResumeLayout(false);
             inclusionDefectPanel.PerformLayout();
-            imagesGroup.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)originPb).EndInit();
-            leftPanel.ResumeLayout(false);
-            panel1.ResumeLayout(false);
-            panel8.ResumeLayout(false);
-            panel5.ResumeLayout(false);
             settingsTabControl.ResumeLayout(false);
-            defectsTabPage.ResumeLayout(false);
-            defectsSettingsGroup.ResumeLayout(false);
-            defectsSettingsGroup.PerformLayout();
             inpaintDefectParamPanel.ResumeLayout(false);
             inpaintDefectParamPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)inpaintPb).EndInit();
@@ -1926,17 +1855,24 @@
             foldersTabPage.ResumeLayout(false);
             foldersGroup.ResumeLayout(false);
             foldersGroup.PerformLayout();
-            cameraTabPage.ResumeLayout(false);
-            cameraSettingsGroup.ResumeLayout(false);
-            cameraSettingsGroup.PerformLayout();
-            cameraParamsPanel.ResumeLayout(false);
-            cameraParamsPanel.PerformLayout();
             pr205TabPage.ResumeLayout(false);
             pr205Group.ResumeLayout(false);
             pr205Group.PerformLayout();
             pr205ParamPanel.ResumeLayout(false);
             pr205ParamPanel.PerformLayout();
+            leftPanel.ResumeLayout(false);
+            imagesGroup.ResumeLayout(false);
+            tabControl1.ResumeLayout(false);
+            cameraTabSettings.ResumeLayout(false);
+            cameraTabSettings.PerformLayout();
+            cameraParamsPanel.ResumeLayout(false);
+            cameraParamsPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)originPb).EndInit();
+            panel8.ResumeLayout(false);
             controlPanel.ResumeLayout(false);
+            tabControl2.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
             ResumeLayout(false);
 
         }
@@ -1950,11 +1886,7 @@
         private System.Windows.Forms.GroupBox resultsGroup;
         private System.Windows.Forms.GroupBox imagesGroup;
         private System.Windows.Forms.TabControl settingsTabControl;
-        private System.Windows.Forms.TabPage cameraTabPage;
-        private System.Windows.Forms.TabPage defectsTabPage;
         private System.Windows.Forms.TabPage foldersTabPage;
-        private System.Windows.Forms.GroupBox cameraSettingsGroup;
-        private System.Windows.Forms.GroupBox defectsSettingsGroup;
         private System.Windows.Forms.GroupBox foldersGroup;
         private System.Windows.Forms.Panel statusPanel;
         private System.Windows.Forms.Panel controlButtonsPanel;
@@ -2005,13 +1937,9 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button recognizeButton;
-        private System.Windows.Forms.Button stopStreamButton;
         private System.Windows.Forms.Button startStreamButton;
         private Panel panel8;
-        private Panel panel5;
-        private Button button3;
         private Button loadImageButton;
-        private Panel panel1;
         private Panel nedolivDefectPanel;
         private Panel ovalityDefectPanel;
         private Panel inpaintDefectPanel;
@@ -2082,5 +2010,9 @@
         private Label label33;
         private TextBox generalTime;
         private PictureBox originPb;
+        private TabControl tabControl1;
+        private TabPage cameraTabSettings;
+        private TabControl tabControl2;
+        private TabPage tabPage1;
     }
 }
