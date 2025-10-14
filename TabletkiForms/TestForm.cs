@@ -1437,7 +1437,7 @@ namespace KrishkiForms
                     MessageBox.Show($"Ошибка при выключении обдува: {ex.Message}");
                 }
                 isProcessing = false;
-                recognizeButton.Text = "Начать распознавание";
+                recognizeButton.Text = "Начать анализ";
                 recognizeButton.Enabled = true;
                 cts?.Dispose();
                 cts = null;
@@ -1472,7 +1472,7 @@ namespace KrishkiForms
                 int.TryParse(delayTb.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out delayValue);
                 processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                 isProcessing = true;
-                recognizeButton.Text = "Остановить распознавание";
+                recognizeButton.Text = "Остановить анализ";
             }
             catch
             {
@@ -1957,7 +1957,7 @@ namespace KrishkiForms
                     {
                         img1 = new Mat(img, roi);
                     }
-                    originPb.Image = MatToBitmap(img1);
+                    UpdatePictureBox(originPb, img1);
                 }
                 else
                 {
@@ -1968,7 +1968,7 @@ namespace KrishkiForms
                         {
                             img1 = new Mat(img, roi);
                         }
-                        originPb.Image = MatToBitmap(img1);
+                        UpdatePictureBox(originPb, img1);
                         isFirstImageCam1 = true;
                     }
                     else
@@ -1978,7 +1978,7 @@ namespace KrishkiForms
                         {
                             img1 = new Mat(img, roi);
                         }
-                        originPb.Image = MatToBitmap(img1);
+                        UpdatePictureBox(originPb, img1);
                     }
                 }
             }
@@ -2071,6 +2071,7 @@ namespace KrishkiForms
                             try
                             {
                                 frameToProcess = new Mat(imageFiles[currentImageIndex]);
+                                UpdatePictureBox(originPb, frameToProcess);
                                 currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
                             }
                             catch (Exception ex)
