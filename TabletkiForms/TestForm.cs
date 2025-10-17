@@ -1240,60 +1240,30 @@ namespace KrishkiForms
         {
             token.ThrowIfCancellationRequested();
 
-            Mat processed = image.Clone();
-            NonlinearBackgroundDecolorization(processed, capsColor);
-
-            Mat[] channels;
-            Cv2.Split(processed, out channels);
-
-            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
-            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
-            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
-            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
-
-            Point[][] contours;
-            HierarchyIndex[] hierarchy;
-            Cv2.FindContours(
-                channels[2],
-                out contours,
-                out hierarchy,
-                RetrievalModes.External,
-                ContourApproximationModes.ApproxNone
-            );
-
-            int maxInd = 0;
-            int maxLength = 0;
-            for (int i = 0; i < contours.Length; i++)
-            {
-                if (contours[i].Length > maxLength)
-                {
-                    maxLength = contours[i].Length;
-                    maxInd = i;
-                }
-            }
-
-            if (contours[maxInd] == null || contours[maxInd].Length == 0)
+            if (capContour == null || capContour.Length == 0)
                 return false;
 
+            // Проверяем, что каналы уже вычислены
+            if (blurChannel_1 == null || blurChannel_2 == null)
+                throw new InvalidOperationException("Каналы не были инициализированы. Сначала вызовите GetCapContour().");
+
+            // Вычисляем центр и радиус крышки по контуру
             double sumX = 0, sumY = 0;
-            foreach (var pt in contours[maxInd])
+            foreach (var pt in capContour)
             {
                 sumX += pt.X;
                 sumY += pt.Y;
             }
-            var capCenter = new Point(
-                (int)(sumX / contours[maxInd].Length),
-                (int)(sumY / contours[maxInd].Length)
-            );
+            var capCenter = new Point((int)(sumX / capContour.Length), (int)(sumY / capContour.Length));
 
             double radius = 0;
-            foreach (var pt in contours[maxInd])
+            foreach (var pt in capContour)
             {
                 double dx = pt.X - capCenter.X;
                 double dy = pt.Y - capCenter.Y;
                 radius += Math.Sqrt(dx * dx + dy * dy);
             }
-            radius /= contours[maxInd].Length;
+            radius /= capContour.Length;
 
             if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
             {
@@ -1305,33 +1275,24 @@ namespace KrishkiForms
                             (float)(radius + 3.0f),
                             (float)(radius + 3.0f + CAP_FLASH_OFFSET));
 
-            Cv2.BitwiseAnd(CapRadiusMask, channels[2], channels[2]);
-            Cv2.MorphologyEx(channels[2], channels[1], MorphTypes.Erode, elementMask);
+            // Используем готовые глобальные каналы
+            Cv2.BitwiseAnd(CapRadiusMask, blurChannel_2, blurChannel_2);
+            Cv2.MorphologyEx(blurChannel_2, blurChannel_1, MorphTypes.Erode, elementMask);
 
             Point[][] obloyContours;
             HierarchyIndex[] hierarchyObloy;
-            Cv2.FindContours(
-                channels[1],
-                out obloyContours,
-                out hierarchyObloy,
-                RetrievalModes.External,
-                ContourApproximationModes.ApproxNone
-            );
+            Cv2.FindContours(blurChannel_1, out obloyContours, out hierarchyObloy,
+                             RetrievalModes.External, ContourApproximationModes.ApproxNone);
 
             if (obloyContours.Length > 0)
             {
-                Cv2.DrawContours(
-                    image,
-                    obloyContours,
-                    -1,
-                    new Scalar(0, 0, 255),
-                    2
-                );
+                Cv2.DrawContours(image, obloyContours, -1, new Scalar(0, 0, 255), 2);
             }
 
-            int pixCount = Cv2.CountNonZero(channels[1]);
+            int pixCount = Cv2.CountNonZero(blurChannel_1);
             return pixCount > minBinaryPixelsForFlashDecision;
         }
+
 
         #endregion
 
