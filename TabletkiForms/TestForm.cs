@@ -1055,11 +1055,11 @@ namespace KrishkiForms
 
         #region Методы обработки изображений
 
-        private bool CheckOvality(Mat gray, Mat image, CancellationToken token)
+        private bool CheckOvality(Mat gray, Mat image, CancellationToken token, Point[] largestContourOvality)
         {
             token.ThrowIfCancellationRequested();
 
-            largestContourOvality = GetCapContour(gray, image);
+            //largestContourOvality = GetCapContour(gray, image);
             token.ThrowIfCancellationRequested();
 
             Cv2.DrawContours(image, new[] { largestContourOvality }, -1, new Scalar(255, 0, 0), 2);
@@ -1082,11 +1082,11 @@ namespace KrishkiForms
             return isOval;
         }
 
-        private bool CheckForInclusions(Mat gray, Mat image, CancellationToken token)
+        private bool CheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] bestContour)
         {
             token.ThrowIfCancellationRequested();
 
-            Point[] bestContour = GetCapContour(gray, image);
+            //Point[] bestContour = GetCapContour(gray, image);
             token.ThrowIfCancellationRequested();
 
             RotatedRect ellipse = Cv2.FitEllipse(bestContour);
@@ -1139,7 +1139,7 @@ namespace KrishkiForms
             }
         }
 
-        private bool CheckForPaintDefects(Mat gray, Mat image, CancellationToken token)
+        private bool CheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
 
@@ -1148,7 +1148,7 @@ namespace KrishkiForms
                 Cv2.CvtColor(image, hsv, ColorConversionCodes.BGR2HSV);
                 token.ThrowIfCancellationRequested();
 
-                Point[] capContour = GetCapContour(gray, image);
+                //Point[] capContour = GetCapContour(gray, image);
                 token.ThrowIfCancellationRequested();
 
                 if (capContour == null || capContour.Length == 0)
@@ -1236,7 +1236,7 @@ namespace KrishkiForms
             }
         }
 
-        private bool CheckForObloyDefects(Mat gray, Mat image, CancellationToken token)
+        private bool CheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
 
@@ -2091,6 +2091,9 @@ namespace KrishkiForms
                         Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
                         Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
 
+                        // Вычисляем контур крышки один раз
+                        Point[] capContour = GetCapContour(gray, frameToProcess);
+
                         // Копируем изображения только если соответствующий CheckBox активен
                         if (ovalityCB.Checked)
                         {
@@ -2131,22 +2134,22 @@ namespace KrishkiForms
                                 // Запускаем только если CheckBox активен
                                 if (ovalityCB.Checked)
                                 {
-                                    ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality);
+                                    ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality, capContour);
                                 }
 
                                 if (inclusionCB.Checked)
                                 {
-                                    inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions);
+                                    inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions, capContour);
                                 }
 
                                 if (inpaintCB.Checked)
                                 {
-                                    paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects);
+                                    paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects, capContour);
                                 }
 
                                 if (obloyCB.Checked)
                                 {
-                                    obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, timeoutCts.Token, RunCheckForObloyDefects);
+                                    obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, timeoutCts.Token, RunCheckForObloyDefects, capContour);
                                 }
 
                                 await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask);
@@ -2189,14 +2192,14 @@ namespace KrishkiForms
             }
         }
 
-        private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, CancellationToken token, Func<Mat, Mat, CancellationToken, bool> checkFunc)
+        private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, CancellationToken token, Func<Mat, Mat, CancellationToken, Point[], bool> checkFunc, Point[] capContour)
         {
             try
             {
                 return await Task.Run(() =>
                 {
                     token.ThrowIfCancellationRequested();
-                    return checkFunc(gray, image, token);
+                    return checkFunc(gray, image, token, capContour);
                 }, token);
             }
             catch (OperationCanceledException)
@@ -2209,13 +2212,13 @@ namespace KrishkiForms
 
         #region Методы проверки дефектов
 
-        private bool RunCheckOvality(Mat gray, Mat image, CancellationToken token)
+        private bool RunCheckOvality(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            bool isOval = CheckOvality(gray, image, token);
+            bool isOval = CheckOvality(gray, image, token, capContour);
 
             if (isOval)
             {
@@ -2233,14 +2236,14 @@ namespace KrishkiForms
             return isOval;
         }
 
-        private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token)
+        private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            bool hasInclusions = CheckForInclusions(gray, image, token);
+            bool hasInclusions = CheckForInclusions(gray, image, token, capContour);
 
             if (hasInclusions)
             {
@@ -2258,14 +2261,14 @@ namespace KrishkiForms
             return hasInclusions;
         }
 
-        private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token)
+        private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            bool hasPaintDefects = CheckForPaintDefects(gray, image, token);
+            bool hasPaintDefects = CheckForPaintDefects(gray, image, token, capContour);
 
             if (hasPaintDefects)
             {
@@ -2283,14 +2286,14 @@ namespace KrishkiForms
             return hasPaintDefects;
         }
 
-        private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token)
+        private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            bool hasObloyDefects = CheckForObloyDefects(gray, image, token);
+            bool hasObloyDefects = CheckForObloyDefects(gray, image, token, capContour);
 
             if (hasObloyDefects)
             {
