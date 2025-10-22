@@ -5,12 +5,12 @@ namespace KrishkiForms.CameraAndModbusClasses
 {
 	public class LocalSettings
 	{
-		public bool UseModule { get; set; } = true;
+		public bool UseModule { get; set; } = false;
 		public int DINumber { get; set; } = 1;
 		public int DONumber { get; set; } = 1;
 		public string ModuleIP { get; set; } = "169.254.192.10"; //was 10.16.1.24
         public bool UseVConcat { get; set; } = false;		
-		public string Cam1SN { get; set; } = "DA0149100"; //was K05474844
+		public string Cam1SN { get; set; } = "DA5107528"; //was K05474844
 
 		public int EndStreamDelay { get; set; } = 1000;
 

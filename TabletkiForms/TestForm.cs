@@ -163,6 +163,7 @@ namespace KrishkiForms
         // Логирование
         private DateTime? _lastImageReceivedTime = null;
         private readonly string _logFilePath = "SendImageLog.txt";
+        private readonly string _processTimeLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProcessTime.txt");
         private List<string> imageFiles = new List<string>();
         private int currentImageIndex = 0;
         private int _writeZeroFailCount = 0;
@@ -544,7 +545,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    //modbusClient.WriteSingleRegister(obduvRegister, 1);
                 }
             }
             catch (Exception ex)
@@ -1390,7 +1391,7 @@ namespace KrishkiForms
                 {
                     if (modbusClient != null && modbusClient.Connected)
                     {
-                        modbusClient.WriteSingleRegister(obduvRegister, 1);
+                        //modbusClient.WriteSingleRegister(obduvRegister, 1);
                     }
                 }
                 catch (Exception ex)
@@ -1408,17 +1409,17 @@ namespace KrishkiForms
         private void StartProcessing()
         {
             ApplyRecognitionParameters();
-            if (originPb.Image == null)
+            /*if (originPb.Image == null)
             {
                 MessageBox.Show("Пожалуйста, загрузите изображение перед распознаванием.");
                 return;
-            }
+            }*/
 
             try
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    //modbusClient.WriteSingleRegister(obduvRegister, 0);
                 }
             }
             catch (Exception ex)
@@ -2013,7 +2014,6 @@ namespace KrishkiForms
 
                     if (isStreamCam)
                     {
-                        // Оригинальная логика для камеры
                         lock (frameLock)
                         {
                             if (!newFrameAvailable) continue;
@@ -2024,7 +2024,6 @@ namespace KrishkiForms
                     else if (isProcessingFromFolder)
                     {
                         await Task.Delay(100);
-                        // Логика для изображений из папки
                         lock (imageListLock)
                         {
                             if (imageFiles.Count == 0) continue;
@@ -2052,10 +2051,8 @@ namespace KrishkiForms
                         Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
                         Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
 
-                        // Вычисляем контур крышки один раз
                         Point[] capContour = GetCapContour(gray, frameToProcess);
 
-                        // Копируем изображения только если соответствующий CheckBox активен
                         if (ovalityCB.Checked)
                         {
                             frameToProcess.CopyTo(_imageForOvality);
@@ -2086,13 +2083,11 @@ namespace KrishkiForms
 
                             try
                             {
-                                // Инициализируем задачи как завершенные с результатом false
                                 var ovalityTask = Task.FromResult(false);
                                 var inclusionsTask = Task.FromResult(false);
                                 var paintTask = Task.FromResult(false);
                                 var obloyTask = Task.FromResult(false);
 
-                                // Запускаем только если CheckBox активен
                                 if (ovalityCB.Checked)
                                 {
                                     ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality, capContour);
@@ -2101,6 +2096,7 @@ namespace KrishkiForms
                                 if (inclusionCB.Checked)
                                 {
                                     inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions, capContour);
+
                                 }
 
                                 if (inpaintCB.Checked)
@@ -2115,11 +2111,10 @@ namespace KrishkiForms
 
                                 await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask);
 
-                                // Проверяем только те задачи, которые были запущены
                                 bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
-                                               (inclusionCB.Checked && inclusionsTask.Result) ||
-                                               (inpaintCB.Checked && paintTask.Result) ||
-                                               (obloyCB.Checked && obloyTask.Result);
+                                                 (inclusionCB.Checked && inclusionsTask.Result) ||
+                                                 (inpaintCB.Checked && paintTask.Result) ||
+                                                 (obloyCB.Checked && obloyTask.Result);
 
                                 if (anyDefect)
                                 {
@@ -2129,14 +2124,25 @@ namespace KrishkiForms
                                         generalDefectsCountTb.Text = blowTriggerCount.ToString();
                                     }));
                                 }
-                                else // нет дефекта
+                                else
                                 {
-                                    // Запускаем Modbus-последовательность в отдельном таске
                                     _ = Task.Run(() => PulseObduvAsync(delayValue, token));
                                 }
 
                                 stopwatch.Stop();
                                 UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
+
+                                // 🟢 лог времени обработки кадра
+                                try
+                                {
+                                    string processEntry = $"{DateTime.Now:HH:mm:ss.fff} | ProcessTime: {stopwatch.ElapsedMilliseconds} ms";
+                                    File.AppendAllText(_processTimeLogPath, processEntry + Environment.NewLine);
+                                }
+                                catch (Exception logEx)
+                                {
+                                    Debug.WriteLine($"Ошибка при записи ProcessTime лога: {logEx.Message}");
+                                }
+                                // 🔚 конец добавленного блока
                             }
                             catch (OperationCanceledException)
                             {
