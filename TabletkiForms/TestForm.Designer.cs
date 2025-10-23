@@ -588,7 +588,7 @@
             // 
             comboBox1.FlatStyle = FlatStyle.Flat;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые" });
+            comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые", "Зеленые" });
             comboBox1.Location = new Point(168, 31);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(105, 23);

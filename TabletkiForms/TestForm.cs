@@ -97,6 +97,9 @@ namespace KrishkiForms
         private const byte YELLOW_CAPS = 160;
         private const byte GOLD_CAPS = 160;
         private const byte WHITE_CAPS = 160;
+        private const byte GREEN_CAPS = 255;
+        private const byte GREEN_THRESHOLD = 47;
+        private static bool isGreenColor = false;
         private static bool isColored = true;
 
         // Морфологические элементы
@@ -1746,17 +1749,40 @@ namespace KrishkiForms
             switch (selected)
             {
                 case "Желтые":
+                    window = 15;
+                    morph_size = 11;
+                    morph_size_2 = 11;
+                    isGreenColor = false;
                     isColored = true;
                     return YELLOW_CAPS;
                 case "Синие":
+                    window = 15;
+                    morph_size = 11;
+                    morph_size_2 = 11;
+                    isGreenColor = false;
                     isColored = true;
                     return BLUE_CAPS;
                 case "Золотые":
+                    window = 15;
+                    morph_size = 11;
+                    morph_size_2 = 11;
+                    isGreenColor = false;
                     isColored = true;
                     return GOLD_CAPS;
                 case "Белые":
+                    window = 7;
+                    morph_size = 4;
+                    morph_size_2 = 4;
+                    isGreenColor = false;
                     isColored = false;
                     return WHITE_CAPS;
+                case "Зеленые":
+                    window = 3;
+                    morph_size = 2;
+                    morph_size_2 = 2;
+                    isColored = true;
+                    isGreenColor = true;
+                    return GREEN_CAPS;
                 default:
                     isColored = true;
                     return YELLOW_CAPS;
@@ -2632,13 +2658,14 @@ namespace KrishkiForms
                 throw new ArgumentException("Ожидается 3-канальное 8-битное изображение.");
 
             int total = img.Rows * img.Cols * 3;
+
             unsafe
             {
                 byte* data = (byte*)img.DataPointer;
 
-                if (!isColored)
+                // 1️⃣ Выбеливание, если крышка не зелёная
+                if (!isGreenColor)
                 {
-                    // Простое выбеливание всех каналов
                     for (int i = 0; i < total; i++)
                     {
                         int val = (255 * data[i]) / nWhite;
@@ -2646,29 +2673,27 @@ namespace KrishkiForms
                         data[i] = (byte)val;
                     }
                 }
-                else
+
+                // 2️⃣ Если крышка цветная
+                if (isColored)
                 {
-                    // Выбеливание и цветоразностная компонента
                     for (int i = 0; i < total; i += 3)
                     {
-                        int b = (255 * data[i]) / nWhite;
-                        int g = (255 * data[i + 1]) / nWhite;
-                        int r = (255 * data[i + 2]) / nWhite;
-
-                        if (b > 255) b = 255;
-                        if (g > 255) g = 255;
-                        if (r > 255) r = 255;
-
-                        // Цветоразностная компонента: новый B = |B - (G+R)/2|
-                        data[i] = (byte)Math.Abs(b - ((g + r) >> 1));
-
-                        // G и R остаются выбеленными
-                        data[i + 1] = (byte)g;
-                        data[i + 2] = (byte)r;
+                        if (!isGreenColor)
+                        {
+                            // Цветоразностная компонента (для не зелёных)
+                            data[i] = (byte)Math.Abs(data[i] - ((data[i + 1] + data[i + 2]) >> 1));
+                        }
+                        else
+                        {
+                            // Для зелёных крышек — бинаризация по синему каналу
+                            data[i] = (data[i] < GREEN_THRESHOLD) ? (byte)0x00 : (byte)0xFF;
+                        }
                     }
                 }
             }
         }
+
 
         private unsafe void GetHueChannel(Mat img, int[] arrIndex, byte[] hueLUT)
         {
