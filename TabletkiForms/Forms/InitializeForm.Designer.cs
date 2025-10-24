@@ -32,9 +32,10 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.лого;
-            pictureBox1.Location = new Point(13, 23);
+            pictureBox1.Location = new Point(15, 31);
+            pictureBox1.Margin = new Padding(3, 4, 3, 4);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(71, 50);
+            pictureBox1.Size = new Size(81, 67);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 1;
             pictureBox1.TabStop = false;
@@ -55,8 +56,9 @@
             mainPanel.Controls.Add(pictureBox1);
             mainPanel.Dock = DockStyle.Fill;
             mainPanel.Location = new Point(0, 0);
+            mainPanel.Margin = new Padding(3, 4, 3, 4);
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(434, 357);
+            mainPanel.Size = new Size(496, 476);
             mainPanel.TabIndex = 1;
             // 
             // paramPrConnect
@@ -65,9 +67,10 @@
             paramPrConnect.FlatAppearance.BorderSize = 0;
             paramPrConnect.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             paramPrConnect.ForeColor = Color.Black;
-            paramPrConnect.Location = new Point(85, 175);
+            paramPrConnect.Location = new Point(97, 233);
+            paramPrConnect.Margin = new Padding(3, 4, 3, 4);
             paramPrConnect.Name = "paramPrConnect";
-            paramPrConnect.Size = new Size(41, 28);
+            paramPrConnect.Size = new Size(47, 37);
             paramPrConnect.TabIndex = 41;
             paramPrConnect.Text = "...";
             paramPrConnect.UseVisualStyleBackColor = false;
@@ -79,9 +82,10 @@
             paramCameraConnect.FlatAppearance.BorderSize = 0;
             paramCameraConnect.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             paramCameraConnect.ForeColor = Color.Black;
-            paramCameraConnect.Location = new Point(85, 142);
+            paramCameraConnect.Location = new Point(97, 189);
+            paramCameraConnect.Margin = new Padding(3, 4, 3, 4);
             paramCameraConnect.Name = "paramCameraConnect";
-            paramCameraConnect.Size = new Size(41, 28);
+            paramCameraConnect.Size = new Size(47, 37);
             paramCameraConnect.TabIndex = 40;
             paramCameraConnect.Text = "...";
             paramCameraConnect.UseVisualStyleBackColor = false;
@@ -93,9 +97,10 @@
             btnRetry.FlatAppearance.BorderSize = 0;
             btnRetry.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             btnRetry.ForeColor = Color.Black;
-            btnRetry.Location = new Point(177, 239);
+            btnRetry.Location = new Point(202, 319);
+            btnRetry.Margin = new Padding(3, 4, 3, 4);
             btnRetry.Name = "btnRetry";
-            btnRetry.Size = new Size(65, 51);
+            btnRetry.Size = new Size(74, 68);
             btnRetry.TabIndex = 39;
             btnRetry.Text = "↺";
             btnRetry.UseVisualStyleBackColor = false;
@@ -107,9 +112,10 @@
             btnExit.FlatAppearance.BorderSize = 0;
             btnExit.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             btnExit.ForeColor = Color.White;
-            btnExit.Location = new Point(80, 239);
+            btnExit.Location = new Point(91, 319);
+            btnExit.Margin = new Padding(3, 4, 3, 4);
             btnExit.Name = "btnExit";
-            btnExit.Size = new Size(85, 51);
+            btnExit.Size = new Size(97, 68);
             btnExit.TabIndex = 38;
             btnExit.Text = "✖";
             btnExit.UseVisualStyleBackColor = false;
@@ -121,9 +127,10 @@
             btnContinue.FlatAppearance.BorderSize = 0;
             btnContinue.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             btnContinue.ForeColor = Color.White;
-            btnContinue.Location = new Point(251, 239);
+            btnContinue.Location = new Point(287, 319);
+            btnContinue.Margin = new Padding(3, 4, 3, 4);
             btnContinue.Name = "btnContinue";
-            btnContinue.Size = new Size(85, 51);
+            btnContinue.Size = new Size(97, 68);
             btnContinue.TabIndex = 37;
             btnContinue.Text = "➔";
             btnContinue.UseVisualStyleBackColor = false;
@@ -134,9 +141,9 @@
             prConnectLabel.AutoSize = true;
             prConnectLabel.Font = new Font("Segoe UI", 9F);
             prConnectLabel.ForeColor = Color.FromArgb(0, 51, 102);
-            prConnectLabel.Location = new Point(132, 179);
+            prConnectLabel.Location = new Point(151, 239);
             prConnectLabel.Name = "prConnectLabel";
-            prConnectLabel.Size = new Size(131, 15);
+            prConnectLabel.Size = new Size(162, 20);
             prConnectLabel.TabIndex = 5;
             prConnectLabel.Text = "Подключение ПР205...";
             // 
@@ -145,9 +152,9 @@
             cameraConectLabel.AutoSize = true;
             cameraConectLabel.Font = new Font("Segoe UI", 9F);
             cameraConectLabel.ForeColor = Color.FromArgb(0, 51, 102);
-            cameraConectLabel.Location = new Point(132, 146);
+            cameraConectLabel.Location = new Point(151, 195);
             cameraConectLabel.Name = "cameraConectLabel";
-            cameraConectLabel.Size = new Size(140, 15);
+            cameraConectLabel.Size = new Size(173, 20);
             cameraConectLabel.TabIndex = 4;
             cameraConectLabel.Text = "Подключение камеры...";
             // 
@@ -156,31 +163,32 @@
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             label1.ForeColor = Color.FromArgb(0, 51, 102);
-            label1.Location = new Point(45, 96);
+            label1.Location = new Point(51, 128);
             label1.Name = "label1";
-            label1.Size = new Size(331, 32);
+            label1.Size = new Size(410, 41);
             label1.TabIndex = 3;
             label1.Text = "Инициализация устройств";
             // 
             // HeaderInitializeForm
             // 
             HeaderInitializeForm.AutoSize = true;
-            HeaderInitializeForm.Font = new Font("Segoe UI", 18F);
+            HeaderInitializeForm.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
             HeaderInitializeForm.ForeColor = Color.FromArgb(0, 51, 102);
-            HeaderInitializeForm.Location = new Point(99, 32);
+            HeaderInitializeForm.Location = new Point(113, 43);
             HeaderInitializeForm.Name = "HeaderInitializeForm";
-            HeaderInitializeForm.Size = new Size(322, 32);
+            HeaderInitializeForm.Size = new Size(373, 38);
             HeaderInitializeForm.TabIndex = 2;
             HeaderInitializeForm.Text = "Kvantron.CapDefect.Detector";
             // 
             // InitializeForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(240, 245, 250);
-            ClientSize = new Size(434, 357);
+            ClientSize = new Size(496, 476);
             Controls.Add(mainPanel);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "InitializeForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Kvantron Cap Defect Detector";
