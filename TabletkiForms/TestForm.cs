@@ -1752,6 +1752,8 @@ namespace KrishkiForms
                     window = 15;
                     morph_size = 11;
                     morph_size_2 = 11;
+                    cam.Saturation = 128;
+                    cam.SetSaturation();
                     isGreenColor = false;
                     isColored = true;
                     return YELLOW_CAPS;
@@ -1759,6 +1761,8 @@ namespace KrishkiForms
                     window = 15;
                     morph_size = 11;
                     morph_size_2 = 11;
+                    cam.Saturation = 128;
+                    cam.SetSaturation();
                     isGreenColor = false;
                     isColored = true;
                     return BLUE_CAPS;
@@ -1766,6 +1770,8 @@ namespace KrishkiForms
                     window = 15;
                     morph_size = 11;
                     morph_size_2 = 11;
+                    cam.Saturation = 128;
+                    cam.SetSaturation();
                     isGreenColor = false;
                     isColored = true;
                     return GOLD_CAPS;
@@ -1773,6 +1779,8 @@ namespace KrishkiForms
                     window = 7;
                     morph_size = 4;
                     morph_size_2 = 4;
+                    cam.Saturation = 255;
+                    cam.SetSaturation();
                     isGreenColor = false;
                     isColored = false;
                     return WHITE_CAPS;
@@ -1780,11 +1788,15 @@ namespace KrishkiForms
                     window = 3;
                     morph_size = 2;
                     morph_size_2 = 2;
+                    cam.Saturation = 255;
+                    cam.SetSaturation();
                     isColored = true;
                     isGreenColor = true;
                     return GREEN_CAPS;
                 default:
                     isColored = true;
+                    cam.Saturation = 128;
+                    cam.SetSaturation();
                     return YELLOW_CAPS;
             }
         }

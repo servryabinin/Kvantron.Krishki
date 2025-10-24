@@ -32,6 +32,8 @@ namespace KrishkiForms.CameraAndModbusClasses
         public uint Width { get; set; }
         public uint Height { get; set; }
 
+        public uint Saturation { get; set; }
+
         public bool Connected { get; set; } = false; //показывает статус подключения камеры
         public bool Streamed { get; set; } = false;
 
@@ -107,6 +109,16 @@ namespace KrishkiForms.CameraAndModbusClasses
             if (Width != 0)
             {
                 int nRet = m_MyCamera.MV_CC_SetWidth_NET(Width);
+                return MyCamera.MV_OK == nRet;
+            }
+            else return false;
+        }
+
+        public bool SetSaturation()
+        {
+            if (Saturation != 0)
+            {
+                int nRet = m_MyCamera.MV_CC_SetSaturation_NET(Saturation);
                 return MyCamera.MV_OK == nRet;
             }
             else return false;
