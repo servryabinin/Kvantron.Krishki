@@ -80,16 +80,16 @@
             ovalityDef = new TextBox();
             label17 = new Label();
             label48 = new Label();
-            inpaintDefectPanel = new Panel();
-            inpaintTime = new TextBox();
-            label19 = new Label();
-            label50 = new Label();
-            InpaintDef = new TextBox();
             obloyDefectPanel = new Panel();
             label14 = new Label();
             obloyTime = new TextBox();
             label7 = new Label();
             obloyDef = new TextBox();
+            inpaintDefectPanel = new Panel();
+            inpaintTime = new TextBox();
+            label19 = new Label();
+            label50 = new Label();
+            InpaintDef = new TextBox();
             inclusionDefectPanel = new Panel();
             inclusionTime = new TextBox();
             label18 = new Label();
@@ -180,8 +180,8 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             nedolivDefectPanel.SuspendLayout();
             ovalityDefectPanel.SuspendLayout();
-            inpaintDefectPanel.SuspendLayout();
             obloyDefectPanel.SuspendLayout();
+            inpaintDefectPanel.SuspendLayout();
             inclusionDefectPanel.SuspendLayout();
             settingsTabControl.SuspendLayout();
             foldersTabPage.SuspendLayout();
@@ -242,10 +242,10 @@
             tabPage1.Controls.Add(defectTypeComboBox);
             tabPage1.Controls.Add(comboBox1);
             tabPage1.Controls.Add(label43);
-            tabPage1.Location = new Point(4, 24);
+            tabPage1.Location = new Point(4, 29);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(333, 543);
+            tabPage1.Size = new Size(333, 538);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Дефекты";
             tabPage1.UseVisualStyleBackColor = true;
@@ -273,7 +273,7 @@
             ovalityCB.ForeColor = Color.FromArgb(4, 85, 191);
             ovalityCB.Location = new Point(18, 14);
             ovalityCB.Name = "ovalityCB";
-            ovalityCB.Size = new Size(212, 25);
+            ovalityCB.Size = new Size(271, 32);
             ovalityCB.TabIndex = 9;
             ovalityCB.Text = "Определение овальности";
             ovalityCB.UseVisualStyleBackColor = false;
@@ -284,7 +284,7 @@
             ovalityCoef.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             ovalityCoef.Location = new Point(18, 63);
             ovalityCoef.Name = "ovalityCoef";
-            ovalityCoef.Size = new Size(100, 25);
+            ovalityCoef.Size = new Size(100, 29);
             ovalityCoef.TabIndex = 8;
             ovalityCoef.Text = "0,7";
             // 
@@ -305,7 +305,7 @@
             label21.ForeColor = SystemColors.ActiveCaptionText;
             label21.Location = new Point(15, 42);
             label21.Name = "label21";
-            label21.Size = new Size(150, 13);
+            label21.Size = new Size(175, 19);
             label21.TabIndex = 7;
             label21.Text = "Коэффициент овальности:";
             // 
@@ -339,7 +339,7 @@
             // 
             obloyPixCount.Location = new Point(18, 60);
             obloyPixCount.Name = "obloyPixCount";
-            obloyPixCount.Size = new Size(100, 23);
+            obloyPixCount.Size = new Size(100, 27);
             obloyPixCount.TabIndex = 8;
             obloyPixCount.Text = "25";
             // 
@@ -360,7 +360,7 @@
             label47.ForeColor = Color.Black;
             label47.Location = new Point(15, 44);
             label47.Name = "label47";
-            label47.Size = new Size(172, 13);
+            label47.Size = new Size(205, 19);
             label47.TabIndex = 7;
             label47.Text = "Минимальная площадь облоя:";
             // 
@@ -374,7 +374,7 @@
             obloyCB.ForeColor = Color.FromArgb(4, 85, 191);
             obloyCB.Location = new Point(15, 16);
             obloyCB.Name = "obloyCB";
-            obloyCB.Size = new Size(173, 25);
+            obloyCB.Size = new Size(221, 32);
             obloyCB.TabIndex = 9;
             obloyCB.Text = "Определение облоя";
             obloyCB.UseVisualStyleBackColor = false;
@@ -401,7 +401,7 @@
             // 
             maxSquareInclusion.Location = new Point(18, 147);
             maxSquareInclusion.Name = "maxSquareInclusion";
-            maxSquareInclusion.Size = new Size(100, 23);
+            maxSquareInclusion.Size = new Size(100, 27);
             maxSquareInclusion.TabIndex = 17;
             maxSquareInclusion.Text = "500";
             // 
@@ -415,7 +415,7 @@
             inclusionCB.ForeColor = Color.FromArgb(4, 85, 191);
             inclusionCB.Location = new Point(18, 14);
             inclusionCB.Name = "inclusionCB";
-            inclusionCB.Size = new Size(215, 25);
+            inclusionCB.Size = new Size(276, 32);
             inclusionCB.TabIndex = 13;
             inclusionCB.Text = "Определение вкраплений";
             inclusionCB.UseVisualStyleBackColor = false;
@@ -428,7 +428,7 @@
             label22.ForeColor = Color.Black;
             label22.Location = new Point(15, 131);
             label22.Name = "label22";
-            label22.Size = new Size(275, 13);
+            label22.Size = new Size(358, 17);
             label22.TabIndex = 16;
             label22.Text = "Максимальная площадь вкрапления (от 1 до 10000):";
             // 
@@ -446,7 +446,7 @@
             // 
             minSquareInclusion.Location = new Point(18, 103);
             minSquareInclusion.Name = "minSquareInclusion";
-            minSquareInclusion.Size = new Size(100, 23);
+            minSquareInclusion.Size = new Size(100, 27);
             minSquareInclusion.TabIndex = 15;
             minSquareInclusion.Text = "200";
             // 
@@ -457,7 +457,7 @@
             label24.ForeColor = Color.Black;
             label24.Location = new Point(15, 42);
             label24.Name = "label24";
-            label24.Size = new Size(256, 13);
+            label24.Size = new Size(337, 17);
             label24.TabIndex = 11;
             label24.Text = "Коэффициент округлости вкраплений (от 0 до 1):";
             // 
@@ -468,7 +468,7 @@
             label23.ForeColor = Color.Black;
             label23.Location = new Point(15, 87);
             label23.Name = "label23";
-            label23.Size = new Size(269, 13);
+            label23.Size = new Size(352, 17);
             label23.TabIndex = 14;
             label23.Text = "Минимальная площадь вкрапления (от 1 до 10000):";
             // 
@@ -476,7 +476,7 @@
             // 
             circleCoefTx.Location = new Point(18, 58);
             circleCoefTx.Name = "circleCoefTx";
-            circleCoefTx.Size = new Size(100, 23);
+            circleCoefTx.Size = new Size(100, 27);
             circleCoefTx.TabIndex = 12;
             circleCoefTx.Text = "0,8";
             // 
@@ -509,7 +509,7 @@
             // 
             whiteThresoldTx.Location = new Point(12, 103);
             whiteThresoldTx.Name = "whiteThresoldTx";
-            whiteThresoldTx.Size = new Size(100, 23);
+            whiteThresoldTx.Size = new Size(100, 27);
             whiteThresoldTx.TabIndex = 39;
             whiteThresoldTx.Text = "10";
             // 
@@ -523,7 +523,7 @@
             inpaintCB.ForeColor = Color.FromArgb(4, 85, 191);
             inpaintCB.Location = new Point(15, 15);
             inpaintCB.Name = "inpaintCB";
-            inpaintCB.Size = new Size(223, 25);
+            inpaintCB.Size = new Size(286, 32);
             inpaintCB.TabIndex = 35;
             inpaintCB.Text = "Определение непрокрасов";
             inpaintCB.UseVisualStyleBackColor = false;
@@ -536,7 +536,7 @@
             label29.ForeColor = Color.Black;
             label29.Location = new Point(9, 43);
             label29.Name = "label29";
-            label29.Size = new Size(282, 13);
+            label29.Size = new Size(343, 19);
             label29.TabIndex = 36;
             label29.Text = "Минимальная площадь непрокраса (от 1 до 10000):";
             // 
@@ -547,7 +547,7 @@
             label28.ForeColor = Color.Black;
             label28.Location = new Point(9, 88);
             label28.Name = "label28";
-            label28.Size = new Size(172, 13);
+            label28.Size = new Size(213, 19);
             label28.TabIndex = 38;
             label28.Text = "Близость к белому (от 1 до 255)";
             // 
@@ -555,7 +555,7 @@
             // 
             minSquareInpaint.Location = new Point(12, 58);
             minSquareInpaint.Name = "minSquareInpaint";
-            minSquareInpaint.Size = new Size(100, 23);
+            minSquareInpaint.Size = new Size(100, 27);
             minSquareInpaint.TabIndex = 37;
             minSquareInpaint.Text = "500";
             // 
@@ -566,7 +566,7 @@
             label2.ForeColor = Color.Black;
             label2.Location = new Point(19, 15);
             label2.Name = "label2";
-            label2.Size = new Size(77, 15);
+            label2.Size = new Size(97, 20);
             label2.TabIndex = 2;
             label2.Text = "Тип дефекта:";
             // 
@@ -580,18 +580,18 @@
             defectTypeComboBox.Items.AddRange(new object[] { "Овальность", "Вкрапления", "Непрокрас", "Облой", "Неполный залив" });
             defectTypeComboBox.Location = new Point(19, 35);
             defectTypeComboBox.Name = "defectTypeComboBox";
-            defectTypeComboBox.Size = new Size(120, 23);
+            defectTypeComboBox.Size = new Size(120, 28);
             defectTypeComboBox.TabIndex = 3;
             defectTypeComboBox.SelectedIndexChanged += defectTypeComboBox_SelectedIndexChanged_1;
             // 
             // comboBox1
             // 
-            comboBox1.FlatStyle = FlatStyle.Flat;
+            comboBox1.FlatStyle = FlatStyle.Popup;
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые", "Зеленые" });
-            comboBox1.Location = new Point(168, 31);
+            comboBox1.Location = new Point(168, 35);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(105, 23);
+            comboBox1.Size = new Size(105, 28);
             comboBox1.TabIndex = 38;
             // 
             // label43
@@ -601,7 +601,7 @@
             label43.ForeColor = Color.Black;
             label43.Location = new Point(166, 15);
             label43.Name = "label43";
-            label43.Size = new Size(81, 15);
+            label43.Size = new Size(100, 20);
             label43.TabIndex = 37;
             label43.Text = "Цвет крышек";
             // 
@@ -634,7 +634,7 @@
             generalPanel.Controls.Add(generalTime);
             generalPanel.Location = new Point(440, 36);
             generalPanel.Name = "generalPanel";
-            generalPanel.Size = new Size(107, 117);
+            generalPanel.Size = new Size(121, 117);
             generalPanel.TabIndex = 11;
             // 
             // label32
@@ -642,9 +642,9 @@
             label32.AutoSize = true;
             label32.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label32.ForeColor = Color.Black;
-            label32.Location = new Point(30, 68);
+            label32.Location = new Point(34, 68);
             label32.Name = "label32";
-            label32.Size = new Size(42, 15);
+            label32.Size = new Size(54, 20);
             label32.TabIndex = 9;
             label32.Text = "Время";
             // 
@@ -652,9 +652,9 @@
             // 
             generalDefectsCountTb.BackColor = Color.FromArgb(240, 245, 255);
             generalDefectsCountTb.BorderStyle = BorderStyle.None;
-            generalDefectsCountTb.Location = new Point(16, 35);
+            generalDefectsCountTb.Location = new Point(25, 35);
             generalDefectsCountTb.Name = "generalDefectsCountTb";
-            generalDefectsCountTb.Size = new Size(67, 18);
+            generalDefectsCountTb.Size = new Size(67, 22);
             generalDefectsCountTb.TabIndex = 12;
             generalDefectsCountTb.Text = "0";
             generalDefectsCountTb.TextAlign = HorizontalAlignment.Center;
@@ -666,7 +666,7 @@
             label33.ForeColor = Color.Black;
             label33.Location = new Point(8, 15);
             label33.Name = "label33";
-            label33.Size = new Size(87, 15);
+            label33.Size = new Size(108, 20);
             label33.TabIndex = 4;
             label33.Text = "Общее кол-во";
             // 
@@ -674,9 +674,9 @@
             // 
             generalTime.BackColor = Color.FromArgb(240, 245, 255);
             generalTime.BorderStyle = BorderStyle.None;
-            generalTime.Location = new Point(23, 85);
+            generalTime.Location = new Point(32, 85);
             generalTime.Name = "generalTime";
-            generalTime.Size = new Size(60, 18);
+            generalTime.Size = new Size(60, 22);
             generalTime.TabIndex = 7;
             generalTime.Text = "0";
             generalTime.TextAlign = HorizontalAlignment.Center;
@@ -684,9 +684,9 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.лого;
-            pictureBox1.Location = new Point(566, 36);
+            pictureBox1.Location = new Point(568, 36);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(231, 117);
+            pictureBox1.Size = new Size(229, 117);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
@@ -709,7 +709,7 @@
             nedolivTime.BorderStyle = BorderStyle.None;
             nedolivTime.Location = new Point(16, 85);
             nedolivTime.Name = "nedolivTime";
-            nedolivTime.Size = new Size(67, 18);
+            nedolivTime.Size = new Size(67, 22);
             nedolivTime.TabIndex = 13;
             nedolivTime.Text = "0";
             nedolivTime.TextAlign = HorizontalAlignment.Center;
@@ -721,7 +721,7 @@
             label20.ForeColor = Color.Black;
             label20.Location = new Point(30, 68);
             label20.Name = "label20";
-            label20.Size = new Size(42, 15);
+            label20.Size = new Size(54, 20);
             label20.TabIndex = 9;
             label20.Text = "Время";
             // 
@@ -731,7 +731,7 @@
             nedolivDef.BorderStyle = BorderStyle.None;
             nedolivDef.Location = new Point(16, 35);
             nedolivDef.Name = "nedolivDef";
-            nedolivDef.Size = new Size(67, 18);
+            nedolivDef.Size = new Size(67, 22);
             nedolivDef.TabIndex = 12;
             nedolivDef.Text = "0";
             nedolivDef.TextAlign = HorizontalAlignment.Center;
@@ -743,7 +743,7 @@
             label51.ForeColor = Color.Black;
             label51.Location = new Point(3, 15);
             label51.Name = "label51";
-            label51.Size = new Size(100, 15);
+            label51.Size = new Size(127, 20);
             label51.TabIndex = 4;
             label51.Text = "Неполный залив";
             // 
@@ -765,7 +765,7 @@
             timeOvality.BorderStyle = BorderStyle.None;
             timeOvality.Location = new Point(4, 85);
             timeOvality.Name = "timeOvality";
-            timeOvality.Size = new Size(69, 18);
+            timeOvality.Size = new Size(69, 22);
             timeOvality.TabIndex = 9;
             timeOvality.Text = "0";
             timeOvality.TextAlign = HorizontalAlignment.Center;
@@ -776,7 +776,7 @@
             ovalityDef.BorderStyle = BorderStyle.None;
             ovalityDef.Location = new Point(5, 35);
             ovalityDef.Name = "ovalityDef";
-            ovalityDef.Size = new Size(69, 18);
+            ovalityDef.Size = new Size(69, 22);
             ovalityDef.TabIndex = 8;
             ovalityDef.Text = "0";
             ovalityDef.TextAlign = HorizontalAlignment.Center;
@@ -788,7 +788,7 @@
             label17.ForeColor = Color.Black;
             label17.Location = new Point(18, 67);
             label17.Name = "label17";
-            label17.Size = new Size(42, 15);
+            label17.Size = new Size(54, 20);
             label17.TabIndex = 9;
             label17.Text = "Время";
             // 
@@ -799,65 +799,9 @@
             label48.ForeColor = Color.Black;
             label48.Location = new Point(2, 13);
             label48.Name = "label48";
-            label48.Size = new Size(72, 15);
+            label48.Size = new Size(91, 20);
             label48.TabIndex = 1;
             label48.Text = "Овальность";
-            // 
-            // inpaintDefectPanel
-            // 
-            inpaintDefectPanel.BackColor = Color.FromArgb(240, 245, 255);
-            inpaintDefectPanel.Controls.Add(inpaintTime);
-            inpaintDefectPanel.Controls.Add(label19);
-            inpaintDefectPanel.Controls.Add(label50);
-            inpaintDefectPanel.Controls.Add(InpaintDef);
-            inpaintDefectPanel.Location = new Point(170, 36);
-            inpaintDefectPanel.Name = "inpaintDefectPanel";
-            inpaintDefectPanel.Size = new Size(82, 117);
-            inpaintDefectPanel.TabIndex = 4;
-            // 
-            // inpaintTime
-            // 
-            inpaintTime.BackColor = Color.FromArgb(240, 245, 255);
-            inpaintTime.BorderStyle = BorderStyle.None;
-            inpaintTime.Location = new Point(8, 85);
-            inpaintTime.Name = "inpaintTime";
-            inpaintTime.Size = new Size(67, 18);
-            inpaintTime.TabIndex = 12;
-            inpaintTime.Text = "0";
-            inpaintTime.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label19.ForeColor = Color.Black;
-            label19.Location = new Point(16, 68);
-            label19.Name = "label19";
-            label19.Size = new Size(42, 15);
-            label19.TabIndex = 9;
-            label19.Text = "Время";
-            // 
-            // label50
-            // 
-            label50.AutoSize = true;
-            label50.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label50.ForeColor = Color.Black;
-            label50.Location = new Point(2, 15);
-            label50.Name = "label50";
-            label50.Size = new Size(77, 15);
-            label50.TabIndex = 3;
-            label50.Text = "Непрокрасы";
-            // 
-            // InpaintDef
-            // 
-            InpaintDef.BackColor = Color.FromArgb(240, 245, 255);
-            InpaintDef.BorderStyle = BorderStyle.None;
-            InpaintDef.Location = new Point(8, 35);
-            InpaintDef.Name = "InpaintDef";
-            InpaintDef.Size = new Size(67, 18);
-            InpaintDef.TabIndex = 11;
-            InpaintDef.Text = "0";
-            InpaintDef.TextAlign = HorizontalAlignment.Center;
             // 
             // obloyDefectPanel
             // 
@@ -878,7 +822,7 @@
             label14.ForeColor = Color.Black;
             label14.Location = new Point(15, 67);
             label14.Name = "label14";
-            label14.Size = new Size(42, 15);
+            label14.Size = new Size(54, 20);
             label14.TabIndex = 8;
             label14.Text = "Время";
             // 
@@ -888,7 +832,7 @@
             obloyTime.BorderStyle = BorderStyle.None;
             obloyTime.Location = new Point(8, 85);
             obloyTime.Name = "obloyTime";
-            obloyTime.Size = new Size(67, 18);
+            obloyTime.Size = new Size(67, 22);
             obloyTime.TabIndex = 10;
             obloyTime.Text = "0";
             obloyTime.TextAlign = HorizontalAlignment.Center;
@@ -900,7 +844,7 @@
             label7.ForeColor = Color.Black;
             label7.Location = new Point(13, 13);
             label7.Name = "label7";
-            label7.Size = new Size(44, 15);
+            label7.Size = new Size(55, 20);
             label7.TabIndex = 0;
             label7.Text = "Облой";
             // 
@@ -910,10 +854,66 @@
             obloyDef.BorderStyle = BorderStyle.None;
             obloyDef.Location = new Point(6, 35);
             obloyDef.Name = "obloyDef";
-            obloyDef.Size = new Size(69, 18);
+            obloyDef.Size = new Size(69, 22);
             obloyDef.TabIndex = 9;
             obloyDef.Text = "0";
             obloyDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // inpaintDefectPanel
+            // 
+            inpaintDefectPanel.BackColor = Color.FromArgb(240, 245, 255);
+            inpaintDefectPanel.Controls.Add(inpaintTime);
+            inpaintDefectPanel.Controls.Add(label19);
+            inpaintDefectPanel.Controls.Add(label50);
+            inpaintDefectPanel.Controls.Add(InpaintDef);
+            inpaintDefectPanel.Location = new Point(170, 36);
+            inpaintDefectPanel.Name = "inpaintDefectPanel";
+            inpaintDefectPanel.Size = new Size(82, 117);
+            inpaintDefectPanel.TabIndex = 4;
+            // 
+            // inpaintTime
+            // 
+            inpaintTime.BackColor = Color.FromArgb(240, 245, 255);
+            inpaintTime.BorderStyle = BorderStyle.None;
+            inpaintTime.Location = new Point(8, 85);
+            inpaintTime.Name = "inpaintTime";
+            inpaintTime.Size = new Size(67, 22);
+            inpaintTime.TabIndex = 12;
+            inpaintTime.Text = "0";
+            inpaintTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label19.ForeColor = Color.Black;
+            label19.Location = new Point(16, 68);
+            label19.Name = "label19";
+            label19.Size = new Size(54, 20);
+            label19.TabIndex = 9;
+            label19.Text = "Время";
+            // 
+            // label50
+            // 
+            label50.AutoSize = true;
+            label50.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label50.ForeColor = Color.Black;
+            label50.Location = new Point(2, 15);
+            label50.Name = "label50";
+            label50.Size = new Size(97, 20);
+            label50.TabIndex = 3;
+            label50.Text = "Непрокрасы";
+            // 
+            // InpaintDef
+            // 
+            InpaintDef.BackColor = Color.FromArgb(240, 245, 255);
+            InpaintDef.BorderStyle = BorderStyle.None;
+            InpaintDef.Location = new Point(8, 35);
+            InpaintDef.Name = "InpaintDef";
+            InpaintDef.Size = new Size(67, 22);
+            InpaintDef.TabIndex = 11;
+            InpaintDef.Text = "0";
+            InpaintDef.TextAlign = HorizontalAlignment.Center;
             // 
             // inclusionDefectPanel
             // 
@@ -933,7 +933,7 @@
             inclusionTime.BorderStyle = BorderStyle.None;
             inclusionTime.Location = new Point(5, 85);
             inclusionTime.Name = "inclusionTime";
-            inclusionTime.Size = new Size(68, 18);
+            inclusionTime.Size = new Size(68, 22);
             inclusionTime.TabIndex = 11;
             inclusionTime.Text = "0";
             inclusionTime.TextAlign = HorizontalAlignment.Center;
@@ -945,7 +945,7 @@
             label18.ForeColor = Color.Black;
             label18.Location = new Point(18, 68);
             label18.Name = "label18";
-            label18.Size = new Size(42, 15);
+            label18.Size = new Size(54, 20);
             label18.TabIndex = 9;
             label18.Text = "Время";
             // 
@@ -955,7 +955,7 @@
             inclusionDef.BorderStyle = BorderStyle.None;
             inclusionDef.Location = new Point(5, 35);
             inclusionDef.Name = "inclusionDef";
-            inclusionDef.Size = new Size(68, 18);
+            inclusionDef.Size = new Size(68, 22);
             inclusionDef.TabIndex = 10;
             inclusionDef.Text = "0";
             inclusionDef.TextAlign = HorizontalAlignment.Center;
@@ -967,7 +967,7 @@
             label49.ForeColor = Color.Black;
             label49.Location = new Point(2, 14);
             label49.Name = "label49";
-            label49.Size = new Size(73, 15);
+            label49.Size = new Size(93, 20);
             label49.TabIndex = 2;
             label49.Text = "Вкрапления";
             // 
@@ -985,9 +985,9 @@
             // 
             foldersTabPage.BackColor = Color.White;
             foldersTabPage.Controls.Add(foldersGroup);
-            foldersTabPage.Location = new Point(4, 24);
+            foldersTabPage.Location = new Point(4, 29);
             foldersTabPage.Name = "foldersTabPage";
-            foldersTabPage.Size = new Size(446, 542);
+            foldersTabPage.Size = new Size(446, 537);
             foldersTabPage.TabIndex = 2;
             foldersTabPage.Text = "Папки";
             // 
@@ -1018,7 +1018,7 @@
             foldersGroup.ForeColor = Color.FromArgb(4, 85, 191);
             foldersGroup.Location = new Point(0, 0);
             foldersGroup.Name = "foldersGroup";
-            foldersGroup.Size = new Size(446, 542);
+            foldersGroup.Size = new Size(446, 537);
             foldersGroup.TabIndex = 0;
             foldersGroup.TabStop = false;
             foldersGroup.Text = "Настройки папок";
@@ -1045,7 +1045,7 @@
             underfillPathTextBox.Font = new Font("Segoe UI", 8F);
             underfillPathTextBox.Location = new Point(20, 384);
             underfillPathTextBox.Name = "underfillPathTextBox";
-            underfillPathTextBox.Size = new Size(347, 22);
+            underfillPathTextBox.Size = new Size(347, 25);
             underfillPathTextBox.TabIndex = 17;
             // 
             // label13
@@ -1055,7 +1055,7 @@
             label13.ForeColor = Color.Black;
             label13.Location = new Point(20, 364);
             label13.Name = "label13";
-            label13.Size = new Size(103, 15);
+            label13.Size = new Size(130, 20);
             label13.TabIndex = 16;
             label13.Text = "Неполный залив:";
             // 
@@ -1081,7 +1081,7 @@
             obloyPathTextBox.Font = new Font("Segoe UI", 8F);
             obloyPathTextBox.Location = new Point(20, 324);
             obloyPathTextBox.Name = "obloyPathTextBox";
-            obloyPathTextBox.Size = new Size(347, 22);
+            obloyPathTextBox.Size = new Size(347, 25);
             obloyPathTextBox.TabIndex = 14;
             // 
             // label12
@@ -1091,7 +1091,7 @@
             label12.ForeColor = Color.Black;
             label12.Location = new Point(20, 304);
             label12.Name = "label12";
-            label12.Size = new Size(47, 15);
+            label12.Size = new Size(58, 20);
             label12.TabIndex = 13;
             label12.Text = "Облой:";
             // 
@@ -1117,7 +1117,7 @@
             inpaintPathTextBox.Font = new Font("Segoe UI", 8F);
             inpaintPathTextBox.Location = new Point(20, 264);
             inpaintPathTextBox.Name = "inpaintPathTextBox";
-            inpaintPathTextBox.Size = new Size(347, 22);
+            inpaintPathTextBox.Size = new Size(347, 25);
             inpaintPathTextBox.TabIndex = 11;
             // 
             // label11
@@ -1127,7 +1127,7 @@
             label11.ForeColor = Color.Black;
             label11.Location = new Point(20, 244);
             label11.Name = "label11";
-            label11.Size = new Size(80, 15);
+            label11.Size = new Size(100, 20);
             label11.TabIndex = 10;
             label11.Text = "Непрокрасы:";
             // 
@@ -1153,7 +1153,7 @@
             inclusionPathTextBox.Font = new Font("Segoe UI", 8F);
             inclusionPathTextBox.Location = new Point(20, 204);
             inclusionPathTextBox.Name = "inclusionPathTextBox";
-            inclusionPathTextBox.Size = new Size(347, 22);
+            inclusionPathTextBox.Size = new Size(347, 25);
             inclusionPathTextBox.TabIndex = 8;
             // 
             // label10
@@ -1163,7 +1163,7 @@
             label10.ForeColor = Color.Black;
             label10.Location = new Point(20, 184);
             label10.Name = "label10";
-            label10.Size = new Size(76, 15);
+            label10.Size = new Size(96, 20);
             label10.TabIndex = 7;
             label10.Text = "Вкрапления:";
             // 
@@ -1189,7 +1189,7 @@
             ovalityPathTextBox.Font = new Font("Segoe UI", 8F);
             ovalityPathTextBox.Location = new Point(20, 144);
             ovalityPathTextBox.Name = "ovalityPathTextBox";
-            ovalityPathTextBox.Size = new Size(347, 22);
+            ovalityPathTextBox.Size = new Size(347, 25);
             ovalityPathTextBox.TabIndex = 5;
             // 
             // label9
@@ -1199,7 +1199,7 @@
             label9.ForeColor = Color.Black;
             label9.Location = new Point(20, 124);
             label9.Name = "label9";
-            label9.Size = new Size(75, 15);
+            label9.Size = new Size(94, 20);
             label9.TabIndex = 4;
             label9.Text = "Овальность:";
             // 
@@ -1225,7 +1225,7 @@
             originalPathTextBox.Font = new Font("Segoe UI", 8F);
             originalPathTextBox.Location = new Point(20, 84);
             originalPathTextBox.Name = "originalPathTextBox";
-            originalPathTextBox.Size = new Size(347, 22);
+            originalPathTextBox.Size = new Size(347, 25);
             originalPathTextBox.TabIndex = 2;
             // 
             // label8
@@ -1235,7 +1235,7 @@
             label8.ForeColor = Color.Black;
             label8.Location = new Point(20, 64);
             label8.Name = "label8";
-            label8.Size = new Size(111, 15);
+            label8.Size = new Size(138, 20);
             label8.TabIndex = 1;
             label8.Text = "Исходные снимки:";
             // 
@@ -1256,10 +1256,10 @@
             // pr205TabPage
             // 
             pr205TabPage.Controls.Add(pr205Group);
-            pr205TabPage.Location = new Point(4, 24);
+            pr205TabPage.Location = new Point(4, 29);
             pr205TabPage.Name = "pr205TabPage";
             pr205TabPage.Padding = new Padding(3);
-            pr205TabPage.Size = new Size(446, 542);
+            pr205TabPage.Size = new Size(446, 537);
             pr205TabPage.TabIndex = 3;
             pr205TabPage.Text = "ПР205";
             pr205TabPage.UseVisualStyleBackColor = true;
@@ -1279,7 +1279,7 @@
             pr205Group.ForeColor = Color.FromArgb(4, 85, 191);
             pr205Group.Location = new Point(3, 3);
             pr205Group.Name = "pr205Group";
-            pr205Group.Size = new Size(440, 536);
+            pr205Group.Size = new Size(440, 531);
             pr205Group.TabIndex = 1;
             pr205Group.TabStop = false;
             pr205Group.Text = "Настройки ПР205";
@@ -1290,7 +1290,7 @@
             prIpTextBox.Font = new Font("Segoe UI", 9F);
             prIpTextBox.Location = new Point(84, 86);
             prIpTextBox.Name = "prIpTextBox";
-            prIpTextBox.Size = new Size(138, 23);
+            prIpTextBox.Size = new Size(138, 27);
             prIpTextBox.TabIndex = 31;
             prIpTextBox.Text = "10.10.69.38";
             // 
@@ -1316,7 +1316,7 @@
             delayTb.Font = new Font("Segoe UI", 9F);
             delayTb.Location = new Point(155, 80);
             delayTb.Name = "delayTb";
-            delayTb.Size = new Size(100, 23);
+            delayTb.Size = new Size(100, 27);
             delayTb.TabIndex = 16;
             delayTb.Text = "25";
             // 
@@ -1327,7 +1327,7 @@
             label25.ForeColor = Color.Black;
             label25.Location = new Point(155, 60);
             label25.Name = "label25";
-            label25.Size = new Size(63, 15);
+            label25.Size = new Size(79, 20);
             label25.TabIndex = 15;
             label25.Text = "Задержка:";
             // 
@@ -1338,7 +1338,7 @@
             pr205PortTb.Font = new Font("Segoe UI", 9F);
             pr205PortTb.Location = new Point(31, 80);
             pr205PortTb.Name = "pr205PortTb";
-            pr205PortTb.Size = new Size(100, 23);
+            pr205PortTb.Size = new Size(100, 27);
             pr205PortTb.TabIndex = 14;
             pr205PortTb.Text = "502";
             // 
@@ -1349,7 +1349,7 @@
             label26.ForeColor = Color.Black;
             label26.Location = new Point(31, 60);
             label26.Name = "label26";
-            label26.Size = new Size(72, 15);
+            label26.Size = new Size(91, 20);
             label26.TabIndex = 13;
             label26.Text = "Порт ПР205";
             // 
@@ -1360,7 +1360,7 @@
             label30.ForeColor = Color.Black;
             label30.Location = new Point(53, 17);
             label30.Name = "label30";
-            label30.Size = new Size(78, 13);
+            label30.Size = new Size(99, 19);
             label30.TabIndex = 12;
             label30.Text = "Статус ПР205:";
             // 
@@ -1371,7 +1371,7 @@
             prStatus.ForeColor = Color.Black;
             prStatus.Location = new Point(155, 17);
             prStatus.Name = "prStatus";
-            prStatus.Size = new Size(94, 13);
+            prStatus.Size = new Size(120, 19);
             prStatus.TabIndex = 11;
             prStatus.Text = "Не подключена";
             // 
@@ -1395,7 +1395,7 @@
             label40.ForeColor = Color.Black;
             label40.Location = new Point(84, 68);
             label40.Name = "label40";
-            label40.Size = new Size(92, 15);
+            label40.Size = new Size(119, 20);
             label40.TabIndex = 30;
             label40.Text = "Ip адрес обдува";
             // 
@@ -1469,10 +1469,10 @@
             // tabControl1
             // 
             tabControl1.Controls.Add(cameraTabSettings);
-            tabControl1.Location = new Point(10, 293);
+            tabControl1.Location = new Point(10, 307);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(313, 446);
+            tabControl1.Size = new Size(313, 432);
             tabControl1.TabIndex = 2;
             // 
             // cameraTabSettings
@@ -1485,10 +1485,10 @@
             cameraTabSettings.Controls.Add(cameraParamsPanel);
             cameraTabSettings.Controls.Add(applySettingsButton);
             cameraTabSettings.Font = new Font("Segoe UI Semilight", 9F, FontStyle.Italic, GraphicsUnit.Point, 204);
-            cameraTabSettings.Location = new Point(4, 26);
+            cameraTabSettings.Location = new Point(4, 30);
             cameraTabSettings.Name = "cameraTabSettings";
             cameraTabSettings.Padding = new Padding(3);
-            cameraTabSettings.Size = new Size(305, 416);
+            cameraTabSettings.Size = new Size(305, 398);
             cameraTabSettings.TabIndex = 0;
             cameraTabSettings.Text = "Настройки камеры";
             cameraTabSettings.UseVisualStyleBackColor = true;
@@ -1514,7 +1514,7 @@
             label1.ForeColor = Color.Black;
             label1.Location = new Point(6, 12);
             label1.Name = "label1";
-            label1.Size = new Size(106, 15);
+            label1.Size = new Size(128, 18);
             label1.TabIndex = 4;
             label1.Text = "IP адрес камеры:";
             // 
@@ -1525,7 +1525,7 @@
             cameraIpTextBox.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             cameraIpTextBox.Location = new Point(6, 32);
             cameraIpTextBox.Name = "cameraIpTextBox";
-            cameraIpTextBox.Size = new Size(135, 23);
+            cameraIpTextBox.Size = new Size(135, 27);
             cameraIpTextBox.TabIndex = 5;
             cameraIpTextBox.Text = "169.254.205.254";
             // 
@@ -1535,7 +1535,7 @@
             loadSettingsButton.FlatAppearance.BorderSize = 0;
             loadSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             loadSettingsButton.ForeColor = Color.White;
-            loadSettingsButton.Location = new Point(6, 357);
+            loadSettingsButton.Location = new Point(6, 341);
             loadSettingsButton.Name = "loadSettingsButton";
             loadSettingsButton.Size = new Size(134, 52);
             loadSettingsButton.TabIndex = 0;
@@ -1549,7 +1549,7 @@
             saveSettingsButton.FlatAppearance.BorderSize = 0;
             saveSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             saveSettingsButton.ForeColor = Color.White;
-            saveSettingsButton.Location = new Point(157, 357);
+            saveSettingsButton.Location = new Point(157, 341);
             saveSettingsButton.Name = "saveSettingsButton";
             saveSettingsButton.Size = new Size(129, 52);
             saveSettingsButton.TabIndex = 1;
@@ -1585,7 +1585,7 @@
             prStatusLabel.ForeColor = Color.Black;
             prStatusLabel.Location = new Point(150, 14);
             prStatusLabel.Name = "prStatusLabel";
-            prStatusLabel.Size = new Size(77, 13);
+            prStatusLabel.Size = new Size(102, 19);
             prStatusLabel.TabIndex = 3;
             prStatusLabel.Text = "Не запущена";
             // 
@@ -1596,7 +1596,7 @@
             gainTb.Font = new Font("Segoe UI", 9F);
             gainTb.Location = new Point(150, 150);
             gainTb.Name = "gainTb";
-            gainTb.Size = new Size(100, 23);
+            gainTb.Size = new Size(100, 27);
             gainTb.TabIndex = 7;
             gainTb.Text = "100";
             // 
@@ -1607,7 +1607,7 @@
             label16.ForeColor = Color.Black;
             label16.Location = new Point(20, 13);
             label16.Name = "label16";
-            label16.Size = new Size(105, 13);
+            label16.Size = new Size(124, 19);
             label16.TabIndex = 1;
             label16.Text = "Обработка видео:";
             // 
@@ -1618,7 +1618,7 @@
             camStatus.ForeColor = Color.Black;
             camStatus.Location = new Point(149, 46);
             camStatus.Name = "camStatus";
-            camStatus.Size = new Size(94, 13);
+            camStatus.Size = new Size(120, 19);
             camStatus.TabIndex = 2;
             camStatus.Text = "Не подключена";
             // 
@@ -1629,7 +1629,7 @@
             label6.ForeColor = Color.Black;
             label6.Location = new Point(150, 130);
             label6.Name = "label6";
-            label6.Size = new Size(95, 15);
+            label6.Size = new Size(117, 20);
             label6.TabIndex = 6;
             label6.Text = "Насыщенность:";
             // 
@@ -1640,7 +1640,7 @@
             exposureTb.Font = new Font("Segoe UI", 9F);
             exposureTb.Location = new Point(20, 150);
             exposureTb.Name = "exposureTb";
-            exposureTb.Size = new Size(100, 23);
+            exposureTb.Size = new Size(100, 27);
             exposureTb.TabIndex = 5;
             exposureTb.Text = "10000";
             // 
@@ -1651,7 +1651,7 @@
             label15.ForeColor = Color.Black;
             label15.Location = new Point(20, 46);
             label15.Name = "label15";
-            label15.Size = new Size(87, 13);
+            label15.Size = new Size(106, 19);
             label15.TabIndex = 0;
             label15.Text = "Статус камеры:";
             // 
@@ -1662,7 +1662,7 @@
             label5.ForeColor = Color.Black;
             label5.Location = new Point(20, 130);
             label5.Name = "label5";
-            label5.Size = new Size(75, 15);
+            label5.Size = new Size(95, 20);
             label5.TabIndex = 4;
             label5.Text = "Экспозиция:";
             // 
@@ -1673,7 +1673,7 @@
             widthTb.Font = new Font("Segoe UI", 9F);
             widthTb.Location = new Point(150, 97);
             widthTb.Name = "widthTb";
-            widthTb.Size = new Size(100, 23);
+            widthTb.Size = new Size(100, 27);
             widthTb.TabIndex = 3;
             widthTb.Text = "1920";
             // 
@@ -1684,7 +1684,7 @@
             label4.ForeColor = Color.Black;
             label4.Location = new Point(150, 77);
             label4.Name = "label4";
-            label4.Size = new Size(55, 15);
+            label4.Size = new Size(70, 20);
             label4.TabIndex = 2;
             label4.Text = "Ширина:";
             // 
@@ -1695,7 +1695,7 @@
             heightTb.Font = new Font("Segoe UI", 9F);
             heightTb.Location = new Point(20, 97);
             heightTb.Name = "heightTb";
-            heightTb.Size = new Size(100, 23);
+            heightTb.Size = new Size(100, 27);
             heightTb.TabIndex = 1;
             heightTb.Text = "1080";
             // 
@@ -1706,7 +1706,7 @@
             label3.ForeColor = Color.Black;
             label3.Location = new Point(20, 77);
             label3.Name = "label3";
-            label3.Size = new Size(50, 15);
+            label3.Size = new Size(62, 20);
             label3.TabIndex = 0;
             label3.Text = "Высота:";
             // 
@@ -1716,7 +1716,7 @@
             applySettingsButton.FlatAppearance.BorderSize = 0;
             applySettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             applySettingsButton.ForeColor = Color.White;
-            applySettingsButton.Location = new Point(6, 297);
+            applySettingsButton.Location = new Point(6, 281);
             applySettingsButton.Name = "applySettingsButton";
             applySettingsButton.Size = new Size(280, 43);
             applySettingsButton.TabIndex = 2;
@@ -1742,18 +1742,18 @@
             panel8.Controls.Add(loadImageButton);
             panel8.Location = new Point(10, 251);
             panel8.Name = "panel8";
-            panel8.Size = new Size(309, 36);
+            panel8.Size = new Size(309, 56);
             panel8.TabIndex = 27;
             // 
             // recognizeButton
             // 
             recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
             recognizeButton.FlatAppearance.BorderSize = 0;
-            recognizeButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            recognizeButton.Font = new Font("Segoe UI", 7.20000029F, FontStyle.Bold, GraphicsUnit.Point, 204);
             recognizeButton.ForeColor = Color.White;
-            recognizeButton.Location = new Point(203, 3);
+            recognizeButton.Location = new Point(203, 1);
             recognizeButton.Name = "recognizeButton";
-            recognizeButton.Size = new Size(99, 27);
+            recognizeButton.Size = new Size(99, 51);
             recognizeButton.TabIndex = 4;
             recognizeButton.Text = "Начать анализ";
             recognizeButton.UseVisualStyleBackColor = false;
@@ -1763,11 +1763,11 @@
             // 
             startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
             startStreamButton.FlatAppearance.BorderSize = 0;
-            startStreamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            startStreamButton.Font = new Font("Segoe UI", 7.20000029F, FontStyle.Bold, GraphicsUnit.Point, 204);
             startStreamButton.ForeColor = Color.White;
-            startStreamButton.Location = new Point(93, 3);
+            startStreamButton.Location = new Point(93, 1);
             startStreamButton.Name = "startStreamButton";
-            startStreamButton.Size = new Size(109, 27);
+            startStreamButton.Size = new Size(109, 51);
             startStreamButton.TabIndex = 2;
             startStreamButton.Text = "Получить";
             startStreamButton.UseVisualStyleBackColor = false;
@@ -1777,11 +1777,11 @@
             // 
             loadImageButton.BackColor = Color.FromArgb(66, 133, 244);
             loadImageButton.FlatAppearance.BorderSize = 0;
-            loadImageButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            loadImageButton.Font = new Font("Segoe UI", 7.20000029F, FontStyle.Bold, GraphicsUnit.Point, 204);
             loadImageButton.ForeColor = Color.White;
             loadImageButton.Location = new Point(3, 2);
             loadImageButton.Name = "loadImageButton";
-            loadImageButton.Size = new Size(88, 28);
+            loadImageButton.Size = new Size(88, 50);
             loadImageButton.TabIndex = 1;
             loadImageButton.Text = "Загрузить";
             loadImageButton.UseVisualStyleBackColor = false;
@@ -1815,7 +1815,7 @@
             // 
             // TestForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1195, 767);
             Controls.Add(mainPanel);
@@ -1850,10 +1850,10 @@
             nedolivDefectPanel.PerformLayout();
             ovalityDefectPanel.ResumeLayout(false);
             ovalityDefectPanel.PerformLayout();
-            inpaintDefectPanel.ResumeLayout(false);
-            inpaintDefectPanel.PerformLayout();
             obloyDefectPanel.ResumeLayout(false);
             obloyDefectPanel.PerformLayout();
+            inpaintDefectPanel.ResumeLayout(false);
+            inpaintDefectPanel.PerformLayout();
             inclusionDefectPanel.ResumeLayout(false);
             inclusionDefectPanel.PerformLayout();
             settingsTabControl.ResumeLayout(false);

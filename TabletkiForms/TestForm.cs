@@ -539,6 +539,8 @@ namespace KrishkiForms
 
             startStreamButton.Text = "Остановить";
             startStreamButton.BackColor = Color.FromArgb(220, 53, 69);
+            prStatusLabel.Text = "Запущена";
+            prStatusLabel.ForeColor = Color.Green;
             isStreamRunning = true;
         }
 
@@ -574,6 +576,8 @@ namespace KrishkiForms
 
             startStreamButton.Text = "Запустить";
             startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
+            prStatusLabel.Text = "Не запущена";
+            prStatusLabel.ForeColor = Color.Black;
             isStreamRunning = false;
         }
 
@@ -1403,6 +1407,7 @@ namespace KrishkiForms
                 }
                 isProcessing = false;
                 recognizeButton.Text = "Начать анализ";
+                recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
                 recognizeButton.Enabled = true;
                 cts?.Dispose();
                 cts = null;
@@ -1438,6 +1443,7 @@ namespace KrishkiForms
                 processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                 isProcessing = true;
                 recognizeButton.Text = "Остановить анализ";
+                recognizeButton.BackColor = Color.FromArgb(220, 53, 69);
             }
             catch
             {
