@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
-using System.Web.Helpers;
 using KrishkiForms.CameraAndModbusClasses;
+using KrishkiForms.Hardware;
 using Kvantron.Hardware.SmartDio;
 using MathNet.Numerics.IntegralTransforms;
 using OpenCvSharp;
@@ -39,7 +39,6 @@ namespace KrishkiForms
         private bool isRoiProduce = false;
         private bool isConfirmVisible = false;
         private bool obduvEnabled = false;
-        private bool obduvState = false;
         private bool isProcessingFromFolder = false;
         private bool isImageLoaded = false;
         private bool isStreamRunning = false;
@@ -172,10 +171,6 @@ namespace KrishkiForms
         private int _writeZeroFailCount = 0;
         private int _writeOneFailCount = 0;
         private int igf = 0;
-
-        // Modbus
-        private readonly int obduvRegister = 16465;
-
         #endregion
 
         #region Конструктор и инициализация
@@ -546,18 +541,6 @@ namespace KrishkiForms
 
         private void StopStream()
         {
-            try
-            {
-                if (modbusClient != null && modbusClient.Connected)
-                {
-                    //modbusClient.WriteSingleRegister(obduvRegister, 1);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при выключении обдува: {ex.Message}");
-            }
-
             isRoiProduce = false;
             isROISelected = false;
             isStreamCam = false;
@@ -609,7 +592,7 @@ namespace KrishkiForms
             try
             {
                 obduvEnabled = !obduvEnabled;
-                int register = 16465;
+                int register = PLCData.QualityRegisterModbus;
                 int state = obduvEnabled ? 1 : 0;
 
                 modbusClient.WriteSingleRegister(register, state);
@@ -1394,17 +1377,6 @@ namespace KrishkiForms
             }
             finally
             {
-                try
-                {
-                    if (modbusClient != null && modbusClient.Connected)
-                    {
-                        //modbusClient.WriteSingleRegister(obduvRegister, 1);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка при выключении обдува: {ex.Message}");
-                }
                 isProcessing = false;
                 recognizeButton.Text = "Начать анализ";
                 recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
@@ -1422,18 +1394,6 @@ namespace KrishkiForms
                 MessageBox.Show("Пожалуйста, загрузите изображение перед распознаванием.");
                 return;
             }*/
-
-            try
-            {
-                if (modbusClient != null && modbusClient.Connected)
-                {
-                    //modbusClient.WriteSingleRegister(obduvRegister, 0);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при включении обдува: {ex.Message}");
-            }
 
             cts = new CancellationTokenSource();
             try
@@ -1483,18 +1443,6 @@ namespace KrishkiForms
 
         private void ShutdownApplication()
         {
-            try
-            {
-                if (modbusClient != null && modbusClient.Connected)
-                {
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при установке обдува при завершении: {ex.Message}");
-            }
-
             // Проверяем не только что cam != null, но и что камера действительно подключена
             if (cam != null && cameraConnected)
             {
@@ -2204,10 +2152,10 @@ namespace KrishkiForms
                                         generalDefectsCountTb.Text = blowTriggerCount.ToString();
                                     }));
                                 }
-                                else
-                                {
-                                    _ = Task.Run(() => PulseObduvAsync(delayValue, token));
-                                }
+                                PLCData.QualityStatus qualityStatus = anyDefect
+                                    ? PLCData.QualityStatus.Bad
+                                    : PLCData.QualityStatus.Good;
+                                _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
 
                                 stopwatch.Stop();
                                 UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
@@ -2383,18 +2331,14 @@ namespace KrishkiForms
         #endregion
 
         #region Методы работы с Modbus
-
-        private async Task SetObduv(bool newState)
-        {
-            if (obduvState != newState)
-            {
-                obduvState = newState;
-                modbusClient.WriteSingleRegister(obduvRegister, newState ? 0 : 1);
-                await Task.Delay(delayValue);
-            }
-        }
-
-        private async Task PulseObduvAsync(int delayMs, CancellationToken token)
+        /// <summary>
+        /// Отправка статуса состояния <paramref name="qualityStatus"/> на ПЛК.
+        /// Установка предыдущего значения регистра ПЛК не делается. Предполагается,
+        /// что логика сброса, если она необходима, будет реализована в других
+        /// модулях или ПЛК
+        /// </summary>
+        /// <param name="qualityStatus"></param>
+        private void SendQualityStatus(PLCData.QualityStatus qualityStatus)
         {
             try
             {
@@ -2402,14 +2346,8 @@ namespace KrishkiForms
                 {
                     var stopwatch = Stopwatch.StartNew();
 
-                    // Включаем обдув
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
-
-                    // Ждём в отдельном таске
-                    await Task.Delay(delayMs, token);
-
-                    // Выключаем обдув
-                    modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    // Обновление состояния обдува
+                    modbusClient.WriteSingleRegister(PLCData.QualityRegisterModbus, (int)qualityStatus);
 
                     stopwatch.Stop();
                 }
@@ -2420,7 +2358,7 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                // Логирование ошибки
+                // TODO Логирование ошибки
             }
         }
 
