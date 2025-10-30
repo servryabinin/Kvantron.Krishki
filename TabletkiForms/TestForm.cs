@@ -539,8 +539,11 @@ namespace KrishkiForms
 
             startStreamButton.Text = "Остановить";
             startStreamButton.BackColor = Color.FromArgb(220, 53, 69);
-            prStatusLabel.Text = "Запущена";
-            prStatusLabel.ForeColor = Color.Green;
+            if (cam != null)
+            {
+                prStatusLabel.Text = "Запущена";
+                prStatusLabel.ForeColor = Color.Green;
+            }
             isStreamRunning = true;
         }
 
