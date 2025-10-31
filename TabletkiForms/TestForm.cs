@@ -29,8 +29,10 @@ namespace KrishkiForms
         private ModbusTCP modbusClient;
         private int breakingTimeRegister = 16401;
         private int cameraOffsetRegister = 16402;
+        private int breakerOffsetRegister = 16403;
         private int BreakingTime = 15;
         private int CameraOffset = 630;
+        private int BreakerOffset = 1800;
 
         // Состояния приложения
         private bool cameraConnected = false;
@@ -555,6 +557,17 @@ namespace KrishkiForms
             isRoiProduce = false;
             isROISelected = false;
             isStreamCam = false;
+
+            /*// Очистка очереди и сброс семафора
+            while (_frameQueue.TryDequeue(out var oldFrame))
+            {
+                oldFrame.Dispose();
+            }
+
+            while (_frameAvailable.CurrentCount > 0)
+            {
+                _frameAvailable.Wait(0);
+            }*/
             originPb.Image?.Dispose();
             originPb.Image = null;
 
@@ -641,7 +654,7 @@ namespace KrishkiForms
 
         #region Кнопки настроек
 
-        #region Настройки какмеры
+        #region Настройки камеры
         private void ApplySettingsButton_Click(object sender, EventArgs e)
         {
             ApplyCameraSettings();
@@ -783,6 +796,33 @@ namespace KrishkiForms
             }
 
             return true;
+        }
+
+        private async void ApplyPr_Click(object sender, EventArgs e)
+        {
+            cts = new CancellationTokenSource();
+
+            try
+            {
+                // BreakingTime
+                if (!int.TryParse(breakingTimeTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakingTime) || BreakingTime <= 0)
+                    BreakingTime = 15;
+                await Task.Run(() => SendBreakingTime(BreakingTime), cts.Token);
+
+                // CameraOffset
+                if (!int.TryParse(cameraOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out CameraOffset) || CameraOffset <= 0)
+                    CameraOffset = 810;
+                await Task.Run(() => SendCameraOffset(CameraOffset), cts.Token);
+
+                // BreakerOffset
+                if (!int.TryParse(breakerOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakerOffset) || BreakerOffset <= 0)
+                    BreakerOffset = 1800;
+                await Task.Run(() => SendBreakerOffset(BreakerOffset), cts.Token);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при отправке параметров: {ex.Message}");
+            }
         }
 
         #endregion
@@ -1401,22 +1441,12 @@ namespace KrishkiForms
         {
             ApplyRecognitionParameters();
 
+            
+
             cts = new CancellationTokenSource();
             try
             {
                 capsColor = GetSelectedCapValue();
-
-                if (!int.TryParse(breakingTimeTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakingTime) || BreakingTime <= 0)
-                {
-                    BreakingTime = 15; // значение по умолчанию
-                }
-                _ = Task.Run(() => SendBreakingTime(BreakingTime), cts.Token);
-
-                if (!int.TryParse(cameraOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out CameraOffset) || CameraOffset <= 0)
-                {
-                    CameraOffset = 630; // значение по умолчанию
-                }
-                _ = Task.Run(() => SendCameraOffset(CameraOffset), cts.Token);
 
                 processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                 isProcessing = true;
@@ -1932,21 +1962,21 @@ namespace KrishkiForms
 
             if (isStreamCam)
             {
-                while (_frameQueue.Count >= MaxQueueSize)
+                lock (frameLock)
                 {
-                    if (_frameQueue.TryDequeue(out var oldFrame))
-                        oldFrame.Dispose();
+                    latestFrame?.Dispose();
+                    latestFrame = img.Clone();
+                    newFrameAvailable = true;
                 }
 
-                _frameQueue.Enqueue(img.Clone());
-
-                _frameAvailable.Release();
-
+                // Если ROI не выбран, показываем полное изображение с камеры
                 if (!LocalSettings.Instance.UseVConcat)
                 {
                     img1 = img.Clone();
-                    if (isRoiProduce && isROISelected)
+                    if (isRoiProduce == true && isROISelected == true)
+                    {
                         img1 = new Mat(img, roi);
+                    }
                     UpdatePictureBox(originPb, img1);
                 }
                 else
@@ -1954,16 +1984,20 @@ namespace KrishkiForms
                     if (!isFirstImageCam1)
                     {
                         img1 = img.Clone();
-                        if (isRoiProduce && isROISelected)
+                        if (isRoiProduce == true && isROISelected == true)
+                        {
                             img1 = new Mat(img, roi);
+                        }
                         UpdatePictureBox(originPb, img1);
                         isFirstImageCam1 = true;
                     }
                     else
                     {
                         Cv2.VConcat(img1, img.Clone(), img1);
-                        if (isRoiProduce && isROISelected)
+                        if (isRoiProduce == true && isROISelected == true)
+                        {
                             img1 = new Mat(img, roi);
+                        }
                         UpdatePictureBox(originPb, img1);
                     }
                 }
@@ -2052,24 +2086,25 @@ namespace KrishkiForms
             {
                 while (!token.IsCancellationRequested)
                 {
-                    
+                    Stopwatch stopwatch = Stopwatch.StartNew();
 
                     Mat frameToProcess = null;
 
                     if (isStreamCam)
                     {
-                        await _frameAvailable.WaitAsync(token);
-                        // Забираем кадр из очереди
-                        if (!_frameQueue.TryDequeue(out frameToProcess))
-                            continue;
+                        lock (frameLock)
+                        {
+                            if (!newFrameAvailable) continue;
+                            frameToProcess = latestFrame.Clone();
+                            newFrameAvailable = false;
+                        }
                     }
                     else if (isProcessingFromFolder)
                     {
-                        await Task.Delay(100, token);
+                        await Task.Delay(100);
                         lock (imageListLock)
                         {
-                            if (imageFiles.Count == 0)
-                                continue;
+                            if (imageFiles.Count == 0) continue;
 
                             try
                             {
@@ -2087,8 +2122,6 @@ namespace KrishkiForms
 
                     if (frameToProcess == null || frameToProcess.Empty())
                         continue;
-
-                    Stopwatch stopwatch = Stopwatch.StartNew();
 
                     using (frameToProcess)
                     using (Mat gray = new Mat())
@@ -2124,7 +2157,7 @@ namespace KrishkiForms
 
                         using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
-                            timeoutCts.CancelAfter(80); // таймаут обработки одного кадра (мс)
+                            timeoutCts.CancelAfter(60);
 
                             try
                             {
@@ -2134,28 +2167,32 @@ namespace KrishkiForms
                                 var obloyTask = Task.FromResult(false);
 
                                 if (ovalityCB.Checked)
-                                    ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality,
-                                        timeoutCts.Token, RunCheckOvality, capContour);
+                                {
+                                    ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality, capContour);
+                                }
 
                                 if (inclusionCB.Checked)
-                                    inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions,
-                                        timeoutCts.Token, RunCheckForInclusions, capContour);
+                                {
+                                    inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions, capContour);
+
+                                }
 
                                 if (inpaintCB.Checked)
-                                    paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects,
-                                        timeoutCts.Token, RunCheckForPaintDefects, capContour);
+                                {
+                                    paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects, capContour);
+                                }
 
                                 if (obloyCB.Checked)
-                                    obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects,
-                                        timeoutCts.Token, RunCheckForObloyDefects, capContour);
+                                {
+                                    obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, timeoutCts.Token, RunCheckForObloyDefects, capContour);
+                                }
 
                                 await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask);
 
-                                bool anyDefect =
-                                    (ovalityCB.Checked && ovalityTask.Result) ||
-                                    (inclusionCB.Checked && inclusionsTask.Result) ||
-                                    (inpaintCB.Checked && paintTask.Result) ||
-                                    (obloyCB.Checked && obloyTask.Result);
+                                bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
+                                                 (inclusionCB.Checked && inclusionsTask.Result) ||
+                                                 (inpaintCB.Checked && paintTask.Result) ||
+                                                 (obloyCB.Checked && obloyTask.Result);
 
                                 if (anyDefect)
                                 {
@@ -2165,20 +2202,15 @@ namespace KrishkiForms
                                         generalDefectsCountTb.Text = blowTriggerCount.ToString();
                                     }));
                                 }
-
-                                if (breakingAllowCb.Checked)
-                                {
-                                    PLCData.QualityStatus qualityStatus = anyDefect
+                                PLCData.QualityStatus qualityStatus = anyDefect
                                     ? PLCData.QualityStatus.Bad
                                     : PLCData.QualityStatus.Good;
-
-                                    _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
-                                }
+                                _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
 
                                 stopwatch.Stop();
                                 UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
 
-                                // 🕓 Лог времени обработки кадра
+                                // 🟢 лог времени обработки кадра
                                 try
                                 {
                                     string processEntry = $"{DateTime.Now:HH:mm:ss.fff} | ProcessTime: {stopwatch.ElapsedMilliseconds} ms";
@@ -2188,10 +2220,11 @@ namespace KrishkiForms
                                 {
                                     Debug.WriteLine($"Ошибка при записи ProcessTime лога: {logEx.Message}");
                                 }
+                                // 🔚 конец добавленного блока
                             }
                             catch (OperationCanceledException)
                             {
-                                // обработку кадра прервали — ок
+                                // ОК
                             }
                         }
                     }
@@ -2199,8 +2232,8 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                /*BeginInvoke((Action)(() =>
-                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));*/
+                BeginInvoke((Action)(() =>
+                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));
             }
         }
 
@@ -2390,12 +2423,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    var stopwatch = Stopwatch.StartNew();
-
-                    // Обновление состояния обдува
                     modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(breakingTimeRegister, breakingTime);
-
-                    stopwatch.Stop();
                 }
             }
             catch (TaskCanceledException)
@@ -2418,12 +2446,30 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    var stopwatch = Stopwatch.StartNew();
-
-                    // Обновление состояния обдува
                     modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(cameraOffsetRegister, cameraOffset);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // отмена - ничего страшного
+            }
+            catch (Exception ex)
+            {
+                // TODO Логирование ошибки
+            }
+        }
 
-                    stopwatch.Stop();
+        /// <summary>
+        /// Отправка на ПЛК расстояния от датчика до отбраковщика.
+        /// </summary>
+        /// /// <param name="breakerOffset"></param>
+        private void SendBreakerOffset(int breakerOffset)
+        {
+            try
+            {
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(breakerOffsetRegister, breakerOffset);
                 }
             }
             catch (TaskCanceledException)
@@ -2892,5 +2938,7 @@ namespace KrishkiForms
         }
 
         #endregion
+
+        
     }
 }

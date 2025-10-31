@@ -121,6 +121,10 @@
             pr205Group = new GroupBox();
             prIpTextBox = new TextBox();
             pr205ParamPanel = new Panel();
+            breakerOffsetTb = new TextBox();
+            label31 = new Label();
+            cameraOffsetTb = new TextBox();
+            label27 = new Label();
             breakingAllowCb = new CheckBox();
             breakingTimeTb = new TextBox();
             label25 = new Label();
@@ -164,8 +168,6 @@
             controlPanel = new Panel();
             statusPanel = new Panel();
             controlButtonsPanel = new Panel();
-            label27 = new Label();
-            cameraOffsetTb = new TextBox();
             mainPanel.SuspendLayout();
             rightPanel.SuspendLayout();
             tabControl2.SuspendLayout();
@@ -344,7 +346,7 @@
             obloyPixCount.Name = "obloyPixCount";
             obloyPixCount.Size = new Size(100, 27);
             obloyPixCount.TabIndex = 8;
-            obloyPixCount.Text = "25";
+            obloyPixCount.Text = "1000";
             // 
             // obloyPb
             // 
@@ -1301,6 +1303,8 @@
             // 
             pr205ParamPanel.BackColor = Color.FromArgb(240, 245, 255);
             pr205ParamPanel.BorderStyle = BorderStyle.Fixed3D;
+            pr205ParamPanel.Controls.Add(breakerOffsetTb);
+            pr205ParamPanel.Controls.Add(label31);
             pr205ParamPanel.Controls.Add(cameraOffsetTb);
             pr205ParamPanel.Controls.Add(label27);
             pr205ParamPanel.Controls.Add(breakingAllowCb);
@@ -1310,10 +1314,54 @@
             pr205ParamPanel.Controls.Add(label26);
             pr205ParamPanel.Controls.Add(label30);
             pr205ParamPanel.Controls.Add(prStatus);
-            pr205ParamPanel.Location = new Point(84, 129);
+            pr205ParamPanel.Location = new Point(61, 129);
             pr205ParamPanel.Name = "pr205ParamPanel";
-            pr205ParamPanel.Size = new Size(280, 220);
+            pr205ParamPanel.Size = new Size(333, 276);
             pr205ParamPanel.TabIndex = 11;
+            // 
+            // breakerOffsetTb
+            // 
+            breakerOffsetTb.BackColor = Color.White;
+            breakerOffsetTb.BorderStyle = BorderStyle.FixedSingle;
+            breakerOffsetTb.Font = new Font("Segoe UI", 9F);
+            breakerOffsetTb.Location = new Point(36, 234);
+            breakerOffsetTb.Name = "breakerOffsetTb";
+            breakerOffsetTb.Size = new Size(100, 27);
+            breakerOffsetTb.TabIndex = 21;
+            breakerOffsetTb.Text = "1800";
+            // 
+            // label31
+            // 
+            label31.AutoSize = true;
+            label31.Font = new Font("Segoe UI", 9F);
+            label31.ForeColor = Color.Black;
+            label31.Location = new Point(31, 211);
+            label31.Name = "label31";
+            label31.Size = new Size(280, 20);
+            label31.TabIndex = 20;
+            label31.Text = "Расстояние от камеры до обдува, тики:";
+            // 
+            // cameraOffsetTb
+            // 
+            cameraOffsetTb.BackColor = Color.White;
+            cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
+            cameraOffsetTb.Font = new Font("Segoe UI", 9F);
+            cameraOffsetTb.Location = new Point(36, 172);
+            cameraOffsetTb.Name = "cameraOffsetTb";
+            cameraOffsetTb.Size = new Size(100, 27);
+            cameraOffsetTb.TabIndex = 19;
+            cameraOffsetTb.Text = "810";
+            // 
+            // label27
+            // 
+            label27.AutoSize = true;
+            label27.Font = new Font("Segoe UI", 9F);
+            label27.ForeColor = Color.Black;
+            label27.Location = new Point(31, 149);
+            label27.Name = "label27";
+            label27.Size = new Size(285, 20);
+            label27.TabIndex = 18;
+            label27.Text = "Расстояние от датчика до камеры, тики:";
             // 
             // breakingAllowCb
             // 
@@ -1423,12 +1471,13 @@
             ApplyPr.FlatAppearance.BorderSize = 0;
             ApplyPr.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             ApplyPr.ForeColor = Color.White;
-            ApplyPr.Location = new Point(84, 355);
+            ApplyPr.Location = new Point(84, 411);
             ApplyPr.Name = "ApplyPr";
             ApplyPr.Size = new Size(280, 43);
             ApplyPr.TabIndex = 2;
             ApplyPr.Text = "Применить настройки";
             ApplyPr.UseVisualStyleBackColor = false;
+            ApplyPr.Click += ApplyPr_Click;
             // 
             // savePrSettings
             // 
@@ -1436,7 +1485,7 @@
             savePrSettings.FlatAppearance.BorderSize = 0;
             savePrSettings.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             savePrSettings.ForeColor = Color.White;
-            savePrSettings.Location = new Point(235, 415);
+            savePrSettings.Location = new Point(235, 463);
             savePrSettings.Name = "savePrSettings";
             savePrSettings.Size = new Size(129, 52);
             savePrSettings.TabIndex = 1;
@@ -1450,7 +1499,7 @@
             loadPrSettings.FlatAppearance.BorderSize = 0;
             loadPrSettings.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             loadPrSettings.ForeColor = Color.White;
-            loadPrSettings.Location = new Point(84, 415);
+            loadPrSettings.Location = new Point(84, 463);
             loadPrSettings.Name = "loadPrSettings";
             loadPrSettings.Size = new Size(134, 52);
             loadPrSettings.TabIndex = 0;
@@ -1831,28 +1880,6 @@
             controlButtonsPanel.Size = new Size(700, 81);
             controlButtonsPanel.TabIndex = 0;
             // 
-            // label27
-            // 
-            label27.AutoSize = true;
-            label27.Font = new Font("Segoe UI", 9F);
-            label27.ForeColor = Color.Black;
-            label27.Location = new Point(31, 149);
-            label27.Name = "label27";
-            label27.Size = new Size(208, 20);
-            label27.TabIndex = 18;
-            label27.Text = "Расстояние до камеры, тики:";
-            // 
-            // cameraOffsetTb
-            // 
-            cameraOffsetTb.BackColor = Color.White;
-            cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
-            cameraOffsetTb.Font = new Font("Segoe UI", 9F);
-            cameraOffsetTb.Location = new Point(36, 172);
-            cameraOffsetTb.Name = "cameraOffsetTb";
-            cameraOffsetTb.Size = new Size(100, 27);
-            cameraOffsetTb.TabIndex = 19;
-            cameraOffsetTb.Text = "630";
-            // 
             // TestForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2059,5 +2086,7 @@
         private CheckBox breakingAllowCb;
         private Label label27;
         private TextBox cameraOffsetTb;
+        private TextBox breakerOffsetTb;
+        private Label label31;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -83,24 +84,33 @@ namespace KrishkiForms.CameraAndModbusClasses
         {
             try
             {
+                ushort transactionId = (ushort)new Random().Next(1, 65535);
+                byte[] trans = BitConverter.GetBytes(transactionId);
                 byte[] reg = BitConverter.GetBytes((ushort)register);
                 byte[] val = BitConverter.GetBytes((ushort)state);
 
                 byte[] data = new byte[]
                 {
-                    0x00, 0x1C,             // Transaction Identifier
-                    0x00, 0x00,             // Protocol Identifier
+                    trans[1], trans[0],     // Transaction ID (уникальный)
+                    0x00, 0x00,             // Protocol ID
                     0x00, 0x06,             // Length
-                    0x01,                   // Unit Identifier
-                    0x06,                   // Function Code (Write Single Register)
-                    reg[1], reg[0],         // Register address (big-endian)
-                    val[1], val[0]          // Value (big-endian)
+                    0x01,                   // Unit ID
+                    0x06,                   // Write Single Register
+                    reg[1], reg[0],         // Address
+                    val[1], val[0]          // Value
                 };
 
+                stream.WriteTimeout = 1000;
+                stream.ReadTimeout = 1000;
                 stream.Write(data, 0, data.Length);
 
-                var array = new byte[256];
-                int num = stream.Read(array, 0, array.Length);
+                var response = new byte[256];
+                int bytesRead = stream.Read(response, 0, response.Length);
+            }
+            catch (IOException ioEx)
+            {
+                connected = false;
+                Debug.WriteLine($"Ошибка Modbus I/O: {ioEx.Message}");
             }
             catch (Exception)
             {
@@ -108,6 +118,7 @@ namespace KrishkiForms.CameraAndModbusClasses
                 throw;
             }
         }
+
 
 
         public void WriteSingleCoil(int coilAddress, bool state)
