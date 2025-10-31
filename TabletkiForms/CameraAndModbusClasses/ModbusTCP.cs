@@ -50,7 +50,7 @@ namespace KrishkiForms.CameraAndModbusClasses
             connected = false;
         }
 
-        public void WriteSingleRegister(int register, int state)
+        public void WriteSingleRegisterForBreaker(int register, int state)
         {
             try
             {
@@ -78,6 +78,37 @@ namespace KrishkiForms.CameraAndModbusClasses
                 throw;
             }
         }
+
+        public void WriteSingleRegisterForDelayBreakerAndCameraOffset(int register, int state)
+        {
+            try
+            {
+                byte[] reg = BitConverter.GetBytes((ushort)register);
+                byte[] val = BitConverter.GetBytes((ushort)state);
+
+                byte[] data = new byte[]
+                {
+                    0x00, 0x1C,             // Transaction Identifier
+                    0x00, 0x00,             // Protocol Identifier
+                    0x00, 0x06,             // Length
+                    0x01,                   // Unit Identifier
+                    0x06,                   // Function Code (Write Single Register)
+                    reg[1], reg[0],         // Register address (big-endian)
+                    val[1], val[0]          // Value (big-endian)
+                };
+
+                stream.Write(data, 0, data.Length);
+
+                var array = new byte[256];
+                int num = stream.Read(array, 0, array.Length);
+            }
+            catch (Exception)
+            {
+                connected = false;
+                throw;
+            }
+        }
+
 
         public void WriteSingleCoil(int coilAddress, bool state)
         {

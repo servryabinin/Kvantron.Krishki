@@ -482,7 +482,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    modbusClient.WriteSingleRegisterForBreaker(obduvRegister, 1);
                 }
             }
             catch (Exception ex)
@@ -536,7 +536,7 @@ namespace KrishkiForms
                 int register = 16465;
                 int state = obduvEnabled ? 1 : 0;
 
-                modbusClient.WriteSingleRegister(register, state);
+                modbusClient.WriteSingleRegisterForBreaker(register, state);
                 obduvBatton.Text = obduvEnabled ? "Включить обдув" : "Выключить обдув";
             }
             catch (Exception ex)
@@ -1000,7 +1000,7 @@ namespace KrishkiForms
                 {
                     if (modbusClient != null && modbusClient.Connected)
                     {
-                        modbusClient.WriteSingleRegister(obduvRegister, 1);
+                        modbusClient.WriteSingleRegisterForBreaker(obduvRegister, 1);
                     }
                 }
                 catch (Exception ex)
@@ -1028,7 +1028,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    modbusClient.WriteSingleRegisterForBreaker(obduvRegister, 0);
                 }
             }
             catch (Exception ex)
@@ -1087,7 +1087,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    modbusClient.WriteSingleRegisterForBreaker(obduvRegister, 1);
                 }
             }
             catch (Exception ex)
@@ -1895,7 +1895,7 @@ namespace KrishkiForms
             if (obduvState != newState)
             {
                 obduvState = newState;
-                modbusClient.WriteSingleRegister(obduvRegister, newState ? 0 : 1);
+                modbusClient.WriteSingleRegisterForBreaker(obduvRegister, newState ? 0 : 1);
                 await Task.Delay(delayValue);
             }
         }
@@ -1909,13 +1909,13 @@ namespace KrishkiForms
                     var stopwatch = Stopwatch.StartNew();
 
                     // Включаем обдув
-                    modbusClient.WriteSingleRegister(obduvRegister, 1);
+                    modbusClient.WriteSingleRegisterForBreaker(obduvRegister, 1);
 
                     // Ждём в отдельном таске
                     await Task.Delay(delayMs, token);
 
                     // Выключаем обдув
-                    modbusClient.WriteSingleRegister(obduvRegister, 0);
+                    modbusClient.WriteSingleRegisterForBreaker(obduvRegister, 0);
 
                     stopwatch.Stop();
                 }

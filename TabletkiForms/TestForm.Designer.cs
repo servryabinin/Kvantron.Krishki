@@ -121,7 +121,8 @@
             pr205Group = new GroupBox();
             prIpTextBox = new TextBox();
             pr205ParamPanel = new Panel();
-            delayTb = new TextBox();
+            breakingAllowCb = new CheckBox();
+            breakingTimeTb = new TextBox();
             label25 = new Label();
             pr205PortTb = new TextBox();
             label26 = new Label();
@@ -163,6 +164,8 @@
             controlPanel = new Panel();
             statusPanel = new Panel();
             controlButtonsPanel = new Panel();
+            label27 = new Label();
+            cameraOffsetTb = new TextBox();
             mainPanel.SuspendLayout();
             rightPanel.SuspendLayout();
             tabControl2.SuspendLayout();
@@ -286,7 +289,7 @@
             ovalityCoef.Name = "ovalityCoef";
             ovalityCoef.Size = new Size(100, 29);
             ovalityCoef.TabIndex = 8;
-            ovalityCoef.Text = "0,7";
+            ovalityCoef.Text = "0,96";
             // 
             // ovalityPb
             // 
@@ -1298,7 +1301,10 @@
             // 
             pr205ParamPanel.BackColor = Color.FromArgb(240, 245, 255);
             pr205ParamPanel.BorderStyle = BorderStyle.Fixed3D;
-            pr205ParamPanel.Controls.Add(delayTb);
+            pr205ParamPanel.Controls.Add(cameraOffsetTb);
+            pr205ParamPanel.Controls.Add(label27);
+            pr205ParamPanel.Controls.Add(breakingAllowCb);
+            pr205ParamPanel.Controls.Add(breakingTimeTb);
             pr205ParamPanel.Controls.Add(label25);
             pr205ParamPanel.Controls.Add(pr205PortTb);
             pr205ParamPanel.Controls.Add(label26);
@@ -1306,30 +1312,42 @@
             pr205ParamPanel.Controls.Add(prStatus);
             pr205ParamPanel.Location = new Point(84, 129);
             pr205ParamPanel.Name = "pr205ParamPanel";
-            pr205ParamPanel.Size = new Size(280, 200);
+            pr205ParamPanel.Size = new Size(280, 220);
             pr205ParamPanel.TabIndex = 11;
             // 
-            // delayTb
+            // breakingAllowCb
             // 
-            delayTb.BackColor = Color.White;
-            delayTb.BorderStyle = BorderStyle.FixedSingle;
-            delayTb.Font = new Font("Segoe UI", 9F);
-            delayTb.Location = new Point(155, 80);
-            delayTb.Name = "delayTb";
-            delayTb.Size = new Size(100, 27);
-            delayTb.TabIndex = 16;
-            delayTb.Text = "25";
+            breakingAllowCb.AutoSize = true;
+            breakingAllowCb.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            breakingAllowCb.ForeColor = Color.Black;
+            breakingAllowCb.Location = new Point(33, 122);
+            breakingAllowCb.Name = "breakingAllowCb";
+            breakingAllowCb.Size = new Size(143, 24);
+            breakingAllowCb.TabIndex = 17;
+            breakingAllowCb.Text = "Включить обдув";
+            breakingAllowCb.UseVisualStyleBackColor = true;
+            // 
+            // breakingTimeTb
+            // 
+            breakingTimeTb.BackColor = Color.White;
+            breakingTimeTb.BorderStyle = BorderStyle.FixedSingle;
+            breakingTimeTb.Font = new Font("Segoe UI", 9F);
+            breakingTimeTb.Location = new Point(155, 80);
+            breakingTimeTb.Name = "breakingTimeTb";
+            breakingTimeTb.Size = new Size(100, 27);
+            breakingTimeTb.TabIndex = 16;
+            breakingTimeTb.Text = "15";
             // 
             // label25
             // 
             label25.AutoSize = true;
             label25.Font = new Font("Segoe UI", 9F);
             label25.ForeColor = Color.Black;
-            label25.Location = new Point(155, 60);
+            label25.Location = new Point(155, 58);
             label25.Name = "label25";
-            label25.Size = new Size(79, 20);
+            label25.Size = new Size(110, 20);
             label25.TabIndex = 15;
-            label25.Text = "Задержка:";
+            label25.Text = "Время обдува:";
             // 
             // pr205PortTb
             // 
@@ -1347,7 +1365,7 @@
             label26.AutoSize = true;
             label26.Font = new Font("Segoe UI", 9F);
             label26.ForeColor = Color.Black;
-            label26.Location = new Point(31, 60);
+            label26.Location = new Point(31, 58);
             label26.Name = "label26";
             label26.Size = new Size(91, 20);
             label26.TabIndex = 13;
@@ -1358,7 +1376,7 @@
             label30.AutoSize = true;
             label30.Font = new Font("Segoe UI", 8.25F);
             label30.ForeColor = Color.Black;
-            label30.Location = new Point(53, 17);
+            label30.Location = new Point(33, 15);
             label30.Name = "label30";
             label30.Size = new Size(99, 19);
             label30.TabIndex = 12;
@@ -1369,7 +1387,7 @@
             prStatus.AutoSize = true;
             prStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
             prStatus.ForeColor = Color.Black;
-            prStatus.Location = new Point(155, 17);
+            prStatus.Location = new Point(135, 15);
             prStatus.Name = "prStatus";
             prStatus.Size = new Size(120, 19);
             prStatus.TabIndex = 11;
@@ -1813,6 +1831,28 @@
             controlButtonsPanel.Size = new Size(700, 81);
             controlButtonsPanel.TabIndex = 0;
             // 
+            // label27
+            // 
+            label27.AutoSize = true;
+            label27.Font = new Font("Segoe UI", 9F);
+            label27.ForeColor = Color.Black;
+            label27.Location = new Point(31, 149);
+            label27.Name = "label27";
+            label27.Size = new Size(208, 20);
+            label27.TabIndex = 18;
+            label27.Text = "Расстояние до камеры, тики:";
+            // 
+            // cameraOffsetTb
+            // 
+            cameraOffsetTb.BackColor = Color.White;
+            cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
+            cameraOffsetTb.Font = new Font("Segoe UI", 9F);
+            cameraOffsetTb.Location = new Point(36, 172);
+            cameraOffsetTb.Name = "cameraOffsetTb";
+            cameraOffsetTb.Size = new Size(100, 27);
+            cameraOffsetTb.TabIndex = 19;
+            cameraOffsetTb.Text = "630";
+            // 
             // TestForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2002,7 +2042,7 @@
         private Button ApplyPr;
         private Button savePrSettings;
         private Button loadPrSettings;
-        private TextBox delayTb;
+        private TextBox breakingTimeTb;
         private Label label25;
         private TextBox pr205PortTb;
         private Label label26;
@@ -2016,5 +2056,8 @@
         private TabPage cameraTabSettings;
         private TabControl tabControl2;
         private TabPage tabPage1;
+        private CheckBox breakingAllowCb;
+        private Label label27;
+        private TextBox cameraOffsetTb;
     }
 }

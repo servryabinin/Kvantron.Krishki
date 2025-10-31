@@ -9,6 +9,7 @@ using Kvantron.Hardware.SmartDio;
 using MathNet.Numerics.IntegralTransforms;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
+using static KrishkiForms.Hardware.PLCData;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 
@@ -26,6 +27,10 @@ namespace KrishkiForms
         private DioModule module = null;
         private HikCamera cam;
         private ModbusTCP modbusClient;
+        private int breakingTimeRegister = 16401;
+        private int cameraOffsetRegister = 16402;
+        private int BreakingTime = 15;
+        private int CameraOffset = 630;
 
         // Состояния приложения
         private bool cameraConnected = false;
@@ -71,8 +76,6 @@ namespace KrishkiForms
         private readonly ConcurrentQueue<Mat> _frameQueue = new();
         private readonly SemaphoreSlim _frameAvailable = new(0); // сигнал, что есть новый кадр
         private const int MaxQueueSize = 8; // максимум кадров в очереди, чтобы не накапливать
-
-
 
         // Счетчики дефектов
         private int ovalityCount = 0;
@@ -603,7 +606,7 @@ namespace KrishkiForms
                 int register = PLCData.QualityRegisterModbus;
                 int state = obduvEnabled ? 1 : 0;
 
-                modbusClient.WriteSingleRegister(register, state);
+                modbusClient.WriteSingleRegisterForBreaker(register, state);
                 //obduvBatton.Text = obduvEnabled ? "Включить обдув" : "Выключить обдув";
             }
             catch (Exception ex)
@@ -674,7 +677,7 @@ namespace KrishkiForms
                 {
                     IPAddress = prIpTextBox.Text,
                     Port = pr205PortTb.Text,
-                    Delay = delayTb.Text
+                    Delay = breakingTimeTb.Text
                 };
 
                 string json = System.Text.Json.JsonSerializer.Serialize(settings,
@@ -731,9 +734,9 @@ namespace KrishkiForms
 
                             // Загружаем задержку
                             if (settings.ContainsKey("Delay"))
-                                delayTb.Text = settings["Delay"];
+                                breakingTimeTb.Text = settings["Delay"];
                             else
-                                delayTb.Text = "25"; // значение по умолчанию
+                                breakingTimeTb.Text = "25"; // значение по умолчанию
 
                             MessageBox.Show("Настройки ПР205 успешно загружены.", "Успех",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -772,7 +775,7 @@ namespace KrishkiForms
             }
 
             // Проверка задержки
-            if (!int.TryParse(delayTb.Text, out int delay) || delay < 0)
+            if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0)
             {
                 MessageBox.Show("Задержка должна быть положительным числом", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1397,17 +1400,24 @@ namespace KrishkiForms
         private void StartProcessing()
         {
             ApplyRecognitionParameters();
-            /*if (originPb.Image == null)
-            {
-                MessageBox.Show("Пожалуйста, загрузите изображение перед распознаванием.");
-                return;
-            }*/
 
             cts = new CancellationTokenSource();
             try
             {
                 capsColor = GetSelectedCapValue();
-                int.TryParse(delayTb.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out delayValue);
+
+                if (!int.TryParse(breakingTimeTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakingTime) || BreakingTime <= 0)
+                {
+                    BreakingTime = 15; // значение по умолчанию
+                }
+                _ = Task.Run(() => SendBreakingTime(BreakingTime), cts.Token);
+
+                if (!int.TryParse(cameraOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out CameraOffset) || CameraOffset <= 0)
+                {
+                    CameraOffset = 630; // значение по умолчанию
+                }
+                _ = Task.Run(() => SendCameraOffset(CameraOffset), cts.Token);
+
                 processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                 isProcessing = true;
                 recognizeButton.Text = "Остановить анализ";
@@ -2114,7 +2124,7 @@ namespace KrishkiForms
 
                         using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
-                            timeoutCts.CancelAfter(60); // таймаут обработки одного кадра (мс)
+                            timeoutCts.CancelAfter(80); // таймаут обработки одного кадра (мс)
 
                             try
                             {
@@ -2156,11 +2166,14 @@ namespace KrishkiForms
                                     }));
                                 }
 
-                                PLCData.QualityStatus qualityStatus = anyDefect
+                                if (breakingAllowCb.Checked)
+                                {
+                                    PLCData.QualityStatus qualityStatus = anyDefect
                                     ? PLCData.QualityStatus.Bad
                                     : PLCData.QualityStatus.Good;
 
-                                _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
+                                    _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
+                                }
 
                                 stopwatch.Stop();
                                 UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
@@ -2186,8 +2199,8 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                BeginInvoke((Action)(() =>
-                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));
+                /*BeginInvoke((Action)(() =>
+                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));*/
             }
         }
 
@@ -2352,7 +2365,63 @@ namespace KrishkiForms
                     var stopwatch = Stopwatch.StartNew();
 
                     // Обновление состояния обдува
-                    modbusClient.WriteSingleRegister(PLCData.QualityRegisterModbus, (int)qualityStatus);
+                    modbusClient.WriteSingleRegisterForBreaker(PLCData.QualityRegisterModbus, (int)qualityStatus);
+
+                    stopwatch.Stop();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // отмена - ничего страшного
+            }
+            catch (Exception ex)
+            {
+                // TODO Логирование ошибки
+            }
+        }
+
+        /// <summary>
+        /// Отправка на ПЛК время обдува, то есть сколько обдув будет работать по времени.
+        /// </summary>
+        /// /// <param name="breakingTime"></param>
+        private void SendBreakingTime(int breakingTime)
+        {
+            try
+            {
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    var stopwatch = Stopwatch.StartNew();
+
+                    // Обновление состояния обдува
+                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(breakingTimeRegister, breakingTime);
+
+                    stopwatch.Stop();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // отмена - ничего страшного
+            }
+            catch (Exception ex)
+            {
+                // TODO Логирование ошибки
+            }
+        }
+
+        /// <summary>
+        /// Отправка на ПЛК расстояния от датчика до камеры, в тиках энкодера.
+        /// </summary>
+        /// /// <param name="cameraOffset"></param>
+        private void SendCameraOffset(int cameraOffset)
+        {
+            try
+            {
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    var stopwatch = Stopwatch.StartNew();
+
+                    // Обновление состояния обдува
+                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(cameraOffsetRegister, cameraOffset);
 
                     stopwatch.Stop();
                 }
