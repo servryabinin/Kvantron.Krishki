@@ -690,7 +690,9 @@ namespace KrishkiForms
                 {
                     IPAddress = prIpTextBox.Text,
                     Port = pr205PortTb.Text,
-                    Delay = breakingTimeTb.Text
+                    BreakingTime = breakingTimeTb.Text,
+                    CameraOffset = cameraOffsetTb.Text,
+                    BreakerOffset = breakerOffsetTb.Text
                 };
 
                 string json = System.Text.Json.JsonSerializer.Serialize(settings,
@@ -746,10 +748,22 @@ namespace KrishkiForms
                                 pr205PortTb.Text = "502"; // значение по умолчанию
 
                             // Загружаем задержку
-                            if (settings.ContainsKey("Delay"))
-                                breakingTimeTb.Text = settings["Delay"];
+                            if (settings.ContainsKey("BreakingTime"))
+                                breakingTimeTb.Text = settings["BreakingTime"];
                             else
-                                breakingTimeTb.Text = "25"; // значение по умолчанию
+                                breakingTimeTb.Text = "15"; // значение по умолчанию
+
+                            // Загружаем задержку
+                            if (settings.ContainsKey("CameraOffset"))
+                                cameraOffsetTb.Text = settings["CameraOffset"];
+                            else
+                                cameraOffsetTb.Text = "300"; // значение по умолчанию
+
+                            // Загружаем задержку
+                            if (settings.ContainsKey("BreakerOffset"))
+                                breakerOffsetTb.Text = settings["BreakerOffset"];
+                            else
+                                breakingTimeTb.Text = "1500"; // значение по умолчанию
 
                             MessageBox.Show("Настройки ПР205 успешно загружены.", "Успех",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -791,6 +805,22 @@ namespace KrishkiForms
             if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0)
             {
                 MessageBox.Show("Задержка должна быть положительным числом", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            // Проверка порта
+            if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset)  || cameraOffset < 0)
+            {
+                MessageBox.Show("Расстояние от датчика до камеры должно быть положительным числом", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            // Проверка задержки
+            if (!int.TryParse(breakerOffsetTb.Text, out int breakerOffset) || breakerOffset < 0)
+            {
+                MessageBox.Show("Расстояние от датчика до отбраковщика должно быть положительным числом", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }

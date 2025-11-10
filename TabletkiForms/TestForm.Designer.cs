@@ -1328,7 +1328,7 @@
             breakerOffsetTb.Name = "breakerOffsetTb";
             breakerOffsetTb.Size = new Size(100, 27);
             breakerOffsetTb.TabIndex = 21;
-            breakerOffsetTb.Text = "1800";
+            breakerOffsetTb.Text = "1500";
             // 
             // label31
             // 
@@ -1339,7 +1339,7 @@
             label31.Name = "label31";
             label31.Size = new Size(280, 20);
             label31.TabIndex = 20;
-            label31.Text = "Расстояние от камеры до обдува, тики:";
+            label31.Text = "Расстояние от датчика до обдува, тики:";
             // 
             // cameraOffsetTb
             // 
@@ -1350,7 +1350,7 @@
             cameraOffsetTb.Name = "cameraOffsetTb";
             cameraOffsetTb.Size = new Size(100, 27);
             cameraOffsetTb.TabIndex = 19;
-            cameraOffsetTb.Text = "810";
+            cameraOffsetTb.Text = "300";
             // 
             // label27
             // 
