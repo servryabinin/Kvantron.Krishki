@@ -27,9 +27,9 @@ namespace KrishkiForms
         private DioModule module = null;
         private HikCamera cam;
         private ModbusTCP modbusClient;
-        private int breakingTimeRegister = 16401;
+        private int breakingTimeRegister = 16466;
         private int cameraOffsetRegister = 16402;
-        private int breakerOffsetRegister = 16403;
+        private int breakerOffsetRegister = 16399;
         private int BreakingTime = 15;
         private int CameraOffset = 630;
         private int BreakerOffset = 1800;
