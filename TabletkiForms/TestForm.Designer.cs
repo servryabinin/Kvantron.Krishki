@@ -168,6 +168,7 @@
             controlPanel = new Panel();
             statusPanel = new Panel();
             controlButtonsPanel = new Panel();
+            NumberDropCapTb = new TextBox();
             mainPanel.SuspendLayout();
             rightPanel.SuspendLayout();
             tabControl2.SuspendLayout();
@@ -1303,6 +1304,7 @@
             // 
             pr205ParamPanel.BackColor = Color.FromArgb(240, 245, 255);
             pr205ParamPanel.BorderStyle = BorderStyle.Fixed3D;
+            pr205ParamPanel.Controls.Add(NumberDropCapTb);
             pr205ParamPanel.Controls.Add(breakerOffsetTb);
             pr205ParamPanel.Controls.Add(label31);
             pr205ParamPanel.Controls.Add(cameraOffsetTb);
@@ -1880,6 +1882,13 @@
             controlButtonsPanel.Size = new Size(700, 81);
             controlButtonsPanel.TabIndex = 0;
             // 
+            // NumberDropCapTb
+            // 
+            NumberDropCapTb.Location = new Point(172, 171);
+            NumberDropCapTb.Name = "NumberDropCapTb";
+            NumberDropCapTb.Size = new Size(125, 26);
+            NumberDropCapTb.TabIndex = 22;
+            // 
             // TestForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2088,5 +2097,6 @@
         private TextBox cameraOffsetTb;
         private TextBox breakerOffsetTb;
         private Label label31;
+        private TextBox NumberDropCapTb;
     }
 }

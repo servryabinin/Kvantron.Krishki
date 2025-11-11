@@ -55,23 +55,21 @@ namespace KrishkiForms.CameraAndModbusClasses
         {
             try
             {
-                byte[] reg = BitConverter.GetBytes((ushort)register); // Получаем два байта регистра (младший и старший)
+                byte[] reg = BitConverter.GetBytes((ushort)register);
 
                 byte[] data = new byte[]
                 {
-                    0x00, 0x1C,             // Transaction Identifier
-                    0x00, 0x00,             // Protocol Identifier
-                    0x00, 0x06,             // Length
-                    0x01,                   // Unit Identifier
-                    0x06,                   // Function Code (Write Single Register)
-                    reg[1], reg[0],         // Register address (старший, младший байт)
-                    0x00, (byte)state       // Value (0 — выключить, 1 — включить)
+                    0x00, 0x1C,
+                    0x00, 0x00,
+                    0x00, 0x06,
+                    0x01,
+                    0x06,
+                    reg[1], reg[0],
+                    (byte)((state >> 8) & 0xFF), (byte)(state & 0xFF) // теперь поддерживаем больше 255
                 };
 
                 stream.Write(data, 0, data.Length);
-
-                var array = new byte[256];
-                int num = stream.Read(array, 0, array.Length);
+                stream.Read(new byte[256], 0, 256);
             }
             catch (Exception)
             {
@@ -79,6 +77,7 @@ namespace KrishkiForms.CameraAndModbusClasses
                 throw;
             }
         }
+
 
         public void WriteSingleRegisterForDelayBreakerAndCameraOffset(int register, int state)
         {

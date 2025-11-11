@@ -183,7 +183,7 @@ namespace KrishkiForms
         private int currentImageIndex = 0;
         private int _writeZeroFailCount = 0;
         private int _writeOneFailCount = 0;
-        private int igf = 0;
+        private int currentFrameNumber = 0;
         #endregion
 
         #region Конструктор и инициализация
@@ -1444,6 +1444,12 @@ namespace KrishkiForms
             recognizeButton.Text = "Остановка...";
             recognizeButton.Enabled = false;
 
+            if (modbusClient != null && modbusClient.Connected)
+            {
+                modbusClient.WriteSingleRegisterForBreaker(16400, 0);
+            }
+            currentFrameNumber = 0;
+
             try
             {
                 await processingTask;
@@ -1471,7 +1477,10 @@ namespace KrishkiForms
         {
             ApplyRecognitionParameters();
 
-            
+            if (modbusClient != null && modbusClient.Connected)
+            {
+                modbusClient.WriteSingleRegisterForBreaker(16400, 1);
+            }
 
             cts = new CancellationTokenSource();
             try
@@ -1971,7 +1980,6 @@ namespace KrishkiForms
 
         public void GetImage(Mat img)
         {
-            #region Логирование прихода крышек
             DateTime now = DateTime.Now;
 
             if (_lastImageReceivedTime.HasValue)
@@ -1990,25 +1998,48 @@ namespace KrishkiForms
             }
 
             _lastImageReceivedTime = now;
-            #endregion
 
             if (isStreamCam)
             {
-                while (_frameQueue.Count >= MaxQueueSize)
+                lock (frameLock)
                 {
-                    if (_frameQueue.TryDequeue(out var oldFrame))
-                        oldFrame.Dispose();
+                    latestFrame?.Dispose();
+                    latestFrame = img.Clone();
+                    newFrameAvailable = true;
+                    if (isProcessing == true)
+                    {
+                        currentFrameNumber = currentFrameNumber + 1;
+                    }   
                 }
 
-                _frameQueue.Enqueue(img.Clone());
+                #region Сохранение всех фото крыщек
+                /*// ======== СОХРАНЕНИЕ ИЗОБРАЖЕНИЙ =========
+                try
+                {
+                    string saveDir = @"C:\Users\Kvantron\source\repos\Kvantron.Krishki\TabletkiForms\дефектные крышки\все крышки";
 
-                _frameAvailable.Release();
+                    if (!Directory.Exists(saveDir))
+                        Directory.CreateDirectory(saveDir);
 
+                    string savePath = Path.Combine(saveDir, $"{number_drop_cap}.bmp");
+
+                    img.SaveImage(savePath);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Ошибка сохранения изображения: {ex.Message}");
+                }
+                // ==========================================*/
+                #endregion
+
+                // Если ROI не выбран, показываем полное изображение с камеры
                 if (!LocalSettings.Instance.UseVConcat)
                 {
                     img1 = img.Clone();
-                    if (isRoiProduce && isROISelected)
+                    if (isRoiProduce == true && isROISelected == true)
+                    {
                         img1 = new Mat(img, roi);
+                    }
                     UpdatePictureBox(originPb, img1);
                 }
                 else
@@ -2016,23 +2047,25 @@ namespace KrishkiForms
                     if (!isFirstImageCam1)
                     {
                         img1 = img.Clone();
-                        if (isRoiProduce && isROISelected)
+                        if (isRoiProduce == true && isROISelected == true)
+                        {
                             img1 = new Mat(img, roi);
+                        }
                         UpdatePictureBox(originPb, img1);
                         isFirstImageCam1 = true;
                     }
                     else
                     {
                         Cv2.VConcat(img1, img.Clone(), img1);
-                        if (isRoiProduce && isROISelected)
+                        if (isRoiProduce == true && isROISelected == true)
+                        {
                             img1 = new Mat(img, roi);
+                        }
                         UpdatePictureBox(originPb, img1);
                     }
                 }
             }
         }
-
-
 
         public void GetModuleState(int number, bool state)
         {
@@ -2114,24 +2147,25 @@ namespace KrishkiForms
             {
                 while (!token.IsCancellationRequested)
                 {
-
+                    Stopwatch stopwatch = Stopwatch.StartNew();
 
                     Mat frameToProcess = null;
 
                     if (isStreamCam)
                     {
-                        await _frameAvailable.WaitAsync(token);
-                        // Забираем кадр из очереди
-                        if (!_frameQueue.TryDequeue(out frameToProcess))
-                            continue;
+                        lock (frameLock)
+                        {
+                            if (!newFrameAvailable) continue;
+                            frameToProcess = latestFrame.Clone();
+                            newFrameAvailable = false;
+                        }
                     }
                     else if (isProcessingFromFolder)
                     {
-                        await Task.Delay(100, token);
+                        await Task.Delay(100);
                         lock (imageListLock)
                         {
-                            if (imageFiles.Count == 0)
-                                continue;
+                            if (imageFiles.Count == 0) continue;
 
                             try
                             {
@@ -2149,8 +2183,6 @@ namespace KrishkiForms
 
                     if (frameToProcess == null || frameToProcess.Empty())
                         continue;
-
-                    Stopwatch stopwatch = Stopwatch.StartNew();
 
                     using (frameToProcess)
                     using (Mat gray = new Mat())
@@ -2186,7 +2218,7 @@ namespace KrishkiForms
 
                         using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                         {
-                            timeoutCts.CancelAfter(80); // таймаут обработки одного кадра (мс)
+                            timeoutCts.CancelAfter(60);
 
                             try
                             {
@@ -2196,28 +2228,32 @@ namespace KrishkiForms
                                 var obloyTask = Task.FromResult(false);
 
                                 if (ovalityCB.Checked)
-                                    ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality,
-                                        timeoutCts.Token, RunCheckOvality, capContour);
+                                {
+                                    ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality, capContour);
+                                }
 
                                 if (inclusionCB.Checked)
-                                    inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions,
-                                        timeoutCts.Token, RunCheckForInclusions, capContour);
+                                {
+                                    inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions, capContour);
+
+                                }
 
                                 if (inpaintCB.Checked)
-                                    paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects,
-                                        timeoutCts.Token, RunCheckForPaintDefects, capContour);
+                                {
+                                    paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects, capContour);
+                                }
 
                                 if (obloyCB.Checked)
-                                    obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects,
-                                        timeoutCts.Token, RunCheckForObloyDefects, capContour);
+                                {
+                                    obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, timeoutCts.Token, RunCheckForObloyDefects, capContour);
+                                }
 
                                 await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask);
 
-                                bool anyDefect =
-                                    (ovalityCB.Checked && ovalityTask.Result) ||
-                                    (inclusionCB.Checked && inclusionsTask.Result) ||
-                                    (inpaintCB.Checked && paintTask.Result) ||
-                                    (obloyCB.Checked && obloyTask.Result);
+                                bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
+                                                 (inclusionCB.Checked && inclusionsTask.Result) ||
+                                                 (inpaintCB.Checked && paintTask.Result) ||
+                                                 (obloyCB.Checked && obloyTask.Result);
 
                                 if (anyDefect)
                                 {
@@ -2226,36 +2262,31 @@ namespace KrishkiForms
                                         blowTriggerCount++;
                                         generalDefectsCountTb.Text = blowTriggerCount.ToString();
                                     }));
+                                    NumberDropCapTb.Text = currentFrameNumber.ToString();
                                 }
-
-                                if (breakingAllowCb.Checked)
-                                {
-                                    PLCData.QualityStatus qualityStatus = anyDefect
+                                PLCData.QualityStatus qualityStatus = anyDefect
                                     ? PLCData.QualityStatus.Bad
                                     : PLCData.QualityStatus.Good;
-
-                                    _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
-                                }
+                                _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
 
                                 stopwatch.Stop();
                                 UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
 
-                                #region логирование времени обработки
-                                /* // 🕓 Лог времени обработки кадра
-                                 try
-                                 {
-                                     string processEntry = $"{DateTime.Now:HH:mm:ss.fff} | ProcessTime: {stopwatch.ElapsedMilliseconds} ms";
-                                     File.AppendAllText(_processTimeLogPath, processEntry + Environment.NewLine);
-                                 }
-                                 catch (Exception logEx)
-                                 {
-                                     Debug.WriteLine($"Ошибка при записи ProcessTime лога: {logEx.Message}");
-                                 }*/
-                                #endregion
+                                // 🟢 лог времени обработки кадра
+                                try
+                                {
+                                    string processEntry = $"{DateTime.Now:HH:mm:ss.fff} | ProcessTime: {stopwatch.ElapsedMilliseconds} ms";
+                                    File.AppendAllText(_processTimeLogPath, processEntry + Environment.NewLine);
+                                }
+                                catch (Exception logEx)
+                                {
+                                    Debug.WriteLine($"Ошибка при записи ProcessTime лога: {logEx.Message}");
+                                }
+                                // 🔚 конец добавленного блока
                             }
                             catch (OperationCanceledException)
                             {
-                                // обработку кадра прервали — ок
+                                // ОК
                             }
                         }
                     }
@@ -2263,8 +2294,8 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                /*BeginInvoke((Action)(() =>
-                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));*/
+                BeginInvoke((Action)(() =>
+                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));
             }
         }
 
@@ -2301,7 +2332,7 @@ namespace KrishkiForms
             {
                 ovalityCount++;
                 UpdateTextBox(ovalityDef, ovalityCount);
-                fileNameForOvalityDefect = $"ovality_{ovalityCount}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.bmp";
+                fileNameForOvalityDefect = $"{currentFrameNumber}_ovality_{ovalityCount}.bmp";
                 fullPathForOvalityDefect = Path.Combine(ovalityDefectPath, fileNameForOvalityDefect);
                 image.SaveImage(fullPathForOvalityDefect);
             }
@@ -2326,7 +2357,7 @@ namespace KrishkiForms
             {
                 inclusionCount++;
                 UpdateTextBox(inclusionDef, inclusionCount);
-                fileNameForInclusionDefect = $"inclusion_{inclusionCount}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.bmp";
+                fileNameForInclusionDefect = $"{currentFrameNumber}_inclusion_{inclusionCount}.bmp";
                 fullPathForInclusionDefect = Path.Combine(inclusionDefectPath, fileNameForInclusionDefect);
                 image.SaveImage(fullPathForInclusionDefect);
             }
@@ -2351,7 +2382,7 @@ namespace KrishkiForms
             {
                 paintDefectCount++;
                 UpdateTextBox(InpaintDef, paintDefectCount);
-                fileNameForPaintDefect = $"paint_{paintDefectCount}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.bmp";
+                fileNameForPaintDefect = $"{currentFrameNumber}_paint_{paintDefectCount}.bmp";
                 fullPathForPaintDefect = Path.Combine(paintDefectPath, fileNameForPaintDefect);
                 image.SaveImage(fullPathForPaintDefect);
             }
@@ -2376,7 +2407,7 @@ namespace KrishkiForms
             {
                 obloyDefectCount++;
                 UpdateTextBox(obloyDef, obloyDefectCount);
-                fileNameForObloyDefect = $"obloy_{obloyDefectCount}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.bmp";
+                fileNameForObloyDefect = $"{currentFrameNumber}_obloy_{obloyDefectCount}.bmp";
                 fullPathForObloyDefect = Path.Combine(obloyDefectPath, fileNameForObloyDefect);
                 image.SaveImage(fullPathForObloyDefect);
             }
