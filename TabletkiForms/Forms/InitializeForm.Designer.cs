@@ -108,7 +108,7 @@
             // 
             // btnExit
             // 
-            btnExit.BackColor = Color.FromArgb(220, 53, 69);
+            btnExit.BackColor = Color.FromArgb(229, 115, 115);
             btnExit.FlatAppearance.BorderSize = 0;
             btnExit.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             btnExit.ForeColor = Color.White;

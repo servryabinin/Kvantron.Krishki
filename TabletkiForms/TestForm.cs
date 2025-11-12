@@ -30,9 +30,9 @@ namespace KrishkiForms
         private int breakingTimeRegister = 16466;
         private int cameraOffsetRegister = 16402;
         private int breakerOffsetRegister = 16399;
-        private int BreakingTime = 15;
-        private int CameraOffset = 630;
-        private int BreakerOffset = 1800;
+        private int BreakingTime = 55;
+        private int CameraOffset = 300;
+        private int BreakerOffset = 2430;
 
         // Состояния приложения
         private bool cameraConnected = false;
@@ -105,7 +105,7 @@ namespace KrishkiForms
         private byte[] HUE_LUT = new byte[128 * 128 * 128];
         private byte capsColor = 0;
         private int delayValue;
-        private const byte BLUE_CAPS = 80;
+        private const byte BLUE_CAPS = 160;
         private const byte YELLOW_CAPS = 160;
         private const byte GOLD_CAPS = 160;
         private const byte WHITE_CAPS = 160;
@@ -129,7 +129,7 @@ namespace KrishkiForms
         private double inclusionThreshold = 0.5;
         private double minAreaInclusion = 50.0;
         private double maxAreaInclusion = 500.0;
-        private double minBinaryPixelsForFlashDecision = 15.0;
+        private double minAreaObloy = 1000.0;
 
         // Контуры и геометрия
         private Point[] largestContourOvality;
@@ -201,7 +201,18 @@ namespace KrishkiForms
                 cam = null;
                 cameraConnected = false;
             }
-            modbusClient = modbus;
+
+            if (modbus != null)
+            {
+                modbusClient = modbus;
+                prConnected = true;
+            }
+            else
+            {
+                modbusClient = null;
+                prConnected = false;
+            }
+
             InitializeComponent();
             InitializeApplication();
         }
@@ -215,37 +226,46 @@ namespace KrishkiForms
             LoadPathsFromSettings();
             Form1_Load();
 
-            // Не создаём новые подключения! Используем переданные
+            Color connectedColor = Color.FromArgb(229, 115, 115); // красный (отключить)
+            Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий (подключить)
+
+            // --- ПР205 ---
             if (modbusClient != null && modbusClient.Connected)
             {
                 prStatus.Text = "Подключено";
                 prStatus.ForeColor = Color.Green;
-                connectPrButton.Text = "Отключиться";
+                connectPrButton.Text = "Отключиться от ПР";
+                connectPrButton.BackColor = connectedColor;
             }
             else
             {
                 prStatus.Text = "Не подключено";
                 prStatus.ForeColor = Color.Red;
-                connectPrButton.Text = "Подключиться";
+                connectPrButton.Text = "Подключиться к ПР";
+                connectPrButton.BackColor = disconnectedColor;
             }
 
+            // --- Камера ---
             if (cam != null && cam.Connected)
             {
                 cam.SendImage += GetImage;
                 camStatus.Text = "Подключено";
                 camStatus.ForeColor = Color.Green;
                 connectCameraButton.Text = "Отключиться";
+                connectCameraButton.BackColor = connectedColor;
             }
             else
             {
                 camStatus.Text = "Не подключено";
                 camStatus.ForeColor = Color.Red;
                 connectCameraButton.Text = "Подключиться";
+                connectCameraButton.BackColor = disconnectedColor;
             }
 
             StartStop(false, true);
             LocalSettings.Instance.Save();
         }
+
 
         private void InitializeImageMatrices()
         {
@@ -378,11 +398,16 @@ namespace KrishkiForms
 
         private void connectCameraButton_Click(object sender, EventArgs e)
         {
+            Color connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
+            Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
+
             if (cameraConnected)
             {
                 cam.Close();
                 cameraConnected = false;
-                connectCameraButton.Text = "Подключиться к камере";
+                connectCameraButton.Text = "Подключиться";
+                connectCameraButton.BackColor = disconnectedColor;
+
                 camStatus.Text = "Не подключено";
                 camStatus.ForeColor = Color.Red;
             }
@@ -392,7 +417,9 @@ namespace KrishkiForms
                 {
                     cam.SendImage += GetImage;
                     cameraConnected = true;
-                    connectCameraButton.Text = "Отключиться от камеры";
+                    connectCameraButton.Text = "Отключиться";
+                    connectCameraButton.BackColor = connectedColor;
+
                     camStatus.Text = "Подключено";
                     camStatus.ForeColor = Color.Green;
                 }
@@ -401,13 +428,20 @@ namespace KrishkiForms
                     MessageBox.Show("Не удалось подключиться к камере.");
                     camStatus.Text = "Не подключено";
                     camStatus.ForeColor = Color.Red;
+
                     cameraConnected = false;
+                    connectCameraButton.Text = "Подключиться";
+                    connectCameraButton.BackColor = disconnectedColor;
                 }
             }
         }
 
+
         private void connectPrButton_Click(object sender, EventArgs e)
         {
+            Color connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
+            Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
+
             if (prConnected && modbusClient != null && modbusClient.Connected)
             {
                 try
@@ -421,6 +455,8 @@ namespace KrishkiForms
 
                 prConnected = false;
                 connectPrButton.Text = "Подключиться к ПР";
+                connectPrButton.BackColor = disconnectedColor;
+
                 prStatus.Text = "Не подключено";
                 prStatus.ForeColor = Color.Red;
                 return;
@@ -436,28 +472,38 @@ namespace KrishkiForms
                 {
                     prConnected = true;
                     MessageBox.Show("Modbus подключение к ПР205 установлено.");
+
                     prStatus.Text = "Подключено";
                     prStatus.ForeColor = Color.Green;
+
                     connectPrButton.Text = "Отключиться от ПР";
+                    connectPrButton.BackColor = connectedColor;
                 }
                 else
                 {
                     prConnected = false;
                     MessageBox.Show("Не удалось подключиться к ПР205.");
+
                     prStatus.Text = "Не подключено";
                     prStatus.ForeColor = Color.Red;
+
                     connectPrButton.Text = "Подключиться к ПР";
+                    connectPrButton.BackColor = disconnectedColor;
                 }
             }
             catch (Exception ex)
             {
                 prConnected = false;
                 MessageBox.Show($"Ошибка подключения к ПР205: {ex.Message}");
+
                 prStatus.Text = "Не подключено";
                 prStatus.ForeColor = Color.Red;
+
                 connectPrButton.Text = "Подключиться к ПР";
+                connectPrButton.BackColor = disconnectedColor;
             }
         }
+
 
         #endregion
 
@@ -467,7 +513,6 @@ namespace KrishkiForms
         {
             if (isImageLoaded)
             {
-                // Очистка
                 isStreamCam = false;
                 originPb.Image?.Dispose();
                 originPb.Image = null;
@@ -480,13 +525,17 @@ namespace KrishkiForms
                     isProcessingFromFolder = false;
                 }
 
+                // Восстанавливаем внешний вид кнопки
                 loadImageButton.Text = "Загрузить";
                 loadImageButton.BackColor = Color.FromArgb(66, 133, 244); // Синий
+
+                // Разблокируем кнопку запуска потока
+                startStreamButton.Enabled = true;
+
                 isImageLoaded = false;
             }
             else
             {
-                // Загрузка
                 using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
                     openFileDialog.Multiselect = true;
@@ -504,14 +553,21 @@ namespace KrishkiForms
                         if (imageFiles.Count > 0)
                         {
                             LoadAndDisplayCurrentImage();
-                            loadImageButton.Text = "Очистить";
-                            loadImageButton.BackColor = Color.FromArgb(220, 53, 69); // Красный
+
+                            // Меняем внешний вид кнопки
+                            loadImageButton.Text = "Отключить";
+                            loadImageButton.BackColor = Color.FromArgb(229, 115, 115); // Красный
+
+                            // Блокируем кнопку старта потока
+                            startStreamButton.Enabled = false;
+
                             isImageLoaded = true;
                         }
                     }
                 }
             }
         }
+
 
         private void startStreamButton_Click(object sender, EventArgs e)
         {
@@ -531,8 +587,14 @@ namespace KrishkiForms
             {
                 originalImage = null;
             }
+
             isStreamCam = true;
             ApplyRecognitionParameters();
+
+            // 🔒 Блокируем кнопки подключения
+            connectCameraButton.Enabled = false;
+            connectPrButton.Enabled = false;
+            loadImageButton.Enabled = false;
 
             // Блокируем настройки во время стрима
             ovalityCoef.Enabled = false;
@@ -546,11 +608,12 @@ namespace KrishkiForms
             StartStop(true);
 
             startStreamButton.Text = "Остановить";
-            startStreamButton.BackColor = Color.FromArgb(220, 53, 69);
-            prStatusLabel.Text = "Запущена";
-            prStatusLabel.ForeColor = Color.Green;
+            startStreamButton.BackColor = Color.FromArgb(229, 115, 115);
+            cameraStatusLabel.Text = "Запущен";
+            cameraStatusLabel.ForeColor = Color.Green;
             isStreamRunning = true;
         }
+
 
         private void StopStream()
         {
@@ -558,19 +621,16 @@ namespace KrishkiForms
             isROISelected = false;
             isStreamCam = false;
 
-            /*// Очистка очереди и сброс семафора
-            while (_frameQueue.TryDequeue(out var oldFrame))
-            {
-                oldFrame.Dispose();
-            }
-
-            while (_frameAvailable.CurrentCount > 0)
-            {
-                _frameAvailable.Wait(0);
-            }*/
             originPb.Image?.Dispose();
             originPb.Image = null;
 
+            // 🔓 Разблокируем кнопки подключения
+            connectCameraButton.Enabled = true;
+            connectPrButton.Enabled = true;
+            loadImageButton.Enabled = true;
+
+
+            // Разблокируем настройки
             ovalityCoef.Enabled = true;
             circleCoefTx.Enabled = true;
             minSquareInclusion.Enabled = true;
@@ -583,8 +643,8 @@ namespace KrishkiForms
 
             startStreamButton.Text = "Запустить";
             startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
-            prStatusLabel.Text = "Не запущена";
-            prStatusLabel.ForeColor = Color.Black;
+            cameraStatusLabel.Text = "Не запущен";
+            cameraStatusLabel.ForeColor = Color.Black;
             isStreamRunning = false;
         }
 
@@ -711,6 +771,14 @@ namespace KrishkiForms
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
+
+
+                Properties.Settings.Default.BreakingTime = breakingTimeTb.Text;
+                Properties.Settings.Default.CameraOffset = cameraOffsetTb.Text;
+                Properties.Settings.Default.BreakerOffset = breakerOffsetTb.Text;
+
+                // сохраняем изменения в Settings
+                Properties.Settings.Default.Save();
             }
             catch (Exception ex)
             {
@@ -810,7 +878,7 @@ namespace KrishkiForms
             }
 
             // Проверка порта
-            if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset)  || cameraOffset < 0)
+            if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset) || cameraOffset < 0)
             {
                 MessageBox.Show("Расстояние от датчика до камеры должно быть положительным числом", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -836,17 +904,17 @@ namespace KrishkiForms
             {
                 // BreakingTime
                 if (!int.TryParse(breakingTimeTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakingTime) || BreakingTime <= 0)
-                    BreakingTime = 15;
+                    BreakingTime = 55;
                 await Task.Run(() => SendBreakingTime(BreakingTime), cts.Token);
 
                 // CameraOffset
                 if (!int.TryParse(cameraOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out CameraOffset) || CameraOffset <= 0)
-                    CameraOffset = 810;
+                    CameraOffset = 300;
                 await Task.Run(() => SendCameraOffset(CameraOffset), cts.Token);
 
                 // BreakerOffset
                 if (!int.TryParse(breakerOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakerOffset) || BreakerOffset <= 0)
-                    BreakerOffset = 1800;
+                    BreakerOffset = 2430;
                 await Task.Run(() => SendBreakerOffset(BreakerOffset), cts.Token);
             }
             catch (Exception ex)
@@ -854,6 +922,155 @@ namespace KrishkiForms
                 MessageBox.Show($"Ошибка при отправке параметров: {ex.Message}");
             }
         }
+
+        #endregion
+
+        #region Настройка параметров обнаржуения дефектов
+
+        private void saveDefectSettings_Click(object sender, EventArgs e)
+        {
+            if (!ValidateDefectSettings())
+                return;
+
+            try
+            {
+                var settings = new
+                {
+                    OvalityThreshold = ovalityCoef.Text,
+                    InclusionThreshold = circleCoefTx.Text,
+                    MinAreaInclusion = minSquareInclusion.Text,
+                    MaxAreaInclusion = maxSquareInclusion.Text,
+                    MinAreaInpaintDefect = minSquareInpaint.Text,
+                    MinInpaintWhiteThreshold = whiteThresoldTx.Text,
+                    MinBinaryPixelsForFlashDecision = obloyPixCount.Text,
+                    MinAreaObloy = obloyPixCount.Text
+                };
+
+                string json = System.Text.Json.JsonSerializer.Serialize(settings,
+                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                    saveFileDialog.Title = "Сохранить настройки дефектов";
+                    saveFileDialog.FileName = "defect_settings.json";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        File.WriteAllText(saveFileDialog.FileName, json);
+                        MessageBox.Show("Настройки дефектов успешно сохранены.", "Успех",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+
+                // Сохраняем в Settings
+                Properties.Settings.Default.OvalityThreshold = ovalityCoef.Text;
+                Properties.Settings.Default.InclusionThreshold = circleCoefTx.Text;
+                Properties.Settings.Default.MinAreaInclusion = minSquareInclusion.Text;
+                Properties.Settings.Default.MaxAreaInclusion = maxSquareInclusion.Text;
+                Properties.Settings.Default.MinAreaInpaintDefect = minSquareInpaint.Text;
+                Properties.Settings.Default.MinInpaintWhiteThreshold = whiteThresoldTx.Text;
+                Properties.Settings.Default.MinAreaObloy = obloyPixCount.Text;
+
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при сохранении настроек дефектов: " + ex.Message,
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void loadDefectSettings_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                    openFileDialog.Title = "Загрузить настройки дефектов";
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string json = File.ReadAllText(openFileDialog.FileName);
+                        var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+                        if (settings != null)
+                        {
+                            ovalityCoef.Text = settings.ContainsKey("OvalityThreshold") ? settings["OvalityThreshold"] : "0.7";
+                            circleCoefTx.Text = settings.ContainsKey("InclusionThreshold") ? settings["InclusionThreshold"] : "0.5";
+                            minSquareInclusion.Text = settings.ContainsKey("MinAreaInclusion") ? settings["MinAreaInclusion"] : "50";
+                            maxSquareInclusion.Text = settings.ContainsKey("MaxAreaInclusion") ? settings["MaxAreaInclusion"] : "500";
+                            minSquareInpaint.Text = settings.ContainsKey("MinAreaInpaintDefect") ? settings["MinAreaInpaintDefect"] : "500";
+                            whiteThresoldTx.Text = settings.ContainsKey("MinInpaintWhiteThreshold") ? settings["MinInpaintWhiteThreshold"] : "150";
+                            obloyPixCount.Text = settings.ContainsKey("MinAreaObloy") ? settings["MinAreaObloy"] : "1000";
+
+                            MessageBox.Show("Настройки дефектов успешно загружены.", "Успех",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Не удалось прочитать настройки из файла.",
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при загрузке настроек дефектов: " + ex.Message,
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool ValidateDefectSettings()
+        {
+            // Проверка на корректность чисел
+            if (!double.TryParse(ovalityCoef.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality) || ovality <= 0 || ovality > 1)
+            {
+                MessageBox.Show("Параметр 'OvalityThreshold' должен быть числом от 0 до 1.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!double.TryParse(circleCoefTx.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion) || inclusion <= 0 || inclusion > 1)
+            {
+                MessageBox.Show("Параметр 'InclusionThreshold' должен быть числом от 0 до 1.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!double.TryParse(minSquareInclusion.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInclusion) || minInclusion < 0)
+            {
+                MessageBox.Show("Параметр 'MinAreaInclusion' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!double.TryParse(maxSquareInclusion.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double maxInclusion) || maxInclusion <= minInclusion)
+            {
+                MessageBox.Show("Параметр 'MaxAreaInclusion' должен быть больше 'MinAreaInclusion'.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!double.TryParse(minSquareInpaint.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInpaint) || minInpaint <= 0)
+            {
+                MessageBox.Show("Параметр 'MinAreaInpaintDefect' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!double.TryParse(whiteThresoldTx.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double whiteThreshold) || whiteThreshold <= 0)
+            {
+                MessageBox.Show("Параметр 'MinInpaintWhiteThreshold' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (!double.TryParse(obloyPixCount.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double obloy) || obloy <= 0)
+            {
+                MessageBox.Show("Параметр 'MinAreaObloy' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            return true;
+        }
+
 
         #endregion
 
@@ -1107,19 +1324,66 @@ namespace KrishkiForms
         // Загрузка путей из настроек
         private void LoadPathsFromSettings()
         {
+            // ===== Пути к дефектам =====
             ovalityDefectPath = Properties.Settings.Default.OvalityDefectPath;
             inclusionDefectPath = Properties.Settings.Default.InclusionDefectPath;
             paintDefectPath = Properties.Settings.Default.PaintDefectPath;
             obloyDefectPath = Properties.Settings.Default.ObloyDefectPath;
-            //underfillDefectPath = Properties.Settings.Default.UnderfillDefectPath;
+            // underfillDefectPath = Properties.Settings.Default.UnderfillDefectPath;
 
-            // Обновляем TextBox'ы если они есть
+            // Обновляем TextBox'ы путей, если они есть
             if (ovalityPathTextBox != null) ovalityPathTextBox.Text = ovalityDefectPath;
             if (inclusionPathTextBox != null) inclusionPathTextBox.Text = inclusionDefectPath;
             if (inpaintPathTextBox != null) inpaintPathTextBox.Text = paintDefectPath;
             if (obloyPathTextBox != null) obloyPathTextBox.Text = obloyDefectPath;
-            //if (underfillPathTextBox != null) underfillPathTextBox.Text = underfillDefectPath;
+            // if (underfillPathTextBox != null) underfillPathTextBox.Text = underfillDefectPath;
+
+            // ===== Параметры ПР =====
+            int.TryParse(Properties.Settings.Default.BreakingTime, out BreakingTime);
+            int.TryParse(Properties.Settings.Default.BreakerOffset, out BreakerOffset);
+            int.TryParse(Properties.Settings.Default.CameraOffset, out CameraOffset);
+
+            if (cameraOffsetTb != null) cameraOffsetTb.Text = CameraOffset.ToString();
+            if (breakerOffsetTb != null) breakerOffsetTb.Text = BreakerOffset.ToString();
+            if (breakingTimeTb != null) breakingTimeTb.Text = BreakingTime.ToString();
+
+            // ===== Параметры дефектов (автоподгрузка при запуске) =====
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.OvalityThreshold))
+                ovalityCoef.Text = Properties.Settings.Default.OvalityThreshold;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.InclusionThreshold))
+                circleCoefTx.Text = Properties.Settings.Default.InclusionThreshold;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInclusion))
+                minSquareInclusion.Text = Properties.Settings.Default.MinAreaInclusion;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MaxAreaInclusion))
+                maxSquareInclusion.Text = Properties.Settings.Default.MaxAreaInclusion;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInpaintDefect))
+                minSquareInpaint.Text = Properties.Settings.Default.MinAreaInpaintDefect;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinInpaintWhiteThreshold))
+                whiteThresoldTx.Text = Properties.Settings.Default.MinInpaintWhiteThreshold;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaObloy))
+                obloyPixCount.Text = Properties.Settings.Default.MinAreaObloy;
+
+            // ===== Параметры камеры (Width, Height, Exposure, Gain) =====
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.WidthFrame))
+                widthTb.Text = Properties.Settings.Default.WidthFrame;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.HeightFrame))
+                heightTb.Text = Properties.Settings.Default.HeightFrame;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.ExposureFrame))
+                exposureTb.Text = Properties.Settings.Default.ExposureFrame;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.GainFrame))
+                gainTb.Text = Properties.Settings.Default.GainFrame;
         }
+
+
 
         #endregion
 
@@ -1362,7 +1626,7 @@ namespace KrishkiForms
             }
 
             int pixCount = Cv2.CountNonZero(blurChannel_1);
-            return pixCount > minBinaryPixelsForFlashDecision;
+            return pixCount > minAreaObloy;
         }
 
 
@@ -1477,7 +1741,7 @@ namespace KrishkiForms
         {
             ApplyRecognitionParameters();
 
-            if (modbusClient != null && modbusClient.Connected)
+            if (modbusClient != null && modbusClient.Connected && !isImageLoaded)
             {
                 modbusClient.WriteSingleRegisterForBreaker(16400, 1);
             }
@@ -1490,7 +1754,7 @@ namespace KrishkiForms
                 processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                 isProcessing = true;
                 recognizeButton.Text = "Остановить анализ";
-                recognizeButton.BackColor = Color.FromArgb(220, 53, 69);
+                recognizeButton.BackColor = Color.FromArgb(229, 115, 115);
             }
             catch
             {
@@ -1807,7 +2071,7 @@ namespace KrishkiForms
                     morph_size_2 = 11;
                     if (cam != null)
                     {
-                        cam.Saturation = 128;
+                        cam.Saturation = 255;
                         cam.SetSaturation();
                     }
                     isGreenColor = false;
@@ -1898,10 +2162,10 @@ namespace KrishkiForms
                 whiteThresoldTx.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
             }
 
-            if (!double.TryParse(obloyPixCount.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minBinaryPixelsForFlashDecision))
+            if (!double.TryParse(obloyPixCount.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaObloy))
             {
-                minBinaryPixelsForFlashDecision = 15;
-                obloyPixCount.Text = minBinaryPixelsForFlashDecision.ToString(CultureInfo.InvariantCulture);
+                minAreaObloy = 1000;
+                obloyPixCount.Text = minAreaObloy.ToString(CultureInfo.InvariantCulture);
             }
         }
 
@@ -1909,6 +2173,17 @@ namespace KrishkiForms
         {
             try
             {
+                // Простая валидация
+                if (string.IsNullOrWhiteSpace(widthTb.Text) ||
+                    string.IsNullOrWhiteSpace(heightTb.Text) ||
+                    string.IsNullOrWhiteSpace(exposureTb.Text) ||
+                    string.IsNullOrWhiteSpace(gainTb.Text))
+                {
+                    MessageBox.Show("Пожалуйста, заполните все поля перед сохранением.", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 var settings = new
                 {
                     Width = widthTb.Text,
@@ -1917,7 +2192,8 @@ namespace KrishkiForms
                     Gain = gainTb.Text
                 };
 
-                string json = System.Text.Json.JsonSerializer.Serialize(settings, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                string json = System.Text.Json.JsonSerializer.Serialize(settings,
+                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
 
                 using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                 {
@@ -1928,15 +2204,26 @@ namespace KrishkiForms
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         File.WriteAllText(saveFileDialog.FileName, json);
-                        MessageBox.Show("Настройки успешно сохранены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        // ✅ Сохраняем также в Settings
+                        Properties.Settings.Default.WidthFrame = widthTb.Text;
+                        Properties.Settings.Default.HeightFrame = heightTb.Text;
+                        Properties.Settings.Default.ExposureFrame = exposureTb.Text;
+                        Properties.Settings.Default.GainFrame = gainTb.Text;
+                        Properties.Settings.Default.Save();
+
+                        MessageBox.Show("Настройки успешно сохранены.", "Успех",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при сохранении настроек: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Ошибка при сохранении настроек: " + ex.Message,
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void LoadSettings()
         {
@@ -1954,25 +2241,36 @@ namespace KrishkiForms
 
                         if (settings != null)
                         {
-                            widthTb.Text = settings.ContainsKey("Width") ? settings["Width"] : "";
-                            heightTb.Text = settings.ContainsKey("Height") ? settings["Height"] : "";
-                            exposureTb.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "";
-                            gainTb.Text = settings.ContainsKey("Gain") ? settings["Gain"] : "";
+                            widthTb.Text = settings.ContainsKey("Width") ? settings["Width"] : "640";
+                            heightTb.Text = settings.ContainsKey("Height") ? settings["Height"] : "480";
+                            exposureTb.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "2000";
+                            gainTb.Text = settings.ContainsKey("Gain") ? settings["Gain"] : "1";
 
-                            MessageBox.Show("Настройки успешно загружены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            // ✅ Обновляем Settings при загрузке
+                            Properties.Settings.Default.WidthFrame = widthTb.Text;
+                            Properties.Settings.Default.HeightFrame = heightTb.Text;
+                            Properties.Settings.Default.ExposureFrame = exposureTb.Text;
+                            Properties.Settings.Default.GainFrame = gainTb.Text;
+                            Properties.Settings.Default.Save();
+
+                            MessageBox.Show("Настройки успешно загружены.", "Успех",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
                         {
-                            MessageBox.Show("Не удалось прочитать настройки из файла.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Не удалось прочитать настройки из файла.",
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при загрузке настроек: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Ошибка при загрузке настроек: " + ex.Message,
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         #endregion
 
@@ -2009,7 +2307,7 @@ namespace KrishkiForms
                     if (isProcessing == true)
                     {
                         currentFrameNumber = currentFrameNumber + 1;
-                    }   
+                    }
                 }
 
                 #region Сохранение всех фото крыщек
@@ -2262,7 +2560,7 @@ namespace KrishkiForms
                                         blowTriggerCount++;
                                         generalDefectsCountTb.Text = blowTriggerCount.ToString();
                                     }));
-                                    NumberDropCapTb.Text = currentFrameNumber.ToString();
+                                    //NumberDropCapTb.Text = currentFrameNumber.ToString();
                                 }
                                 PLCData.QualityStatus qualityStatus = anyDefect
                                     ? PLCData.QualityStatus.Bad
@@ -3000,6 +3298,8 @@ namespace KrishkiForms
         }
 
         #endregion
+
+
 
         
     }

@@ -156,7 +156,7 @@
             // 
             // cancelButton
             // 
-            cancelButton.BackColor = Color.FromArgb(220, 53, 69);
+            cancelButton.BackColor = Color.FromArgb(229, 115, 115);
             cancelButton.FlatAppearance.BorderSize = 0;
             cancelButton.FlatStyle = FlatStyle.Flat;
             cancelButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);

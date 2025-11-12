@@ -12,7 +12,7 @@ namespace KrishkiForms.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.13.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -80,6 +80,174 @@ namespace KrishkiForms.Properties {
             }
             set {
                 this["UnderfillDefectPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BreakerOffset {
+            get {
+                return ((string)(this["BreakerOffset"]));
+            }
+            set {
+                this["BreakerOffset"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CameraOffset {
+            get {
+                return ((string)(this["CameraOffset"]));
+            }
+            set {
+                this["CameraOffset"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BreakingTime {
+            get {
+                return ((string)(this["BreakingTime"]));
+            }
+            set {
+                this["BreakingTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OvalityThreshold {
+            get {
+                return ((string)(this["OvalityThreshold"]));
+            }
+            set {
+                this["OvalityThreshold"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string InclusionThreshold {
+            get {
+                return ((string)(this["InclusionThreshold"]));
+            }
+            set {
+                this["InclusionThreshold"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MinAreaInclusion {
+            get {
+                return ((string)(this["MinAreaInclusion"]));
+            }
+            set {
+                this["MinAreaInclusion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MaxAreaInclusion {
+            get {
+                return ((string)(this["MaxAreaInclusion"]));
+            }
+            set {
+                this["MaxAreaInclusion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MinAreaInpaintDefect {
+            get {
+                return ((string)(this["MinAreaInpaintDefect"]));
+            }
+            set {
+                this["MinAreaInpaintDefect"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MinInpaintWhiteThreshold {
+            get {
+                return ((string)(this["MinInpaintWhiteThreshold"]));
+            }
+            set {
+                this["MinInpaintWhiteThreshold"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MinAreaObloy {
+            get {
+                return ((string)(this["MinAreaObloy"]));
+            }
+            set {
+                this["MinAreaObloy"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WidthFrame {
+            get {
+                return ((string)(this["WidthFrame"]));
+            }
+            set {
+                this["WidthFrame"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HeightFrame {
+            get {
+                return ((string)(this["HeightFrame"]));
+            }
+            set {
+                this["HeightFrame"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExposureFrame {
+            get {
+                return ((string)(this["ExposureFrame"]));
+            }
+            set {
+                this["ExposureFrame"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GainFrame {
+            get {
+                return ((string)(this["GainFrame"]));
+            }
+            set {
+                this["GainFrame"] = value;
             }
         }
     }
