@@ -130,7 +130,7 @@
             breakingAllowCb = new CheckBox();
             breakerOffsetTb = new TextBox();
             label25 = new Label();
-            ApplyPr = new Button();
+            applyPrBreakerParamButton = new Button();
             label31 = new Label();
             breakingTimeTb = new TextBox();
             cameraOffsetTb = new TextBox();
@@ -636,7 +636,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.FromArgb(240, 245, 255);
+            panel1.BackColor = Color.Transparent;
             panel1.BorderStyle = BorderStyle.Fixed3D;
             panel1.Controls.Add(label43);
             panel1.Controls.Add(comboBox1);
@@ -658,6 +658,7 @@
             // 
             // comboBox1
             // 
+            comboBox1.BackColor = Color.FromArgb(240, 245, 255);
             comboBox1.FlatStyle = FlatStyle.Popup;
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые", "Зеленые" });
@@ -1140,7 +1141,7 @@
             applyFoldersButton.FlatAppearance.BorderSize = 0;
             applyFoldersButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 204);
             applyFoldersButton.ForeColor = Color.White;
-            applyFoldersButton.Location = new Point(88, 477);
+            applyFoldersButton.Location = new Point(75, 477);
             applyFoldersButton.Name = "applyFoldersButton";
             applyFoldersButton.Size = new Size(280, 50);
             applyFoldersButton.TabIndex = 0;
@@ -1370,7 +1371,7 @@
             prBreakingSettings.Controls.Add(breakingAllowCb);
             prBreakingSettings.Controls.Add(breakerOffsetTb);
             prBreakingSettings.Controls.Add(label25);
-            prBreakingSettings.Controls.Add(ApplyPr);
+            prBreakingSettings.Controls.Add(applyPrBreakerParamButton);
             prBreakingSettings.Controls.Add(label31);
             prBreakingSettings.Controls.Add(breakingTimeTb);
             prBreakingSettings.Controls.Add(cameraOffsetTb);
@@ -1396,10 +1397,11 @@
             breakingAllowCb.TabIndex = 17;
             breakingAllowCb.Text = "Включить обдув";
             breakingAllowCb.UseVisualStyleBackColor = true;
+            breakingAllowCb.CheckedChanged += breakingAllowCb_CheckedChanged;
             // 
             // breakerOffsetTb
             // 
-            breakerOffsetTb.BackColor = Color.White;
+            breakerOffsetTb.BackColor = Color.FromArgb(240, 245, 255);
             breakerOffsetTb.BorderStyle = BorderStyle.FixedSingle;
             breakerOffsetTb.Font = new Font("Segoe UI", 9F);
             breakerOffsetTb.Location = new Point(308, 96);
@@ -1419,19 +1421,19 @@
             label25.TabIndex = 15;
             label25.Text = "Время обдува:";
             // 
-            // ApplyPr
+            // applyPrBreakerParamButton
             // 
-            ApplyPr.BackColor = Color.FromArgb(4, 85, 191);
-            ApplyPr.FlatAppearance.BorderSize = 0;
-            ApplyPr.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            ApplyPr.ForeColor = Color.White;
-            ApplyPr.Location = new Point(59, 142);
-            ApplyPr.Name = "ApplyPr";
-            ApplyPr.Size = new Size(280, 43);
-            ApplyPr.TabIndex = 2;
-            ApplyPr.Text = "Применить настройки";
-            ApplyPr.UseVisualStyleBackColor = false;
-            ApplyPr.Click += ApplyPr_Click;
+            applyPrBreakerParamButton.BackColor = Color.FromArgb(4, 85, 191);
+            applyPrBreakerParamButton.FlatAppearance.BorderSize = 0;
+            applyPrBreakerParamButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            applyPrBreakerParamButton.ForeColor = Color.White;
+            applyPrBreakerParamButton.Location = new Point(59, 142);
+            applyPrBreakerParamButton.Name = "applyPrBreakerParamButton";
+            applyPrBreakerParamButton.Size = new Size(280, 43);
+            applyPrBreakerParamButton.TabIndex = 2;
+            applyPrBreakerParamButton.Text = "Применить настройки";
+            applyPrBreakerParamButton.UseVisualStyleBackColor = false;
+            applyPrBreakerParamButton.Click += ApplyPr_Click;
             // 
             // label31
             // 
@@ -1446,7 +1448,7 @@
             // 
             // breakingTimeTb
             // 
-            breakingTimeTb.BackColor = Color.White;
+            breakingTimeTb.BackColor = Color.FromArgb(240, 245, 255);
             breakingTimeTb.BorderStyle = BorderStyle.FixedSingle;
             breakingTimeTb.Font = new Font("Segoe UI", 9F);
             breakingTimeTb.Location = new Point(304, 15);
@@ -1457,7 +1459,7 @@
             // 
             // cameraOffsetTb
             // 
-            cameraOffsetTb.BackColor = Color.White;
+            cameraOffsetTb.BackColor = Color.FromArgb(240, 245, 255);
             cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
             cameraOffsetTb.Font = new Font("Segoe UI", 9F);
             cameraOffsetTb.Location = new Point(306, 54);
@@ -2206,7 +2208,7 @@
         private TabPage pr205TabPage;
         private GroupBox pr205Group;
         private Label label30;
-        private Button ApplyPr;
+        private Button applyPrBreakerParamButton;
         private Button savePrSettings;
         private Button loadPrSettings;
         private TextBox breakingTimeTb;

@@ -6,6 +6,7 @@ using System.Numerics;
 using KrishkiForms.CameraAndModbusClasses;
 using KrishkiForms.Hardware;
 using Kvantron.Hardware.SmartDio;
+using Kvantron.UI.Controls.Utils;
 using MathNet.Numerics.IntegralTransforms;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
@@ -30,9 +31,14 @@ namespace KrishkiForms
         private int breakingTimeRegister = 16466;
         private int cameraOffsetRegister = 16402;
         private int breakerOffsetRegister = 16399;
+        private int breakerAllowRegister = 16401;
+        private int startRecognizeProcessing = 16400;
         private int BreakingTime = 55;
         private int CameraOffset = 300;
         private int BreakerOffset = 2430;
+        private int BreakerAllowTrue = 1;
+        private int BreakerAllowFalse = 0;
+        private int RecognizeProcessingAndBreakerAllowFinish = 0;
 
         // Состояния приложения
         private bool cameraConnected = false;
@@ -228,6 +234,9 @@ namespace KrishkiForms
 
             Color connectedColor = Color.FromArgb(229, 115, 115); // красный (отключить)
             Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий (подключить)
+
+            recognizeButton.Enabled = false;
+
 
             // --- ПР205 ---
             if (modbusClient != null && modbusClient.Connected)
@@ -533,6 +542,8 @@ namespace KrishkiForms
                 startStreamButton.Enabled = true;
 
                 isImageLoaded = false;
+                recognizeButton.Enabled = false;
+
             }
             else
             {
@@ -562,6 +573,7 @@ namespace KrishkiForms
                             startStreamButton.Enabled = false;
 
                             isImageLoaded = true;
+                            recognizeButton.Enabled = true;
                         }
                     }
                 }
@@ -612,6 +624,8 @@ namespace KrishkiForms
             cameraStatusLabel.Text = "Запущен";
             cameraStatusLabel.ForeColor = Color.Green;
             isStreamRunning = true;
+            recognizeButton.Enabled = true;
+
         }
 
 
@@ -646,6 +660,8 @@ namespace KrishkiForms
             cameraStatusLabel.Text = "Не запущен";
             cameraStatusLabel.ForeColor = Color.Black;
             isStreamRunning = false;
+            recognizeButton.Enabled = false;
+
         }
 
 
@@ -767,18 +783,20 @@ namespace KrishkiForms
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         File.WriteAllText(saveFileDialog.FileName, json);
+
+                        Properties.Settings.Default.BreakingTime = breakingTimeTb.Text;
+                        Properties.Settings.Default.CameraOffset = cameraOffsetTb.Text;
+                        Properties.Settings.Default.BreakerOffset = breakerOffsetTb.Text;
+                        Properties.Settings.Default.IpAdressPr = prIpTextBox.Text;
+                        Properties.Settings.Default.PortPr = pr205PortTb.Text;
+
+                        // сохраняем изменения в Settings
+                        Properties.Settings.Default.Save();
+
                         MessageBox.Show("Настройки ПР205 успешно сохранены.", "Успех",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
-
-
-                Properties.Settings.Default.BreakingTime = breakingTimeTb.Text;
-                Properties.Settings.Default.CameraOffset = cameraOffsetTb.Text;
-                Properties.Settings.Default.BreakerOffset = breakerOffsetTb.Text;
-
-                // сохраняем изменения в Settings
-                Properties.Settings.Default.Save();
             }
             catch (Exception ex)
             {
@@ -831,7 +849,7 @@ namespace KrishkiForms
                             if (settings.ContainsKey("BreakerOffset"))
                                 breakerOffsetTb.Text = settings["BreakerOffset"];
                             else
-                                breakingTimeTb.Text = "1500"; // значение по умолчанию
+                                breakerOffsetTb.Text = "2430"; // значение по умолчанию
 
                             MessageBox.Show("Настройки ПР205 успешно загружены.", "Успех",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -942,7 +960,6 @@ namespace KrishkiForms
                     MaxAreaInclusion = maxSquareInclusion.Text,
                     MinAreaInpaintDefect = minSquareInpaint.Text,
                     MinInpaintWhiteThreshold = whiteThresoldTx.Text,
-                    MinBinaryPixelsForFlashDecision = obloyPixCount.Text,
                     MinAreaObloy = obloyPixCount.Text
                 };
 
@@ -1710,7 +1727,7 @@ namespace KrishkiForms
 
             if (modbusClient != null && modbusClient.Connected)
             {
-                modbusClient.WriteSingleRegisterForBreaker(16400, 0);
+                modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 0);
             }
             currentFrameNumber = 0;
 
@@ -1732,6 +1749,10 @@ namespace KrishkiForms
                 recognizeButton.Text = "Начать анализ";
                 recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
                 recognizeButton.Enabled = true;
+
+                SetUiDuringRecognition(false);
+
+
                 cts?.Dispose();
                 cts = null;
             }
@@ -1743,7 +1764,7 @@ namespace KrishkiForms
 
             if (modbusClient != null && modbusClient.Connected && !isImageLoaded)
             {
-                modbusClient.WriteSingleRegisterForBreaker(16400, 1);
+                modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 1);
             }
 
             cts = new CancellationTokenSource();
@@ -1755,12 +1776,33 @@ namespace KrishkiForms
                 isProcessing = true;
                 recognizeButton.Text = "Остановить анализ";
                 recognizeButton.BackColor = Color.FromArgb(229, 115, 115);
+
+                SetUiDuringRecognition(true);
             }
             catch
             {
                 cts?.Dispose();
                 throw;
             }
+        }
+
+        private void SetUiDuringRecognition(bool isLocked)
+        {
+            applySettingsButton.Enabled = !isLocked;
+            loadSettingsButton.Enabled = !isLocked;
+            saveSettingsButton.Enabled = !isLocked;
+            loadDefectSettings.Enabled = !isLocked;
+            saveDefectSettings.Enabled = !isLocked;
+            applyFoldersButton.Enabled = !isLocked;
+            browseOvalityButton.Enabled = !isLocked;
+            browseInclusionButton.Enabled = !isLocked;
+            browseInpaintButton.Enabled = !isLocked;
+            browseObloyButton.Enabled = !isLocked;
+            browseUnderfillButton.Enabled = !isLocked;
+            browseOriginalButton.Enabled = !isLocked;
+            applyPrBreakerParamButton.Enabled = !isLocked;
+            loadPrSettings.Enabled = !isLocked;
+            savePrSettings.Enabled = !isLocked;
         }
 
         private void ApplyCameraSettings()
@@ -1794,34 +1836,61 @@ namespace KrishkiForms
 
         private void ShutdownApplication()
         {
-            // Проверяем не только что cam != null, но и что камера действительно подключена
-            if (cam != null && cameraConnected)
+            try
             {
-                try
+                // --- Отправляем сигнал завершения в ПР205 ---
+                if (modbusClient != null && modbusClient.Connected)
                 {
-                    if (cam.Streamed)
-                        cam.EndStream();
-                    cam.Close();
+                    try
+                    {
+                        modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, RecognizeProcessingAndBreakerAllowFinish);
+                        modbusClient.WriteSingleRegisterForBreaker(breakerAllowRegister, RecognizeProcessingAndBreakerAllowFinish);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Ошибка при отправке сигнала завершения в ПР205: {ex.Message}");
+                    }
                 }
-                catch (Exception ex)
+
+                // --- Закрываем камеру ---
+                if (cam != null && cameraConnected)
                 {
-                    Console.WriteLine($"Ошибка при закрытии камеры: {ex.Message}");
+                    try
+                    {
+                        if (cam.Streamed)
+                            cam.EndStream();
+                        cam.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Ошибка при закрытии камеры: {ex.Message}");
+                    }
+                    finally
+                    {
+                        cam = null;
+                        cameraConnected = false;
+                    }
                 }
-                finally
+
+                // --- Отключаем modbus ---
+                if (modbusClient != null && modbusClient.Connected)
                 {
-                    // Зануляем объект камеры
-                    cam = null;
-                    cameraConnected = false;
+                    try
+                    {
+                        modbusClient.Disconnect();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Ошибка при отключении от ПР205: {ex.Message}");
+                    }
                 }
             }
-
-            if (modbusClient != null && modbusClient.Connected)
+            finally
             {
-                modbusClient.Disconnect();
+                Application.Exit();
             }
-
-            Application.Exit();
         }
+
 
         #endregion
 
@@ -2241,17 +2310,10 @@ namespace KrishkiForms
 
                         if (settings != null)
                         {
-                            widthTb.Text = settings.ContainsKey("Width") ? settings["Width"] : "640";
-                            heightTb.Text = settings.ContainsKey("Height") ? settings["Height"] : "480";
-                            exposureTb.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "2000";
-                            gainTb.Text = settings.ContainsKey("Gain") ? settings["Gain"] : "1";
-
-                            // ✅ Обновляем Settings при загрузке
-                            Properties.Settings.Default.WidthFrame = widthTb.Text;
-                            Properties.Settings.Default.HeightFrame = heightTb.Text;
-                            Properties.Settings.Default.ExposureFrame = exposureTb.Text;
-                            Properties.Settings.Default.GainFrame = gainTb.Text;
-                            Properties.Settings.Default.Save();
+                            widthTb.Text = settings.ContainsKey("Width") ? settings["Width"] : "500";
+                            heightTb.Text = settings.ContainsKey("Height") ? settings["Height"] : "532";
+                            exposureTb.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "450";
+                            gainTb.Text = settings.ContainsKey("Gain") ? settings["Gain"] : "3,01";
 
                             MessageBox.Show("Настройки успешно загружены.", "Успех",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -2842,6 +2904,32 @@ namespace KrishkiForms
             }
         }
 
+        private void breakingAllowCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    int valueToSend = breakingAllowCb.Checked
+                        ? (int)BreakerAllowTrue
+                        : (int)BreakerAllowFalse;
+
+                    modbusClient.WriteSingleRegisterForBreaker(breakerAllowRegister, valueToSend);
+                }
+                else
+                {
+                    MessageBox.Show("Нет подключения к ПР205. Сигнал не отправлен.",
+                        "Ошибка подключения", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при отправке сигнала на ПР205: {ex.Message}",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
         #endregion
 
         #region Методы работы с изображениями
@@ -3298,9 +3386,5 @@ namespace KrishkiForms
         }
 
         #endregion
-
-
-
-        
     }
 }

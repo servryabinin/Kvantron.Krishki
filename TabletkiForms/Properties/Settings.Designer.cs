@@ -250,5 +250,41 @@ namespace KrishkiForms.Properties {
                 this["GainFrame"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string IpAdressCamera {
+            get {
+                return ((string)(this["IpAdressCamera"]));
+            }
+            set {
+                this["IpAdressCamera"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string IpAdressPr {
+            get {
+                return ((string)(this["IpAdressPr"]));
+            }
+            set {
+                this["IpAdressPr"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PortPr {
+            get {
+                return ((string)(this["PortPr"]));
+            }
+            set {
+                this["PortPr"] = value;
+            }
+        }
     }
 }
