@@ -1,16 +1,19 @@
-﻿using System.Collections.Concurrent;
+﻿//#define OLD_FRAME_PROCESSING
+
+using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using KrishkiForms.CameraAndModbusClasses;
+using KrishkiForms.FrameProcessing;
 using KrishkiForms.Hardware;
 using Kvantron.Hardware.SmartDio;
 using Kvantron.UI.Controls.Utils;
 using MathNet.Numerics.IntegralTransforms;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
-using static KrishkiForms.Hardware.PLCData;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 
@@ -77,16 +80,14 @@ namespace KrishkiForms
         private System.Windows.Forms.Timer frameProcessingTimer;
 
         // Блокировки и синхронизация
+#if OLD_FRAME_PROCESSING
         private readonly object frameLock = new object();
-        private readonly object imageListLock = new object();
         private volatile bool newFrameAvailable = false;
         private Mat latestFrame = null;
+#else
+        private readonly FrameBuffer _imageQueue = new();
+#endif
         private Mat pictureForOutput;
-
-        //Очередь в которую добавляются кадры с камеры
-        private readonly ConcurrentQueue<Mat> _frameQueue = new();
-        private readonly SemaphoreSlim _frameAvailable = new(0); // сигнал, что есть новый кадр
-        private const int MaxQueueSize = 8; // максимум кадров в очереди, чтобы не накапливать
 
         // Счетчики дефектов
         private int ovalityCount = 0;
@@ -190,7 +191,7 @@ namespace KrishkiForms
         private DateTime? _lastImageReceivedTime = null;
         private readonly string _logFilePath = "SendImageLog.txt";
         private readonly string _processTimeLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProcessTime.txt");
-        private List<string> imageFiles = new List<string>();
+        private ImmutableList<string> imageFiles = [];
         private int currentImageIndex = 0;
         private int _writeZeroFailCount = 0;
         private int _writeOneFailCount = 0;
@@ -557,11 +558,8 @@ namespace KrishkiForms
                 inclusionPb.Image?.Dispose();
                 inclusionPb.Image = null;
 
-                lock (imageListLock)
-                {
-                    imageFiles?.Clear();
-                    isProcessingFromFolder = false;
-                }
+                imageFiles = [];
+                isProcessingFromFolder = false;
 
                 // Восстанавливаем внешний вид кнопки
                 loadImageButton.Text = "Загрузить";
@@ -583,12 +581,9 @@ namespace KrishkiForms
 
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        lock (imageListLock)
-                        {
-                            imageFiles = new List<string>(openFileDialog.FileNames);
-                            currentImageIndex = 0;
-                            isProcessingFromFolder = imageFiles.Count > 0;
-                        }
+                        imageFiles = [.. openFileDialog.FileNames];
+                        currentImageIndex = 0;
+                        isProcessingFromFolder = imageFiles.Count > 0;
 
                         if (imageFiles.Count > 0)
                         {
@@ -1932,6 +1927,12 @@ namespace KrishkiForms
                         Console.WriteLine($"Ошибка при отключении от ПР205: {ex.Message}");
                     }
                 }
+
+#if OLD_FRAME_PROCESSING
+#else
+                // --- Освобождение кадрового буфера ---
+                _imageQueue.Dispose();
+#endif
             }
             finally
             {
@@ -2411,6 +2412,7 @@ namespace KrishkiForms
 
             if (isStreamCam)
             {
+#if OLD_FRAME_PROCESSING
                 lock (frameLock)
                 {
                     latestFrame?.Dispose();
@@ -2421,6 +2423,13 @@ namespace KrishkiForms
                         currentFrameNumber = currentFrameNumber + 1;
                     }
                 }
+#else
+                if (isProcessing)
+                {
+                    _imageQueue.Put(img.Clone());
+                    currentFrameNumber++;
+                }
+#endif
 
                 #region Сохранение всех фото крыщек
                 /*// ======== СОХРАНЕНИЕ ИЗОБРАЖЕНИЙ =========
@@ -2559,35 +2568,36 @@ namespace KrishkiForms
                 {
                     Stopwatch stopwatch = Stopwatch.StartNew();
 
-                    Mat frameToProcess = null;
+                    Mat? frameToProcess = null;
 
                     if (isStreamCam)
                     {
+#if OLD_FRAME_PROCESSING
                         lock (frameLock)
                         {
                             if (!newFrameAvailable) continue;
                             frameToProcess = latestFrame.Clone();
                             newFrameAvailable = false;
                         }
+#else
+                        frameToProcess = _imageQueue.Get(token);
+#endif
                     }
                     else if (isProcessingFromFolder)
                     {
                         await Task.Delay(100);
-                        lock (imageListLock)
-                        {
-                            if (imageFiles.Count == 0) continue;
+                        if (imageFiles.Count == 0) continue;
 
-                            try
-                            {
-                                frameToProcess = new Mat(imageFiles[currentImageIndex]);
-                                UpdatePictureBox(originPb, frameToProcess);
-                                currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}");
-                                continue;
-                            }
+                        try
+                        {
+                            frameToProcess = new Mat(imageFiles[currentImageIndex]);
+                            UpdatePictureBox(originPb, frameToProcess);
+                            currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}");
+                            continue;
                         }
                     }
 
@@ -3044,30 +3054,17 @@ namespace KrishkiForms
 
         private void LoadAndDisplayCurrentImage()
         {
-            lock (imageListLock)
+            if (imageFiles.Count == 0) return;
+
+            try
             {
-                if (imageFiles.Count == 0) return;
-
-                try
-                {
-                    using (var imageFromFile = new Mat(imageFiles[currentImageIndex]))
-                    {
-                        // Обновляем latestFrame для обработки
-                        lock (frameLock)
-                        {
-                            latestFrame?.Dispose();
-                            latestFrame = imageFromFile.Clone();
-                            newFrameAvailable = true;
-                        }
-
-                        // Отображаем текущее изображение
-                        originPb.Image = MatToBitmap(imageFromFile.Clone());
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}");
-                }
+                // Отображаем текущее изображение
+                using Mat imageFromFile = new(imageFiles[currentImageIndex]);
+                originPb.Image = MatToBitmap(imageFromFile);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}");
             }
         }
 
