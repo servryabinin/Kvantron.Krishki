@@ -666,6 +666,7 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(105, 28);
             comboBox1.TabIndex = 38;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // saveDefectSettings
             // 
@@ -1904,6 +1905,7 @@
             originPb.SizeMode = PictureBoxSizeMode.Zoom;
             originPb.TabIndex = 0;
             originPb.TabStop = false;
+            originPb.Click += originPb_Click;
             // 
             // panel8
             // 

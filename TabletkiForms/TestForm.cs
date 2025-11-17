@@ -23,6 +23,9 @@ namespace KrishkiForms
         // UI элементы
         private System.Windows.Forms.ToolTip tooltip = new System.Windows.Forms.ToolTip();
         private Label labelCoordinates = new Label();
+        private Color connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
+        private Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
+        private bool capsAreWhite = false;
 
         // Оборудование
         private DioModule module = null;
@@ -95,6 +98,8 @@ namespace KrishkiForms
         private int ellipseReject = 0;
         private int sizeReject = 0;
         private int defectReject = 0;
+        private bool cleanupRunning = false;
+        private const int MAX_IMAGES_PER_DEFECT = 600;
 
         // Параметры обработки изображений
         private int MIN_DIAMETER_PX = 500;
@@ -221,6 +226,7 @@ namespace KrishkiForms
 
             InitializeComponent();
             InitializeApplication();
+            SendStopSignalsToPLC();
         }
 
         private void InitializeApplication()
@@ -232,9 +238,6 @@ namespace KrishkiForms
             LoadPathsFromSettings();
             Form1_Load();
 
-            Color connectedColor = Color.FromArgb(229, 115, 115); // красный (отключить)
-            Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий (подключить)
-
             recognizeButton.Enabled = false;
 
 
@@ -245,6 +248,7 @@ namespace KrishkiForms
                 prStatus.ForeColor = Color.Green;
                 connectPrButton.Text = "Отключиться от ПР";
                 connectPrButton.BackColor = connectedColor;
+                startStreamButton.Enabled = true;
             }
             else
             {
@@ -252,6 +256,7 @@ namespace KrishkiForms
                 prStatus.ForeColor = Color.Red;
                 connectPrButton.Text = "Подключиться к ПР";
                 connectPrButton.BackColor = disconnectedColor;
+                startStreamButton.Enabled = false;
             }
 
             // --- Камера ---
@@ -322,6 +327,27 @@ namespace KrishkiForms
             inclusionDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "вкрапления");
             obloyDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "облой");
         }
+
+        private void SendStopSignalsToPLC()
+        {
+            try
+            {
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    // Сбрасываем breakerAllowRegister
+                    modbusClient.WriteSingleRegisterForBreaker(breakerAllowRegister, 0);
+
+                    // Сбрасываем startRecognizeProcessing
+                    if (!isImageLoaded)
+                        modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка отправки в PLC: " + ex.Message);
+            }
+        }
+
         #endregion
 
         #region Подключение к оборудованию
@@ -407,8 +433,7 @@ namespace KrishkiForms
 
         private void connectCameraButton_Click(object sender, EventArgs e)
         {
-            Color connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
-            Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
+
 
             if (cameraConnected)
             {
@@ -419,6 +444,8 @@ namespace KrishkiForms
 
                 camStatus.Text = "Не подключено";
                 camStatus.ForeColor = Color.Red;
+
+                startStreamButton.Enabled = false;
             }
             else
             {
@@ -431,6 +458,8 @@ namespace KrishkiForms
 
                     camStatus.Text = "Подключено";
                     camStatus.ForeColor = Color.Green;
+
+                    startStreamButton.Enabled = true;
                 }
                 else
                 {
@@ -441,6 +470,8 @@ namespace KrishkiForms
                     cameraConnected = false;
                     connectCameraButton.Text = "Подключиться";
                     connectCameraButton.BackColor = disconnectedColor;
+
+                    startStreamButton.Enabled = false;
                 }
             }
         }
@@ -448,8 +479,6 @@ namespace KrishkiForms
 
         private void connectPrButton_Click(object sender, EventArgs e)
         {
-            Color connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
-            Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
 
             if (prConnected && modbusClient != null && modbusClient.Connected)
             {
@@ -1133,6 +1162,24 @@ namespace KrishkiForms
             obloyTime.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GetSelectedCapValue();
+
+            if (capsAreWhite)
+            {
+                // Белые → отключить и сбросить
+                inpaintCB.Checked = false;
+                inpaintCB_CheckedChanged(null, null);
+                inpaintCB.Enabled = false;
+            }
+            else
+            {
+                // Остальные цвета → снова доступно
+                inpaintCB.Enabled = true;
+            }
+        }
+
         #region Обработчик выбора типа дефекта
         private void defectTypeComboBox_SelectedIndexChanged_1(object sender, EventArgs e)
         {
@@ -1803,6 +1850,7 @@ namespace KrishkiForms
             applyPrBreakerParamButton.Enabled = !isLocked;
             loadPrSettings.Enabled = !isLocked;
             savePrSettings.Enabled = !isLocked;
+            startStreamButton.Enabled = !isLocked;
         }
 
         private void ApplyCameraSettings()
@@ -2119,6 +2167,7 @@ namespace KrishkiForms
 
         private byte GetSelectedCapValue()
         {
+            capsAreWhite = false;
             string selected = comboBox1.SelectedItem?.ToString();
             switch (selected)
             {
@@ -2169,6 +2218,7 @@ namespace KrishkiForms
                     }
                     isGreenColor = false;
                     isColored = false;
+                    capsAreWhite = true;
                     return WHITE_CAPS;
                 case "Зеленые":
                     window = 3;
@@ -2676,6 +2726,42 @@ namespace KrishkiForms
             }
         }
 
+        private void SaveAndCleanupAsync(Mat image, string fullPath, string directory)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    image.SaveImage(fullPath);
+                }
+                catch { /* игнорируем ошибки */ }
+
+                CleanupOldImages(directory);
+            });
+        }
+
+        private void CleanupOldImages(string directory)
+        {
+            try
+            {
+                var files = new DirectoryInfo(directory)
+                    .GetFiles("*.bmp")
+                    .OrderBy(f => f.CreationTime)
+                    .ToList();
+
+                if (files.Count > MAX_IMAGES_PER_DEFECT)
+                {
+                    var toRemove = files.Take(100).ToList();
+                    foreach (var file in toRemove)
+                    {
+                        try { file.Delete(); } catch { }
+                    }
+                }
+            }
+            catch { }
+        }
+
+
         #endregion
 
         #region Методы проверки дефектов
@@ -2692,9 +2778,11 @@ namespace KrishkiForms
             {
                 ovalityCount++;
                 UpdateTextBox(ovalityDef, ovalityCount);
-                fileNameForOvalityDefect = $"{currentFrameNumber}_ovality_{ovalityCount}.bmp";
-                fullPathForOvalityDefect = Path.Combine(ovalityDefectPath, fileNameForOvalityDefect);
-                image.SaveImage(fullPathForOvalityDefect);
+
+                string fileName = $"{currentFrameNumber}_ovality_{ovalityCount}.bmp";
+                string fullPath = Path.Combine(ovalityDefectPath, fileName);
+
+                SaveAndCleanupAsync(image, fullPath, ovalityDefectPath);
             }
 
             stopwatch.Stop();
@@ -2708,8 +2796,7 @@ namespace KrishkiForms
         {
             token.ThrowIfCancellationRequested();
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             bool hasInclusions = CheckForInclusions(gray, image, token, capContour);
 
@@ -2717,9 +2804,11 @@ namespace KrishkiForms
             {
                 inclusionCount++;
                 UpdateTextBox(inclusionDef, inclusionCount);
-                fileNameForInclusionDefect = $"{currentFrameNumber}_inclusion_{inclusionCount}.bmp";
-                fullPathForInclusionDefect = Path.Combine(inclusionDefectPath, fileNameForInclusionDefect);
-                image.SaveImage(fullPathForInclusionDefect);
+
+                string fileName = $"{currentFrameNumber}_inclusion_{inclusionCount}.bmp";
+                string fullPath = Path.Combine(inclusionDefectPath, fileName);
+
+                SaveAndCleanupAsync(image, fullPath, inclusionDefectPath);
             }
 
             stopwatch.Stop();
@@ -2733,8 +2822,7 @@ namespace KrishkiForms
         {
             token.ThrowIfCancellationRequested();
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             bool hasPaintDefects = CheckForPaintDefects(gray, image, token, capContour);
 
@@ -2742,9 +2830,11 @@ namespace KrishkiForms
             {
                 paintDefectCount++;
                 UpdateTextBox(InpaintDef, paintDefectCount);
-                fileNameForPaintDefect = $"{currentFrameNumber}_paint_{paintDefectCount}.bmp";
-                fullPathForPaintDefect = Path.Combine(paintDefectPath, fileNameForPaintDefect);
-                image.SaveImage(fullPathForPaintDefect);
+
+                string fileName = $"{currentFrameNumber}_paint_{paintDefectCount}.bmp";
+                string fullPath = Path.Combine(paintDefectPath, fileName);
+
+                SaveAndCleanupAsync(image, fullPath, paintDefectPath);
             }
 
             stopwatch.Stop();
@@ -2758,8 +2848,7 @@ namespace KrishkiForms
         {
             token.ThrowIfCancellationRequested();
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
             bool hasObloyDefects = CheckForObloyDefects(gray, image, token, capContour);
 
@@ -2767,9 +2856,11 @@ namespace KrishkiForms
             {
                 obloyDefectCount++;
                 UpdateTextBox(obloyDef, obloyDefectCount);
-                fileNameForObloyDefect = $"{currentFrameNumber}_obloy_{obloyDefectCount}.bmp";
-                fullPathForObloyDefect = Path.Combine(obloyDefectPath, fileNameForObloyDefect);
-                image.SaveImage(fullPathForObloyDefect);
+
+                string fileName = $"{currentFrameNumber}_obloy_{obloyDefectCount}.bmp";
+                string fullPath = Path.Combine(obloyDefectPath, fileName);
+
+                SaveAndCleanupAsync(image, fullPath, obloyDefectPath);
             }
 
             stopwatch.Stop();
@@ -3386,5 +3477,10 @@ namespace KrishkiForms
         }
 
         #endregion
+
+        private void originPb_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
