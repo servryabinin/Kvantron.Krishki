@@ -117,10 +117,10 @@ namespace KrishkiForms
         private byte[] HUE_LUT = new byte[128 * 128 * 128];
         private byte capsColor = 0;
         private int delayValue;
-        private const byte BLUE_CAPS = 160;
-        private const byte YELLOW_CAPS = 160;
-        private const byte GOLD_CAPS = 160;
-        private const byte WHITE_CAPS = 160;
+        private const byte BLUE_CAPS = 80;  //160
+        private const byte YELLOW_CAPS = 112;  //160
+        private const byte GOLD_CAPS = 112;  //160
+        private const byte WHITE_CAPS = 96;  //160
         private const byte GREEN_CAPS = 255;
         private const byte GREEN_THRESHOLD = 47;
         private static bool isGreenColor = false;
@@ -2174,9 +2174,9 @@ namespace KrishkiForms
             switch (selected)
             {
                 case "Желтые":
-                    window = 15;
-                    morph_size = 11;
-                    morph_size_2 = 11;
+                    window = 5;  //15
+                    morph_size = 1;  //11 
+                    morph_size_2 = 1;  //11
                     if (cam != null)
                     {
                         cam.Saturation = 128;
@@ -2186,21 +2186,21 @@ namespace KrishkiForms
                     isColored = true;
                     return YELLOW_CAPS;
                 case "Синие":
-                    window = 15;
-                    morph_size = 11;
-                    morph_size_2 = 11;
+                    window = 3; //15
+                    morph_size = 1; //11
+                    morph_size_2 = 1;  //11
                     if (cam != null)
                     {
-                        cam.Saturation = 255;
+                        cam.Saturation = 255; 
                         cam.SetSaturation();
                     }
                     isGreenColor = false;
                     isColored = true;
                     return BLUE_CAPS;
                 case "Золотые":
-                    window = 15;
-                    morph_size = 11;
-                    morph_size_2 = 11;
+                    window = 5; //15
+                    morph_size = 1;  //11
+                    morph_size_2 = 1;  //11
                     if (cam != null)
                     {
                         cam.Saturation = 128;
@@ -2210,12 +2210,12 @@ namespace KrishkiForms
                     isColored = true;
                     return GOLD_CAPS;
                 case "Белые":
-                    window = 7;
-                    morph_size = 4;
-                    morph_size_2 = 4;
+                    window = 5;
+                    morph_size = 1;
+                    morph_size_2 = 1;
                     if (cam != null)
                     {
-                        cam.Saturation = 255;
+                        cam.Saturation = 128;
                         cam.SetSaturation();
                     }
                     isGreenColor = false;
