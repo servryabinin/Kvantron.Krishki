@@ -504,7 +504,8 @@ namespace KrishkiForms
             try
             {
                 string ip = prIpTextBox.Text.Trim();
-                modbusClient = new ModbusTCP(ip, 502);
+                int port = int.Parse(pr205PortTb.Text.Trim());
+                modbusClient = new ModbusTCP(ip, port);
                 modbusClient.Connect();
 
                 if (modbusClient.Connected)
@@ -2391,7 +2392,8 @@ namespace KrishkiForms
 
         public void GetImage(Mat img)
         {
-            DateTime now = DateTime.Now;
+            #region Логирование получения нового кадра
+            /*DateTime now = DateTime.Now;
 
             if (_lastImageReceivedTime.HasValue)
             {
@@ -2408,7 +2410,8 @@ namespace KrishkiForms
                 }
             }
 
-            _lastImageReceivedTime = now;
+            _lastImageReceivedTime = now;*/
+            #endregion
 
             if (isStreamCam)
             {
@@ -2566,7 +2569,6 @@ namespace KrishkiForms
             {
                 while (!token.IsCancellationRequested)
                 {
-                    Stopwatch stopwatch = Stopwatch.StartNew();
 
                     Mat? frameToProcess = null;
 
@@ -2581,6 +2583,7 @@ namespace KrishkiForms
                         }
 #else
                         frameToProcess = _imageQueue.Get(token);
+
 #endif
                     }
                     else if (isProcessingFromFolder)
@@ -2607,6 +2610,7 @@ namespace KrishkiForms
                     using (frameToProcess)
                     using (Mat gray = new Mat())
                     {
+                        Stopwatch stopwatch = Stopwatch.StartNew();
                         Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
                         Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
 
@@ -2692,8 +2696,9 @@ namespace KrishkiForms
                                 stopwatch.Stop();
                                 UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
 
+                                #region Логирование времени обработки
                                 // 🟢 лог времени обработки кадра
-                                try
+                                /*try
                                 {
                                     string processEntry = $"{DateTime.Now:HH:mm:ss.fff} | ProcessTime: {stopwatch.ElapsedMilliseconds} ms";
                                     File.AppendAllText(_processTimeLogPath, processEntry + Environment.NewLine);
@@ -2701,8 +2706,9 @@ namespace KrishkiForms
                                 catch (Exception logEx)
                                 {
                                     Debug.WriteLine($"Ошибка при записи ProcessTime лога: {logEx.Message}");
-                                }
+                                }*/
                                 // 🔚 конец добавленного блока
+                                #endregion
                             }
                             catch (OperationCanceledException)
                             {
@@ -2711,6 +2717,14 @@ namespace KrishkiForms
                         }
                     }
                 }
+            }
+            catch (TaskCanceledException ex)
+            {
+
+            }
+            catch (OperationCanceledException ex)
+            {
+
             }
             catch (Exception ex)
             {
@@ -2742,7 +2756,12 @@ namespace KrishkiForms
             {
                 try
                 {
-                    image.SaveImage(fullPath);
+                    var encodingParams = new[]
+                    {
+                        new ImageEncodingParam(ImwriteFlags.JpegQuality, 85)
+                    };
+
+                    Cv2.ImWrite(fullPath, image, encodingParams);
                 }
                 catch { /* игнорируем ошибки */ }
 
@@ -2750,27 +2769,32 @@ namespace KrishkiForms
             });
         }
 
+
+
         private void CleanupOldImages(string directory)
         {
             try
             {
                 var files = new DirectoryInfo(directory)
-                    .GetFiles("*.bmp")
+                    .GetFiles("*.jpg")
                     .OrderBy(f => f.CreationTime)
                     .ToList();
 
                 if (files.Count > MAX_IMAGES_PER_DEFECT)
                 {
                     var toRemove = files.Take(100).ToList();
-                    foreach (var file in toRemove)
+
+                    foreach (var f in toRemove)
                     {
-                        try { file.Delete(); } catch { }
+                        try { f.Delete(); } catch { }
                     }
                 }
             }
-            catch { }
+            catch
+            {
+                // игнорируем ошибки удаления
+            }
         }
-
 
         #endregion
 
@@ -2779,7 +2803,6 @@ namespace KrishkiForms
         private bool RunCheckOvality(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
-
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             bool isOval = CheckOvality(gray, image, token, capContour);
@@ -2789,7 +2812,7 @@ namespace KrishkiForms
                 ovalityCount++;
                 UpdateTextBox(ovalityDef, ovalityCount);
 
-                string fileName = $"{currentFrameNumber}_ovality_{ovalityCount}.bmp";
+                string fileName = $"{currentFrameNumber}_ovality_{ovalityCount}.jpg";
                 string fullPath = Path.Combine(ovalityDefectPath, fileName);
 
                 SaveAndCleanupAsync(image, fullPath, ovalityDefectPath);
@@ -2802,10 +2825,10 @@ namespace KrishkiForms
             return isOval;
         }
 
+
         private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
-
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             bool hasInclusions = CheckForInclusions(gray, image, token, capContour);
@@ -2815,7 +2838,7 @@ namespace KrishkiForms
                 inclusionCount++;
                 UpdateTextBox(inclusionDef, inclusionCount);
 
-                string fileName = $"{currentFrameNumber}_inclusion_{inclusionCount}.bmp";
+                string fileName = $"{currentFrameNumber}_inclusion_{inclusionCount}.jpg";
                 string fullPath = Path.Combine(inclusionDefectPath, fileName);
 
                 SaveAndCleanupAsync(image, fullPath, inclusionDefectPath);
@@ -2828,10 +2851,10 @@ namespace KrishkiForms
             return hasInclusions;
         }
 
+
         private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
-
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             bool hasPaintDefects = CheckForPaintDefects(gray, image, token, capContour);
@@ -2841,7 +2864,7 @@ namespace KrishkiForms
                 paintDefectCount++;
                 UpdateTextBox(InpaintDef, paintDefectCount);
 
-                string fileName = $"{currentFrameNumber}_paint_{paintDefectCount}.bmp";
+                string fileName = $"{currentFrameNumber}_paint_{paintDefectCount}.jpg";
                 string fullPath = Path.Combine(paintDefectPath, fileName);
 
                 SaveAndCleanupAsync(image, fullPath, paintDefectPath);
@@ -2854,10 +2877,10 @@ namespace KrishkiForms
             return hasPaintDefects;
         }
 
+
         private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
             token.ThrowIfCancellationRequested();
-
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             bool hasObloyDefects = CheckForObloyDefects(gray, image, token, capContour);
@@ -2867,7 +2890,7 @@ namespace KrishkiForms
                 obloyDefectCount++;
                 UpdateTextBox(obloyDef, obloyDefectCount);
 
-                string fileName = $"{currentFrameNumber}_obloy_{obloyDefectCount}.bmp";
+                string fileName = $"{currentFrameNumber}_obloy_{obloyDefectCount}.jpg";
                 string fullPath = Path.Combine(obloyDefectPath, fileName);
 
                 SaveAndCleanupAsync(image, fullPath, obloyDefectPath);
@@ -2879,6 +2902,7 @@ namespace KrishkiForms
 
             return hasObloyDefects;
         }
+
 
         private bool RunCheckUnderfill(Mat gray, Mat image, CancellationToken token)
         {
