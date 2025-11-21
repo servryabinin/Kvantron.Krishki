@@ -125,6 +125,7 @@ namespace KrishkiForms
         private const byte GREEN_THRESHOLD = 47;
         private static bool isGreenColor = false;
         private static bool isColored = true;
+        private static bool isYellowCap = false;
 
         // Морфологические элементы
         private Mat element1;
@@ -2184,6 +2185,7 @@ namespace KrishkiForms
                     }
                     isGreenColor = false;
                     isColored = true;
+                    isYellowCap = true;
                     return YELLOW_CAPS;
                 case "Синие":
                     window = 3; //15
@@ -2196,6 +2198,7 @@ namespace KrishkiForms
                     }
                     isGreenColor = false;
                     isColored = true;
+                    isYellowCap = false;
                     return BLUE_CAPS;
                 case "Золотые":
                     window = 5; //15
@@ -2208,6 +2211,7 @@ namespace KrishkiForms
                     }
                     isGreenColor = false;
                     isColored = true;
+                    isYellowCap = true;
                     return GOLD_CAPS;
                 case "Белые":
                     window = 5;
@@ -2221,26 +2225,33 @@ namespace KrishkiForms
                     isGreenColor = false;
                     isColored = false;
                     capsAreWhite = true;
+                    isYellowCap = false;
                     return WHITE_CAPS;
                 case "Зеленые":
-                    window = 3;
-                    morph_size = 2;
-                    morph_size_2 = 2;
-                    if (cam != null)
-                    {
-                        cam.Saturation = 255;
-                        cam.SetSaturation();
-                    }
-                    isColored = true;
-                    isGreenColor = true;
-                    return GREEN_CAPS;
-                default:
-                    isColored = true;
+                    window = 5;
+                    morph_size = 1;
+                    morph_size_2 = 1;
                     if (cam != null)
                     {
                         cam.Saturation = 128;
                         cam.SetSaturation();
                     }
+                    isGreenColor = false;
+                    isColored = true;
+                    isYellowCap = false;
+                    return GREEN_CAPS;
+                default:
+                    window = 5;  //15
+                    morph_size = 1;  //11 
+                    morph_size_2 = 1;  //11
+                    if (cam != null)
+                    {
+                        cam.Saturation = 128;
+                        cam.SetSaturation();
+                    }
+                    isGreenColor = false;
+                    isColored = true;
+                    isYellowCap = true;
                     return YELLOW_CAPS;
             }
         }
@@ -3353,8 +3364,14 @@ namespace KrishkiForms
                     {
                         if (!isGreenColor)
                         {
-                            // Цветоразностная компонента (для не зелёных)
-                            data[i] = (byte)Math.Abs(data[i] - ((data[i + 1] + data[i + 2]) >> 1));
+                            if (isYellowCap)
+                            {
+                                data[i] = (byte)((3 * data[i + 2] + data[i + 1]) >> 2);
+                            }
+                            else
+                            {
+                                data[i] = (byte)Math.Abs(data[i] - ((data[i + 1] + data[i + 2]) >> 1));
+                            }
                         }
                         else
                         {
