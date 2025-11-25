@@ -661,7 +661,7 @@
             comboBox1.BackColor = Color.FromArgb(240, 245, 255);
             comboBox1.FlatStyle = FlatStyle.Popup;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые", "Зеленые" });
+            comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые", "Зеленые", "Оранжевые" });
             comboBox1.Location = new Point(10, 22);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(105, 28);
