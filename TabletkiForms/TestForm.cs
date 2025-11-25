@@ -122,7 +122,7 @@ namespace KrishkiForms
         private const byte GOLD_CAPS = 112;  //160
         private const byte WHITE_CAPS = 96;  //160
         private const byte GREEN_CAPS = 255;
-        private const byte GREEN_THRESHOLD = 47;
+        private const byte GREEN_THRESHOLD = 40;
         private const byte ORANGE_CAPS = 80;
         private static bool isGreenColor = false;
         private static bool isColored = true;
@@ -2229,15 +2229,15 @@ namespace KrishkiForms
                     isYellowCap = false;
                     return WHITE_CAPS;
                 case "Зеленые":
-                    window = 5;
-                    morph_size = 1;
-                    morph_size_2 = 1;
+                    window = 7;
+                    morph_size = 2;
+                    morph_size_2 = 2;
                     if (cam != null)
                     {
                         cam.Saturation = 128;
                         cam.SetSaturation();
                     }
-                    isGreenColor = false;
+                    isGreenColor = true;
                     isColored = true;
                     isYellowCap = false;
                     return GREEN_CAPS;
@@ -3390,8 +3390,16 @@ namespace KrishkiForms
                         else
                         {
                             // Для зелёных крышек — бинаризация по синему каналу
-                            data[i] = (data[i+1] < GREEN_THRESHOLD) ? (byte)0x00 : (byte)0xFF;
+                            if (data[i + 1] < GREEN_THRESHOLD)
+                            {
+                                data[i] = (byte)0x00;
+                            }
+                            else
+                            {
+                                data[i] = (byte)0xFF;
+                            }
                         }
+
                     }
                 }
             }
