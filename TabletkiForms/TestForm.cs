@@ -2709,7 +2709,7 @@ namespace KrishkiForms
                                     BeginInvoke((Action)(() =>
                                     {
                                         blowTriggerCount++;
-                                        generalDefectsCountTb.Text = blowTriggerCount.ToString();
+                                        ngCapsCountTb.Text = blowTriggerCount.ToString();
                                     }));
                                     //NumberDropCapTb.Text = currentFrameNumber.ToString();
                                 }
