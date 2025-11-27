@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using KrishkiForms.CameraAndModbusClasses;
+using KrishkiForms.Forms.ParamHardwareAndDefectAndContourForms;
 using KrishkiForms.FrameProcessing;
 using KrishkiForms.Hardware;
 using Kvantron.Hardware.SmartDio;
@@ -247,36 +248,26 @@ namespace KrishkiForms
             // --- ПР205 ---
             if (modbusClient != null && modbusClient.Connected)
             {
-                prStatus.Text = "Подключено";
-                prStatus.ForeColor = Color.Green;
-                connectPrButton.Text = "Отключиться от ПР";
-                connectPrButton.BackColor = connectedColor;
                 startStreamButton.Enabled = true;
             }
             else
             {
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
-                connectPrButton.Text = "Подключиться к ПР";
-                connectPrButton.BackColor = disconnectedColor;
                 startStreamButton.Enabled = false;
             }
 
             // --- Камера ---
             if (cam != null && cam.Connected)
             {
+                startStreamButton.Enabled = true;
                 cam.SendImage += GetImage;
                 camStatus.Text = "Подключено";
                 camStatus.ForeColor = Color.Green;
-                connectCameraButton.Text = "Отключиться";
-                connectCameraButton.BackColor = connectedColor;
             }
             else
             {
+                startStreamButton.Enabled = false;
                 camStatus.Text = "Не подключено";
                 camStatus.ForeColor = Color.Red;
-                connectCameraButton.Text = "Подключиться";
-                connectCameraButton.BackColor = disconnectedColor;
             }
 
             StartStop(false, true);
@@ -353,201 +344,7 @@ namespace KrishkiForms
 
         #endregion
 
-        #region Подключение к оборудованию
-
-        private void ConnectToModbus()
-        {
-            try
-            {
-                modbusClient = new ModbusTCP("10.10.69.38", 502);
-                modbusClient.Connect();
-
-                if (modbusClient.Connected)
-                {
-                    MessageBox.Show("Modbus подключение к ПР205 установлено.");
-                    prStatus.Text = "Подключено";
-                    prStatus.ForeColor = Color.Green;
-                    //button10.Text = "Отключиться от ПР";
-                    prConnected = true;
-                }
-                else
-                {
-                    MessageBox.Show("Не удалось подключиться к ПР205.");
-                    prStatus.Text = "Не подключено";
-                    prStatus.ForeColor = Color.Red;
-                    //button10.Text = "Подключиться к ПР";
-                    prConnected = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка подключения к ПР205: {ex.Message}");
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
-            }
-        }
-
-        private void ConnectToCamera()
-        {
-            if (cam.Open())
-            {
-                cam.SendImage += GetImage;
-                camStatus.Text = "Подключено";
-                camStatus.ForeColor = Color.Green;
-                connectCameraButton.Text = "Отключиться от камеры";
-                cameraConnected = true;
-            }
-            else
-            {
-                MessageBox.Show("Камера 1 - ошибка");
-                camStatus.Text = "Не подключено";
-                camStatus.ForeColor = Color.Red;
-                connectCameraButton.Text = "Подключиться к камере";
-                cameraConnected = false;
-                cameraError1 = true;
-            }
-        }
-
-        private void ConnectToModule()
-        {
-            if (LocalSettings.Instance.UseModule)
-            {
-                try
-                {
-                    module = DioModule.CreateMK210(LocalSettings.Instance.ModuleIP, 502);
-                    if (module != null)
-                    {
-                        module.Connect();
-                        module.DiStateChanged += GetModuleState;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-        }
-
-        #endregion
-
         #region Обработчики событий UI
-
-        #region Кнопки управления оборудованием
-
-        private void connectCameraButton_Click(object sender, EventArgs e)
-        {
-
-
-            if (cameraConnected)
-            {
-                cam.Close();
-                cameraConnected = false;
-                connectCameraButton.Text = "Подключиться";
-                connectCameraButton.BackColor = disconnectedColor;
-
-                camStatus.Text = "Не подключено";
-                camStatus.ForeColor = Color.Red;
-
-                startStreamButton.Enabled = false;
-            }
-            else
-            {
-                if (cam.Open())
-                {
-                    cam.SendImage += GetImage;
-                    cameraConnected = true;
-                    connectCameraButton.Text = "Отключиться";
-                    connectCameraButton.BackColor = connectedColor;
-
-                    camStatus.Text = "Подключено";
-                    camStatus.ForeColor = Color.Green;
-
-                    startStreamButton.Enabled = true;
-                }
-                else
-                {
-                    MessageBox.Show("Не удалось подключиться к камере.");
-                    camStatus.Text = "Не подключено";
-                    camStatus.ForeColor = Color.Red;
-
-                    cameraConnected = false;
-                    connectCameraButton.Text = "Подключиться";
-                    connectCameraButton.BackColor = disconnectedColor;
-
-                    startStreamButton.Enabled = false;
-                }
-            }
-        }
-
-
-        private void connectPrButton_Click(object sender, EventArgs e)
-        {
-
-            if (prConnected && modbusClient != null && modbusClient.Connected)
-            {
-                try
-                {
-                    modbusClient.Disconnect();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка при отключении от ПР205: {ex.Message}");
-                }
-
-                prConnected = false;
-                connectPrButton.Text = "Подключиться к ПР";
-                connectPrButton.BackColor = disconnectedColor;
-
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
-                return;
-            }
-
-            try
-            {
-                string ip = prIpTextBox.Text.Trim();
-                int port = int.Parse(pr205PortTb.Text.Trim());
-                modbusClient = new ModbusTCP(ip, port);
-                modbusClient.Connect();
-
-                if (modbusClient.Connected)
-                {
-                    prConnected = true;
-                    MessageBox.Show("Modbus подключение к ПР205 установлено.");
-
-                    prStatus.Text = "Подключено";
-                    prStatus.ForeColor = Color.Green;
-
-                    connectPrButton.Text = "Отключиться от ПР";
-                    connectPrButton.BackColor = connectedColor;
-                }
-                else
-                {
-                    prConnected = false;
-                    MessageBox.Show("Не удалось подключиться к ПР205.");
-
-                    prStatus.Text = "Не подключено";
-                    prStatus.ForeColor = Color.Red;
-
-                    connectPrButton.Text = "Подключиться к ПР";
-                    connectPrButton.BackColor = disconnectedColor;
-                }
-            }
-            catch (Exception ex)
-            {
-                prConnected = false;
-                MessageBox.Show($"Ошибка подключения к ПР205: {ex.Message}");
-
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
-
-                connectPrButton.Text = "Подключиться к ПР";
-                connectPrButton.BackColor = disconnectedColor;
-            }
-        }
-
-
-        #endregion
 
         #region Кнопки управления изображениями
 
@@ -558,8 +355,6 @@ namespace KrishkiForms
                 isStreamCam = false;
                 originPb.Image?.Dispose();
                 originPb.Image = null;
-                inclusionPb.Image?.Dispose();
-                inclusionPb.Image = null;
 
                 imageFiles = [];
                 isProcessingFromFolder = false;
@@ -631,18 +426,7 @@ namespace KrishkiForms
             ApplyRecognitionParameters();
 
             // 🔒 Блокируем кнопки подключения
-            connectCameraButton.Enabled = false;
-            connectPrButton.Enabled = false;
             loadImageButton.Enabled = false;
-
-            // Блокируем настройки во время стрима
-            ovalityCoef.Enabled = false;
-            circleCoefTx.Enabled = false;
-            minSquareInclusion.Enabled = false;
-            maxSquareInclusion.Enabled = false;
-            minSquareInpaint.Enabled = false;
-            whiteThresoldTx.Enabled = false;
-            obloyPixCount.Enabled = false;
 
             StartStop(true);
 
@@ -666,19 +450,7 @@ namespace KrishkiForms
             originPb.Image = null;
 
             // 🔓 Разблокируем кнопки подключения
-            connectCameraButton.Enabled = true;
-            connectPrButton.Enabled = true;
             loadImageButton.Enabled = true;
-
-
-            // Разблокируем настройки
-            ovalityCoef.Enabled = true;
-            circleCoefTx.Enabled = true;
-            minSquareInclusion.Enabled = true;
-            maxSquareInclusion.Enabled = true;
-            minSquareInpaint.Enabled = true;
-            whiteThresoldTx.Enabled = true;
-            obloyPixCount.Enabled = true;
 
             StartStop(false);
 
@@ -707,30 +479,6 @@ namespace KrishkiForms
                 StartProcessing();
             }
         }
-
-        private void obduvBatton_Click_1(object sender, EventArgs e)
-        {
-            if (modbusClient == null || !modbusClient.Connected)
-            {
-                MessageBox.Show("ПР205 не подключён.");
-                return;
-            }
-
-            try
-            {
-                obduvEnabled = !obduvEnabled;
-                int register = PLCData.QualityRegisterModbus;
-                int state = obduvEnabled ? 1 : 0;
-
-                modbusClient.WriteSingleRegisterForBreaker(register, state);
-                //obduvBatton.Text = obduvEnabled ? "Включить обдув" : "Выключить обдув";
-            }
-            catch (Exception ex)
-            {
-                // Ошибка отправки сигнала
-            }
-        }
-
         #endregion
 
         #region Кнопки ROI
@@ -756,219 +504,6 @@ namespace KrishkiForms
         #endregion
 
         #region Кнопки настроек
-
-        #region Настройки камеры
-        private void ApplySettingsButton_Click(object sender, EventArgs e)
-        {
-            ApplyCameraSettings();
-        }
-
-        private void applySettingsButton_Click(object sender, EventArgs e)
-        {
-            ApplyCameraSettings();
-        }
-
-        private void saveSettingsButton_Click(object sender, EventArgs e)
-        {
-            SaveSettings();
-        }
-
-        private void loadSettingsButton_Click(object sender, EventArgs e)
-        {
-            LoadSettings();
-        }
-
-        #endregion
-
-        #region Настройки ПР
-
-        private void savePrSettings_Click(object sender, EventArgs e)
-        {
-            if (!ValidatePrSettings())
-                return;
-
-            try
-            {
-                var settings = new
-                {
-                    IPAddress = prIpTextBox.Text,
-                    Port = pr205PortTb.Text,
-                    BreakingTime = breakingTimeTb.Text,
-                    CameraOffset = cameraOffsetTb.Text,
-                    BreakerOffset = breakerOffsetTb.Text
-                };
-
-                string json = System.Text.Json.JsonSerializer.Serialize(settings,
-                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
-
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-                {
-                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    saveFileDialog.Title = "Сохранить настройки ПР205";
-                    saveFileDialog.FileName = "pr205_settings.json";
-
-                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(saveFileDialog.FileName, json);
-
-                        Properties.Settings.Default.BreakingTime = breakingTimeTb.Text;
-                        Properties.Settings.Default.CameraOffset = cameraOffsetTb.Text;
-                        Properties.Settings.Default.BreakerOffset = breakerOffsetTb.Text;
-                        Properties.Settings.Default.IpAdressPr = prIpTextBox.Text;
-                        Properties.Settings.Default.PortPr = pr205PortTb.Text;
-
-                        // сохраняем изменения в Settings
-                        Properties.Settings.Default.Save();
-
-                        MessageBox.Show("Настройки ПР205 успешно сохранены.", "Успех",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при сохранении настроек ПР205: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void loadPrSettings_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
-                {
-                    openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    openFileDialog.Title = "Загрузить настройки ПР205";
-
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        string json = File.ReadAllText(openFileDialog.FileName);
-                        var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-
-                        if (settings != null)
-                        {
-                            // Загружаем IP адрес
-                            if (settings.ContainsKey("IPAddress"))
-                                prIpTextBox.Text = settings["IPAddress"];
-                            else
-                                prIpTextBox.Text = "10.10.69.38"; // значение по умолчанию
-
-                            // Загружаем порт
-                            if (settings.ContainsKey("Port"))
-                                pr205PortTb.Text = settings["Port"];
-                            else
-                                pr205PortTb.Text = "502"; // значение по умолчанию
-
-                            // Загружаем задержку
-                            if (settings.ContainsKey("BreakingTime"))
-                                breakingTimeTb.Text = settings["BreakingTime"];
-                            else
-                                breakingTimeTb.Text = "15"; // значение по умолчанию
-
-                            // Загружаем задержку
-                            if (settings.ContainsKey("CameraOffset"))
-                                cameraOffsetTb.Text = settings["CameraOffset"];
-                            else
-                                cameraOffsetTb.Text = "300"; // значение по умолчанию
-
-                            // Загружаем задержку
-                            if (settings.ContainsKey("BreakerOffset"))
-                                breakerOffsetTb.Text = settings["BreakerOffset"];
-                            else
-                                breakerOffsetTb.Text = "2430"; // значение по умолчанию
-
-                            MessageBox.Show("Настройки ПР205 успешно загружены.", "Успех",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Не удалось прочитать настройки из файла.",
-                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при загрузке настроек ПР205: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private bool ValidatePrSettings()
-        {
-            // Проверка IP адреса
-            if (!System.Net.IPAddress.TryParse(prIpTextBox.Text, out _))
-            {
-                MessageBox.Show("Неверный формат IP адреса", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Проверка порта
-            if (!int.TryParse(pr205PortTb.Text, out int port) || port < 1 || port > 65535)
-            {
-                MessageBox.Show("Порт должен быть числом от 1 до 65535", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Проверка задержки
-            if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0)
-            {
-                MessageBox.Show("Задержка должна быть положительным числом", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Проверка порта
-            if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset) || cameraOffset < 0)
-            {
-                MessageBox.Show("Расстояние от датчика до камеры должно быть положительным числом", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Проверка задержки
-            if (!int.TryParse(breakerOffsetTb.Text, out int breakerOffset) || breakerOffset < 0)
-            {
-                MessageBox.Show("Расстояние от датчика до отбраковщика должно быть положительным числом", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            return true;
-        }
-
-        private async void ApplyPr_Click(object sender, EventArgs e)
-        {
-            cts = new CancellationTokenSource();
-
-            try
-            {
-                // BreakingTime
-                if (!int.TryParse(breakingTimeTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakingTime) || BreakingTime <= 0)
-                    BreakingTime = 55;
-                await Task.Run(() => SendBreakingTime(BreakingTime), cts.Token);
-
-                // CameraOffset
-                if (!int.TryParse(cameraOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out CameraOffset) || CameraOffset <= 0)
-                    CameraOffset = 300;
-                await Task.Run(() => SendCameraOffset(CameraOffset), cts.Token);
-
-                // BreakerOffset
-                if (!int.TryParse(breakerOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakerOffset) || BreakerOffset <= 0)
-                    BreakerOffset = 2430;
-                await Task.Run(() => SendBreakerOffset(BreakerOffset), cts.Token);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при отправке параметров: {ex.Message}");
-            }
-        }
-
-        #endregion
 
         #region Настройка параметров обнаржуения дефектов
 
@@ -1134,28 +669,24 @@ namespace KrishkiForms
 
         private void ovalityCB_CheckedChanged(object sender, EventArgs e)
         {
-            ovalityDefectPanel.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             ovalityDef.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             timeOvality.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
         }
 
         private void inclusionCB_CheckedChanged(object sender, EventArgs e)
         {
-            inclusionDefectPanel.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             inclusionDef.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             inclusionTime.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
         }
 
         private void inpaintCB_CheckedChanged(object sender, EventArgs e)
         {
-            inpaintDefectPanel.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             InpaintDef.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             inpaintTime.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
         }
 
         private void obloyCB_CheckedChanged(object sender, EventArgs e)
         {
-            obloyDefectPanel.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             obloyDef.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             obloyTime.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
         }
@@ -1851,35 +1382,6 @@ namespace KrishkiForms
             startStreamButton.Enabled = !isLocked;
         }
 
-        private void ApplyCameraSettings()
-        {
-            try
-            {
-                if (!img1.Empty())
-                {
-                    StopStream();
-                    uint width = uint.Parse(widthTb.Text);
-                    uint height = uint.Parse(heightTb.Text);
-                    uint exposure = uint.Parse(exposureTb.Text);
-                    uint gain = uint.Parse(gainTb.Text);
-                    cam.Width = width;
-                    cam.Height = height;
-                    cam.ExposureTime = exposure;
-                    cam.Gain = gain;
-                    cam.SetHeight();
-                    cam.SetWidth();
-                    cam.SetGain();
-                    cam.SetExposureTime();
-
-                    StartStream();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка: {ex.Message}");
-            }
-        }
-
         private void ShutdownApplication()
         {
             try
@@ -2194,7 +1696,7 @@ namespace KrishkiForms
                     morph_size_2 = 1;  //11
                     if (cam != null)
                     {
-                        cam.Saturation = 255; 
+                        cam.Saturation = 255;
                         cam.SetSaturation();
                     }
                     isGreenColor = false;
@@ -2314,102 +1816,6 @@ namespace KrishkiForms
                 obloyPixCount.Text = minAreaObloy.ToString(CultureInfo.InvariantCulture);
             }
         }
-
-        private void SaveSettings()
-        {
-            try
-            {
-                // Простая валидация
-                if (string.IsNullOrWhiteSpace(widthTb.Text) ||
-                    string.IsNullOrWhiteSpace(heightTb.Text) ||
-                    string.IsNullOrWhiteSpace(exposureTb.Text) ||
-                    string.IsNullOrWhiteSpace(gainTb.Text))
-                {
-                    MessageBox.Show("Пожалуйста, заполните все поля перед сохранением.", "Ошибка",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                var settings = new
-                {
-                    Width = widthTb.Text,
-                    Height = heightTb.Text,
-                    Exposure = exposureTb.Text,
-                    Gain = gainTb.Text
-                };
-
-                string json = System.Text.Json.JsonSerializer.Serialize(settings,
-                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
-
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-                {
-                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    saveFileDialog.Title = "Сохранить настройки";
-                    saveFileDialog.FileName = "settings.json";
-
-                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(saveFileDialog.FileName, json);
-
-                        // ✅ Сохраняем также в Settings
-                        Properties.Settings.Default.WidthFrame = widthTb.Text;
-                        Properties.Settings.Default.HeightFrame = heightTb.Text;
-                        Properties.Settings.Default.ExposureFrame = exposureTb.Text;
-                        Properties.Settings.Default.GainFrame = gainTb.Text;
-                        Properties.Settings.Default.Save();
-
-                        MessageBox.Show("Настройки успешно сохранены.", "Успех",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при сохранении настроек: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-
-        private void LoadSettings()
-        {
-            try
-            {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
-                {
-                    openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    openFileDialog.Title = "Загрузить настройки";
-
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        string json = File.ReadAllText(openFileDialog.FileName);
-                        var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-
-                        if (settings != null)
-                        {
-                            widthTb.Text = settings.ContainsKey("Width") ? settings["Width"] : "500";
-                            heightTb.Text = settings.ContainsKey("Height") ? settings["Height"] : "532";
-                            exposureTb.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "450";
-                            gainTb.Text = settings.ContainsKey("Gain") ? settings["Gain"] : "3,01";
-
-                            MessageBox.Show("Настройки успешно загружены.", "Успех",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Не удалось прочитать настройки из файла.",
-                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при загрузке настроек: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
 
         #endregion
 
@@ -2985,101 +2391,6 @@ namespace KrishkiForms
             }
         }
 
-        /// <summary>
-        /// Отправка на ПЛК время обдува, то есть сколько обдув будет работать по времени.
-        /// </summary>
-        /// /// <param name="breakingTime"></param>
-        private void SendBreakingTime(int breakingTime)
-        {
-            try
-            {
-                if (modbusClient != null && modbusClient.Connected)
-                {
-                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(breakingTimeRegister, breakingTime);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // отмена - ничего страшного
-            }
-            catch (Exception ex)
-            {
-                // TODO Логирование ошибки
-            }
-        }
-
-        /// <summary>
-        /// Отправка на ПЛК расстояния от датчика до камеры, в тиках энкодера.
-        /// </summary>
-        /// /// <param name="cameraOffset"></param>
-        private void SendCameraOffset(int cameraOffset)
-        {
-            try
-            {
-                if (modbusClient != null && modbusClient.Connected)
-                {
-                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(cameraOffsetRegister, cameraOffset);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // отмена - ничего страшного
-            }
-            catch (Exception ex)
-            {
-                // TODO Логирование ошибки
-            }
-        }
-
-        /// <summary>
-        /// Отправка на ПЛК расстояния от датчика до отбраковщика.
-        /// </summary>
-        /// /// <param name="breakerOffset"></param>
-        private void SendBreakerOffset(int breakerOffset)
-        {
-            try
-            {
-                if (modbusClient != null && modbusClient.Connected)
-                {
-                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(breakerOffsetRegister, breakerOffset);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // отмена - ничего страшного
-            }
-            catch (Exception ex)
-            {
-                // TODO Логирование ошибки
-            }
-        }
-
-        private void breakingAllowCb_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (modbusClient != null && modbusClient.Connected)
-                {
-                    int valueToSend = breakingAllowCb.Checked
-                        ? (int)BreakerAllowTrue
-                        : (int)BreakerAllowFalse;
-
-                    modbusClient.WriteSingleRegisterForBreaker(breakerAllowRegister, valueToSend);
-                }
-                else
-                {
-                    MessageBox.Show("Нет подключения к ПР205. Сигнал не отправлен.",
-                        "Ошибка подключения", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при отправке сигнала на ПР205: {ex.Message}",
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-
         #endregion
 
         #region Методы работы с изображениями
@@ -3538,9 +2849,17 @@ namespace KrishkiForms
 
         #endregion
 
-        private void originPb_Click(object sender, EventArgs e)
+        private void hardwareSettingsFormBt_Click(object sender, EventArgs e)
         {
+            var hwForm = new HardwareSettingsForm(
+                modbusClient,
+                cam,
+                prConnected,
+                cameraConnected
+            );
 
+            hwForm.ShowDialog();
         }
+
     }
 }

@@ -51,8 +51,6 @@
             savePrSettings = new Button();
             loadPrSettings = new Button();
             connectCameraButton = new Button();
-            label1 = new Label();
-            cameraIpTextBox = new TextBox();
             loadSettingsButton = new Button();
             saveSettingsButton = new Button();
             cameraParamsPanel = new Panel();
@@ -64,8 +62,10 @@
             label4 = new Label();
             heightTb = new TextBox();
             label3 = new Label();
-            applySettingsButton = new Button();
+            applyCameraSettingsButton = new Button();
             groupBox1 = new GroupBox();
+            label15 = new Label();
+            camStatus = new Label();
             cameraSettingsPb = new PictureBox();
             foldersGroup = new GroupBox();
             browseUnderfillButton = new Button();
@@ -155,6 +155,7 @@
             breakingAllowCb.TabIndex = 17;
             breakingAllowCb.Text = "Включить обдув";
             breakingAllowCb.UseVisualStyleBackColor = true;
+            breakingAllowCb.CheckedChanged += breakingAllowCb_CheckedChanged;
             // 
             // breakerOffsetTb
             // 
@@ -172,7 +173,7 @@
             label25.AutoSize = true;
             label25.Font = new Font("Segoe UI", 9F);
             label25.ForeColor = Color.Black;
-            label25.Location = new Point(183, 21);
+            label25.Location = new Point(155, 25);
             label25.Name = "label25";
             label25.Size = new Size(86, 15);
             label25.TabIndex = 15;
@@ -190,6 +191,7 @@
             applyPrBreakerParamButton.TabIndex = 2;
             applyPrBreakerParamButton.Text = "Применить настройки";
             applyPrBreakerParamButton.UseVisualStyleBackColor = false;
+            applyPrBreakerParamButton.Click += applyPrBreakerParamButton_Click;
             // 
             // label31
             // 
@@ -294,6 +296,7 @@
             connectPrButton.TabIndex = 32;
             connectPrButton.Text = "Подключиться к ПР";
             connectPrButton.UseVisualStyleBackColor = false;
+            connectPrButton.Click += connectPrButton_Click;
             // 
             // label26
             // 
@@ -351,6 +354,7 @@
             savePrSettings.TabIndex = 1;
             savePrSettings.Text = "Сохранить";
             savePrSettings.UseVisualStyleBackColor = false;
+            savePrSettings.Click += savePrSettings_Click;
             // 
             // loadPrSettings
             // 
@@ -364,6 +368,7 @@
             loadPrSettings.TabIndex = 0;
             loadPrSettings.Text = "Загрузить настройки";
             loadPrSettings.UseVisualStyleBackColor = false;
+            loadPrSettings.Click += loadPrSettings_Click;
             // 
             // connectCameraButton
             // 
@@ -371,34 +376,13 @@
             connectCameraButton.FlatAppearance.BorderSize = 0;
             connectCameraButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             connectCameraButton.ForeColor = Color.White;
-            connectCameraButton.Location = new Point(160, 42);
+            connectCameraButton.Location = new Point(160, 37);
             connectCameraButton.Name = "connectCameraButton";
             connectCameraButton.Size = new Size(129, 38);
             connectCameraButton.TabIndex = 6;
             connectCameraButton.Text = "Подключиться";
             connectCameraButton.UseVisualStyleBackColor = false;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Microsoft Sans Serif", 9F);
-            label1.ForeColor = Color.Black;
-            label1.Location = new Point(12, 32);
-            label1.Name = "label1";
-            label1.Size = new Size(106, 15);
-            label1.TabIndex = 4;
-            label1.Text = "IP адрес камеры:";
-            // 
-            // cameraIpTextBox
-            // 
-            cameraIpTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
-            cameraIpTextBox.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            cameraIpTextBox.Location = new Point(9, 49);
-            cameraIpTextBox.Name = "cameraIpTextBox";
-            cameraIpTextBox.Size = new Size(135, 23);
-            cameraIpTextBox.TabIndex = 5;
-            cameraIpTextBox.Text = "169.254.205.254";
+            connectCameraButton.Click += connectCameraButton_Click;
             // 
             // loadSettingsButton
             // 
@@ -412,6 +396,7 @@
             loadSettingsButton.TabIndex = 0;
             loadSettingsButton.Text = "Загрузить настройки";
             loadSettingsButton.UseVisualStyleBackColor = false;
+            loadSettingsButton.Click += loadSettingsButton_Click;
             // 
             // saveSettingsButton
             // 
@@ -425,6 +410,7 @@
             saveSettingsButton.TabIndex = 1;
             saveSettingsButton.Text = "Сохранить";
             saveSettingsButton.UseVisualStyleBackColor = false;
+            saveSettingsButton.Click += saveSettingsButton_Click;
             // 
             // cameraParamsPanel
             // 
@@ -531,29 +517,30 @@
             label3.TabIndex = 0;
             label3.Text = "Высота:";
             // 
-            // applySettingsButton
+            // applyCameraSettingsButton
             // 
-            applySettingsButton.BackColor = Color.FromArgb(4, 85, 191);
-            applySettingsButton.FlatAppearance.BorderSize = 0;
-            applySettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            applySettingsButton.ForeColor = Color.White;
-            applySettingsButton.Location = new Point(9, 217);
-            applySettingsButton.Name = "applySettingsButton";
-            applySettingsButton.Size = new Size(280, 43);
-            applySettingsButton.TabIndex = 2;
-            applySettingsButton.Text = "Применить настройки";
-            applySettingsButton.UseVisualStyleBackColor = false;
+            applyCameraSettingsButton.BackColor = Color.FromArgb(4, 85, 191);
+            applyCameraSettingsButton.FlatAppearance.BorderSize = 0;
+            applyCameraSettingsButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            applyCameraSettingsButton.ForeColor = Color.White;
+            applyCameraSettingsButton.Location = new Point(9, 217);
+            applyCameraSettingsButton.Name = "applyCameraSettingsButton";
+            applyCameraSettingsButton.Size = new Size(280, 43);
+            applyCameraSettingsButton.TabIndex = 2;
+            applyCameraSettingsButton.Text = "Применить настройки";
+            applyCameraSettingsButton.UseVisualStyleBackColor = false;
+            applyCameraSettingsButton.Click += applySettingsButton_Click;
             // 
             // groupBox1
             // 
             groupBox1.BackColor = Color.White;
+            groupBox1.Controls.Add(label15);
+            groupBox1.Controls.Add(camStatus);
             groupBox1.Controls.Add(cameraSettingsPb);
-            groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(connectCameraButton);
             groupBox1.Controls.Add(saveSettingsButton);
             groupBox1.Controls.Add(loadSettingsButton);
-            groupBox1.Controls.Add(cameraIpTextBox);
-            groupBox1.Controls.Add(applySettingsButton);
+            groupBox1.Controls.Add(applyCameraSettingsButton);
             groupBox1.Controls.Add(cameraParamsPanel);
             groupBox1.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox1.ForeColor = Color.FromArgb(4, 85, 191);
@@ -563,6 +550,28 @@
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
             groupBox1.Text = "Настройки камеры";
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Font = new Font("Segoe UI", 8.25F);
+            label15.ForeColor = Color.Black;
+            label15.Location = new Point(19, 33);
+            label15.Name = "label15";
+            label15.Size = new Size(87, 13);
+            label15.TabIndex = 8;
+            label15.Text = "Статус камеры:";
+            // 
+            // camStatus
+            // 
+            camStatus.AutoSize = true;
+            camStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            camStatus.ForeColor = Color.Black;
+            camStatus.Location = new Point(19, 55);
+            camStatus.Name = "camStatus";
+            camStatus.Size = new Size(94, 13);
+            camStatus.TabIndex = 9;
+            camStatus.Text = "Не подключена";
             // 
             // cameraSettingsPb
             // 
@@ -618,6 +627,7 @@
             browseUnderfillButton.TabIndex = 18;
             browseUnderfillButton.Text = "...";
             browseUnderfillButton.UseVisualStyleBackColor = false;
+            browseUnderfillButton.Click += browseUnderfillButton_Click;
             // 
             // underfillPathTextBox
             // 
@@ -666,6 +676,7 @@
             browseObloyButton.TabIndex = 15;
             browseObloyButton.Text = "...";
             browseObloyButton.UseVisualStyleBackColor = false;
+            browseObloyButton.Click += browseObloyButton_Click;
             // 
             // obloyPathTextBox
             // 
@@ -701,6 +712,7 @@
             browseInpaintButton.TabIndex = 12;
             browseInpaintButton.Text = "...";
             browseInpaintButton.UseVisualStyleBackColor = false;
+            browseInpaintButton.Click += browseInpaintButton_Click;
             // 
             // inpaintPathTextBox
             // 
@@ -736,6 +748,7 @@
             browseInclusionButton.TabIndex = 9;
             browseInclusionButton.Text = "...";
             browseInclusionButton.UseVisualStyleBackColor = false;
+            browseInclusionButton.Click += browseInclusionButton_Click;
             // 
             // inclusionPathTextBox
             // 
@@ -771,6 +784,7 @@
             browseOvalityButton.TabIndex = 6;
             browseOvalityButton.Text = "...";
             browseOvalityButton.UseVisualStyleBackColor = false;
+            browseOvalityButton.Click += browseOvalityButton_Click;
             // 
             // ovalityPathTextBox
             // 
@@ -806,6 +820,7 @@
             browseOriginalButton.TabIndex = 3;
             browseOriginalButton.Text = "...";
             browseOriginalButton.UseVisualStyleBackColor = false;
+            browseOriginalButton.Click += browseOriginalButton_Click;
             // 
             // originalPathTextBox
             // 
@@ -880,8 +895,6 @@
         private Button savePrSettings;
         private Button loadPrSettings;
         private Button connectCameraButton;
-        private Label label1;
-        private TextBox cameraIpTextBox;
         private Button loadSettingsButton;
         private Button saveSettingsButton;
         private Panel cameraParamsPanel;
@@ -893,7 +906,7 @@
         private Label label4;
         private TextBox heightTb;
         private Label label3;
-        private Button applySettingsButton;
+        private Button applyCameraSettingsButton;
         private GroupBox groupBox1;
         private PictureBox cameraSettingsPb;
         private GroupBox foldersGroup;
@@ -916,5 +929,7 @@
         private Button browseOriginalButton;
         private TextBox originalPathTextBox;
         private Label label8;
+        private Label label15;
+        private Label camStatus;
     }
 }

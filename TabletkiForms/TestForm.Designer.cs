@@ -30,79 +30,79 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestForm));
             mainPanel = new Panel();
-            ovalityCB = new CheckBox();
-            inclusionCB = new CheckBox();
-            inpaintCB = new CheckBox();
-            obloyCB = new CheckBox();
-            comboBox1 = new ComboBox();
-            pictureBox1 = new PictureBox();
-            timeOvality = new TextBox();
-            ovalityDef = new TextBox();
-            obloyTime = new TextBox();
-            obloyDef = new TextBox();
-            inpaintTime = new TextBox();
-            InpaintDef = new TextBox();
-            inclusionTime = new TextBox();
-            inclusionDef = new TextBox();
-            imagesGroup = new GroupBox();
-            originPb = new PictureBox();
-            recognizeButton = new Button();
-            startStreamButton = new Button();
-            loadImageButton = new Button();
-            label15 = new Label();
-            camStatus = new Label();
-            label16 = new Label();
-            cameraStatusLabel = new Label();
-            panel2 = new Panel();
             panel3 = new Panel();
-            label2 = new Label();
-            groupBox1 = new GroupBox();
-            comboBox2 = new ComboBox();
-            label34 = new Label();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            label35 = new Label();
-            label42 = new Label();
-            label41 = new Label();
-            label39 = new Label();
-            label38 = new Label();
-            label37 = new Label();
-            label36 = new Label();
-            generslCapsCountTb = new TextBox();
-            okCapsCountTb = new TextBox();
-            percentOkCapsTb = new TextBox();
-            percentNgCapsTb = new TextBox();
-            ngCapsCountTb = new TextBox();
-            generalTimeTb = new TextBox();
-            label44 = new Label();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            contourSettingsFormBt = new Button();
+            defectSettingsFormBt = new Button();
+            hardwareSettingsFormBt = new Button();
+            label59 = new Label();
             tableLayoutPanel2 = new TableLayoutPanel();
+            inpaintTime = new TextBox();
+            obloyTime = new TextBox();
+            inclusionTime = new TextBox();
+            timeOvality = new TextBox();
             label45 = new Label();
+            ovalityDef = new TextBox();
+            inclusionDef = new TextBox();
+            obloyDef = new TextBox();
+            InpaintDef = new TextBox();
             label46 = new Label();
             label52 = new Label();
+            obloyCB = new CheckBox();
             label53 = new Label();
             label54 = new Label();
             label55 = new Label();
             label56 = new Label();
             label57 = new Label();
             label58 = new Label();
+            ovalityCB = new CheckBox();
+            inclusionCB = new CheckBox();
+            inpaintCB = new CheckBox();
             percentOvalityCapsTb = new TextBox();
             percentInclusionCapsTb = new TextBox();
             percentInpaintCapsTb = new TextBox();
             percentObloyCapsTb = new TextBox();
-            label59 = new Label();
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
-            tableLayoutPanel3 = new TableLayoutPanel();
+            label44 = new Label();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            generalTimeTb = new TextBox();
+            ngCapsCountTb = new TextBox();
+            label35 = new Label();
+            comboBox1 = new ComboBox();
+            label36 = new Label();
+            label37 = new Label();
+            label38 = new Label();
+            label39 = new Label();
+            label41 = new Label();
+            label42 = new Label();
+            generslCapsCountTb = new TextBox();
+            okCapsCountTb = new TextBox();
+            percentOkCapsTb = new TextBox();
+            percentNgCapsTb = new TextBox();
+            label34 = new Label();
+            recognizeButton = new Button();
+            groupBox1 = new GroupBox();
+            comboBox2 = new ComboBox();
+            startStreamButton = new Button();
+            label2 = new Label();
+            loadImageButton = new Button();
+            imagesGroup = new GroupBox();
+            originPb = new PictureBox();
+            panel2 = new Panel();
+            cameraStatusLabel = new Label();
+            label16 = new Label();
+            label15 = new Label();
+            camStatus = new Label();
+            pictureBox1 = new PictureBox();
             mainPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            panel3.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            groupBox1.SuspendLayout();
             imagesGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
             panel2.SuspendLayout();
-            panel3.SuspendLayout();
-            groupBox1.SuspendLayout();
-            tableLayoutPanel1.SuspendLayout();
-            tableLayoutPanel2.SuspendLayout();
-            tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // mainPanel
@@ -117,312 +117,6 @@
             mainPanel.Name = "mainPanel";
             mainPanel.Size = new Size(1740, 1039);
             mainPanel.TabIndex = 0;
-            // 
-            // ovalityCB
-            // 
-            ovalityCB.Anchor = AnchorStyles.None;
-            ovalityCB.AutoSize = true;
-            ovalityCB.BackColor = Color.White;
-            ovalityCB.Checked = true;
-            ovalityCB.CheckState = CheckState.Checked;
-            ovalityCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            ovalityCB.ForeColor = Color.White;
-            ovalityCB.Location = new Point(29, 71);
-            ovalityCB.Name = "ovalityCB";
-            ovalityCB.Size = new Size(15, 14);
-            ovalityCB.TabIndex = 9;
-            ovalityCB.UseVisualStyleBackColor = false;
-            ovalityCB.CheckedChanged += ovalityCB_CheckedChanged;
-            // 
-            // inclusionCB
-            // 
-            inclusionCB.Anchor = AnchorStyles.None;
-            inclusionCB.AutoSize = true;
-            inclusionCB.BackColor = Color.White;
-            inclusionCB.Checked = true;
-            inclusionCB.CheckState = CheckState.Checked;
-            inclusionCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inclusionCB.ForeColor = Color.White;
-            inclusionCB.Location = new Point(29, 122);
-            inclusionCB.Name = "inclusionCB";
-            inclusionCB.Size = new Size(15, 14);
-            inclusionCB.TabIndex = 13;
-            inclusionCB.UseVisualStyleBackColor = false;
-            inclusionCB.CheckedChanged += inclusionCB_CheckedChanged;
-            // 
-            // inpaintCB
-            // 
-            inpaintCB.Anchor = AnchorStyles.None;
-            inpaintCB.AutoSize = true;
-            inpaintCB.BackColor = Color.White;
-            inpaintCB.Checked = true;
-            inpaintCB.CheckState = CheckState.Checked;
-            inpaintCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inpaintCB.ForeColor = Color.White;
-            inpaintCB.Location = new Point(29, 173);
-            inpaintCB.Name = "inpaintCB";
-            inpaintCB.Size = new Size(15, 14);
-            inpaintCB.TabIndex = 35;
-            inpaintCB.UseVisualStyleBackColor = false;
-            inpaintCB.CheckedChanged += inpaintCB_CheckedChanged;
-            // 
-            // obloyCB
-            // 
-            obloyCB.Anchor = AnchorStyles.None;
-            obloyCB.AutoSize = true;
-            obloyCB.BackColor = Color.White;
-            obloyCB.Checked = true;
-            obloyCB.CheckState = CheckState.Checked;
-            obloyCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            obloyCB.ForeColor = Color.White;
-            obloyCB.Location = new Point(29, 224);
-            obloyCB.Name = "obloyCB";
-            obloyCB.Size = new Size(15, 14);
-            obloyCB.TabIndex = 9;
-            obloyCB.UseVisualStyleBackColor = false;
-            obloyCB.CheckedChanged += obloyCB_CheckedChanged;
-            // 
-            // comboBox1
-            // 
-            comboBox1.BackColor = Color.LightGray;
-            comboBox1.Dock = DockStyle.Fill;
-            comboBox1.FlatStyle = FlatStyle.Popup;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые", "Зеленые", "Оранжевые" });
-            comboBox1.Location = new Point(217, 3);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(209, 23);
-            comboBox1.TabIndex = 38;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.BorderStyle = BorderStyle.Fixed3D;
-            pictureBox1.Image = Properties.Resources.лого;
-            pictureBox1.Location = new Point(1306, 3);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(431, 126);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 8;
-            pictureBox1.TabStop = false;
-            // 
-            // timeOvality
-            // 
-            timeOvality.Anchor = AnchorStyles.None;
-            timeOvality.BackColor = Color.White;
-            timeOvality.BorderStyle = BorderStyle.None;
-            timeOvality.Location = new Point(267, 70);
-            timeOvality.Name = "timeOvality";
-            timeOvality.Size = new Size(69, 16);
-            timeOvality.TabIndex = 9;
-            timeOvality.Text = "0";
-            timeOvality.TextAlign = HorizontalAlignment.Center;
-            // 
-            // ovalityDef
-            // 
-            ovalityDef.Anchor = AnchorStyles.None;
-            ovalityDef.BackColor = Color.White;
-            ovalityDef.BorderStyle = BorderStyle.None;
-            ovalityDef.Location = new Point(181, 70);
-            ovalityDef.Name = "ovalityDef";
-            ovalityDef.Size = new Size(69, 16);
-            ovalityDef.TabIndex = 8;
-            ovalityDef.Text = "0";
-            ovalityDef.TextAlign = HorizontalAlignment.Center;
-            // 
-            // obloyTime
-            // 
-            obloyTime.Anchor = AnchorStyles.None;
-            obloyTime.BackColor = Color.White;
-            obloyTime.BorderStyle = BorderStyle.None;
-            obloyTime.Location = new Point(268, 223);
-            obloyTime.Name = "obloyTime";
-            obloyTime.Size = new Size(67, 16);
-            obloyTime.TabIndex = 10;
-            obloyTime.Text = "0";
-            obloyTime.TextAlign = HorizontalAlignment.Center;
-            // 
-            // obloyDef
-            // 
-            obloyDef.Anchor = AnchorStyles.None;
-            obloyDef.BackColor = Color.White;
-            obloyDef.BorderStyle = BorderStyle.None;
-            obloyDef.Location = new Point(181, 223);
-            obloyDef.Name = "obloyDef";
-            obloyDef.Size = new Size(69, 16);
-            obloyDef.TabIndex = 9;
-            obloyDef.Text = "0";
-            obloyDef.TextAlign = HorizontalAlignment.Center;
-            // 
-            // inpaintTime
-            // 
-            inpaintTime.Anchor = AnchorStyles.None;
-            inpaintTime.BackColor = Color.White;
-            inpaintTime.BorderStyle = BorderStyle.None;
-            inpaintTime.Location = new Point(268, 172);
-            inpaintTime.Name = "inpaintTime";
-            inpaintTime.Size = new Size(67, 16);
-            inpaintTime.TabIndex = 12;
-            inpaintTime.Text = "0";
-            inpaintTime.TextAlign = HorizontalAlignment.Center;
-            // 
-            // InpaintDef
-            // 
-            InpaintDef.Anchor = AnchorStyles.None;
-            InpaintDef.BackColor = Color.White;
-            InpaintDef.BorderStyle = BorderStyle.None;
-            InpaintDef.Location = new Point(182, 172);
-            InpaintDef.Name = "InpaintDef";
-            InpaintDef.Size = new Size(67, 16);
-            InpaintDef.TabIndex = 11;
-            InpaintDef.Text = "0";
-            InpaintDef.TextAlign = HorizontalAlignment.Center;
-            // 
-            // inclusionTime
-            // 
-            inclusionTime.Anchor = AnchorStyles.None;
-            inclusionTime.BackColor = Color.White;
-            inclusionTime.BorderStyle = BorderStyle.None;
-            inclusionTime.Location = new Point(267, 121);
-            inclusionTime.Name = "inclusionTime";
-            inclusionTime.Size = new Size(68, 16);
-            inclusionTime.TabIndex = 11;
-            inclusionTime.Text = "0";
-            inclusionTime.TextAlign = HorizontalAlignment.Center;
-            // 
-            // inclusionDef
-            // 
-            inclusionDef.Anchor = AnchorStyles.None;
-            inclusionDef.BackColor = Color.White;
-            inclusionDef.BorderStyle = BorderStyle.None;
-            inclusionDef.Location = new Point(181, 121);
-            inclusionDef.Name = "inclusionDef";
-            inclusionDef.Size = new Size(68, 16);
-            inclusionDef.TabIndex = 10;
-            inclusionDef.Text = "0";
-            inclusionDef.TextAlign = HorizontalAlignment.Center;
-            // 
-            // imagesGroup
-            // 
-            imagesGroup.BackColor = Color.White;
-            imagesGroup.Controls.Add(originPb);
-            imagesGroup.FlatStyle = FlatStyle.Flat;
-            imagesGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            imagesGroup.ForeColor = Color.FromArgb(4, 85, 191);
-            imagesGroup.Location = new Point(3, 135);
-            imagesGroup.Name = "imagesGroup";
-            imagesGroup.Size = new Size(1297, 880);
-            imagesGroup.TabIndex = 0;
-            imagesGroup.TabStop = false;
-            imagesGroup.Text = "Камера";
-            // 
-            // originPb
-            // 
-            originPb.Location = new Point(10, 24);
-            originPb.Name = "originPb";
-            originPb.Size = new Size(1281, 847);
-            originPb.SizeMode = PictureBoxSizeMode.Zoom;
-            originPb.TabIndex = 0;
-            originPb.TabStop = false;
-            originPb.Click += originPb_Click;
-            // 
-            // recognizeButton
-            // 
-            recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
-            recognizeButton.FlatAppearance.BorderSize = 0;
-            recognizeButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            recognizeButton.ForeColor = Color.White;
-            recognizeButton.Location = new Point(192, 53);
-            recognizeButton.Name = "recognizeButton";
-            recognizeButton.Size = new Size(99, 51);
-            recognizeButton.TabIndex = 4;
-            recognizeButton.Text = "Начать анализ";
-            recognizeButton.UseVisualStyleBackColor = false;
-            recognizeButton.Click += recognizeButton_Click;
-            // 
-            // startStreamButton
-            // 
-            startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
-            startStreamButton.FlatAppearance.BorderSize = 0;
-            startStreamButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            startStreamButton.ForeColor = Color.White;
-            startStreamButton.Location = new Point(97, 53);
-            startStreamButton.Name = "startStreamButton";
-            startStreamButton.Size = new Size(89, 51);
-            startStreamButton.TabIndex = 2;
-            startStreamButton.Text = "Получить";
-            startStreamButton.UseVisualStyleBackColor = false;
-            startStreamButton.Click += startStreamButton_Click;
-            // 
-            // loadImageButton
-            // 
-            loadImageButton.BackColor = Color.FromArgb(66, 133, 244);
-            loadImageButton.FlatAppearance.BorderSize = 0;
-            loadImageButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            loadImageButton.ForeColor = Color.White;
-            loadImageButton.Location = new Point(3, 54);
-            loadImageButton.Name = "loadImageButton";
-            loadImageButton.Size = new Size(88, 50);
-            loadImageButton.TabIndex = 1;
-            loadImageButton.Text = "Загрузить";
-            loadImageButton.UseVisualStyleBackColor = false;
-            loadImageButton.Click += loadImageButton_Click;
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Font = new Font("Segoe UI", 8.25F);
-            label15.ForeColor = Color.Black;
-            label15.Location = new Point(17, 61);
-            label15.Name = "label15";
-            label15.Size = new Size(87, 13);
-            label15.TabIndex = 0;
-            label15.Text = "Статус камеры:";
-            // 
-            // camStatus
-            // 
-            camStatus.AutoSize = true;
-            camStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
-            camStatus.ForeColor = Color.Black;
-            camStatus.Location = new Point(146, 61);
-            camStatus.Name = "camStatus";
-            camStatus.Size = new Size(94, 13);
-            camStatus.TabIndex = 2;
-            camStatus.Text = "Не подключена";
-            // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Font = new Font("Segoe UI", 8.25F);
-            label16.ForeColor = Color.Black;
-            label16.Location = new Point(17, 28);
-            label16.Name = "label16";
-            label16.Size = new Size(74, 13);
-            label16.TabIndex = 1;
-            label16.Text = "Видеопоток:";
-            // 
-            // cameraStatusLabel
-            // 
-            cameraStatusLabel.AutoSize = true;
-            cameraStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
-            cameraStatusLabel.ForeColor = Color.Black;
-            cameraStatusLabel.Location = new Point(147, 29);
-            cameraStatusLabel.Name = "cameraStatusLabel";
-            cameraStatusLabel.Size = new Size(71, 13);
-            cameraStatusLabel.TabIndex = 3;
-            cameraStatusLabel.Text = "Не запущен";
-            // 
-            // panel2
-            // 
-            panel2.BorderStyle = BorderStyle.Fixed3D;
-            panel2.Controls.Add(cameraStatusLabel);
-            panel2.Controls.Add(label16);
-            panel2.Controls.Add(label15);
-            panel2.Controls.Add(camStatus);
-            panel2.Location = new Point(3, 3);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(1297, 126);
-            panel2.TabIndex = 9;
             // 
             // panel3
             // 
@@ -443,224 +137,78 @@
             panel3.Size = new Size(431, 870);
             panel3.TabIndex = 10;
             // 
-            // label2
+            // tableLayoutPanel3
             // 
-            label2.BackColor = Color.FromArgb(4, 85, 191);
-            label2.BorderStyle = BorderStyle.Fixed3D;
-            label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(-2, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(431, 43);
-            label2.TabIndex = 0;
-            label2.Text = "Получение изображения и анализ";
-            label2.TextAlign = ContentAlignment.MiddleCenter;
+            tableLayoutPanel3.ColumnCount = 3;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel3.Controls.Add(contourSettingsFormBt, 2, 0);
+            tableLayoutPanel3.Controls.Add(defectSettingsFormBt, 1, 0);
+            tableLayoutPanel3.Controls.Add(hardwareSettingsFormBt, 0, 0);
+            tableLayoutPanel3.Location = new Point(13, 778);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 1;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.Size = new Size(406, 81);
+            tableLayoutPanel3.TabIndex = 10;
             // 
-            // groupBox1
+            // contourSettingsFormBt
             // 
-            groupBox1.Controls.Add(comboBox2);
-            groupBox1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox1.ForeColor = Color.FromArgb(4, 85, 191);
-            groupBox1.Location = new Point(297, 44);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(127, 60);
-            groupBox1.TabIndex = 1;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Что выводить";
+            contourSettingsFormBt.BackColor = Color.FromArgb(66, 133, 244);
+            contourSettingsFormBt.Dock = DockStyle.Fill;
+            contourSettingsFormBt.FlatAppearance.BorderSize = 0;
+            contourSettingsFormBt.Font = new Font("Segoe UI", 36F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            contourSettingsFormBt.ForeColor = Color.White;
+            contourSettingsFormBt.Location = new Point(273, 3);
+            contourSettingsFormBt.Name = "contourSettingsFormBt";
+            contourSettingsFormBt.Size = new Size(130, 75);
+            contourSettingsFormBt.TabIndex = 12;
+            contourSettingsFormBt.Text = "◯";
+            contourSettingsFormBt.UseVisualStyleBackColor = false;
             // 
-            // comboBox2
+            // defectSettingsFormBt
             // 
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Items.AddRange(new object[] { "Все", "Хорошие", "Плохие" });
-            comboBox2.Location = new Point(10, 24);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(111, 25);
-            comboBox2.TabIndex = 0;
+            defectSettingsFormBt.BackColor = Color.FromArgb(66, 133, 244);
+            defectSettingsFormBt.Dock = DockStyle.Fill;
+            defectSettingsFormBt.FlatAppearance.BorderSize = 0;
+            defectSettingsFormBt.Font = new Font("Segoe UI", 36F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            defectSettingsFormBt.ForeColor = Color.White;
+            defectSettingsFormBt.Location = new Point(138, 3);
+            defectSettingsFormBt.Name = "defectSettingsFormBt";
+            defectSettingsFormBt.Size = new Size(129, 75);
+            defectSettingsFormBt.TabIndex = 11;
+            defectSettingsFormBt.Text = "🔍";
+            defectSettingsFormBt.UseVisualStyleBackColor = false;
             // 
-            // label34
+            // hardwareSettingsFormBt
             // 
-            label34.BackColor = Color.FromArgb(4, 85, 191);
-            label34.BorderStyle = BorderStyle.Fixed3D;
-            label34.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            label34.ForeColor = Color.White;
-            label34.Location = new Point(-2, 116);
-            label34.Name = "label34";
-            label34.Size = new Size(431, 43);
-            label34.TabIndex = 5;
-            label34.Text = "Общая информация";
-            label34.TextAlign = ContentAlignment.MiddleCenter;
+            hardwareSettingsFormBt.BackColor = Color.FromArgb(66, 133, 244);
+            hardwareSettingsFormBt.Dock = DockStyle.Fill;
+            hardwareSettingsFormBt.FlatAppearance.BorderSize = 0;
+            hardwareSettingsFormBt.Font = new Font("Segoe UI", 36F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            hardwareSettingsFormBt.ForeColor = Color.White;
+            hardwareSettingsFormBt.Location = new Point(3, 3);
+            hardwareSettingsFormBt.Name = "hardwareSettingsFormBt";
+            hardwareSettingsFormBt.Size = new Size(129, 75);
+            hardwareSettingsFormBt.TabIndex = 10;
+            hardwareSettingsFormBt.Text = "⛭";
+            hardwareSettingsFormBt.UseVisualStyleBackColor = false;
+            hardwareSettingsFormBt.Click += hardwareSettingsFormBt_Click;
             // 
-            // tableLayoutPanel1
+            // label59
             // 
-            tableLayoutPanel1.ColumnCount = 2;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(generalTimeTb, 1, 6);
-            tableLayoutPanel1.Controls.Add(ngCapsCountTb, 1, 3);
-            tableLayoutPanel1.Controls.Add(label35, 0, 0);
-            tableLayoutPanel1.Controls.Add(comboBox1, 1, 0);
-            tableLayoutPanel1.Controls.Add(label36, 0, 1);
-            tableLayoutPanel1.Controls.Add(label37, 0, 2);
-            tableLayoutPanel1.Controls.Add(label38, 0, 3);
-            tableLayoutPanel1.Controls.Add(label39, 0, 4);
-            tableLayoutPanel1.Controls.Add(label41, 0, 5);
-            tableLayoutPanel1.Controls.Add(label42, 0, 6);
-            tableLayoutPanel1.Controls.Add(generslCapsCountTb, 1, 1);
-            tableLayoutPanel1.Controls.Add(okCapsCountTb, 1, 2);
-            tableLayoutPanel1.Controls.Add(percentOkCapsTb, 1, 4);
-            tableLayoutPanel1.Controls.Add(percentNgCapsTb, 1, 5);
-            tableLayoutPanel1.Location = new Point(0, 159);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 7;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.Size = new Size(429, 248);
-            tableLayoutPanel1.TabIndex = 6;
-            // 
-            // label35
-            // 
-            label35.AutoSize = true;
-            label35.Dock = DockStyle.Right;
-            label35.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label35.Location = new Point(160, 0);
-            label35.Name = "label35";
-            label35.Size = new Size(51, 35);
-            label35.TabIndex = 0;
-            label35.Text = "Рецепт:";
-            label35.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // label42
-            // 
-            label42.AutoSize = true;
-            label42.Dock = DockStyle.Right;
-            label42.Location = new Point(125, 210);
-            label42.Name = "label42";
-            label42.Size = new Size(86, 38);
-            label42.TabIndex = 6;
-            label42.Text = "Общее время:";
-            label42.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // label41
-            // 
-            label41.AutoSize = true;
-            label41.Dock = DockStyle.Right;
-            label41.Location = new Point(133, 175);
-            label41.Name = "label41";
-            label41.Size = new Size(78, 35);
-            label41.TabIndex = 5;
-            label41.Text = "Процент NG:";
-            label41.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // label39
-            // 
-            label39.AutoSize = true;
-            label39.Dock = DockStyle.Right;
-            label39.Location = new Point(134, 140);
-            label39.Name = "label39";
-            label39.Size = new Size(77, 35);
-            label39.TabIndex = 4;
-            label39.Text = "Процент ОК:";
-            label39.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // label38
-            // 
-            label38.AutoSize = true;
-            label38.Dock = DockStyle.Right;
-            label38.Location = new Point(116, 105);
-            label38.Name = "label38";
-            label38.Size = new Size(95, 35);
-            label38.TabIndex = 3;
-            label38.Text = "Количество NG:";
-            label38.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // label37
-            // 
-            label37.AutoSize = true;
-            label37.Dock = DockStyle.Right;
-            label37.Location = new Point(143, 70);
-            label37.Name = "label37";
-            label37.Size = new Size(68, 35);
-            label37.TabIndex = 2;
-            label37.Text = "Кол-во ОК:";
-            label37.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // label36
-            // 
-            label36.AutoSize = true;
-            label36.Dock = DockStyle.Right;
-            label36.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label36.Location = new Point(61, 35);
-            label36.Name = "label36";
-            label36.Size = new Size(150, 35);
-            label36.TabIndex = 1;
-            label36.Text = "Общее кол-во крышек:";
-            label36.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // generslCapsCountTb
-            // 
-            generslCapsCountTb.Dock = DockStyle.Fill;
-            generslCapsCountTb.Location = new Point(217, 38);
-            generslCapsCountTb.Name = "generslCapsCountTb";
-            generslCapsCountTb.Size = new Size(209, 23);
-            generslCapsCountTb.TabIndex = 39;
-            // 
-            // okCapsCountTb
-            // 
-            okCapsCountTb.Dock = DockStyle.Fill;
-            okCapsCountTb.Location = new Point(217, 73);
-            okCapsCountTb.Name = "okCapsCountTb";
-            okCapsCountTb.Size = new Size(209, 23);
-            okCapsCountTb.TabIndex = 40;
-            // 
-            // percentOkCapsTb
-            // 
-            percentOkCapsTb.Dock = DockStyle.Fill;
-            percentOkCapsTb.Location = new Point(217, 143);
-            percentOkCapsTb.Name = "percentOkCapsTb";
-            percentOkCapsTb.Size = new Size(209, 23);
-            percentOkCapsTb.TabIndex = 41;
-            // 
-            // percentNgCapsTb
-            // 
-            percentNgCapsTb.Dock = DockStyle.Fill;
-            percentNgCapsTb.Location = new Point(217, 178);
-            percentNgCapsTb.Name = "percentNgCapsTb";
-            percentNgCapsTb.Size = new Size(209, 23);
-            percentNgCapsTb.TabIndex = 42;
-            // 
-            // ngCapsCountTb
-            // 
-            ngCapsCountTb.Dock = DockStyle.Fill;
-            ngCapsCountTb.Location = new Point(217, 108);
-            ngCapsCountTb.Name = "ngCapsCountTb";
-            ngCapsCountTb.Size = new Size(209, 23);
-            ngCapsCountTb.TabIndex = 43;
-            // 
-            // generalTimeTb
-            // 
-            generalTimeTb.Dock = DockStyle.Fill;
-            generalTimeTb.Location = new Point(217, 213);
-            generalTimeTb.Name = "generalTimeTb";
-            generalTimeTb.Size = new Size(209, 23);
-            generalTimeTb.TabIndex = 44;
-            // 
-            // label44
-            // 
-            label44.BackColor = Color.FromArgb(4, 85, 191);
-            label44.BorderStyle = BorderStyle.Fixed3D;
-            label44.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            label44.ForeColor = Color.White;
-            label44.Location = new Point(-2, 418);
-            label44.Name = "label44";
-            label44.Size = new Size(431, 43);
-            label44.TabIndex = 7;
-            label44.Text = "Результаты работы";
-            label44.TextAlign = ContentAlignment.MiddleCenter;
+            label59.BackColor = Color.FromArgb(4, 85, 191);
+            label59.BorderStyle = BorderStyle.Fixed3D;
+            label59.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            label59.ForeColor = Color.White;
+            label59.Location = new Point(-2, 730);
+            label59.Name = "label59";
+            label59.Size = new Size(431, 43);
+            label59.TabIndex = 9;
+            label59.Text = "Настройкки аппаратуры и параметров";
+            label59.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel2
             // 
@@ -707,6 +255,54 @@
             tableLayoutPanel2.Size = new Size(434, 258);
             tableLayoutPanel2.TabIndex = 8;
             // 
+            // inpaintTime
+            // 
+            inpaintTime.Anchor = AnchorStyles.None;
+            inpaintTime.BackColor = Color.White;
+            inpaintTime.BorderStyle = BorderStyle.None;
+            inpaintTime.Location = new Point(268, 172);
+            inpaintTime.Name = "inpaintTime";
+            inpaintTime.Size = new Size(67, 16);
+            inpaintTime.TabIndex = 12;
+            inpaintTime.Text = "0";
+            inpaintTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // obloyTime
+            // 
+            obloyTime.Anchor = AnchorStyles.None;
+            obloyTime.BackColor = Color.White;
+            obloyTime.BorderStyle = BorderStyle.None;
+            obloyTime.Location = new Point(268, 223);
+            obloyTime.Name = "obloyTime";
+            obloyTime.Size = new Size(67, 16);
+            obloyTime.TabIndex = 10;
+            obloyTime.Text = "0";
+            obloyTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // inclusionTime
+            // 
+            inclusionTime.Anchor = AnchorStyles.None;
+            inclusionTime.BackColor = Color.White;
+            inclusionTime.BorderStyle = BorderStyle.None;
+            inclusionTime.Location = new Point(267, 121);
+            inclusionTime.Name = "inclusionTime";
+            inclusionTime.Size = new Size(68, 16);
+            inclusionTime.TabIndex = 11;
+            inclusionTime.Text = "0";
+            inclusionTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // timeOvality
+            // 
+            timeOvality.Anchor = AnchorStyles.None;
+            timeOvality.BackColor = Color.White;
+            timeOvality.BorderStyle = BorderStyle.None;
+            timeOvality.Location = new Point(267, 70);
+            timeOvality.Name = "timeOvality";
+            timeOvality.Size = new Size(69, 16);
+            timeOvality.TabIndex = 9;
+            timeOvality.Text = "0";
+            timeOvality.TextAlign = HorizontalAlignment.Center;
+            // 
             // label45
             // 
             label45.AutoSize = true;
@@ -718,6 +314,54 @@
             label45.TabIndex = 0;
             label45.Text = "✔";
             label45.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // ovalityDef
+            // 
+            ovalityDef.Anchor = AnchorStyles.None;
+            ovalityDef.BackColor = Color.White;
+            ovalityDef.BorderStyle = BorderStyle.None;
+            ovalityDef.Location = new Point(181, 70);
+            ovalityDef.Name = "ovalityDef";
+            ovalityDef.Size = new Size(69, 16);
+            ovalityDef.TabIndex = 8;
+            ovalityDef.Text = "0";
+            ovalityDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // inclusionDef
+            // 
+            inclusionDef.Anchor = AnchorStyles.None;
+            inclusionDef.BackColor = Color.White;
+            inclusionDef.BorderStyle = BorderStyle.None;
+            inclusionDef.Location = new Point(181, 121);
+            inclusionDef.Name = "inclusionDef";
+            inclusionDef.Size = new Size(68, 16);
+            inclusionDef.TabIndex = 10;
+            inclusionDef.Text = "0";
+            inclusionDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // obloyDef
+            // 
+            obloyDef.Anchor = AnchorStyles.None;
+            obloyDef.BackColor = Color.White;
+            obloyDef.BorderStyle = BorderStyle.None;
+            obloyDef.Location = new Point(181, 223);
+            obloyDef.Name = "obloyDef";
+            obloyDef.Size = new Size(69, 16);
+            obloyDef.TabIndex = 9;
+            obloyDef.Text = "0";
+            obloyDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // InpaintDef
+            // 
+            InpaintDef.Anchor = AnchorStyles.None;
+            InpaintDef.BackColor = Color.White;
+            InpaintDef.BorderStyle = BorderStyle.None;
+            InpaintDef.Location = new Point(182, 172);
+            InpaintDef.Name = "InpaintDef";
+            InpaintDef.Size = new Size(67, 16);
+            InpaintDef.TabIndex = 11;
+            InpaintDef.Text = "0";
+            InpaintDef.TextAlign = HorizontalAlignment.Center;
             // 
             // label46
             // 
@@ -742,6 +386,22 @@
             label52.TabIndex = 2;
             label52.Text = "Количество";
             label52.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // obloyCB
+            // 
+            obloyCB.Anchor = AnchorStyles.None;
+            obloyCB.AutoSize = true;
+            obloyCB.BackColor = Color.White;
+            obloyCB.Checked = true;
+            obloyCB.CheckState = CheckState.Checked;
+            obloyCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            obloyCB.ForeColor = Color.White;
+            obloyCB.Location = new Point(29, 224);
+            obloyCB.Name = "obloyCB";
+            obloyCB.Size = new Size(15, 14);
+            obloyCB.TabIndex = 9;
+            obloyCB.UseVisualStyleBackColor = false;
+            obloyCB.CheckedChanged += obloyCB_CheckedChanged;
             // 
             // label53
             // 
@@ -815,11 +475,59 @@
             label58.Text = "Облой";
             label58.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // ovalityCB
+            // 
+            ovalityCB.Anchor = AnchorStyles.None;
+            ovalityCB.AutoSize = true;
+            ovalityCB.BackColor = Color.White;
+            ovalityCB.Checked = true;
+            ovalityCB.CheckState = CheckState.Checked;
+            ovalityCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            ovalityCB.ForeColor = Color.White;
+            ovalityCB.Location = new Point(29, 71);
+            ovalityCB.Name = "ovalityCB";
+            ovalityCB.Size = new Size(15, 14);
+            ovalityCB.TabIndex = 9;
+            ovalityCB.UseVisualStyleBackColor = false;
+            ovalityCB.CheckedChanged += ovalityCB_CheckedChanged;
+            // 
+            // inclusionCB
+            // 
+            inclusionCB.Anchor = AnchorStyles.None;
+            inclusionCB.AutoSize = true;
+            inclusionCB.BackColor = Color.White;
+            inclusionCB.Checked = true;
+            inclusionCB.CheckState = CheckState.Checked;
+            inclusionCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inclusionCB.ForeColor = Color.White;
+            inclusionCB.Location = new Point(29, 122);
+            inclusionCB.Name = "inclusionCB";
+            inclusionCB.Size = new Size(15, 14);
+            inclusionCB.TabIndex = 13;
+            inclusionCB.UseVisualStyleBackColor = false;
+            inclusionCB.CheckedChanged += inclusionCB_CheckedChanged;
+            // 
+            // inpaintCB
+            // 
+            inpaintCB.Anchor = AnchorStyles.None;
+            inpaintCB.AutoSize = true;
+            inpaintCB.BackColor = Color.White;
+            inpaintCB.Checked = true;
+            inpaintCB.CheckState = CheckState.Checked;
+            inpaintCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inpaintCB.ForeColor = Color.White;
+            inpaintCB.Location = new Point(29, 173);
+            inpaintCB.Name = "inpaintCB";
+            inpaintCB.Size = new Size(15, 14);
+            inpaintCB.TabIndex = 35;
+            inpaintCB.UseVisualStyleBackColor = false;
+            inpaintCB.CheckedChanged += inpaintCB_CheckedChanged;
+            // 
             // percentOvalityCapsTb
             // 
             percentOvalityCapsTb.Anchor = AnchorStyles.None;
             percentOvalityCapsTb.BorderStyle = BorderStyle.None;
-            percentOvalityCapsTb.Location = new Point(349, 66);
+            percentOvalityCapsTb.Location = new Point(349, 70);
             percentOvalityCapsTb.Name = "percentOvalityCapsTb";
             percentOvalityCapsTb.Size = new Size(79, 16);
             percentOvalityCapsTb.TabIndex = 36;
@@ -841,7 +549,7 @@
             // 
             percentInpaintCapsTb.Anchor = AnchorStyles.None;
             percentInpaintCapsTb.BorderStyle = BorderStyle.None;
-            percentInpaintCapsTb.Location = new Point(349, 168);
+            percentInpaintCapsTb.Location = new Point(349, 172);
             percentInpaintCapsTb.Name = "percentInpaintCapsTb";
             percentInpaintCapsTb.Size = new Size(79, 16);
             percentInpaintCapsTb.TabIndex = 38;
@@ -859,77 +567,369 @@
             percentObloyCapsTb.Text = "0";
             percentObloyCapsTb.TextAlign = HorizontalAlignment.Center;
             // 
-            // label59
+            // label44
             // 
-            label59.BackColor = Color.FromArgb(4, 85, 191);
-            label59.BorderStyle = BorderStyle.Fixed3D;
-            label59.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            label59.ForeColor = Color.White;
-            label59.Location = new Point(-2, 730);
-            label59.Name = "label59";
-            label59.Size = new Size(431, 43);
-            label59.TabIndex = 9;
-            label59.Text = "Настройкки аппаратуры и параметров";
-            label59.TextAlign = ContentAlignment.MiddleCenter;
+            label44.BackColor = Color.FromArgb(4, 85, 191);
+            label44.BorderStyle = BorderStyle.Fixed3D;
+            label44.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            label44.ForeColor = Color.White;
+            label44.Location = new Point(-2, 418);
+            label44.Name = "label44";
+            label44.Size = new Size(431, 43);
+            label44.TabIndex = 7;
+            label44.Text = "Результаты работы";
+            label44.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // button1
+            // tableLayoutPanel1
             // 
-            button1.BackColor = Color.FromArgb(66, 133, 244);
-            button1.Dock = DockStyle.Fill;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.Font = new Font("Segoe UI", 36F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button1.ForeColor = Color.White;
-            button1.Location = new Point(3, 3);
-            button1.Name = "button1";
-            button1.Size = new Size(129, 75);
-            button1.TabIndex = 10;
-            button1.Text = "⛭";
-            button1.UseVisualStyleBackColor = false;
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(generalTimeTb, 1, 6);
+            tableLayoutPanel1.Controls.Add(ngCapsCountTb, 1, 3);
+            tableLayoutPanel1.Controls.Add(label35, 0, 0);
+            tableLayoutPanel1.Controls.Add(comboBox1, 1, 0);
+            tableLayoutPanel1.Controls.Add(label36, 0, 1);
+            tableLayoutPanel1.Controls.Add(label37, 0, 2);
+            tableLayoutPanel1.Controls.Add(label38, 0, 3);
+            tableLayoutPanel1.Controls.Add(label39, 0, 4);
+            tableLayoutPanel1.Controls.Add(label41, 0, 5);
+            tableLayoutPanel1.Controls.Add(label42, 0, 6);
+            tableLayoutPanel1.Controls.Add(generslCapsCountTb, 1, 1);
+            tableLayoutPanel1.Controls.Add(okCapsCountTb, 1, 2);
+            tableLayoutPanel1.Controls.Add(percentOkCapsTb, 1, 4);
+            tableLayoutPanel1.Controls.Add(percentNgCapsTb, 1, 5);
+            tableLayoutPanel1.Location = new Point(0, 159);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 7;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
+            tableLayoutPanel1.Size = new Size(429, 248);
+            tableLayoutPanel1.TabIndex = 6;
             // 
-            // button2
+            // generalTimeTb
             // 
-            button2.BackColor = Color.FromArgb(66, 133, 244);
-            button2.Dock = DockStyle.Fill;
-            button2.FlatAppearance.BorderSize = 0;
-            button2.Font = new Font("Segoe UI", 36F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(138, 3);
-            button2.Name = "button2";
-            button2.Size = new Size(129, 75);
-            button2.TabIndex = 11;
-            button2.Text = "🔍";
-            button2.UseVisualStyleBackColor = false;
+            generalTimeTb.Dock = DockStyle.Fill;
+            generalTimeTb.Location = new Point(217, 213);
+            generalTimeTb.Name = "generalTimeTb";
+            generalTimeTb.Size = new Size(209, 23);
+            generalTimeTb.TabIndex = 44;
             // 
-            // button3
+            // ngCapsCountTb
             // 
-            button3.BackColor = Color.FromArgb(66, 133, 244);
-            button3.Dock = DockStyle.Fill;
-            button3.FlatAppearance.BorderSize = 0;
-            button3.Font = new Font("Segoe UI", 36F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            button3.ForeColor = Color.White;
-            button3.Location = new Point(273, 3);
-            button3.Name = "button3";
-            button3.Size = new Size(130, 75);
-            button3.TabIndex = 12;
-            button3.Text = "◯";
-            button3.UseVisualStyleBackColor = false;
+            ngCapsCountTb.Dock = DockStyle.Fill;
+            ngCapsCountTb.Location = new Point(217, 108);
+            ngCapsCountTb.Name = "ngCapsCountTb";
+            ngCapsCountTb.Size = new Size(209, 23);
+            ngCapsCountTb.TabIndex = 43;
             // 
-            // tableLayoutPanel3
+            // label35
             // 
-            tableLayoutPanel3.ColumnCount = 3;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel3.Controls.Add(button3, 2, 0);
-            tableLayoutPanel3.Controls.Add(button2, 1, 0);
-            tableLayoutPanel3.Controls.Add(button1, 0, 0);
-            tableLayoutPanel3.Location = new Point(13, 778);
-            tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 1;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel3.Size = new Size(406, 81);
-            tableLayoutPanel3.TabIndex = 10;
+            label35.AutoSize = true;
+            label35.Dock = DockStyle.Right;
+            label35.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label35.Location = new Point(160, 0);
+            label35.Name = "label35";
+            label35.Size = new Size(51, 35);
+            label35.TabIndex = 0;
+            label35.Text = "Рецепт:";
+            label35.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // comboBox1
+            // 
+            comboBox1.BackColor = Color.LightGray;
+            comboBox1.Dock = DockStyle.Fill;
+            comboBox1.FlatStyle = FlatStyle.Popup;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "Желтые", "Синие", "Золотые", "Белые", "Зеленые", "Оранжевые" });
+            comboBox1.Location = new Point(217, 3);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(209, 23);
+            comboBox1.TabIndex = 38;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            // 
+            // label36
+            // 
+            label36.AutoSize = true;
+            label36.Dock = DockStyle.Right;
+            label36.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label36.Location = new Point(61, 35);
+            label36.Name = "label36";
+            label36.Size = new Size(150, 35);
+            label36.TabIndex = 1;
+            label36.Text = "Общее кол-во крышек:";
+            label36.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // label37
+            // 
+            label37.AutoSize = true;
+            label37.Dock = DockStyle.Right;
+            label37.Location = new Point(143, 70);
+            label37.Name = "label37";
+            label37.Size = new Size(68, 35);
+            label37.TabIndex = 2;
+            label37.Text = "Кол-во ОК:";
+            label37.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // label38
+            // 
+            label38.AutoSize = true;
+            label38.Dock = DockStyle.Right;
+            label38.Location = new Point(116, 105);
+            label38.Name = "label38";
+            label38.Size = new Size(95, 35);
+            label38.TabIndex = 3;
+            label38.Text = "Количество NG:";
+            label38.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // label39
+            // 
+            label39.AutoSize = true;
+            label39.Dock = DockStyle.Right;
+            label39.Location = new Point(134, 140);
+            label39.Name = "label39";
+            label39.Size = new Size(77, 35);
+            label39.TabIndex = 4;
+            label39.Text = "Процент ОК:";
+            label39.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // label41
+            // 
+            label41.AutoSize = true;
+            label41.Dock = DockStyle.Right;
+            label41.Location = new Point(133, 175);
+            label41.Name = "label41";
+            label41.Size = new Size(78, 35);
+            label41.TabIndex = 5;
+            label41.Text = "Процент NG:";
+            label41.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // label42
+            // 
+            label42.AutoSize = true;
+            label42.Dock = DockStyle.Right;
+            label42.Location = new Point(125, 210);
+            label42.Name = "label42";
+            label42.Size = new Size(86, 38);
+            label42.TabIndex = 6;
+            label42.Text = "Общее время:";
+            label42.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // generslCapsCountTb
+            // 
+            generslCapsCountTb.Dock = DockStyle.Fill;
+            generslCapsCountTb.Location = new Point(217, 38);
+            generslCapsCountTb.Name = "generslCapsCountTb";
+            generslCapsCountTb.Size = new Size(209, 23);
+            generslCapsCountTb.TabIndex = 39;
+            // 
+            // okCapsCountTb
+            // 
+            okCapsCountTb.Dock = DockStyle.Fill;
+            okCapsCountTb.Location = new Point(217, 73);
+            okCapsCountTb.Name = "okCapsCountTb";
+            okCapsCountTb.Size = new Size(209, 23);
+            okCapsCountTb.TabIndex = 40;
+            // 
+            // percentOkCapsTb
+            // 
+            percentOkCapsTb.Dock = DockStyle.Fill;
+            percentOkCapsTb.Location = new Point(217, 143);
+            percentOkCapsTb.Name = "percentOkCapsTb";
+            percentOkCapsTb.Size = new Size(209, 23);
+            percentOkCapsTb.TabIndex = 41;
+            // 
+            // percentNgCapsTb
+            // 
+            percentNgCapsTb.Dock = DockStyle.Fill;
+            percentNgCapsTb.Location = new Point(217, 178);
+            percentNgCapsTb.Name = "percentNgCapsTb";
+            percentNgCapsTb.Size = new Size(209, 23);
+            percentNgCapsTb.TabIndex = 42;
+            // 
+            // label34
+            // 
+            label34.BackColor = Color.FromArgb(4, 85, 191);
+            label34.BorderStyle = BorderStyle.Fixed3D;
+            label34.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            label34.ForeColor = Color.White;
+            label34.Location = new Point(-2, 116);
+            label34.Name = "label34";
+            label34.Size = new Size(431, 43);
+            label34.TabIndex = 5;
+            label34.Text = "Общая информация";
+            label34.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // recognizeButton
+            // 
+            recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
+            recognizeButton.FlatAppearance.BorderSize = 0;
+            recognizeButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            recognizeButton.ForeColor = Color.White;
+            recognizeButton.Location = new Point(192, 53);
+            recognizeButton.Name = "recognizeButton";
+            recognizeButton.Size = new Size(99, 51);
+            recognizeButton.TabIndex = 4;
+            recognizeButton.Text = "Начать анализ";
+            recognizeButton.UseVisualStyleBackColor = false;
+            recognizeButton.Click += recognizeButton_Click;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(comboBox2);
+            groupBox1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox1.ForeColor = Color.FromArgb(4, 85, 191);
+            groupBox1.Location = new Point(297, 44);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(127, 60);
+            groupBox1.TabIndex = 1;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Что выводить";
+            // 
+            // comboBox2
+            // 
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Items.AddRange(new object[] { "Все", "Хорошие", "Плохие" });
+            comboBox2.Location = new Point(10, 24);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new Size(111, 25);
+            comboBox2.TabIndex = 0;
+            // 
+            // startStreamButton
+            // 
+            startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
+            startStreamButton.FlatAppearance.BorderSize = 0;
+            startStreamButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            startStreamButton.ForeColor = Color.White;
+            startStreamButton.Location = new Point(97, 53);
+            startStreamButton.Name = "startStreamButton";
+            startStreamButton.Size = new Size(89, 51);
+            startStreamButton.TabIndex = 2;
+            startStreamButton.Text = "Получить";
+            startStreamButton.UseVisualStyleBackColor = false;
+            startStreamButton.Click += startStreamButton_Click;
+            // 
+            // label2
+            // 
+            label2.BackColor = Color.FromArgb(4, 85, 191);
+            label2.BorderStyle = BorderStyle.Fixed3D;
+            label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            label2.ForeColor = Color.White;
+            label2.Location = new Point(-2, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(431, 43);
+            label2.TabIndex = 0;
+            label2.Text = "Получение изображения и анализ";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // loadImageButton
+            // 
+            loadImageButton.BackColor = Color.FromArgb(66, 133, 244);
+            loadImageButton.FlatAppearance.BorderSize = 0;
+            loadImageButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            loadImageButton.ForeColor = Color.White;
+            loadImageButton.Location = new Point(3, 54);
+            loadImageButton.Name = "loadImageButton";
+            loadImageButton.Size = new Size(88, 50);
+            loadImageButton.TabIndex = 1;
+            loadImageButton.Text = "Загрузить";
+            loadImageButton.UseVisualStyleBackColor = false;
+            loadImageButton.Click += loadImageButton_Click;
+            // 
+            // imagesGroup
+            // 
+            imagesGroup.BackColor = Color.White;
+            imagesGroup.Controls.Add(originPb);
+            imagesGroup.FlatStyle = FlatStyle.Flat;
+            imagesGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            imagesGroup.ForeColor = Color.FromArgb(4, 85, 191);
+            imagesGroup.Location = new Point(3, 135);
+            imagesGroup.Name = "imagesGroup";
+            imagesGroup.Size = new Size(1297, 880);
+            imagesGroup.TabIndex = 0;
+            imagesGroup.TabStop = false;
+            imagesGroup.Text = "Камера";
+            // 
+            // originPb
+            // 
+            originPb.Location = new Point(10, 24);
+            originPb.Name = "originPb";
+            originPb.Size = new Size(1281, 847);
+            originPb.SizeMode = PictureBoxSizeMode.Zoom;
+            originPb.TabIndex = 0;
+            originPb.TabStop = false;
+            // 
+            // panel2
+            // 
+            panel2.BorderStyle = BorderStyle.Fixed3D;
+            panel2.Controls.Add(cameraStatusLabel);
+            panel2.Controls.Add(label16);
+            panel2.Controls.Add(label15);
+            panel2.Controls.Add(camStatus);
+            panel2.Location = new Point(3, 3);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(1297, 126);
+            panel2.TabIndex = 9;
+            // 
+            // cameraStatusLabel
+            // 
+            cameraStatusLabel.AutoSize = true;
+            cameraStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            cameraStatusLabel.ForeColor = Color.Black;
+            cameraStatusLabel.Location = new Point(147, 29);
+            cameraStatusLabel.Name = "cameraStatusLabel";
+            cameraStatusLabel.Size = new Size(71, 13);
+            cameraStatusLabel.TabIndex = 3;
+            cameraStatusLabel.Text = "Не запущен";
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Font = new Font("Segoe UI", 8.25F);
+            label16.ForeColor = Color.Black;
+            label16.Location = new Point(17, 28);
+            label16.Name = "label16";
+            label16.Size = new Size(74, 13);
+            label16.TabIndex = 1;
+            label16.Text = "Видеопоток:";
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Font = new Font("Segoe UI", 8.25F);
+            label15.ForeColor = Color.Black;
+            label15.Location = new Point(17, 61);
+            label15.Name = "label15";
+            label15.Size = new Size(87, 13);
+            label15.TabIndex = 0;
+            label15.Text = "Статус камеры:";
+            // 
+            // camStatus
+            // 
+            camStatus.AutoSize = true;
+            camStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            camStatus.ForeColor = Color.Black;
+            camStatus.Location = new Point(146, 61);
+            camStatus.Name = "camStatus";
+            camStatus.Size = new Size(94, 13);
+            camStatus.TabIndex = 2;
+            camStatus.Text = "Не подключена";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BorderStyle = BorderStyle.Fixed3D;
+            pictureBox1.Image = Properties.Resources.лого;
+            pictureBox1.Location = new Point(1306, 3);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(431, 126);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 8;
+            pictureBox1.TabStop = false;
             // 
             // TestForm
             // 
@@ -945,18 +945,18 @@
             Text = "CapDefect Detector";
             FormClosing += Form2_FormClosing;
             mainPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            panel3.ResumeLayout(false);
+            tableLayoutPanel3.ResumeLayout(false);
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            groupBox1.ResumeLayout(false);
             imagesGroup.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)originPb).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
-            panel3.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
-            tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
-            tableLayoutPanel2.ResumeLayout(false);
-            tableLayoutPanel2.PerformLayout();
-            tableLayoutPanel3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
 
         }
@@ -1019,14 +1019,14 @@
         private Label label56;
         private Label label57;
         private Label label58;
-        private Button button1;
+        private Button hardwareSettingsFormBt;
         private Label label59;
         private TextBox percentOvalityCapsTb;
         private TextBox percentInclusionCapsTb;
         private TextBox percentInpaintCapsTb;
         private TextBox percentObloyCapsTb;
         private TableLayoutPanel tableLayoutPanel3;
-        private Button button3;
-        private Button button2;
+        private Button contourSettingsFormBt;
+        private Button defectSettingsFormBt;
     }
 }
