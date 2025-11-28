@@ -183,6 +183,10 @@ namespace KrishkiForms
         private Mat _grayForUnderfill;
         private Mat _frameToDisplay;
 
+        //Изображение для тестирования параметров
+        private Mat _imageForTest;
+        private Mat _imageForTestForDisplay;
+
         // Пути и файлы
         private string settingsFilePath;
         private string ovalityDefectPath;
@@ -316,6 +320,8 @@ namespace KrishkiForms
             _imageForUnderfill = new Mat();
             _grayForUnderfill = new Mat();
             _frameToDisplay = new Mat();
+            _imageForTest = new Mat();
+            _imageForTestForDisplay = new Mat();
         }
 
         private void InitializeMorphologicalElements()
@@ -1428,7 +1434,7 @@ namespace KrishkiForms
 
             token.ThrowIfCancellationRequested();
             bool isOval = axisRatio < ovalityThreshold;
-            
+
             Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
             Cv2.Ellipse(_frameToDisplay, ellipse, color, 2);
             Cv2.PutText(_frameToDisplay, $"Ratio: {axisRatio:F5}", new Point(10, 30),
@@ -3502,5 +3508,166 @@ namespace KrishkiForms
         {
 
         }
+
+        private void loadImageTestTb_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp";
+                ofd.Title = "Выберите изображение";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Загружаем Mat
+                        _imageForTest = Cv2.ImRead(ofd.FileName, ImreadModes.Color);
+
+                        if (_imageForTest.Empty())
+                        {
+                            MessageBox.Show("Не удалось загрузить изображение.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        // Показываем в PictureBox
+                        using (var bitmap = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(_imageForTest))
+                        {
+                            testingPb.Image?.Dispose();  // чистим старое изображение
+                            testingPb.Image = (Bitmap)bitmap.Clone();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка при загрузке изображения: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        private void testDefectParamBt_Click(object sender, EventArgs e)
+        {
+            ApplyRecognitionParameters();
+            capsColor = GetSelectedCapValue();
+            if (_imageForTest == null || _imageForTest.Empty())
+            {
+                MessageBox.Show("Сначала загрузите изображение для тестирования!",
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                // Исходные копии
+                Mat frameBase = _imageForTest.Clone();
+                Mat grayBase = new Mat();
+
+                // Базовая обработка
+                Cv2.CvtColor(frameBase, grayBase, ColorConversionCodes.BGR2GRAY);
+                Cv2.GaussianBlur(grayBase, grayBase, new OpenCvSharp.Size(5, 5), 0);
+
+                // Контур крышки
+                Point[] contour = GetCapContour(grayBase, frameBase);
+
+                if (contour == null || contour.Length == 0)
+                {
+                    MessageBox.Show("Контур крышки не найден.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Для отображения на экране
+                Mat finalFrame = frameBase.Clone();
+                Cv2.DrawContours(finalFrame, new[] { contour }, -1, new Scalar(0, 255, 0), 2);
+
+
+                // === Независимые копии для каждого дефекта ===
+                Mat frameO = null, frameI = null, frameP = null, frameOb = null;
+                Mat grayO = null, grayI = null, grayP = null, grayOb = null;
+
+                if (ovalityCB.Checked)
+                {
+                    frameO = frameBase.Clone();
+                    grayO = grayBase.Clone();
+                }
+
+                if (inclusionCB.Checked)
+                {
+                    frameI = frameBase.Clone();
+                    grayI = grayBase.Clone();
+                }
+
+                if (inpaintCB.Checked)
+                {
+                    frameP = frameBase.Clone();
+                    grayP = grayBase.Clone();
+                }
+
+                if (obloyCB.Checked)
+                {
+                    frameOb = frameBase.Clone();
+                    grayOb = grayBase.Clone();
+                }
+
+
+                // === Запуск проверок ===
+                CancellationToken fake = CancellationToken.None;
+
+                bool oval = false, incl = false, paint = false, obloy = false;
+
+                if (ovalityCB.Checked)
+                    oval = CheckOvality(grayO, frameO, fake, contour);
+
+                if (inclusionCB.Checked)
+                    incl = CheckForInclusions(grayI, frameI, fake, contour);
+
+                if (inpaintCB.Checked)
+                    paint = CheckForPaintDefects(grayP, frameP, fake, contour);
+
+                if (obloyCB.Checked)
+                    obloy = CheckForObloyDefects(grayOb, frameOb, fake, contour);
+
+
+                // === Объединяем результаты (если хочешь — можно рисовать только на независимых кадрах) ===
+                if (oval && frameO != null)
+                    Cv2.PutText(finalFrame, "OVALITY", new Point(20, 40), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
+
+                if (incl && frameI != null)
+                    Cv2.PutText(finalFrame, "INCLUSIONS", new Point(20, 80), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
+
+                if (paint && frameP != null)
+                    Cv2.PutText(finalFrame, "PAINT DEFECT", new Point(20, 120), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
+
+                if (obloy && frameOb != null)
+                    Cv2.PutText(finalFrame, "OBLOY", new Point(20, 160), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
+
+
+                // === Показ результата в PictureBox ===
+                using (var bmp = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(finalFrame))
+                {
+                    testingResultPb.Image?.Dispose();
+                    testingResultPb.Image = (Bitmap)bmp.Clone();
+                }
+
+                // === Очистка ===
+                frameO?.Dispose();
+                frameI?.Dispose();
+                frameP?.Dispose();
+                frameOb?.Dispose();
+
+                grayO?.Dispose();
+                grayI?.Dispose();
+                grayP?.Dispose();
+                grayOb?.Dispose();
+
+                frameBase.Dispose();
+                grayBase.Dispose();
+                finalFrame.Dispose();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка во время тестирования: " + ex.Message,
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }
