@@ -95,7 +95,15 @@ namespace KrishkiForms
         private int paintDefectCount = 0;
         private int obloyDefectCount = 0;
         private int underfillCount = 0;
-        private int blowTriggerCount = 0;
+        private float percentOvalityCaps = 0;
+        private float percentInclusionCaps = 0;
+        private float percentInpaintCaps = 0;
+        private float percentObloyCaps = 0;
+        private float generalCapsCount = 0;
+        private float okCapsCount = 0;
+        private float ngCapsCount = 0;
+        private float percentOkCaps = 0;
+        private float percentNgCaps = 0;
         private int ellipseReject = 0;
         private int sizeReject = 0;
         private int defectReject = 0;
@@ -173,6 +181,7 @@ namespace KrishkiForms
         private Mat _grayForObloyDefects;
         private Mat _imageForUnderfill;
         private Mat _grayForUnderfill;
+        private Mat _frameToDisplay;
 
         // Пути и файлы
         private string settingsFilePath;
@@ -198,6 +207,16 @@ namespace KrishkiForms
         private int _writeZeroFailCount = 0;
         private int _writeOneFailCount = 0;
         private int currentFrameNumber = 0;
+
+        //Режим вывода изображения: Все, хорошие, плохие
+        private enum OutputMode
+        {
+            All,
+            Good,
+            Bad
+        }
+        private OutputMode _outputMode = OutputMode.All;
+
         #endregion
 
         #region Конструктор и инициализация
@@ -296,6 +315,7 @@ namespace KrishkiForms
             _grayForObloyDefects = new Mat();
             _imageForUnderfill = new Mat();
             _grayForUnderfill = new Mat();
+            _frameToDisplay = new Mat();
         }
 
         private void InitializeMorphologicalElements()
@@ -558,8 +578,6 @@ namespace KrishkiForms
                 isStreamCam = false;
                 originPb.Image?.Dispose();
                 originPb.Image = null;
-                inclusionPb.Image?.Dispose();
-                inclusionPb.Image = null;
 
                 imageFiles = [];
                 isProcessingFromFolder = false;
@@ -1134,33 +1152,33 @@ namespace KrishkiForms
 
         private void ovalityCB_CheckedChanged(object sender, EventArgs e)
         {
-            ovalityDefectPanel.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
+            /*ovalityDefectPanel.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             ovalityDef.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            timeOvality.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
+            timeOvality.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);*/
         }
 
         private void inclusionCB_CheckedChanged(object sender, EventArgs e)
         {
-            inclusionDefectPanel.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
+            /*inclusionDefectPanel.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             inclusionDef.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            inclusionTime.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
+            inclusionTime.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);*/
         }
 
         private void inpaintCB_CheckedChanged(object sender, EventArgs e)
         {
-            inpaintDefectPanel.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
+            /*inpaintDefectPanel.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             InpaintDef.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            inpaintTime.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
+            inpaintTime.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);*/
         }
 
         private void obloyCB_CheckedChanged(object sender, EventArgs e)
         {
-            obloyDefectPanel.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
+            /*obloyDefectPanel.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
             obloyDef.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            obloyTime.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
+            obloyTime.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);*/
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void receptCapsCmb_SelectedIndexChanged(object sender, EventArgs e)
         {
             GetSelectedCapValue();
 
@@ -1178,81 +1196,24 @@ namespace KrishkiForms
             }
         }
 
-        #region Обработчик выбора типа дефекта
-        private void defectTypeComboBox_SelectedIndexChanged_1(object sender, EventArgs e)
+        private void outputImageCmB_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Сначала скрываем все панели
-            HideAllDefectParamPanels();
-
-            // Показываем только выбранную панель
-            switch (defectTypeComboBox.SelectedItem?.ToString())
+            switch (outputImageCmB.SelectedIndex)
             {
-                case "Овальность":
-                    ShowOvalityPanel();
+                case 0:
+                    _outputMode = OutputMode.All;   // Все
                     break;
-                case "Облой":
-                    ShowObloyPanel();
+                case 1:
+                    _outputMode = OutputMode.Good;  // Хорошие
                     break;
-                case "Непрокрас":
-                    ShowInpaintPanel();
-                    break;
-                case "Вкрапления":
-                    ShowInclusionPanel();
-                    break;
-                case "Недолив":
-                    //ShowNedolivPanel();
+                case 2:
+                    _outputMode = OutputMode.Bad;   // Плохие
                     break;
                 default:
-                    // Если ничего не выбрано или неизвестный вариант, скрываем все
-                    HideAllDefectParamPanels();
+                    _outputMode = OutputMode.All;
                     break;
             }
         }
-
-        private void HideAllDefectParamPanels()
-        {
-            ovalityParamsPanel.Visible = false;
-            obloyDefectParamPanel.Visible = false;
-            inpaintDefectParamPanel.Visible = false;
-            inclusionParamDefectPanel.Visible = false;
-            //nedolivDefectParamPanel.Visible = false;
-        }
-
-        private void ShowOvalityPanel()
-        {
-            ovalityParamsPanel.Visible = true;
-            ovalityParamsPanel.BringToFront(); // Перемещаем на передний план
-                                               //ovalityParamsPanel.Dock = DockStyle.Fill; // Или другой нужный вам layout
-        }
-
-        private void ShowObloyPanel()
-        {
-            obloyDefectParamPanel.Visible = true;
-            obloyDefectParamPanel.BringToFront();
-            //obloyDefectParamPanel.Dock = DockStyle.Fill;
-        }
-
-        private void ShowInpaintPanel()
-        {
-            inpaintDefectParamPanel.Visible = true;
-            inpaintDefectParamPanel.BringToFront();
-            //inpaintDefectParamPanel.Dock = DockStyle.Fill;
-        }
-
-        private void ShowInclusionPanel()
-        {
-            inclusionParamDefectPanel.Visible = true;
-            inclusionParamDefectPanel.BringToFront();
-            //inclusionParamDefectPanel.Dock = DockStyle.Fill;
-        }
-
-        /*private void ShowNedolivPanel()
-        {
-            nedol.Visible = true;
-            nedolivDefectParamPanel.BringToFront();
-            nedolivDefectParamPanel.Dock = DockStyle.Fill;
-        }*/
-        #endregion
 
         #endregion
 
@@ -1460,8 +1421,6 @@ namespace KrishkiForms
             //largestContourOvality = GetCapContour(gray, image);
             token.ThrowIfCancellationRequested();
 
-            Cv2.DrawContours(image, new[] { largestContourOvality }, -1, new Scalar(255, 0, 0), 2);
-
             RotatedRect ellipse = Cv2.FitEllipse(largestContourOvality);
             majorAxis = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
             minorAxis = Math.Min(ellipse.Size.Width, ellipse.Size.Height);
@@ -1469,14 +1428,11 @@ namespace KrishkiForms
 
             token.ThrowIfCancellationRequested();
             bool isOval = axisRatio < ovalityThreshold;
-
-            using (Mat resultImage = image.Clone())
-            {
-                Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
-                Cv2.Ellipse(image, ellipse, color, 2);
-                Cv2.PutText(image, $"Ratio: {axisRatio:F5}", new Point(10, 30),
+            
+            Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
+            Cv2.Ellipse(_frameToDisplay, ellipse, color, 2);
+            Cv2.PutText(_frameToDisplay, $"Ratio: {axisRatio:F5}", new Point(10, 30),
                            HersheyFonts.HersheySimplex, 1, color, 2);
-            }
             return isOval;
         }
 
@@ -1491,7 +1447,7 @@ namespace KrishkiForms
             Point2f ellipseCenter = ellipse.Center;
             float ellipseRadius = (float)(0.7 * (ellipse.Size.Width + ellipse.Size.Height) / 4.0);
 
-            Cv2.Circle(image, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(0, 255, 0), 2);
+            Cv2.Circle(_frameToDisplay, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(0, 255, 0), 2);
 
             using (Mat mask = Mat.Zeros(gray.Size(), MatType.CV_8UC1))
             using (Mat croppedRegion = new Mat())
@@ -1526,7 +1482,7 @@ namespace KrishkiForms
                         if (area > minAreaInclusion && area < maxAreaInclusion && IsCircularContour(contour))
                         {
                             Rect bbox = Cv2.BoundingRect(contour);
-                            Cv2.Rectangle(image, bbox.TopLeft, bbox.BottomRight,
+                            Cv2.Rectangle(_frameToDisplay, bbox.TopLeft, bbox.BottomRight,
                                          new Scalar(0, 0, 255), 2);
                             inclusionsFound = true;
                         }
@@ -1553,8 +1509,6 @@ namespace KrishkiForms
                 {
                     return false;
                 }
-
-                Cv2.Polylines(image, new[] { capContour }, true, new Scalar(255, 0, 0), 2);
 
                 using (Mat capMask = Mat.Zeros(image.Size(), MatType.CV_8UC1))
                 {
@@ -1617,11 +1571,11 @@ namespace KrishkiForms
 
                                     if (whiteDefects.Count > 0)
                                     {
-                                        Cv2.DrawContours(image, whiteDefects, -1, new Scalar(0, 0, 255), 2);
+                                        Cv2.DrawContours(_frameToDisplay, whiteDefects, -1, new Scalar(0, 0, 255), 2);
                                         foreach (var contour in whiteDefects)
                                         {
                                             Rect boundingBox = Cv2.BoundingRect(contour);
-                                            Cv2.Rectangle(image, boundingBox, new Scalar(0, 255, 255), 2);
+                                            Cv2.Rectangle(_frameToDisplay, boundingBox, new Scalar(0, 255, 255), 2);
                                         }
                                     }
 
@@ -1682,12 +1636,13 @@ namespace KrishkiForms
             Cv2.FindContours(blurChannel_1, out obloyContours, out hierarchyObloy,
                              RetrievalModes.External, ContourApproximationModes.ApproxNone);
 
-            if (obloyContours.Length > 0)
+            int pixCount = Cv2.CountNonZero(blurChannel_1);
+
+            if (pixCount > minAreaObloy)
             {
-                Cv2.DrawContours(image, obloyContours, -1, new Scalar(0, 0, 255), 2);
+                Cv2.DrawContours(_frameToDisplay, obloyContours, -1, new Scalar(0, 0, 255), 2);
             }
 
-            int pixCount = Cv2.CountNonZero(blurChannel_1);
             return pixCount > minAreaObloy;
         }
 
@@ -2172,7 +2127,7 @@ namespace KrishkiForms
         private byte GetSelectedCapValue()
         {
             capsAreWhite = false;
-            string selected = comboBox1.SelectedItem?.ToString();
+            string selected = receptCapsCmB.SelectedItem?.ToString();
             switch (selected)
             {
                 case "Желтые":
@@ -2194,7 +2149,7 @@ namespace KrishkiForms
                     morph_size_2 = 1;  //11
                     if (cam != null)
                     {
-                        cam.Saturation = 255; 
+                        cam.Saturation = 255;
                         cam.SetSaturation();
                     }
                     isGreenColor = false;
@@ -2458,40 +2413,11 @@ namespace KrishkiForms
                     currentFrameNumber++;
                 }
 #endif
-
-                #region Сохранение всех фото крыщек
-                /*// ======== СОХРАНЕНИЕ ИЗОБРАЖЕНИЙ =========
-                try
-                {
-                    string saveDir = @"C:\Users\Kvantron\source\repos\Kvantron.Krishki\TabletkiForms\дефектные крышки\все крышки";
-
-                    if (!Directory.Exists(saveDir))
-                        Directory.CreateDirectory(saveDir);
-
-                    string savePath = Path.Combine(saveDir, $"{number_drop_cap}.bmp");
-
-                    img.SaveImage(savePath);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Ошибка сохранения изображения: {ex.Message}");
-                }
-                // ==========================================*/
-                #endregion
-
+                #region Вывод изображения в originPb
                 // Если ROI не выбран, показываем полное изображение с камеры
-                if (!LocalSettings.Instance.UseVConcat)
+                if (!isProcessing)
                 {
-                    img1 = img.Clone();
-                    if (isRoiProduce == true && isROISelected == true)
-                    {
-                        img1 = new Mat(img, roi);
-                    }
-                    UpdatePictureBox(originPb, img1);
-                }
-                else
-                {
-                    if (!isFirstImageCam1)
+                    if (!LocalSettings.Instance.UseVConcat)
                     {
                         img1 = img.Clone();
                         if (isRoiProduce == true && isROISelected == true)
@@ -2499,18 +2425,31 @@ namespace KrishkiForms
                             img1 = new Mat(img, roi);
                         }
                         UpdatePictureBox(originPb, img1);
-                        isFirstImageCam1 = true;
                     }
                     else
                     {
-                        Cv2.VConcat(img1, img.Clone(), img1);
-                        if (isRoiProduce == true && isROISelected == true)
+                        if (!isFirstImageCam1)
                         {
-                            img1 = new Mat(img, roi);
+                            img1 = img.Clone();
+                            if (isRoiProduce == true && isROISelected == true)
+                            {
+                                img1 = new Mat(img, roi);
+                            }
+                            UpdatePictureBox(originPb, img1);
+                            isFirstImageCam1 = true;
                         }
-                        UpdatePictureBox(originPb, img1);
+                        else
+                        {
+                            Cv2.VConcat(img1, img.Clone(), img1);
+                            if (isRoiProduce == true && isROISelected == true)
+                            {
+                                img1 = new Mat(img, roi);
+                            }
+                            UpdatePictureBox(originPb, img1);
+                        }
                     }
                 }
+                #endregion
             }
         }
 
@@ -2619,7 +2558,7 @@ namespace KrishkiForms
                         try
                         {
                             frameToProcess = new Mat(imageFiles[currentImageIndex]);
-                            UpdatePictureBox(originPb, frameToProcess);
+                            //UpdatePictureBox(originPb, frameToProcess);
                             currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
                         }
                         catch (Exception ex)
@@ -2640,6 +2579,17 @@ namespace KrishkiForms
                         Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
 
                         Point[] capContour = GetCapContour(gray, frameToProcess);
+
+                        frameToProcess.CopyTo(_frameToDisplay);
+
+                        generalCapsCount++;
+
+                        UpdateTextBox(generalCapsCountTb, generalCapsCount, 0);
+
+                        if (capContour != null && capContour.Length > 0)
+                        {
+                            Cv2.DrawContours(_frameToDisplay, new[] { capContour }, -1, new Scalar(255, 0, 0), 2);
+                        }
 
                         if (ovalityCB.Checked)
                         {
@@ -2706,34 +2656,36 @@ namespace KrishkiForms
 
                                 if (anyDefect)
                                 {
-                                    BeginInvoke((Action)(() =>
-                                    {
-                                        blowTriggerCount++;
-                                        ngCapsCountTb.Text = blowTriggerCount.ToString();
-                                    }));
-                                    //NumberDropCapTb.Text = currentFrameNumber.ToString();
+                                    ngCapsCount++;
+                                    percentNgCaps = generalCapsCount > 0 ? ngCapsCount / generalCapsCount * 100 : 0;
+                                    UpdateTextBox(ngCapsCountTb, ngCapsCount, 0);
+                                    UpdateTextBox(percentNgCapsTb, percentNgCaps);
                                 }
+                                else
+                                {
+                                    okCapsCount++;
+                                    percentOkCaps = generalCapsCount > 0 ? okCapsCount / generalCapsCount * 100 : 0;
+                                    UpdateTextBox(okCapsCountTb, okCapsCount, 0);
+                                    UpdateTextBox(percentOkCapsTb, percentOkCaps);
+                                }
+
                                 PLCData.QualityStatus qualityStatus = anyDefect
-                                    ? PLCData.QualityStatus.Bad
-                                    : PLCData.QualityStatus.Good;
+                                            ? PLCData.QualityStatus.Bad
+                                            : PLCData.QualityStatus.Good;
                                 _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
 
-                                stopwatch.Stop();
-                                UpdateTextBox(generalTime, stopwatch.ElapsedMilliseconds);
+                                bool showFrame =
+                                    _outputMode == OutputMode.All ||
+                                    (_outputMode == OutputMode.Good && !anyDefect) ||
+                                    (_outputMode == OutputMode.Bad && anyDefect);
 
-                                #region Логирование времени обработки
-                                // 🟢 лог времени обработки кадра
-                                /*try
+                                if (showFrame)
                                 {
-                                    string processEntry = $"{DateTime.Now:HH:mm:ss.fff} | ProcessTime: {stopwatch.ElapsedMilliseconds} ms";
-                                    File.AppendAllText(_processTimeLogPath, processEntry + Environment.NewLine);
+                                    BeginInvoke(() => UpdatePictureBox(originPb, _frameToDisplay));
                                 }
-                                catch (Exception logEx)
-                                {
-                                    Debug.WriteLine($"Ошибка при записи ProcessTime лога: {logEx.Message}");
-                                }*/
-                                // 🔚 конец добавленного блока
-                                #endregion
+
+                                stopwatch.Stop();
+                                UpdateTextBox(generalTimeTb, stopwatch.ElapsedMilliseconds, 0);
                             }
                             catch (OperationCanceledException)
                             {
@@ -2835,7 +2787,9 @@ namespace KrishkiForms
             if (isOval)
             {
                 ovalityCount++;
+                percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
                 UpdateTextBox(ovalityDef, ovalityCount);
+                UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
 
                 string fileName = $"{currentFrameNumber}_ovality_{ovalityCount}.jpg";
                 string fullPath = Path.Combine(ovalityDefectPath, fileName);
@@ -2844,8 +2798,7 @@ namespace KrishkiForms
             }
 
             stopwatch.Stop();
-            UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds);
-            UpdatePictureBox(ovalityPb, image);
+            UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds, 0);
 
             return isOval;
         }
@@ -2861,7 +2814,9 @@ namespace KrishkiForms
             if (hasInclusions)
             {
                 inclusionCount++;
+                percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
                 UpdateTextBox(inclusionDef, inclusionCount);
+                UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
 
                 string fileName = $"{currentFrameNumber}_inclusion_{inclusionCount}.jpg";
                 string fullPath = Path.Combine(inclusionDefectPath, fileName);
@@ -2870,8 +2825,8 @@ namespace KrishkiForms
             }
 
             stopwatch.Stop();
-            UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds);
-            UpdatePictureBox(inclusionPb, image);
+            UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds, 0);
+            //UpdatePictureBox(inclusionPb, image);
 
             return hasInclusions;
         }
@@ -2887,7 +2842,9 @@ namespace KrishkiForms
             if (hasPaintDefects)
             {
                 paintDefectCount++;
+                percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
                 UpdateTextBox(InpaintDef, paintDefectCount);
+                UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
 
                 string fileName = $"{currentFrameNumber}_paint_{paintDefectCount}.jpg";
                 string fullPath = Path.Combine(paintDefectPath, fileName);
@@ -2896,8 +2853,8 @@ namespace KrishkiForms
             }
 
             stopwatch.Stop();
-            UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds);
-            UpdatePictureBox(inpaintPb, image);
+            UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
+            //UpdatePictureBox(inpaintPb, image);
 
             return hasPaintDefects;
         }
@@ -2913,7 +2870,9 @@ namespace KrishkiForms
             if (hasObloyDefects)
             {
                 obloyDefectCount++;
+                percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
                 UpdateTextBox(obloyDef, obloyDefectCount);
+                UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
 
                 string fileName = $"{currentFrameNumber}_obloy_{obloyDefectCount}.jpg";
                 string fullPath = Path.Combine(obloyDefectPath, fileName);
@@ -2922,8 +2881,8 @@ namespace KrishkiForms
             }
 
             stopwatch.Stop();
-            UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds);
-            UpdatePictureBox(obloyPb, image);
+            UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds, 0);
+            //UpdatePictureBox(obloyPb, image);
 
             return hasObloyDefects;
         }
@@ -3138,20 +3097,21 @@ namespace KrishkiForms
             }
         }
 
-        private void UpdateTextBox(System.Windows.Forms.TextBox textBox, float value)
+        private void UpdateTextBox(System.Windows.Forms.TextBox textBox, float value, int decimals = 1)
         {
             if (textBox.InvokeRequired)
             {
                 textBox.Invoke(new Action(() =>
                 {
-                    textBox.Text = value.ToString();
+                    textBox.Text = value.ToString($"F{decimals}");
                 }));
             }
             else
             {
-                textBox.Text = value.ToString();
+                textBox.Text = value.ToString($"F{decimals}");
             }
         }
+
 
         private void UpdateTextBox(System.Windows.Forms.TextBox textBox, int value)
         {
