@@ -3390,7 +3390,7 @@ namespace KrishkiForms
                         else
                         {
                             // Для зелёных крышек — бинаризация по синему каналу
-                            data[i] = (data[i] < GREEN_THRESHOLD) ? (byte)0x00 : (byte)0xFF;
+                            data[i] = (data[i+1] < GREEN_THRESHOLD) ? (byte)0x00 : (byte)0xFF;
                         }
                     }
                 }
