@@ -110,15 +110,16 @@
             savePrSettings = new Button();
             loadPrSettings = new Button();
             tabPage2 = new TabPage();
+            groupBox9 = new GroupBox();
+            label18 = new Label();
             openCurrentFolderBtn = new Button();
+            cycleUpDown = new NumericUpDown();
             chooseBaseFolderBtn = new Button();
+            label19 = new Label();
             currentFolderTb = new TextBox();
+            okCapsSaveCb = new CheckBox();
             label20 = new Label();
             ngCapsSaveCb = new CheckBox();
-            okCapsSaveCb = new CheckBox();
-            label19 = new Label();
-            cycleUpDown = new NumericUpDown();
-            label18 = new Label();
             tabPage4 = new TabPage();
             panel3 = new Panel();
             tableLayoutPanel2 = new TableLayoutPanel();
@@ -178,7 +179,6 @@
             label15 = new Label();
             camStatus = new Label();
             pictureBox1 = new PictureBox();
-            groupBox9 = new GroupBox();
             mainPanel.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage3.SuspendLayout();
@@ -208,6 +208,7 @@
             tabPrNetworkSettings.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             tabPage2.SuspendLayout();
+            groupBox9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)cycleUpDown).BeginInit();
             panel3.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -217,7 +218,6 @@
             ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            groupBox9.SuspendLayout();
             SuspendLayout();
             // 
             // mainPanel
@@ -438,7 +438,7 @@
             loadDefectSettings.TabIndex = 12;
             loadDefectSettings.Text = "Загрузить настройки";
             loadDefectSettings.UseVisualStyleBackColor = false;
-            loadDefectSettings.Click += saveDefectSettings_Click;
+            loadDefectSettings.Click += loadDefectSettings_Click;
             // 
             // saveDefectSettings
             // 
@@ -453,7 +453,7 @@
             saveDefectSettings.TabIndex = 14;
             saveDefectSettings.Text = "Сохранить";
             saveDefectSettings.UseVisualStyleBackColor = false;
-            saveDefectSettings.Click += loadDefectSettings_Click;
+            saveDefectSettings.Click += saveDefectSettings_Click;
             // 
             // groupBox3
             // 
@@ -1275,6 +1275,37 @@
             tabPage2.Text = "Настройки сохранения";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(label18);
+            groupBox9.Controls.Add(openCurrentFolderBtn);
+            groupBox9.Controls.Add(cycleUpDown);
+            groupBox9.Controls.Add(chooseBaseFolderBtn);
+            groupBox9.Controls.Add(label19);
+            groupBox9.Controls.Add(currentFolderTb);
+            groupBox9.Controls.Add(okCapsSaveCb);
+            groupBox9.Controls.Add(label20);
+            groupBox9.Controls.Add(ngCapsSaveCb);
+            groupBox9.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox9.ForeColor = Color.FromArgb(4, 85, 191);
+            groupBox9.Location = new Point(23, 22);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new Size(545, 197);
+            groupBox9.TabIndex = 19;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Настройки для сохранения";
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label18.ForeColor = Color.Black;
+            label18.Location = new Point(6, 41);
+            label18.Name = "label18";
+            label18.Size = new Size(179, 17);
+            label18.TabIndex = 10;
+            label18.Text = "Цикл создания новой папки:";
+            // 
             // openCurrentFolderBtn
             // 
             openCurrentFolderBtn.BackColor = Color.FromArgb(66, 133, 244);
@@ -1288,6 +1319,18 @@
             openCurrentFolderBtn.Text = "📂";
             openCurrentFolderBtn.UseVisualStyleBackColor = false;
             openCurrentFolderBtn.Click += openCurrentFolderBtn_Click;
+            // 
+            // cycleUpDown
+            // 
+            cycleUpDown.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            cycleUpDown.Location = new Point(201, 39);
+            cycleUpDown.Maximum = new decimal(new int[] { 12, 0, 0, 0 });
+            cycleUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            cycleUpDown.Name = "cycleUpDown";
+            cycleUpDown.Size = new Size(168, 25);
+            cycleUpDown.TabIndex = 11;
+            cycleUpDown.Value = new decimal(new int[] { 6, 0, 0, 0 });
+            cycleUpDown.ValueChanged += cycleUpDown_ValueChanged;
             // 
             // chooseBaseFolderBtn
             // 
@@ -1303,6 +1346,17 @@
             chooseBaseFolderBtn.UseVisualStyleBackColor = false;
             chooseBaseFolderBtn.Click += chooseBaseFolderBtn_Click;
             // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label19.ForeColor = Color.Black;
+            label19.Location = new Point(74, 81);
+            label19.Name = "label19";
+            label19.Size = new Size(111, 17);
+            label19.TabIndex = 12;
+            label19.Text = "Какие сохранять:";
+            // 
             // currentFolderTb
             // 
             currentFolderTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
@@ -1311,6 +1365,18 @@
             currentFolderTb.Name = "currentFolderTb";
             currentFolderTb.Size = new Size(168, 25);
             currentFolderTb.TabIndex = 16;
+            // 
+            // okCapsSaveCb
+            // 
+            okCapsSaveCb.AutoSize = true;
+            okCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            okCapsSaveCb.ForeColor = Color.Black;
+            okCapsSaveCb.Location = new Point(201, 81);
+            okCapsSaveCb.Name = "okCapsSaveCb";
+            okCapsSaveCb.Size = new Size(87, 21);
+            okCapsSaveCb.TabIndex = 13;
+            okCapsSaveCb.Text = "Хорошие";
+            okCapsSaveCb.UseVisualStyleBackColor = true;
             // 
             // label20
             // 
@@ -1334,52 +1400,6 @@
             ngCapsSaveCb.TabIndex = 14;
             ngCapsSaveCb.Text = "Плохие";
             ngCapsSaveCb.UseVisualStyleBackColor = true;
-            // 
-            // okCapsSaveCb
-            // 
-            okCapsSaveCb.AutoSize = true;
-            okCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            okCapsSaveCb.ForeColor = Color.Black;
-            okCapsSaveCb.Location = new Point(201, 81);
-            okCapsSaveCb.Name = "okCapsSaveCb";
-            okCapsSaveCb.Size = new Size(87, 21);
-            okCapsSaveCb.TabIndex = 13;
-            okCapsSaveCb.Text = "Хорошие";
-            okCapsSaveCb.UseVisualStyleBackColor = true;
-            // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label19.ForeColor = Color.Black;
-            label19.Location = new Point(74, 81);
-            label19.Name = "label19";
-            label19.Size = new Size(111, 17);
-            label19.TabIndex = 12;
-            label19.Text = "Какие сохранять:";
-            // 
-            // cycleUpDown
-            // 
-            cycleUpDown.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            cycleUpDown.Location = new Point(201, 39);
-            cycleUpDown.Maximum = new decimal(new int[] { 12, 0, 0, 0 });
-            cycleUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            cycleUpDown.Name = "cycleUpDown";
-            cycleUpDown.Size = new Size(168, 25);
-            cycleUpDown.TabIndex = 11;
-            cycleUpDown.Value = new decimal(new int[] { 6, 0, 0, 0 });
-            cycleUpDown.ValueChanged += cycleUpDown_ValueChanged;
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label18.ForeColor = Color.Black;
-            label18.Location = new Point(6, 41);
-            label18.Name = "label18";
-            label18.Size = new Size(179, 17);
-            label18.TabIndex = 10;
-            label18.Text = "Цикл создания новой папки:";
             // 
             // tabPage4
             // 
@@ -2155,26 +2175,6 @@
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
             // 
-            // groupBox9
-            // 
-            groupBox9.Controls.Add(label18);
-            groupBox9.Controls.Add(openCurrentFolderBtn);
-            groupBox9.Controls.Add(cycleUpDown);
-            groupBox9.Controls.Add(chooseBaseFolderBtn);
-            groupBox9.Controls.Add(label19);
-            groupBox9.Controls.Add(currentFolderTb);
-            groupBox9.Controls.Add(okCapsSaveCb);
-            groupBox9.Controls.Add(label20);
-            groupBox9.Controls.Add(ngCapsSaveCb);
-            groupBox9.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox9.ForeColor = Color.FromArgb(4, 85, 191);
-            groupBox9.Location = new Point(23, 22);
-            groupBox9.Name = "groupBox9";
-            groupBox9.Size = new Size(545, 197);
-            groupBox9.TabIndex = 19;
-            groupBox9.TabStop = false;
-            groupBox9.Text = "Настройки для сохранения";
-            // 
             // TestForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2228,6 +2228,8 @@
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
             tabPage2.ResumeLayout(false);
+            groupBox9.ResumeLayout(false);
+            groupBox9.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)cycleUpDown).EndInit();
             panel3.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
@@ -2240,8 +2242,6 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            groupBox9.ResumeLayout(false);
-            groupBox9.PerformLayout();
             ResumeLayout(false);
 
         }

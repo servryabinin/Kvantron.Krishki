@@ -78,24 +78,50 @@ public static class CycleImageSaver
         Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "NG"));
     }
 
-    public static void Save(Mat image, bool isNG, bool allowOk, bool allowNg)
+    public static void Save(Mat image, bool isNG, bool allowOk, bool allowNg, float generalCount)
     {
         try
         {
             if (image == null || image.Empty()) return;
 
-            EnsureCycleFolder();
-
             if (!isNG && !allowOk) return;
             if (isNG && !allowNg) return;
 
+            EnsureCycleFolder();
+
             string subfolder = isNG ? "NG" : "OK";
+            string subfolderPath = Path.Combine(CurrentCycleFolder, subfolder);
 
-            string fileName = $"{(isNG ? "NG" : "OK")}_{DateTime.Now:yyyyMMdd_HHmmss_fff}.png";
-            string path = Path.Combine(CurrentCycleFolder, subfolder, fileName);
+            // Создаём подкаталог, если его нет
+            if (!Directory.Exists(subfolderPath))
+                Directory.CreateDirectory(subfolderPath);
 
-            image.SaveImage(path);
+            // Получаем список файлов, сортируем по дате создания
+            var files = new DirectoryInfo(subfolderPath)
+                            .GetFiles("*.png")
+                            .OrderBy(f => f.CreationTime)
+                            .ToList();
+
+            // Если больше 30000 файлов, удаляем самые старые
+            while (files.Count >= 30000)
+            {
+                try
+                {
+                    files[0].Delete();
+                    files.RemoveAt(0);
+                }
+                catch { break; } // На всякий случай, если файл нельзя удалить
+            }
+
+            // Генерируем имя нового файла
+            string fileName = $"{(isNG ? "NG" : "OK")}_{DateTime.Now:yyyyMMdd_HHmmss_fff}_{generalCount}.jpg";
+            string path = Path.Combine(subfolderPath, fileName);
+
+            // Сохраняем изображение в JPEG с качеством 90%
+            Cv2.ImWrite(path, image, new ImageEncodingParam(ImwriteFlags.JpegQuality, 90));
+
         }
-        catch { }
+        catch { /* Игнорируем ошибки сохранения */ }
     }
+
 }

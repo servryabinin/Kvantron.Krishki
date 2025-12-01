@@ -182,6 +182,7 @@ namespace KrishkiForms
         private Mat _imageForUnderfill;
         private Mat _grayForUnderfill;
         private Mat _frameToDisplay;
+        private Mat _frameToSave;
 
         //Изображение для тестирования параметров
         private Mat _imageForTest;
@@ -326,6 +327,7 @@ namespace KrishkiForms
             _frameToDisplay = new Mat();
             _imageForTest = new Mat();
             _imageForTestForDisplay = new Mat();
+            _frameToSave = new Mat();
         }
 
         private void InitializeMorphologicalElements()
@@ -2526,13 +2528,23 @@ namespace KrishkiForms
                                     UpdateTextBox(percentOkCapsTb, percentOkCaps);
                                 }
 
+                                // Создаем безопасную копию изображения
+                                Mat imageCopy = frameToProcess.Clone();
+
                                 // === Сохранение изображений ===
-                                CycleImageSaver.Save(
-                                    frameToProcess,
-                                    isNG: anyDefect,
-                                    allowOk: okCapsSaveCb.Checked,
-                                    allowNg: ngCapsSaveCb.Checked
-                                );
+                                Task.Run(() =>
+                                {
+                                    CycleImageSaver.Save(
+                                        imageCopy,
+                                        isNG: anyDefect,
+                                        allowOk: okCapsSaveCb.Checked,
+                                        allowNg: ngCapsSaveCb.Checked,
+                                        generalCount: generalCapsCount
+                                    );
+
+                                    imageCopy.Dispose(); // освобождаем память после сохранения
+                                });
+
 
                                 BeginInvoke(() => currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder);
  
@@ -2658,11 +2670,6 @@ namespace KrishkiForms
                 percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
                 UpdateTextBox(ovalityDef, ovalityCount);
                 UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
-
-                string fileName = $"{currentFrameNumber}_ovality_{ovalityCount}.jpg";
-                string fullPath = Path.Combine(ovalityDefectPath, fileName);
-
-                SaveAndCleanupAsync(image, fullPath, ovalityDefectPath);
             }
 
             stopwatch.Stop();
@@ -2685,16 +2692,10 @@ namespace KrishkiForms
                 percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
                 UpdateTextBox(inclusionDef, inclusionCount);
                 UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
-
-                string fileName = $"{currentFrameNumber}_inclusion_{inclusionCount}.jpg";
-                string fullPath = Path.Combine(inclusionDefectPath, fileName);
-
-                SaveAndCleanupAsync(image, fullPath, inclusionDefectPath);
             }
 
             stopwatch.Stop();
             UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds, 0);
-            //UpdatePictureBox(inclusionPb, image);
 
             return hasInclusions;
         }
@@ -2713,16 +2714,10 @@ namespace KrishkiForms
                 percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
                 UpdateTextBox(InpaintDef, paintDefectCount);
                 UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
-
-                string fileName = $"{currentFrameNumber}_paint_{paintDefectCount}.jpg";
-                string fullPath = Path.Combine(paintDefectPath, fileName);
-
-                SaveAndCleanupAsync(image, fullPath, paintDefectPath);
             }
 
             stopwatch.Stop();
             UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
-            //UpdatePictureBox(inpaintPb, image);
 
             return hasPaintDefects;
         }
@@ -2741,16 +2736,10 @@ namespace KrishkiForms
                 percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
                 UpdateTextBox(obloyDef, obloyDefectCount);
                 UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
-
-                string fileName = $"{currentFrameNumber}_obloy_{obloyDefectCount}.jpg";
-                string fullPath = Path.Combine(obloyDefectPath, fileName);
-
-                SaveAndCleanupAsync(image, fullPath, obloyDefectPath);
             }
 
             stopwatch.Stop();
             UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds, 0);
-            //UpdatePictureBox(obloyPb, image);
 
             return hasObloyDefects;
         }
