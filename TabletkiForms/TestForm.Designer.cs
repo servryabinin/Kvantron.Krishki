@@ -119,26 +119,6 @@
             label19 = new Label();
             cycleUpDown = new NumericUpDown();
             label18 = new Label();
-            foldersGroup = new GroupBox();
-            browseUnderfillButton = new Button();
-            underfillPathTextBox = new TextBox();
-            label13 = new Label();
-            applyFoldersButton = new Button();
-            browseObloyButton = new Button();
-            obloyPathTextBox = new TextBox();
-            label12 = new Label();
-            browseInpaintButton = new Button();
-            inpaintPathTextBox = new TextBox();
-            label11 = new Label();
-            browseInclusionButton = new Button();
-            inclusionPathTextBox = new TextBox();
-            label10 = new Label();
-            browseOvalityButton = new Button();
-            ovalityPathTextBox = new TextBox();
-            label9 = new Label();
-            browseOriginalButton = new Button();
-            originalPathTextBox = new TextBox();
-            label8 = new Label();
             tabPage4 = new TabPage();
             panel3 = new Panel();
             tableLayoutPanel2 = new TableLayoutPanel();
@@ -198,6 +178,7 @@
             label15 = new Label();
             camStatus = new Label();
             pictureBox1 = new PictureBox();
+            groupBox9 = new GroupBox();
             mainPanel.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage3.SuspendLayout();
@@ -228,7 +209,6 @@
             tableLayoutPanel4.SuspendLayout();
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)cycleUpDown).BeginInit();
-            foldersGroup.SuspendLayout();
             panel3.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -237,6 +217,7 @@
             ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            groupBox9.SuspendLayout();
             SuspendLayout();
             // 
             // mainPanel
@@ -1284,16 +1265,7 @@
             // 
             // tabPage2
             // 
-            tabPage2.Controls.Add(openCurrentFolderBtn);
-            tabPage2.Controls.Add(chooseBaseFolderBtn);
-            tabPage2.Controls.Add(currentFolderTb);
-            tabPage2.Controls.Add(label20);
-            tabPage2.Controls.Add(ngCapsSaveCb);
-            tabPage2.Controls.Add(okCapsSaveCb);
-            tabPage2.Controls.Add(label19);
-            tabPage2.Controls.Add(cycleUpDown);
-            tabPage2.Controls.Add(label18);
-            tabPage2.Controls.Add(foldersGroup);
+            tabPage2.Controls.Add(groupBox9);
             tabPage2.Font = new Font("Segoe UI", 4F, FontStyle.Regular, GraphicsUnit.Point, 204);
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
@@ -1309,7 +1281,7 @@
             openCurrentFolderBtn.FlatStyle = FlatStyle.Popup;
             openCurrentFolderBtn.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             openCurrentFolderBtn.ForeColor = Color.White;
-            openCurrentFolderBtn.Location = new Point(477, 137);
+            openCurrentFolderBtn.Location = new Point(448, 124);
             openCurrentFolderBtn.Name = "openCurrentFolderBtn";
             openCurrentFolderBtn.Size = new Size(40, 23);
             openCurrentFolderBtn.TabIndex = 18;
@@ -1323,7 +1295,7 @@
             chooseBaseFolderBtn.FlatStyle = FlatStyle.Popup;
             chooseBaseFolderBtn.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             chooseBaseFolderBtn.ForeColor = Color.White;
-            chooseBaseFolderBtn.Location = new Point(416, 137);
+            chooseBaseFolderBtn.Location = new Point(387, 124);
             chooseBaseFolderBtn.Name = "chooseBaseFolderBtn";
             chooseBaseFolderBtn.Size = new Size(40, 23);
             chooseBaseFolderBtn.TabIndex = 17;
@@ -1334,7 +1306,8 @@
             // currentFolderTb
             // 
             currentFolderTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            currentFolderTb.Location = new Point(230, 134);
+            currentFolderTb.ForeColor = Color.Black;
+            currentFolderTb.Location = new Point(201, 121);
             currentFolderTb.Name = "currentFolderTb";
             currentFolderTb.Size = new Size(168, 25);
             currentFolderTb.TabIndex = 16;
@@ -1343,7 +1316,8 @@
             // 
             label20.AutoSize = true;
             label20.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label20.Location = new Point(176, 137);
+            label20.ForeColor = Color.Black;
+            label20.Location = new Point(147, 124);
             label20.Name = "label20";
             label20.Size = new Size(38, 17);
             label20.TabIndex = 15;
@@ -1353,7 +1327,8 @@
             // 
             ngCapsSaveCb.AutoSize = true;
             ngCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            ngCapsSaveCb.Location = new Point(331, 94);
+            ngCapsSaveCb.ForeColor = Color.Black;
+            ngCapsSaveCb.Location = new Point(302, 81);
             ngCapsSaveCb.Name = "ngCapsSaveCb";
             ngCapsSaveCb.Size = new Size(74, 21);
             ngCapsSaveCb.TabIndex = 14;
@@ -1364,7 +1339,8 @@
             // 
             okCapsSaveCb.AutoSize = true;
             okCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            okCapsSaveCb.Location = new Point(230, 94);
+            okCapsSaveCb.ForeColor = Color.Black;
+            okCapsSaveCb.Location = new Point(201, 81);
             okCapsSaveCb.Name = "okCapsSaveCb";
             okCapsSaveCb.Size = new Size(87, 21);
             okCapsSaveCb.TabIndex = 13;
@@ -1375,7 +1351,8 @@
             // 
             label19.AutoSize = true;
             label19.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label19.Location = new Point(103, 94);
+            label19.ForeColor = Color.Black;
+            label19.Location = new Point(74, 81);
             label19.Name = "label19";
             label19.Size = new Size(111, 17);
             label19.TabIndex = 12;
@@ -1384,7 +1361,9 @@
             // cycleUpDown
             // 
             cycleUpDown.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            cycleUpDown.Location = new Point(230, 52);
+            cycleUpDown.Location = new Point(201, 39);
+            cycleUpDown.Maximum = new decimal(new int[] { 12, 0, 0, 0 });
+            cycleUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             cycleUpDown.Name = "cycleUpDown";
             cycleUpDown.Size = new Size(168, 25);
             cycleUpDown.TabIndex = 11;
@@ -1395,273 +1374,12 @@
             // 
             label18.AutoSize = true;
             label18.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label18.Location = new Point(35, 54);
+            label18.ForeColor = Color.Black;
+            label18.Location = new Point(6, 41);
             label18.Name = "label18";
             label18.Size = new Size(179, 17);
             label18.TabIndex = 10;
             label18.Text = "Цикл создания новой папки:";
-            // 
-            // foldersGroup
-            // 
-            foldersGroup.BackColor = Color.White;
-            foldersGroup.Controls.Add(browseUnderfillButton);
-            foldersGroup.Controls.Add(underfillPathTextBox);
-            foldersGroup.Controls.Add(label13);
-            foldersGroup.Controls.Add(applyFoldersButton);
-            foldersGroup.Controls.Add(browseObloyButton);
-            foldersGroup.Controls.Add(obloyPathTextBox);
-            foldersGroup.Controls.Add(label12);
-            foldersGroup.Controls.Add(browseInpaintButton);
-            foldersGroup.Controls.Add(inpaintPathTextBox);
-            foldersGroup.Controls.Add(label11);
-            foldersGroup.Controls.Add(browseInclusionButton);
-            foldersGroup.Controls.Add(inclusionPathTextBox);
-            foldersGroup.Controls.Add(label10);
-            foldersGroup.Controls.Add(browseOvalityButton);
-            foldersGroup.Controls.Add(ovalityPathTextBox);
-            foldersGroup.Controls.Add(label9);
-            foldersGroup.Controls.Add(browseOriginalButton);
-            foldersGroup.Controls.Add(originalPathTextBox);
-            foldersGroup.Controls.Add(label8);
-            foldersGroup.FlatStyle = FlatStyle.Flat;
-            foldersGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            foldersGroup.ForeColor = Color.FromArgb(4, 85, 191);
-            foldersGroup.Location = new Point(66, 207);
-            foldersGroup.Name = "foldersGroup";
-            foldersGroup.Size = new Size(418, 532);
-            foldersGroup.TabIndex = 9;
-            foldersGroup.TabStop = false;
-            foldersGroup.Text = "Настройки папок";
-            // 
-            // browseUnderfillButton
-            // 
-            browseUnderfillButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseUnderfillButton.FlatAppearance.BorderSize = 0;
-            browseUnderfillButton.FlatStyle = FlatStyle.Popup;
-            browseUnderfillButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseUnderfillButton.ForeColor = Color.White;
-            browseUnderfillButton.Location = new Point(361, 294);
-            browseUnderfillButton.Name = "browseUnderfillButton";
-            browseUnderfillButton.Size = new Size(40, 23);
-            browseUnderfillButton.TabIndex = 18;
-            browseUnderfillButton.Text = "...";
-            browseUnderfillButton.UseVisualStyleBackColor = false;
-            browseUnderfillButton.Click += browseUnderfillButton_Click;
-            // 
-            // underfillPathTextBox
-            // 
-            underfillPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            underfillPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            underfillPathTextBox.Font = new Font("Segoe UI", 8F);
-            underfillPathTextBox.Location = new Point(8, 295);
-            underfillPathTextBox.Name = "underfillPathTextBox";
-            underfillPathTextBox.Size = new Size(347, 25);
-            underfillPathTextBox.TabIndex = 17;
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label13.ForeColor = Color.Black;
-            label13.Location = new Point(8, 275);
-            label13.Name = "label13";
-            label13.Size = new Size(130, 20);
-            label13.TabIndex = 16;
-            label13.Text = "Неполный залив:";
-            // 
-            // applyFoldersButton
-            // 
-            applyFoldersButton.BackColor = Color.FromArgb(4, 85, 191);
-            applyFoldersButton.FlatAppearance.BorderSize = 0;
-            applyFoldersButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            applyFoldersButton.ForeColor = Color.White;
-            applyFoldersButton.Location = new Point(75, 465);
-            applyFoldersButton.Name = "applyFoldersButton";
-            applyFoldersButton.Size = new Size(280, 50);
-            applyFoldersButton.TabIndex = 0;
-            applyFoldersButton.Text = "Применить настройки";
-            applyFoldersButton.UseVisualStyleBackColor = false;
-            applyFoldersButton.Click += applyFoldersButton_Click;
-            // 
-            // browseObloyButton
-            // 
-            browseObloyButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseObloyButton.FlatAppearance.BorderSize = 0;
-            browseObloyButton.FlatStyle = FlatStyle.Popup;
-            browseObloyButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseObloyButton.ForeColor = Color.White;
-            browseObloyButton.Location = new Point(361, 234);
-            browseObloyButton.Name = "browseObloyButton";
-            browseObloyButton.Size = new Size(40, 23);
-            browseObloyButton.TabIndex = 15;
-            browseObloyButton.Text = "...";
-            browseObloyButton.UseVisualStyleBackColor = false;
-            browseObloyButton.Click += browseObloyButton_Click;
-            // 
-            // obloyPathTextBox
-            // 
-            obloyPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            obloyPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            obloyPathTextBox.Font = new Font("Segoe UI", 8F);
-            obloyPathTextBox.Location = new Point(8, 235);
-            obloyPathTextBox.Name = "obloyPathTextBox";
-            obloyPathTextBox.Size = new Size(347, 25);
-            obloyPathTextBox.TabIndex = 14;
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label12.ForeColor = Color.Black;
-            label12.Location = new Point(8, 215);
-            label12.Name = "label12";
-            label12.Size = new Size(58, 20);
-            label12.TabIndex = 13;
-            label12.Text = "Облой:";
-            // 
-            // browseInpaintButton
-            // 
-            browseInpaintButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseInpaintButton.FlatAppearance.BorderSize = 0;
-            browseInpaintButton.FlatStyle = FlatStyle.Popup;
-            browseInpaintButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseInpaintButton.ForeColor = Color.White;
-            browseInpaintButton.Location = new Point(361, 174);
-            browseInpaintButton.Name = "browseInpaintButton";
-            browseInpaintButton.Size = new Size(40, 23);
-            browseInpaintButton.TabIndex = 12;
-            browseInpaintButton.Text = "...";
-            browseInpaintButton.UseVisualStyleBackColor = false;
-            browseInpaintButton.Click += browseInpaintButton_Click;
-            // 
-            // inpaintPathTextBox
-            // 
-            inpaintPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            inpaintPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            inpaintPathTextBox.Font = new Font("Segoe UI", 8F);
-            inpaintPathTextBox.Location = new Point(8, 175);
-            inpaintPathTextBox.Name = "inpaintPathTextBox";
-            inpaintPathTextBox.Size = new Size(347, 25);
-            inpaintPathTextBox.TabIndex = 11;
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label11.ForeColor = Color.Black;
-            label11.Location = new Point(8, 155);
-            label11.Name = "label11";
-            label11.Size = new Size(100, 20);
-            label11.TabIndex = 10;
-            label11.Text = "Непрокрасы:";
-            // 
-            // browseInclusionButton
-            // 
-            browseInclusionButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseInclusionButton.FlatAppearance.BorderSize = 0;
-            browseInclusionButton.FlatStyle = FlatStyle.Popup;
-            browseInclusionButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseInclusionButton.ForeColor = Color.White;
-            browseInclusionButton.Location = new Point(361, 114);
-            browseInclusionButton.Name = "browseInclusionButton";
-            browseInclusionButton.Size = new Size(40, 23);
-            browseInclusionButton.TabIndex = 9;
-            browseInclusionButton.Text = "...";
-            browseInclusionButton.UseVisualStyleBackColor = false;
-            browseInclusionButton.Click += browseInclusionButton_Click;
-            // 
-            // inclusionPathTextBox
-            // 
-            inclusionPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            inclusionPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            inclusionPathTextBox.Font = new Font("Segoe UI", 8F);
-            inclusionPathTextBox.Location = new Point(8, 115);
-            inclusionPathTextBox.Name = "inclusionPathTextBox";
-            inclusionPathTextBox.Size = new Size(347, 25);
-            inclusionPathTextBox.TabIndex = 8;
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label10.ForeColor = Color.Black;
-            label10.Location = new Point(8, 95);
-            label10.Name = "label10";
-            label10.Size = new Size(96, 20);
-            label10.TabIndex = 7;
-            label10.Text = "Вкрапления:";
-            // 
-            // browseOvalityButton
-            // 
-            browseOvalityButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseOvalityButton.FlatAppearance.BorderSize = 0;
-            browseOvalityButton.FlatStyle = FlatStyle.Popup;
-            browseOvalityButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseOvalityButton.ForeColor = Color.White;
-            browseOvalityButton.Location = new Point(361, 54);
-            browseOvalityButton.Name = "browseOvalityButton";
-            browseOvalityButton.Size = new Size(40, 23);
-            browseOvalityButton.TabIndex = 6;
-            browseOvalityButton.Text = "...";
-            browseOvalityButton.UseVisualStyleBackColor = false;
-            browseOvalityButton.Click += browseOvalityButton_Click;
-            // 
-            // ovalityPathTextBox
-            // 
-            ovalityPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            ovalityPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            ovalityPathTextBox.Font = new Font("Segoe UI", 8F);
-            ovalityPathTextBox.Location = new Point(8, 55);
-            ovalityPathTextBox.Name = "ovalityPathTextBox";
-            ovalityPathTextBox.Size = new Size(347, 25);
-            ovalityPathTextBox.TabIndex = 5;
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label9.ForeColor = Color.Black;
-            label9.Location = new Point(8, 35);
-            label9.Name = "label9";
-            label9.Size = new Size(94, 20);
-            label9.TabIndex = 4;
-            label9.Text = "Овальность:";
-            // 
-            // browseOriginalButton
-            // 
-            browseOriginalButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseOriginalButton.FlatAppearance.BorderSize = 0;
-            browseOriginalButton.FlatStyle = FlatStyle.Popup;
-            browseOriginalButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseOriginalButton.ForeColor = Color.White;
-            browseOriginalButton.Location = new Point(361, 360);
-            browseOriginalButton.Name = "browseOriginalButton";
-            browseOriginalButton.Size = new Size(40, 23);
-            browseOriginalButton.TabIndex = 3;
-            browseOriginalButton.Text = "...";
-            browseOriginalButton.UseVisualStyleBackColor = false;
-            browseOriginalButton.Click += browseOriginalButton_Click;
-            // 
-            // originalPathTextBox
-            // 
-            originalPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            originalPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            originalPathTextBox.Font = new Font("Segoe UI", 8F);
-            originalPathTextBox.Location = new Point(8, 361);
-            originalPathTextBox.Name = "originalPathTextBox";
-            originalPathTextBox.Size = new Size(347, 25);
-            originalPathTextBox.TabIndex = 2;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label8.ForeColor = Color.Black;
-            label8.Location = new Point(8, 341);
-            label8.Name = "label8";
-            label8.Size = new Size(138, 20);
-            label8.TabIndex = 1;
-            label8.Text = "Исходные снимки:";
             // 
             // tabPage4
             // 
@@ -2437,6 +2155,26 @@
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
             // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(label18);
+            groupBox9.Controls.Add(openCurrentFolderBtn);
+            groupBox9.Controls.Add(cycleUpDown);
+            groupBox9.Controls.Add(chooseBaseFolderBtn);
+            groupBox9.Controls.Add(label19);
+            groupBox9.Controls.Add(currentFolderTb);
+            groupBox9.Controls.Add(okCapsSaveCb);
+            groupBox9.Controls.Add(label20);
+            groupBox9.Controls.Add(ngCapsSaveCb);
+            groupBox9.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox9.ForeColor = Color.FromArgb(4, 85, 191);
+            groupBox9.Location = new Point(23, 22);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new Size(545, 197);
+            groupBox9.TabIndex = 19;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Настройки для сохранения";
+            // 
             // TestForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2490,10 +2228,7 @@
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
             tabPage2.ResumeLayout(false);
-            tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)cycleUpDown).EndInit();
-            foldersGroup.ResumeLayout(false);
-            foldersGroup.PerformLayout();
             panel3.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
@@ -2505,6 +2240,8 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            groupBox9.ResumeLayout(false);
+            groupBox9.PerformLayout();
             ResumeLayout(false);
 
         }
@@ -2616,26 +2353,6 @@
         private TextBox whiteThresoldTx;
         private TextBox minSquareInpaint;
         private Label label29;
-        private GroupBox foldersGroup;
-        private Button browseUnderfillButton;
-        private TextBox underfillPathTextBox;
-        private Label label13;
-        private Button applyFoldersButton;
-        private Button browseObloyButton;
-        private TextBox obloyPathTextBox;
-        private Label label12;
-        private Button browseInpaintButton;
-        private TextBox inpaintPathTextBox;
-        private Label label11;
-        private Button browseInclusionButton;
-        private TextBox inclusionPathTextBox;
-        private Label label10;
-        private Button browseOvalityButton;
-        private TextBox ovalityPathTextBox;
-        private Label label9;
-        private Button browseOriginalButton;
-        private TextBox originalPathTextBox;
-        private Label label8;
         private GroupBox groupBox6;
         private Label label1;
         private Button connectCameraButton;
@@ -2681,5 +2398,6 @@
         private Label label20;
         private CheckBox ngCapsSaveCb;
         private CheckBox okCapsSaveCb;
+        private GroupBox groupBox9;
     }
 }

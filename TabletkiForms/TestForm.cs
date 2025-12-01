@@ -261,7 +261,7 @@ namespace KrishkiForms
             InitializeImageMatrices();
             InitializeMorphologicalElements();
             InitializePaths();
-            LoadPathsFromSettings();
+            LoadDefectAndCameraParam();
             Form1_Load();
 
             recognizeButton.Enabled = false;
@@ -359,6 +359,53 @@ namespace KrishkiForms
             paintDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "непрокрас");
             inclusionDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "вкрапления");
             obloyDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "облой");
+        }
+
+        private void LoadDefectAndCameraParam()
+        {
+            // ===== Параметры ПР =====
+            int.TryParse(Properties.Settings.Default.BreakingTime, out BreakingTime);
+            int.TryParse(Properties.Settings.Default.BreakerOffset, out BreakerOffset);
+            int.TryParse(Properties.Settings.Default.CameraOffset, out CameraOffset);
+
+            if (cameraOffsetTb != null) cameraOffsetTb.Text = CameraOffset.ToString();
+            if (breakerOffsetTb != null) breakerOffsetTb.Text = BreakerOffset.ToString();
+            if (breakingTimeTb != null) breakingTimeTb.Text = BreakingTime.ToString();
+
+            // ===== Параметры дефектов (автоподгрузка при запуске) =====
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.OvalityThreshold))
+                ovalityCoef.Text = Properties.Settings.Default.OvalityThreshold;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.InclusionThreshold))
+                circleCoefTx.Text = Properties.Settings.Default.InclusionThreshold;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInclusion))
+                minSquareInclusion.Text = Properties.Settings.Default.MinAreaInclusion;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MaxAreaInclusion))
+                maxSquareInclusion.Text = Properties.Settings.Default.MaxAreaInclusion;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInpaintDefect))
+                minSquareInpaint.Text = Properties.Settings.Default.MinAreaInpaintDefect;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinInpaintWhiteThreshold))
+                whiteThresoldTx.Text = Properties.Settings.Default.MinInpaintWhiteThreshold;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaObloy))
+                obloyPixCount.Text = Properties.Settings.Default.MinAreaObloy;
+
+            // ===== Параметры камеры (Width, Height, Exposure, Gain) =====
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.WidthFrame))
+                widthTb.Text = Properties.Settings.Default.WidthFrame;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.HeightFrame))
+                heightTb.Text = Properties.Settings.Default.HeightFrame;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.ExposureFrame))
+                exposureTb.Text = Properties.Settings.Default.ExposureFrame;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.GainFrame))
+                gainTb.Text = Properties.Settings.Default.GainFrame;
         }
 
         private void SendStopSignalsToPLC()
@@ -1227,199 +1274,6 @@ namespace KrishkiForms
 
         #endregion
 
-        #region Обработчики кнопок для настройки путей сохранения изображения с дефектными крышками
-
-        private void browseOriginalButton_Click(object sender, EventArgs e)
-        {
-            // Если нужна папка для оригинальных изображений
-            SelectFolder("Выберите папку для сохранения оригинальных изображений", ref settingsFilePath);
-        }
-
-        private void browseOvalityButton_Click(object sender, EventArgs e)
-        {
-            SelectFolder("Выберите папку для сохранения изображений с овальностью", ref ovalityDefectPath);
-
-            // Обновляем TextBox если он есть
-            if (ovalityPathTextBox != null)
-                ovalityPathTextBox.Text = ovalityDefectPath;
-        }
-
-        private void browseInclusionButton_Click(object sender, EventArgs e)
-        {
-            SelectFolder("Выберите папку для сохранения изображений с вкраплениями", ref inclusionDefectPath);
-
-            // Обновляем TextBox если он есть
-            if (inclusionPathTextBox != null)
-                inclusionPathTextBox.Text = inclusionDefectPath;
-        }
-
-        private void browseInpaintButton_Click(object sender, EventArgs e)
-        {
-            SelectFolder("Выберите папку для сохранения изображений с непрокрасом", ref paintDefectPath);
-
-            // Обновляем TextBox если он есть
-            if (inpaintPathTextBox != null)
-                inpaintPathTextBox.Text = paintDefectPath;
-        }
-
-        private void browseObloyButton_Click(object sender, EventArgs e)
-        {
-            SelectFolder("Выберите папку для сохранения изображений с облоем", ref obloyDefectPath);
-
-            // Обновляем TextBox если он есть
-            if (obloyPathTextBox != null)
-                obloyPathTextBox.Text = obloyDefectPath;
-        }
-
-        private void browseUnderfillButton_Click(object sender, EventArgs e)
-        {
-            /*SelectFolder("Выберите папку для сохранения изображений с недоливом", ref underfillDefectPath);
-
-            // Обновляем TextBox если он есть
-            if (underfillPathTextBox != null)
-                underfillPathTextBox.Text = underfillDefectPath;*/
-        }
-
-        // Общий метод для выбора папки
-        private void SelectFolder(string description, ref string pathVariable)
-        {
-            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
-            {
-                folderDialog.Description = description;
-                folderDialog.ShowNewFolderButton = true; // Разрешить создание новых папок
-
-                // Устанавливаем начальную папку, если путь уже существует
-                if (!string.IsNullOrEmpty(pathVariable) && Directory.Exists(pathVariable))
-                {
-                    folderDialog.SelectedPath = pathVariable;
-                }
-                else
-                {
-                    // Или папка "Мои документы" по умолчанию
-                    folderDialog.RootFolder = Environment.SpecialFolder.MyDocuments;
-                }
-
-                if (folderDialog.ShowDialog() == DialogResult.OK)
-                {
-                    pathVariable = folderDialog.SelectedPath;
-                    MessageBox.Show($"Выбран путь: {pathVariable}", "Путь сохранен",
-                                  MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-        }
-
-        private void applyFoldersButton_Click(object sender, EventArgs e)
-        {
-            // Проверяем, что все пути заданы (опционально)
-            if (string.IsNullOrEmpty(ovalityDefectPath) ||
-                string.IsNullOrEmpty(inclusionDefectPath) ||
-                string.IsNullOrEmpty(paintDefectPath) ||
-                string.IsNullOrEmpty(obloyDefectPath))
-            //string.IsNullOrEmpty(underfillDefectPath))
-            {
-                MessageBox.Show("Не все пути для сохранения заданы!", "Внимание",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Создаем папки если они не существуют
-            try
-            {
-                Directory.CreateDirectory(ovalityDefectPath);
-                Directory.CreateDirectory(inclusionDefectPath);
-                Directory.CreateDirectory(paintDefectPath);
-                Directory.CreateDirectory(obloyDefectPath);
-                //Directory.CreateDirectory(underfillDefectPath);
-
-                MessageBox.Show("Все пути успешно применены и папки созданы!", "Успех",
-                              MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при создании папок: {ex.Message}", "Ошибка",
-                              MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            SavePathsToSettings();
-        }
-
-        // Сохранение путей в настройки
-        private void SavePathsToSettings()
-        {
-            Properties.Settings.Default.OvalityDefectPath = ovalityDefectPath;
-            Properties.Settings.Default.InclusionDefectPath = inclusionDefectPath;
-            Properties.Settings.Default.PaintDefectPath = paintDefectPath;
-            Properties.Settings.Default.ObloyDefectPath = obloyDefectPath;
-            //Properties.Settings.Default.UnderfillDefectPath = underfillDefectPath;
-            Properties.Settings.Default.Save();
-        }
-
-        // Загрузка путей из настроек
-        private void LoadPathsFromSettings()
-        {
-            // ===== Пути к дефектам =====
-            ovalityDefectPath = Properties.Settings.Default.OvalityDefectPath;
-            inclusionDefectPath = Properties.Settings.Default.InclusionDefectPath;
-            paintDefectPath = Properties.Settings.Default.PaintDefectPath;
-            obloyDefectPath = Properties.Settings.Default.ObloyDefectPath;
-            // underfillDefectPath = Properties.Settings.Default.UnderfillDefectPath;
-
-            // Обновляем TextBox'ы путей, если они есть
-            if (ovalityPathTextBox != null) ovalityPathTextBox.Text = ovalityDefectPath;
-            if (inclusionPathTextBox != null) inclusionPathTextBox.Text = inclusionDefectPath;
-            if (inpaintPathTextBox != null) inpaintPathTextBox.Text = paintDefectPath;
-            if (obloyPathTextBox != null) obloyPathTextBox.Text = obloyDefectPath;
-            // if (underfillPathTextBox != null) underfillPathTextBox.Text = underfillDefectPath;
-
-            // ===== Параметры ПР =====
-            int.TryParse(Properties.Settings.Default.BreakingTime, out BreakingTime);
-            int.TryParse(Properties.Settings.Default.BreakerOffset, out BreakerOffset);
-            int.TryParse(Properties.Settings.Default.CameraOffset, out CameraOffset);
-
-            if (cameraOffsetTb != null) cameraOffsetTb.Text = CameraOffset.ToString();
-            if (breakerOffsetTb != null) breakerOffsetTb.Text = BreakerOffset.ToString();
-            if (breakingTimeTb != null) breakingTimeTb.Text = BreakingTime.ToString();
-
-            // ===== Параметры дефектов (автоподгрузка при запуске) =====
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.OvalityThreshold))
-                ovalityCoef.Text = Properties.Settings.Default.OvalityThreshold;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.InclusionThreshold))
-                circleCoefTx.Text = Properties.Settings.Default.InclusionThreshold;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInclusion))
-                minSquareInclusion.Text = Properties.Settings.Default.MinAreaInclusion;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.MaxAreaInclusion))
-                maxSquareInclusion.Text = Properties.Settings.Default.MaxAreaInclusion;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInpaintDefect))
-                minSquareInpaint.Text = Properties.Settings.Default.MinAreaInpaintDefect;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinInpaintWhiteThreshold))
-                whiteThresoldTx.Text = Properties.Settings.Default.MinInpaintWhiteThreshold;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaObloy))
-                obloyPixCount.Text = Properties.Settings.Default.MinAreaObloy;
-
-            // ===== Параметры камеры (Width, Height, Exposure, Gain) =====
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.WidthFrame))
-                widthTb.Text = Properties.Settings.Default.WidthFrame;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.HeightFrame))
-                heightTb.Text = Properties.Settings.Default.HeightFrame;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.ExposureFrame))
-                exposureTb.Text = Properties.Settings.Default.ExposureFrame;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.GainFrame))
-                gainTb.Text = Properties.Settings.Default.GainFrame;
-        }
-
-
-
-        #endregion
-
         #endregion
 
         #region Методы обработки изображений
@@ -1803,13 +1657,6 @@ namespace KrishkiForms
             saveSettingsButton.Enabled = !isLocked;
             loadDefectSettings.Enabled = !isLocked;
             saveDefectSettings.Enabled = !isLocked;
-            applyFoldersButton.Enabled = !isLocked;
-            browseOvalityButton.Enabled = !isLocked;
-            browseInclusionButton.Enabled = !isLocked;
-            browseInpaintButton.Enabled = !isLocked;
-            browseObloyButton.Enabled = !isLocked;
-            browseUnderfillButton.Enabled = !isLocked;
-            browseOriginalButton.Enabled = !isLocked;
             applyPrBreakerParamButton.Enabled = !isLocked;
             loadPrSettings.Enabled = !isLocked;
             savePrSettings.Enabled = !isLocked;
