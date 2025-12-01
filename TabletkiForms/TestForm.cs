@@ -304,6 +304,10 @@ namespace KrishkiForms
 
             StartStop(false, true);
             LocalSettings.Instance.Save();
+
+            CycleImageSaver.SetCycleHours((int)cycleUpDown.Value);
+            CycleImageSaver.Init();
+            currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
         }
 
 
@@ -2675,6 +2679,17 @@ namespace KrishkiForms
                                     UpdateTextBox(percentOkCapsTb, percentOkCaps);
                                 }
 
+                                // === Сохранение изображений ===
+                                CycleImageSaver.Save(
+                                    frameToProcess,
+                                    isNG: anyDefect,
+                                    allowOk: okCapsSaveCb.Checked,
+                                    allowNg: ngCapsSaveCb.Checked
+                                );
+
+                                BeginInvoke(() => currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder);
+ 
+
                                 PLCData.QualityStatus qualityStatus = anyDefect
                                             ? PLCData.QualityStatus.Bad
                                             : PLCData.QualityStatus.Good;
@@ -3668,6 +3683,33 @@ namespace KrishkiForms
                                 "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        #region Сохранение изображений и обработчики
+        private void cycleUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            CycleImageSaver.SetCycleHours((int)cycleUpDown.Value);
+            currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
+        }
+
+        private void chooseBaseFolderBtn_Click(object sender, EventArgs e)
+        {
+            using var dialog = new FolderBrowserDialog();
+            dialog.Description = "Выберите папку для хранения крышек";
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                CycleImageSaver.BaseFolder = dialog.SelectedPath;
+                CycleImageSaver.EnsureCycleFolder();
+                currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
+            }
+        }
+
+        private void openCurrentFolderBtn_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(CycleImageSaver.CurrentCycleFolder))
+                System.Diagnostics.Process.Start("explorer", CycleImageSaver.CurrentCycleFolder);
+        }
+        #endregion
 
     }
 }

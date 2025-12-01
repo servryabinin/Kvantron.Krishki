@@ -31,6 +31,37 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestForm));
             mainPanel = new Panel();
             tabControl1 = new TabControl();
+            tabPage3 = new TabPage();
+            groupBox8 = new GroupBox();
+            testingResultPb = new PictureBox();
+            label17 = new Label();
+            label14 = new Label();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            loadImageTestTb = new Button();
+            testDefectParamBt = new Button();
+            testingPb = new PictureBox();
+            groupBox7 = new GroupBox();
+            groupBox2 = new GroupBox();
+            ovalityCoef = new TextBox();
+            label21 = new Label();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            loadDefectSettings = new Button();
+            saveDefectSettings = new Button();
+            groupBox3 = new GroupBox();
+            maxSquareInclusion = new TextBox();
+            label24 = new Label();
+            label22 = new Label();
+            circleCoefTx = new TextBox();
+            label23 = new Label();
+            minSquareInclusion = new TextBox();
+            groupBox4 = new GroupBox();
+            obloyPixCount = new TextBox();
+            label47 = new Label();
+            groupBox5 = new GroupBox();
+            label28 = new Label();
+            whiteThresoldTx = new TextBox();
+            minSquareInpaint = new TextBox();
+            label29 = new Label();
             tabPage1 = new TabPage();
             groupBox6 = new GroupBox();
             tabControl5 = new TabControl();
@@ -79,6 +110,15 @@
             savePrSettings = new Button();
             loadPrSettings = new Button();
             tabPage2 = new TabPage();
+            openCurrentFolderBtn = new Button();
+            chooseBaseFolderBtn = new Button();
+            currentFolderTb = new TextBox();
+            label20 = new Label();
+            ngCapsSaveCb = new CheckBox();
+            okCapsSaveCb = new CheckBox();
+            label19 = new Label();
+            cycleUpDown = new NumericUpDown();
+            label18 = new Label();
             foldersGroup = new GroupBox();
             browseUnderfillButton = new Button();
             underfillPathTextBox = new TextBox();
@@ -99,37 +139,6 @@
             browseOriginalButton = new Button();
             originalPathTextBox = new TextBox();
             label8 = new Label();
-            tabPage3 = new TabPage();
-            groupBox8 = new GroupBox();
-            testingResultPb = new PictureBox();
-            label17 = new Label();
-            label14 = new Label();
-            tableLayoutPanel8 = new TableLayoutPanel();
-            loadImageTestTb = new Button();
-            testDefectParamBt = new Button();
-            testingPb = new PictureBox();
-            groupBox7 = new GroupBox();
-            groupBox2 = new GroupBox();
-            ovalityCoef = new TextBox();
-            label21 = new Label();
-            tableLayoutPanel3 = new TableLayoutPanel();
-            loadDefectSettings = new Button();
-            saveDefectSettings = new Button();
-            groupBox3 = new GroupBox();
-            maxSquareInclusion = new TextBox();
-            label24 = new Label();
-            label22 = new Label();
-            circleCoefTx = new TextBox();
-            label23 = new Label();
-            minSquareInclusion = new TextBox();
-            groupBox4 = new GroupBox();
-            obloyPixCount = new TextBox();
-            label47 = new Label();
-            groupBox5 = new GroupBox();
-            label28 = new Label();
-            whiteThresoldTx = new TextBox();
-            minSquareInpaint = new TextBox();
-            label29 = new Label();
             tabPage4 = new TabPage();
             panel3 = new Panel();
             tableLayoutPanel2 = new TableLayoutPanel();
@@ -189,17 +198,19 @@
             label15 = new Label();
             camStatus = new Label();
             pictureBox1 = new PictureBox();
-            label18 = new Label();
-            numericUpDown1 = new NumericUpDown();
-            label19 = new Label();
-            checkBox1 = new CheckBox();
-            checkBox2 = new CheckBox();
-            label20 = new Label();
-            textBox1 = new TextBox();
-            button1 = new Button();
-            button2 = new Button();
             mainPanel.SuspendLayout();
             tabControl1.SuspendLayout();
+            tabPage3.SuspendLayout();
+            groupBox8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)testingResultPb).BeginInit();
+            tableLayoutPanel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)testingPb).BeginInit();
+            groupBox7.SuspendLayout();
+            groupBox2.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
+            groupBox3.SuspendLayout();
+            groupBox4.SuspendLayout();
+            groupBox5.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox6.SuspendLayout();
             tabControl5.SuspendLayout();
@@ -216,18 +227,8 @@
             tabPrNetworkSettings.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)cycleUpDown).BeginInit();
             foldersGroup.SuspendLayout();
-            tabPage3.SuspendLayout();
-            groupBox8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)testingResultPb).BeginInit();
-            tableLayoutPanel8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)testingPb).BeginInit();
-            groupBox7.SuspendLayout();
-            groupBox2.SuspendLayout();
-            tableLayoutPanel3.SuspendLayout();
-            groupBox3.SuspendLayout();
-            groupBox4.SuspendLayout();
-            groupBox5.SuspendLayout();
             panel3.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -236,7 +237,6 @@
             ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
             // mainPanel
@@ -265,929 +265,6 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(595, 786);
             tabControl1.TabIndex = 11;
-            // 
-            // tabPage1
-            // 
-            tabPage1.Controls.Add(groupBox6);
-            tabPage1.Controls.Add(pr205Group);
-            tabPage1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            tabPage1.ForeColor = SystemColors.ControlText;
-            tabPage1.Location = new Point(4, 24);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(587, 758);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "Настройки аппаратуры";
-            tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // groupBox6
-            // 
-            groupBox6.BackColor = Color.White;
-            groupBox6.Controls.Add(tabControl5);
-            groupBox6.Controls.Add(tabControl2);
-            groupBox6.Controls.Add(saveSettingsButton);
-            groupBox6.Controls.Add(loadSettingsButton);
-            groupBox6.Font = new Font("Microsoft Sans Serif", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox6.ForeColor = Color.FromArgb(4, 85, 191);
-            groupBox6.Location = new Point(6, 420);
-            groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(575, 335);
-            groupBox6.TabIndex = 8;
-            groupBox6.TabStop = false;
-            groupBox6.Text = "Настройки камеры";
-            // 
-            // tabControl5
-            // 
-            tabControl5.Controls.Add(tabPage6);
-            tabControl5.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            tabControl5.Location = new Point(7, 118);
-            tabControl5.Name = "tabControl5";
-            tabControl5.SelectedIndex = 0;
-            tabControl5.Size = new Size(513, 150);
-            tabControl5.TabIndex = 9;
-            // 
-            // tabPage6
-            // 
-            tabPage6.Controls.Add(tableLayoutPanel7);
-            tabPage6.Controls.Add(applySettingsButton);
-            tabPage6.Location = new Point(4, 26);
-            tabPage6.Name = "tabPage6";
-            tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(505, 120);
-            tabPage6.TabIndex = 0;
-            tabPage6.Text = "Настройки кадра";
-            tabPage6.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel7
-            // 
-            tableLayoutPanel7.ColumnCount = 2;
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.2142868F));
-            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.7857132F));
-            tableLayoutPanel7.Controls.Add(gainTb, 1, 3);
-            tableLayoutPanel7.Controls.Add(label3, 0, 0);
-            tableLayoutPanel7.Controls.Add(label6, 0, 3);
-            tableLayoutPanel7.Controls.Add(heightTb, 1, 0);
-            tableLayoutPanel7.Controls.Add(exposureTb, 1, 2);
-            tableLayoutPanel7.Controls.Add(label4, 0, 1);
-            tableLayoutPanel7.Controls.Add(label5, 0, 2);
-            tableLayoutPanel7.Controls.Add(widthTb, 1, 1);
-            tableLayoutPanel7.Location = new Point(3, 6);
-            tableLayoutPanel7.Name = "tableLayoutPanel7";
-            tableLayoutPanel7.RowCount = 4;
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel7.Size = new Size(280, 112);
-            tableLayoutPanel7.TabIndex = 0;
-            // 
-            // gainTb
-            // 
-            gainTb.BackColor = Color.FromArgb(240, 245, 255);
-            gainTb.BorderStyle = BorderStyle.FixedSingle;
-            gainTb.Dock = DockStyle.Fill;
-            gainTb.Font = new Font("Segoe UI", 7.8F);
-            gainTb.Location = new Point(166, 87);
-            gainTb.Name = "gainTb";
-            gainTb.Size = new Size(111, 25);
-            gainTb.TabIndex = 7;
-            gainTb.Text = "3.01";
-            gainTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Dock = DockStyle.Fill;
-            label3.Font = new Font("Segoe UI", 7.8F);
-            label3.ForeColor = Color.Black;
-            label3.Location = new Point(3, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(157, 28);
-            label3.TabIndex = 0;
-            label3.Text = "Высота:";
-            label3.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Dock = DockStyle.Fill;
-            label6.Font = new Font("Segoe UI", 7.8F);
-            label6.ForeColor = Color.Black;
-            label6.Location = new Point(3, 84);
-            label6.Name = "label6";
-            label6.Size = new Size(157, 28);
-            label6.TabIndex = 6;
-            label6.Text = "Насыщенность:";
-            label6.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // heightTb
-            // 
-            heightTb.BackColor = Color.FromArgb(240, 245, 255);
-            heightTb.BorderStyle = BorderStyle.FixedSingle;
-            heightTb.Dock = DockStyle.Fill;
-            heightTb.Font = new Font("Segoe UI", 7.8F);
-            heightTb.Location = new Point(166, 3);
-            heightTb.Name = "heightTb";
-            heightTb.Size = new Size(111, 25);
-            heightTb.TabIndex = 1;
-            heightTb.Text = "532";
-            heightTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // exposureTb
-            // 
-            exposureTb.BackColor = Color.FromArgb(240, 245, 255);
-            exposureTb.BorderStyle = BorderStyle.FixedSingle;
-            exposureTb.Dock = DockStyle.Fill;
-            exposureTb.Font = new Font("Segoe UI", 7.8F);
-            exposureTb.Location = new Point(166, 59);
-            exposureTb.Name = "exposureTb";
-            exposureTb.Size = new Size(111, 25);
-            exposureTb.TabIndex = 5;
-            exposureTb.Text = "450";
-            exposureTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Dock = DockStyle.Fill;
-            label4.Font = new Font("Segoe UI", 7.8F);
-            label4.ForeColor = Color.Black;
-            label4.Location = new Point(3, 28);
-            label4.Name = "label4";
-            label4.Size = new Size(157, 28);
-            label4.TabIndex = 2;
-            label4.Text = "Ширина:";
-            label4.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Dock = DockStyle.Fill;
-            label5.Font = new Font("Segoe UI", 7.8F);
-            label5.ForeColor = Color.Black;
-            label5.Location = new Point(3, 56);
-            label5.Name = "label5";
-            label5.Size = new Size(157, 28);
-            label5.TabIndex = 4;
-            label5.Text = "Экспозиция:";
-            label5.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // widthTb
-            // 
-            widthTb.BackColor = Color.FromArgb(240, 245, 255);
-            widthTb.BorderStyle = BorderStyle.FixedSingle;
-            widthTb.Dock = DockStyle.Fill;
-            widthTb.Font = new Font("Segoe UI", 7.8F);
-            widthTb.Location = new Point(166, 31);
-            widthTb.Name = "widthTb";
-            widthTb.Size = new Size(111, 25);
-            widthTb.TabIndex = 3;
-            widthTb.Text = "500";
-            widthTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // applySettingsButton
-            // 
-            applySettingsButton.BackColor = Color.FromArgb(4, 85, 191);
-            applySettingsButton.FlatAppearance.BorderSize = 0;
-            applySettingsButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            applySettingsButton.ForeColor = Color.White;
-            applySettingsButton.Location = new Point(341, 23);
-            applySettingsButton.Name = "applySettingsButton";
-            applySettingsButton.Size = new Size(151, 85);
-            applySettingsButton.TabIndex = 2;
-            applySettingsButton.Text = "Применить настройки";
-            applySettingsButton.UseVisualStyleBackColor = false;
-            applySettingsButton.Click += applySettingsButton_Click;
-            // 
-            // tabControl2
-            // 
-            tabControl2.Controls.Add(tabPage5);
-            tabControl2.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            tabControl2.Location = new Point(6, 21);
-            tabControl2.Name = "tabControl2";
-            tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new Size(514, 91);
-            tabControl2.TabIndex = 8;
-            // 
-            // tabPage5
-            // 
-            tabPage5.Controls.Add(tableLayoutPanel6);
-            tabPage5.Controls.Add(connectCameraButton);
-            tabPage5.Location = new Point(4, 26);
-            tabPage5.Name = "tabPage5";
-            tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(506, 61);
-            tabPage5.TabIndex = 0;
-            tabPage5.Text = "Сетевые настройки";
-            tabPage5.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel6
-            // 
-            tableLayoutPanel6.ColumnCount = 2;
-            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.2142868F));
-            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.7857132F));
-            tableLayoutPanel6.Controls.Add(label1, 0, 0);
-            tableLayoutPanel6.Controls.Add(cameraIpTextBox, 1, 0);
-            tableLayoutPanel6.Location = new Point(4, 15);
-            tableLayoutPanel6.Name = "tableLayoutPanel6";
-            tableLayoutPanel6.RowCount = 1;
-            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel6.Size = new Size(280, 32);
-            tableLayoutPanel6.TabIndex = 7;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Dock = DockStyle.Fill;
-            label1.Font = new Font("Segoe UI", 7.8F);
-            label1.ForeColor = Color.Black;
-            label1.Location = new Point(3, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(157, 32);
-            label1.TabIndex = 4;
-            label1.Text = "IP адрес камеры:";
-            label1.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // cameraIpTextBox
-            // 
-            cameraIpTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
-            cameraIpTextBox.Dock = DockStyle.Fill;
-            cameraIpTextBox.Font = new Font("Segoe UI", 7.8F);
-            cameraIpTextBox.Location = new Point(166, 3);
-            cameraIpTextBox.Name = "cameraIpTextBox";
-            cameraIpTextBox.Size = new Size(111, 25);
-            cameraIpTextBox.TabIndex = 5;
-            cameraIpTextBox.Text = "169.254.205.254";
-            cameraIpTextBox.TextAlign = HorizontalAlignment.Center;
-            // 
-            // connectCameraButton
-            // 
-            connectCameraButton.BackColor = Color.FromArgb(4, 85, 191);
-            connectCameraButton.FlatAppearance.BorderSize = 0;
-            connectCameraButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            connectCameraButton.ForeColor = Color.White;
-            connectCameraButton.Location = new Point(342, 5);
-            connectCameraButton.Name = "connectCameraButton";
-            connectCameraButton.Size = new Size(151, 48);
-            connectCameraButton.TabIndex = 6;
-            connectCameraButton.Text = "Подключиться";
-            connectCameraButton.UseVisualStyleBackColor = false;
-            connectCameraButton.Click += connectCameraButton_Click;
-            // 
-            // saveSettingsButton
-            // 
-            saveSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
-            saveSettingsButton.FlatAppearance.BorderSize = 0;
-            saveSettingsButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            saveSettingsButton.ForeColor = Color.White;
-            saveSettingsButton.Location = new Point(303, 275);
-            saveSettingsButton.Name = "saveSettingsButton";
-            saveSettingsButton.Size = new Size(134, 50);
-            saveSettingsButton.TabIndex = 1;
-            saveSettingsButton.Text = "Сохранить";
-            saveSettingsButton.UseVisualStyleBackColor = false;
-            saveSettingsButton.Click += saveSettingsButton_Click;
-            // 
-            // loadSettingsButton
-            // 
-            loadSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
-            loadSettingsButton.FlatAppearance.BorderSize = 0;
-            loadSettingsButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            loadSettingsButton.ForeColor = Color.White;
-            loadSettingsButton.Location = new Point(148, 275);
-            loadSettingsButton.Name = "loadSettingsButton";
-            loadSettingsButton.Size = new Size(134, 52);
-            loadSettingsButton.TabIndex = 0;
-            loadSettingsButton.Text = "Загрузить настройки";
-            loadSettingsButton.UseVisualStyleBackColor = false;
-            loadSettingsButton.Click += loadSettingsButton_Click;
-            // 
-            // pr205Group
-            // 
-            pr205Group.BackColor = Color.White;
-            pr205Group.Controls.Add(tabControl4);
-            pr205Group.Controls.Add(tabControl3);
-            pr205Group.Controls.Add(savePrSettings);
-            pr205Group.Controls.Add(loadPrSettings);
-            pr205Group.FlatStyle = FlatStyle.Flat;
-            pr205Group.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            pr205Group.ForeColor = Color.FromArgb(4, 85, 191);
-            pr205Group.Location = new Point(6, 10);
-            pr205Group.Name = "pr205Group";
-            pr205Group.Size = new Size(575, 404);
-            pr205Group.TabIndex = 3;
-            pr205Group.TabStop = false;
-            pr205Group.Text = "Настройки ПР205";
-            // 
-            // tabControl4
-            // 
-            tabControl4.Controls.Add(prBreakingSettings);
-            tabControl4.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            tabControl4.Location = new Point(11, 155);
-            tabControl4.Name = "tabControl4";
-            tabControl4.SelectedIndex = 0;
-            tabControl4.Size = new Size(513, 182);
-            tabControl4.TabIndex = 34;
-            // 
-            // prBreakingSettings
-            // 
-            prBreakingSettings.Controls.Add(tableLayoutPanel5);
-            prBreakingSettings.Controls.Add(applyPrBreakerParamButton);
-            prBreakingSettings.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point, 204);
-            prBreakingSettings.ForeColor = Color.Black;
-            prBreakingSettings.Location = new Point(4, 26);
-            prBreakingSettings.Name = "prBreakingSettings";
-            prBreakingSettings.Padding = new Padding(3);
-            prBreakingSettings.Size = new Size(505, 152);
-            prBreakingSettings.TabIndex = 0;
-            prBreakingSettings.Text = "Настройки отбраковки";
-            prBreakingSettings.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel5
-            // 
-            tableLayoutPanel5.ColumnCount = 2;
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.2417564F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.7582436F));
-            tableLayoutPanel5.Controls.Add(breakingAllowCb, 1, 0);
-            tableLayoutPanel5.Controls.Add(breakerOffsetTb, 1, 3);
-            tableLayoutPanel5.Controls.Add(cameraOffsetTb, 1, 2);
-            tableLayoutPanel5.Controls.Add(breakingTimeTb, 1, 1);
-            tableLayoutPanel5.Controls.Add(label25, 0, 0);
-            tableLayoutPanel5.Controls.Add(label27, 0, 1);
-            tableLayoutPanel5.Controls.Add(label31, 0, 2);
-            tableLayoutPanel5.Controls.Add(label7, 0, 3);
-            tableLayoutPanel5.Location = new Point(6, 6);
-            tableLayoutPanel5.Name = "tableLayoutPanel5";
-            tableLayoutPanel5.RowCount = 4;
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.Size = new Size(273, 142);
-            tableLayoutPanel5.TabIndex = 22;
-            // 
-            // breakingAllowCb
-            // 
-            breakingAllowCb.AutoSize = true;
-            breakingAllowCb.Dock = DockStyle.Fill;
-            breakingAllowCb.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            breakingAllowCb.ForeColor = Color.Black;
-            breakingAllowCb.Location = new Point(161, 3);
-            breakingAllowCb.Name = "breakingAllowCb";
-            breakingAllowCb.Size = new Size(109, 29);
-            breakingAllowCb.TabIndex = 17;
-            breakingAllowCb.UseVisualStyleBackColor = true;
-            breakingAllowCb.CheckedChanged += breakingAllowCb_CheckedChanged;
-            // 
-            // breakerOffsetTb
-            // 
-            breakerOffsetTb.BackColor = Color.FromArgb(240, 245, 255);
-            breakerOffsetTb.BorderStyle = BorderStyle.FixedSingle;
-            breakerOffsetTb.Dock = DockStyle.Fill;
-            breakerOffsetTb.Font = new Font("Segoe UI", 7.8F);
-            breakerOffsetTb.Location = new Point(161, 108);
-            breakerOffsetTb.Name = "breakerOffsetTb";
-            breakerOffsetTb.Size = new Size(109, 25);
-            breakerOffsetTb.TabIndex = 21;
-            breakerOffsetTb.Text = "2430";
-            breakerOffsetTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // cameraOffsetTb
-            // 
-            cameraOffsetTb.BackColor = Color.FromArgb(240, 245, 255);
-            cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
-            cameraOffsetTb.Dock = DockStyle.Fill;
-            cameraOffsetTb.Font = new Font("Segoe UI", 7.8F);
-            cameraOffsetTb.Location = new Point(161, 73);
-            cameraOffsetTb.Name = "cameraOffsetTb";
-            cameraOffsetTb.Size = new Size(109, 25);
-            cameraOffsetTb.TabIndex = 19;
-            cameraOffsetTb.Text = "300";
-            cameraOffsetTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // breakingTimeTb
-            // 
-            breakingTimeTb.BackColor = Color.FromArgb(240, 245, 255);
-            breakingTimeTb.BorderStyle = BorderStyle.FixedSingle;
-            breakingTimeTb.Dock = DockStyle.Fill;
-            breakingTimeTb.Font = new Font("Segoe UI", 7.8F);
-            breakingTimeTb.Location = new Point(161, 38);
-            breakingTimeTb.Name = "breakingTimeTb";
-            breakingTimeTb.Size = new Size(109, 25);
-            breakingTimeTb.TabIndex = 16;
-            breakingTimeTb.Text = "55";
-            breakingTimeTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label25
-            // 
-            label25.AutoSize = true;
-            label25.Dock = DockStyle.Fill;
-            label25.Font = new Font("Segoe UI", 7.8F);
-            label25.ForeColor = Color.Black;
-            label25.Location = new Point(3, 0);
-            label25.Name = "label25";
-            label25.Size = new Size(152, 35);
-            label25.TabIndex = 15;
-            label25.Text = "Включить сдув:";
-            label25.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // label27
-            // 
-            label27.AutoSize = true;
-            label27.Dock = DockStyle.Fill;
-            label27.Font = new Font("Segoe UI", 7.8F);
-            label27.ForeColor = Color.Black;
-            label27.Location = new Point(3, 35);
-            label27.Name = "label27";
-            label27.Size = new Size(152, 35);
-            label27.TabIndex = 18;
-            label27.Text = "Время обдува, мс";
-            label27.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // label31
-            // 
-            label31.AutoSize = true;
-            label31.Dock = DockStyle.Fill;
-            label31.Font = new Font("Segoe UI", 7.8F);
-            label31.ForeColor = Color.Black;
-            label31.Location = new Point(3, 70);
-            label31.Name = "label31";
-            label31.Size = new Size(152, 35);
-            label31.TabIndex = 20;
-            label31.Text = "Расстояние от датчика до камеры, шаги:";
-            label31.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Dock = DockStyle.Fill;
-            label7.Font = new Font("Segoe UI", 7.8F);
-            label7.Location = new Point(3, 105);
-            label7.Name = "label7";
-            label7.Size = new Size(152, 37);
-            label7.TabIndex = 22;
-            label7.Text = "Расстояние от датчика до сдува, шаги";
-            label7.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // applyPrBreakerParamButton
-            // 
-            applyPrBreakerParamButton.BackColor = Color.FromArgb(4, 85, 191);
-            applyPrBreakerParamButton.FlatAppearance.BorderSize = 0;
-            applyPrBreakerParamButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            applyPrBreakerParamButton.ForeColor = Color.White;
-            applyPrBreakerParamButton.Location = new Point(337, 37);
-            applyPrBreakerParamButton.Name = "applyPrBreakerParamButton";
-            applyPrBreakerParamButton.Size = new Size(151, 85);
-            applyPrBreakerParamButton.TabIndex = 2;
-            applyPrBreakerParamButton.Text = "Применить настройки";
-            applyPrBreakerParamButton.UseVisualStyleBackColor = false;
-            applyPrBreakerParamButton.Click += ApplyPr_Click;
-            // 
-            // tabControl3
-            // 
-            tabControl3.Controls.Add(tabPrNetworkSettings);
-            tabControl3.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            tabControl3.Location = new Point(13, 30);
-            tabControl3.Name = "tabControl3";
-            tabControl3.SelectedIndex = 0;
-            tabControl3.Size = new Size(507, 123);
-            tabControl3.TabIndex = 33;
-            // 
-            // tabPrNetworkSettings
-            // 
-            tabPrNetworkSettings.Controls.Add(tableLayoutPanel4);
-            tabPrNetworkSettings.Controls.Add(connectPrButton);
-            tabPrNetworkSettings.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point, 204);
-            tabPrNetworkSettings.Location = new Point(4, 26);
-            tabPrNetworkSettings.Name = "tabPrNetworkSettings";
-            tabPrNetworkSettings.Padding = new Padding(3);
-            tabPrNetworkSettings.Size = new Size(499, 93);
-            tabPrNetworkSettings.TabIndex = 0;
-            tabPrNetworkSettings.Text = "Сетевые настройки ПР205";
-            tabPrNetworkSettings.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel4
-            // 
-            tableLayoutPanel4.ColumnCount = 2;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.1481476F));
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.8518524F));
-            tableLayoutPanel4.Controls.Add(prIpTextBox, 1, 2);
-            tableLayoutPanel4.Controls.Add(label30, 0, 0);
-            tableLayoutPanel4.Controls.Add(label40, 0, 2);
-            tableLayoutPanel4.Controls.Add(prStatus, 1, 0);
-            tableLayoutPanel4.Controls.Add(label26, 0, 1);
-            tableLayoutPanel4.Controls.Add(pr205PortTb, 1, 1);
-            tableLayoutPanel4.Location = new Point(3, 1);
-            tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 3;
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel4.Size = new Size(270, 91);
-            tableLayoutPanel4.TabIndex = 35;
-            // 
-            // prIpTextBox
-            // 
-            prIpTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            prIpTextBox.Dock = DockStyle.Fill;
-            prIpTextBox.Font = new Font("Segoe UI", 7.8F);
-            prIpTextBox.Location = new Point(160, 63);
-            prIpTextBox.Name = "prIpTextBox";
-            prIpTextBox.Size = new Size(107, 25);
-            prIpTextBox.TabIndex = 31;
-            prIpTextBox.Text = "10.10.69.38";
-            prIpTextBox.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label30
-            // 
-            label30.AutoSize = true;
-            label30.Dock = DockStyle.Fill;
-            label30.Font = new Font("Segoe UI", 7.8F);
-            label30.ForeColor = Color.Black;
-            label30.Location = new Point(3, 0);
-            label30.Name = "label30";
-            label30.Size = new Size(151, 30);
-            label30.TabIndex = 12;
-            label30.Text = "Статус ПР205:";
-            label30.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // label40
-            // 
-            label40.AutoSize = true;
-            label40.Dock = DockStyle.Fill;
-            label40.Font = new Font("Segoe UI", 7.8F);
-            label40.ForeColor = Color.Black;
-            label40.Location = new Point(3, 60);
-            label40.Name = "label40";
-            label40.Size = new Size(151, 31);
-            label40.TabIndex = 30;
-            label40.Text = "Ip адрес сдува:";
-            label40.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // prStatus
-            // 
-            prStatus.AutoSize = true;
-            prStatus.Dock = DockStyle.Fill;
-            prStatus.Font = new Font("Segoe UI", 7.8F);
-            prStatus.ForeColor = Color.Black;
-            prStatus.Location = new Point(160, 0);
-            prStatus.Name = "prStatus";
-            prStatus.Size = new Size(107, 30);
-            prStatus.TabIndex = 11;
-            prStatus.Text = "Не подключена";
-            prStatus.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // label26
-            // 
-            label26.AutoSize = true;
-            label26.Dock = DockStyle.Fill;
-            label26.Font = new Font("Segoe UI", 7.8F);
-            label26.ForeColor = Color.Black;
-            label26.Location = new Point(3, 30);
-            label26.Name = "label26";
-            label26.Size = new Size(151, 30);
-            label26.TabIndex = 13;
-            label26.Text = "Порт ПР205:";
-            label26.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // pr205PortTb
-            // 
-            pr205PortTb.BackColor = Color.FromArgb(240, 245, 255);
-            pr205PortTb.BorderStyle = BorderStyle.FixedSingle;
-            pr205PortTb.Dock = DockStyle.Fill;
-            pr205PortTb.Font = new Font("Segoe UI", 7.8F);
-            pr205PortTb.Location = new Point(160, 33);
-            pr205PortTb.Name = "pr205PortTb";
-            pr205PortTb.Size = new Size(107, 25);
-            pr205PortTb.TabIndex = 14;
-            pr205PortTb.Text = "502";
-            pr205PortTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // connectPrButton
-            // 
-            connectPrButton.BackColor = Color.FromArgb(4, 85, 191);
-            connectPrButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            connectPrButton.ForeColor = SystemColors.Control;
-            connectPrButton.Location = new Point(335, 6);
-            connectPrButton.Name = "connectPrButton";
-            connectPrButton.Size = new Size(151, 85);
-            connectPrButton.TabIndex = 32;
-            connectPrButton.Text = "Подключиться к ПР";
-            connectPrButton.UseVisualStyleBackColor = false;
-            connectPrButton.Click += connectPrButton_Click;
-            // 
-            // savePrSettings
-            // 
-            savePrSettings.BackColor = Color.FromArgb(66, 133, 244);
-            savePrSettings.FlatAppearance.BorderSize = 0;
-            savePrSettings.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            savePrSettings.ForeColor = Color.White;
-            savePrSettings.Location = new Point(303, 343);
-            savePrSettings.Name = "savePrSettings";
-            savePrSettings.Size = new Size(129, 52);
-            savePrSettings.TabIndex = 1;
-            savePrSettings.Text = "Сохранить";
-            savePrSettings.UseVisualStyleBackColor = false;
-            savePrSettings.Click += savePrSettings_Click;
-            // 
-            // loadPrSettings
-            // 
-            loadPrSettings.BackColor = Color.FromArgb(66, 133, 244);
-            loadPrSettings.FlatAppearance.BorderSize = 0;
-            loadPrSettings.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            loadPrSettings.ForeColor = Color.White;
-            loadPrSettings.Location = new Point(148, 343);
-            loadPrSettings.Name = "loadPrSettings";
-            loadPrSettings.Size = new Size(134, 52);
-            loadPrSettings.TabIndex = 0;
-            loadPrSettings.Text = "Загрузить настройки";
-            loadPrSettings.UseVisualStyleBackColor = false;
-            loadPrSettings.Click += loadPrSettings_Click;
-            // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(button2);
-            tabPage2.Controls.Add(button1);
-            tabPage2.Controls.Add(textBox1);
-            tabPage2.Controls.Add(label20);
-            tabPage2.Controls.Add(checkBox2);
-            tabPage2.Controls.Add(checkBox1);
-            tabPage2.Controls.Add(label19);
-            tabPage2.Controls.Add(numericUpDown1);
-            tabPage2.Controls.Add(label18);
-            tabPage2.Controls.Add(foldersGroup);
-            tabPage2.Font = new Font("Segoe UI", 4F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            tabPage2.Location = new Point(4, 24);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(587, 758);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Настройки сохранения";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // foldersGroup
-            // 
-            foldersGroup.BackColor = Color.White;
-            foldersGroup.Controls.Add(browseUnderfillButton);
-            foldersGroup.Controls.Add(underfillPathTextBox);
-            foldersGroup.Controls.Add(label13);
-            foldersGroup.Controls.Add(applyFoldersButton);
-            foldersGroup.Controls.Add(browseObloyButton);
-            foldersGroup.Controls.Add(obloyPathTextBox);
-            foldersGroup.Controls.Add(label12);
-            foldersGroup.Controls.Add(browseInpaintButton);
-            foldersGroup.Controls.Add(inpaintPathTextBox);
-            foldersGroup.Controls.Add(label11);
-            foldersGroup.Controls.Add(browseInclusionButton);
-            foldersGroup.Controls.Add(inclusionPathTextBox);
-            foldersGroup.Controls.Add(label10);
-            foldersGroup.Controls.Add(browseOvalityButton);
-            foldersGroup.Controls.Add(ovalityPathTextBox);
-            foldersGroup.Controls.Add(label9);
-            foldersGroup.Controls.Add(browseOriginalButton);
-            foldersGroup.Controls.Add(originalPathTextBox);
-            foldersGroup.Controls.Add(label8);
-            foldersGroup.FlatStyle = FlatStyle.Flat;
-            foldersGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            foldersGroup.ForeColor = Color.FromArgb(4, 85, 191);
-            foldersGroup.Location = new Point(80, 625);
-            foldersGroup.Name = "foldersGroup";
-            foldersGroup.Size = new Size(418, 532);
-            foldersGroup.TabIndex = 9;
-            foldersGroup.TabStop = false;
-            foldersGroup.Text = "Настройки папок";
-            // 
-            // browseUnderfillButton
-            // 
-            browseUnderfillButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseUnderfillButton.FlatAppearance.BorderSize = 0;
-            browseUnderfillButton.FlatStyle = FlatStyle.Popup;
-            browseUnderfillButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseUnderfillButton.ForeColor = Color.White;
-            browseUnderfillButton.Location = new Point(361, 294);
-            browseUnderfillButton.Name = "browseUnderfillButton";
-            browseUnderfillButton.Size = new Size(40, 23);
-            browseUnderfillButton.TabIndex = 18;
-            browseUnderfillButton.Text = "...";
-            browseUnderfillButton.UseVisualStyleBackColor = false;
-            browseUnderfillButton.Click += browseUnderfillButton_Click;
-            // 
-            // underfillPathTextBox
-            // 
-            underfillPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            underfillPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            underfillPathTextBox.Font = new Font("Segoe UI", 8F);
-            underfillPathTextBox.Location = new Point(8, 295);
-            underfillPathTextBox.Name = "underfillPathTextBox";
-            underfillPathTextBox.Size = new Size(347, 25);
-            underfillPathTextBox.TabIndex = 17;
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label13.ForeColor = Color.Black;
-            label13.Location = new Point(8, 275);
-            label13.Name = "label13";
-            label13.Size = new Size(130, 20);
-            label13.TabIndex = 16;
-            label13.Text = "Неполный залив:";
-            // 
-            // applyFoldersButton
-            // 
-            applyFoldersButton.BackColor = Color.FromArgb(4, 85, 191);
-            applyFoldersButton.FlatAppearance.BorderSize = 0;
-            applyFoldersButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            applyFoldersButton.ForeColor = Color.White;
-            applyFoldersButton.Location = new Point(75, 465);
-            applyFoldersButton.Name = "applyFoldersButton";
-            applyFoldersButton.Size = new Size(280, 50);
-            applyFoldersButton.TabIndex = 0;
-            applyFoldersButton.Text = "Применить настройки";
-            applyFoldersButton.UseVisualStyleBackColor = false;
-            applyFoldersButton.Click += applyFoldersButton_Click;
-            // 
-            // browseObloyButton
-            // 
-            browseObloyButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseObloyButton.FlatAppearance.BorderSize = 0;
-            browseObloyButton.FlatStyle = FlatStyle.Popup;
-            browseObloyButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseObloyButton.ForeColor = Color.White;
-            browseObloyButton.Location = new Point(361, 234);
-            browseObloyButton.Name = "browseObloyButton";
-            browseObloyButton.Size = new Size(40, 23);
-            browseObloyButton.TabIndex = 15;
-            browseObloyButton.Text = "...";
-            browseObloyButton.UseVisualStyleBackColor = false;
-            browseObloyButton.Click += browseObloyButton_Click;
-            // 
-            // obloyPathTextBox
-            // 
-            obloyPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            obloyPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            obloyPathTextBox.Font = new Font("Segoe UI", 8F);
-            obloyPathTextBox.Location = new Point(8, 235);
-            obloyPathTextBox.Name = "obloyPathTextBox";
-            obloyPathTextBox.Size = new Size(347, 25);
-            obloyPathTextBox.TabIndex = 14;
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label12.ForeColor = Color.Black;
-            label12.Location = new Point(8, 215);
-            label12.Name = "label12";
-            label12.Size = new Size(58, 20);
-            label12.TabIndex = 13;
-            label12.Text = "Облой:";
-            // 
-            // browseInpaintButton
-            // 
-            browseInpaintButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseInpaintButton.FlatAppearance.BorderSize = 0;
-            browseInpaintButton.FlatStyle = FlatStyle.Popup;
-            browseInpaintButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseInpaintButton.ForeColor = Color.White;
-            browseInpaintButton.Location = new Point(361, 174);
-            browseInpaintButton.Name = "browseInpaintButton";
-            browseInpaintButton.Size = new Size(40, 23);
-            browseInpaintButton.TabIndex = 12;
-            browseInpaintButton.Text = "...";
-            browseInpaintButton.UseVisualStyleBackColor = false;
-            browseInpaintButton.Click += browseInpaintButton_Click;
-            // 
-            // inpaintPathTextBox
-            // 
-            inpaintPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            inpaintPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            inpaintPathTextBox.Font = new Font("Segoe UI", 8F);
-            inpaintPathTextBox.Location = new Point(8, 175);
-            inpaintPathTextBox.Name = "inpaintPathTextBox";
-            inpaintPathTextBox.Size = new Size(347, 25);
-            inpaintPathTextBox.TabIndex = 11;
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label11.ForeColor = Color.Black;
-            label11.Location = new Point(8, 155);
-            label11.Name = "label11";
-            label11.Size = new Size(100, 20);
-            label11.TabIndex = 10;
-            label11.Text = "Непрокрасы:";
-            // 
-            // browseInclusionButton
-            // 
-            browseInclusionButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseInclusionButton.FlatAppearance.BorderSize = 0;
-            browseInclusionButton.FlatStyle = FlatStyle.Popup;
-            browseInclusionButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseInclusionButton.ForeColor = Color.White;
-            browseInclusionButton.Location = new Point(361, 114);
-            browseInclusionButton.Name = "browseInclusionButton";
-            browseInclusionButton.Size = new Size(40, 23);
-            browseInclusionButton.TabIndex = 9;
-            browseInclusionButton.Text = "...";
-            browseInclusionButton.UseVisualStyleBackColor = false;
-            browseInclusionButton.Click += browseInclusionButton_Click;
-            // 
-            // inclusionPathTextBox
-            // 
-            inclusionPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            inclusionPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            inclusionPathTextBox.Font = new Font("Segoe UI", 8F);
-            inclusionPathTextBox.Location = new Point(8, 115);
-            inclusionPathTextBox.Name = "inclusionPathTextBox";
-            inclusionPathTextBox.Size = new Size(347, 25);
-            inclusionPathTextBox.TabIndex = 8;
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label10.ForeColor = Color.Black;
-            label10.Location = new Point(8, 95);
-            label10.Name = "label10";
-            label10.Size = new Size(96, 20);
-            label10.TabIndex = 7;
-            label10.Text = "Вкрапления:";
-            // 
-            // browseOvalityButton
-            // 
-            browseOvalityButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseOvalityButton.FlatAppearance.BorderSize = 0;
-            browseOvalityButton.FlatStyle = FlatStyle.Popup;
-            browseOvalityButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseOvalityButton.ForeColor = Color.White;
-            browseOvalityButton.Location = new Point(361, 54);
-            browseOvalityButton.Name = "browseOvalityButton";
-            browseOvalityButton.Size = new Size(40, 23);
-            browseOvalityButton.TabIndex = 6;
-            browseOvalityButton.Text = "...";
-            browseOvalityButton.UseVisualStyleBackColor = false;
-            browseOvalityButton.Click += browseOvalityButton_Click;
-            // 
-            // ovalityPathTextBox
-            // 
-            ovalityPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            ovalityPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            ovalityPathTextBox.Font = new Font("Segoe UI", 8F);
-            ovalityPathTextBox.Location = new Point(8, 55);
-            ovalityPathTextBox.Name = "ovalityPathTextBox";
-            ovalityPathTextBox.Size = new Size(347, 25);
-            ovalityPathTextBox.TabIndex = 5;
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label9.ForeColor = Color.Black;
-            label9.Location = new Point(8, 35);
-            label9.Name = "label9";
-            label9.Size = new Size(94, 20);
-            label9.TabIndex = 4;
-            label9.Text = "Овальность:";
-            // 
-            // browseOriginalButton
-            // 
-            browseOriginalButton.BackColor = Color.FromArgb(66, 133, 244);
-            browseOriginalButton.FlatAppearance.BorderSize = 0;
-            browseOriginalButton.FlatStyle = FlatStyle.Popup;
-            browseOriginalButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            browseOriginalButton.ForeColor = Color.White;
-            browseOriginalButton.Location = new Point(361, 360);
-            browseOriginalButton.Name = "browseOriginalButton";
-            browseOriginalButton.Size = new Size(40, 23);
-            browseOriginalButton.TabIndex = 3;
-            browseOriginalButton.Text = "...";
-            browseOriginalButton.UseVisualStyleBackColor = false;
-            browseOriginalButton.Click += browseOriginalButton_Click;
-            // 
-            // originalPathTextBox
-            // 
-            originalPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
-            originalPathTextBox.BorderStyle = BorderStyle.FixedSingle;
-            originalPathTextBox.Font = new Font("Segoe UI", 8F);
-            originalPathTextBox.Location = new Point(8, 361);
-            originalPathTextBox.Name = "originalPathTextBox";
-            originalPathTextBox.Size = new Size(347, 25);
-            originalPathTextBox.TabIndex = 2;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label8.ForeColor = Color.Black;
-            label8.Location = new Point(8, 341);
-            label8.Name = "label8";
-            label8.Size = new Size(138, 20);
-            label8.TabIndex = 1;
-            label8.Text = "Исходные снимки:";
             // 
             // tabPage3
             // 
@@ -1564,6 +641,1027 @@
             label29.Size = new Size(228, 17);
             label29.TabIndex = 36;
             label29.Text = "Минимальная площадь непрокраса:";
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(groupBox6);
+            tabPage1.Controls.Add(pr205Group);
+            tabPage1.Font = new Font("Segoe UI", 6F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            tabPage1.ForeColor = SystemColors.ControlText;
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(587, 758);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Настройки аппаратуры";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            groupBox6.BackColor = Color.White;
+            groupBox6.Controls.Add(tabControl5);
+            groupBox6.Controls.Add(tabControl2);
+            groupBox6.Controls.Add(saveSettingsButton);
+            groupBox6.Controls.Add(loadSettingsButton);
+            groupBox6.Font = new Font("Microsoft Sans Serif", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox6.ForeColor = Color.FromArgb(4, 85, 191);
+            groupBox6.Location = new Point(6, 420);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(575, 335);
+            groupBox6.TabIndex = 8;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Настройки камеры";
+            // 
+            // tabControl5
+            // 
+            tabControl5.Controls.Add(tabPage6);
+            tabControl5.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            tabControl5.Location = new Point(7, 118);
+            tabControl5.Name = "tabControl5";
+            tabControl5.SelectedIndex = 0;
+            tabControl5.Size = new Size(513, 150);
+            tabControl5.TabIndex = 9;
+            // 
+            // tabPage6
+            // 
+            tabPage6.Controls.Add(tableLayoutPanel7);
+            tabPage6.Controls.Add(applySettingsButton);
+            tabPage6.Location = new Point(4, 26);
+            tabPage6.Name = "tabPage6";
+            tabPage6.Padding = new Padding(3);
+            tabPage6.Size = new Size(505, 120);
+            tabPage6.TabIndex = 0;
+            tabPage6.Text = "Настройки кадра";
+            tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel7
+            // 
+            tableLayoutPanel7.ColumnCount = 2;
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.2142868F));
+            tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.7857132F));
+            tableLayoutPanel7.Controls.Add(gainTb, 1, 3);
+            tableLayoutPanel7.Controls.Add(label3, 0, 0);
+            tableLayoutPanel7.Controls.Add(label6, 0, 3);
+            tableLayoutPanel7.Controls.Add(heightTb, 1, 0);
+            tableLayoutPanel7.Controls.Add(exposureTb, 1, 2);
+            tableLayoutPanel7.Controls.Add(label4, 0, 1);
+            tableLayoutPanel7.Controls.Add(label5, 0, 2);
+            tableLayoutPanel7.Controls.Add(widthTb, 1, 1);
+            tableLayoutPanel7.Location = new Point(3, 6);
+            tableLayoutPanel7.Name = "tableLayoutPanel7";
+            tableLayoutPanel7.RowCount = 4;
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel7.Size = new Size(280, 112);
+            tableLayoutPanel7.TabIndex = 0;
+            // 
+            // gainTb
+            // 
+            gainTb.BackColor = SystemColors.Window;
+            gainTb.BorderStyle = BorderStyle.FixedSingle;
+            gainTb.Dock = DockStyle.Fill;
+            gainTb.Font = new Font("Segoe UI", 7.8F);
+            gainTb.Location = new Point(166, 87);
+            gainTb.Name = "gainTb";
+            gainTb.Size = new Size(111, 25);
+            gainTb.TabIndex = 7;
+            gainTb.Text = "3.01";
+            gainTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Dock = DockStyle.Fill;
+            label3.Font = new Font("Segoe UI", 7.8F);
+            label3.ForeColor = Color.Black;
+            label3.Location = new Point(3, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(157, 28);
+            label3.TabIndex = 0;
+            label3.Text = "Высота:";
+            label3.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Dock = DockStyle.Fill;
+            label6.Font = new Font("Segoe UI", 7.8F);
+            label6.ForeColor = Color.Black;
+            label6.Location = new Point(3, 84);
+            label6.Name = "label6";
+            label6.Size = new Size(157, 28);
+            label6.TabIndex = 6;
+            label6.Text = "Насыщенность:";
+            label6.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // heightTb
+            // 
+            heightTb.BackColor = SystemColors.Window;
+            heightTb.BorderStyle = BorderStyle.FixedSingle;
+            heightTb.Dock = DockStyle.Fill;
+            heightTb.Font = new Font("Segoe UI", 7.8F);
+            heightTb.Location = new Point(166, 3);
+            heightTb.Name = "heightTb";
+            heightTb.Size = new Size(111, 25);
+            heightTb.TabIndex = 1;
+            heightTb.Text = "532";
+            heightTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // exposureTb
+            // 
+            exposureTb.BackColor = SystemColors.Window;
+            exposureTb.BorderStyle = BorderStyle.FixedSingle;
+            exposureTb.Dock = DockStyle.Fill;
+            exposureTb.Font = new Font("Segoe UI", 7.8F);
+            exposureTb.Location = new Point(166, 59);
+            exposureTb.Name = "exposureTb";
+            exposureTb.Size = new Size(111, 25);
+            exposureTb.TabIndex = 5;
+            exposureTb.Text = "450";
+            exposureTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Dock = DockStyle.Fill;
+            label4.Font = new Font("Segoe UI", 7.8F);
+            label4.ForeColor = Color.Black;
+            label4.Location = new Point(3, 28);
+            label4.Name = "label4";
+            label4.Size = new Size(157, 28);
+            label4.TabIndex = 2;
+            label4.Text = "Ширина:";
+            label4.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Dock = DockStyle.Fill;
+            label5.Font = new Font("Segoe UI", 7.8F);
+            label5.ForeColor = Color.Black;
+            label5.Location = new Point(3, 56);
+            label5.Name = "label5";
+            label5.Size = new Size(157, 28);
+            label5.TabIndex = 4;
+            label5.Text = "Экспозиция:";
+            label5.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // widthTb
+            // 
+            widthTb.BackColor = SystemColors.Window;
+            widthTb.BorderStyle = BorderStyle.FixedSingle;
+            widthTb.Dock = DockStyle.Fill;
+            widthTb.Font = new Font("Segoe UI", 7.8F);
+            widthTb.Location = new Point(166, 31);
+            widthTb.Name = "widthTb";
+            widthTb.Size = new Size(111, 25);
+            widthTb.TabIndex = 3;
+            widthTb.Text = "500";
+            widthTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // applySettingsButton
+            // 
+            applySettingsButton.BackColor = Color.FromArgb(4, 85, 191);
+            applySettingsButton.FlatAppearance.BorderSize = 0;
+            applySettingsButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            applySettingsButton.ForeColor = Color.White;
+            applySettingsButton.Location = new Point(341, 23);
+            applySettingsButton.Name = "applySettingsButton";
+            applySettingsButton.Size = new Size(151, 85);
+            applySettingsButton.TabIndex = 2;
+            applySettingsButton.Text = "Применить настройки";
+            applySettingsButton.UseVisualStyleBackColor = false;
+            applySettingsButton.Click += applySettingsButton_Click;
+            // 
+            // tabControl2
+            // 
+            tabControl2.Controls.Add(tabPage5);
+            tabControl2.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            tabControl2.Location = new Point(6, 21);
+            tabControl2.Name = "tabControl2";
+            tabControl2.SelectedIndex = 0;
+            tabControl2.Size = new Size(514, 91);
+            tabControl2.TabIndex = 8;
+            // 
+            // tabPage5
+            // 
+            tabPage5.Controls.Add(tableLayoutPanel6);
+            tabPage5.Controls.Add(connectCameraButton);
+            tabPage5.Location = new Point(4, 26);
+            tabPage5.Name = "tabPage5";
+            tabPage5.Padding = new Padding(3);
+            tabPage5.Size = new Size(506, 61);
+            tabPage5.TabIndex = 0;
+            tabPage5.Text = "Сетевые настройки";
+            tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel6
+            // 
+            tableLayoutPanel6.ColumnCount = 2;
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.2142868F));
+            tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.7857132F));
+            tableLayoutPanel6.Controls.Add(label1, 0, 0);
+            tableLayoutPanel6.Controls.Add(cameraIpTextBox, 1, 0);
+            tableLayoutPanel6.Location = new Point(4, 15);
+            tableLayoutPanel6.Name = "tableLayoutPanel6";
+            tableLayoutPanel6.RowCount = 1;
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel6.Size = new Size(280, 32);
+            tableLayoutPanel6.TabIndex = 7;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Dock = DockStyle.Fill;
+            label1.Font = new Font("Segoe UI", 7.8F);
+            label1.ForeColor = Color.Black;
+            label1.Location = new Point(3, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(157, 32);
+            label1.TabIndex = 4;
+            label1.Text = "IP адрес камеры:";
+            label1.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // cameraIpTextBox
+            // 
+            cameraIpTextBox.BackColor = SystemColors.Window;
+            cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
+            cameraIpTextBox.Dock = DockStyle.Fill;
+            cameraIpTextBox.Font = new Font("Segoe UI", 7.8F);
+            cameraIpTextBox.Location = new Point(166, 3);
+            cameraIpTextBox.Name = "cameraIpTextBox";
+            cameraIpTextBox.Size = new Size(111, 25);
+            cameraIpTextBox.TabIndex = 5;
+            cameraIpTextBox.Text = "169.254.205.254";
+            cameraIpTextBox.TextAlign = HorizontalAlignment.Center;
+            // 
+            // connectCameraButton
+            // 
+            connectCameraButton.BackColor = Color.FromArgb(4, 85, 191);
+            connectCameraButton.FlatAppearance.BorderSize = 0;
+            connectCameraButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            connectCameraButton.ForeColor = Color.White;
+            connectCameraButton.Location = new Point(342, 5);
+            connectCameraButton.Name = "connectCameraButton";
+            connectCameraButton.Size = new Size(151, 48);
+            connectCameraButton.TabIndex = 6;
+            connectCameraButton.Text = "Подключиться";
+            connectCameraButton.UseVisualStyleBackColor = false;
+            connectCameraButton.Click += connectCameraButton_Click;
+            // 
+            // saveSettingsButton
+            // 
+            saveSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
+            saveSettingsButton.FlatAppearance.BorderSize = 0;
+            saveSettingsButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            saveSettingsButton.ForeColor = Color.White;
+            saveSettingsButton.Location = new Point(303, 275);
+            saveSettingsButton.Name = "saveSettingsButton";
+            saveSettingsButton.Size = new Size(134, 50);
+            saveSettingsButton.TabIndex = 1;
+            saveSettingsButton.Text = "Сохранить";
+            saveSettingsButton.UseVisualStyleBackColor = false;
+            saveSettingsButton.Click += saveSettingsButton_Click;
+            // 
+            // loadSettingsButton
+            // 
+            loadSettingsButton.BackColor = Color.FromArgb(66, 133, 244);
+            loadSettingsButton.FlatAppearance.BorderSize = 0;
+            loadSettingsButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            loadSettingsButton.ForeColor = Color.White;
+            loadSettingsButton.Location = new Point(148, 275);
+            loadSettingsButton.Name = "loadSettingsButton";
+            loadSettingsButton.Size = new Size(134, 52);
+            loadSettingsButton.TabIndex = 0;
+            loadSettingsButton.Text = "Загрузить настройки";
+            loadSettingsButton.UseVisualStyleBackColor = false;
+            loadSettingsButton.Click += loadSettingsButton_Click;
+            // 
+            // pr205Group
+            // 
+            pr205Group.BackColor = Color.White;
+            pr205Group.Controls.Add(tabControl4);
+            pr205Group.Controls.Add(tabControl3);
+            pr205Group.Controls.Add(savePrSettings);
+            pr205Group.Controls.Add(loadPrSettings);
+            pr205Group.FlatStyle = FlatStyle.Flat;
+            pr205Group.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            pr205Group.ForeColor = Color.FromArgb(4, 85, 191);
+            pr205Group.Location = new Point(6, 10);
+            pr205Group.Name = "pr205Group";
+            pr205Group.Size = new Size(575, 404);
+            pr205Group.TabIndex = 3;
+            pr205Group.TabStop = false;
+            pr205Group.Text = "Настройки ПР205";
+            // 
+            // tabControl4
+            // 
+            tabControl4.Controls.Add(prBreakingSettings);
+            tabControl4.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            tabControl4.Location = new Point(11, 155);
+            tabControl4.Name = "tabControl4";
+            tabControl4.SelectedIndex = 0;
+            tabControl4.Size = new Size(513, 182);
+            tabControl4.TabIndex = 34;
+            // 
+            // prBreakingSettings
+            // 
+            prBreakingSettings.Controls.Add(tableLayoutPanel5);
+            prBreakingSettings.Controls.Add(applyPrBreakerParamButton);
+            prBreakingSettings.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point, 204);
+            prBreakingSettings.ForeColor = Color.Black;
+            prBreakingSettings.Location = new Point(4, 26);
+            prBreakingSettings.Name = "prBreakingSettings";
+            prBreakingSettings.Padding = new Padding(3);
+            prBreakingSettings.Size = new Size(505, 152);
+            prBreakingSettings.TabIndex = 0;
+            prBreakingSettings.Text = "Настройки отбраковки";
+            prBreakingSettings.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.ColumnCount = 2;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.2417564F));
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.7582436F));
+            tableLayoutPanel5.Controls.Add(breakingAllowCb, 1, 0);
+            tableLayoutPanel5.Controls.Add(breakerOffsetTb, 1, 3);
+            tableLayoutPanel5.Controls.Add(cameraOffsetTb, 1, 2);
+            tableLayoutPanel5.Controls.Add(breakingTimeTb, 1, 1);
+            tableLayoutPanel5.Controls.Add(label25, 0, 0);
+            tableLayoutPanel5.Controls.Add(label27, 0, 1);
+            tableLayoutPanel5.Controls.Add(label31, 0, 2);
+            tableLayoutPanel5.Controls.Add(label7, 0, 3);
+            tableLayoutPanel5.Location = new Point(6, 6);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 4;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel5.Size = new Size(273, 142);
+            tableLayoutPanel5.TabIndex = 22;
+            // 
+            // breakingAllowCb
+            // 
+            breakingAllowCb.AutoSize = true;
+            breakingAllowCb.Dock = DockStyle.Fill;
+            breakingAllowCb.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            breakingAllowCb.ForeColor = Color.Black;
+            breakingAllowCb.Location = new Point(161, 3);
+            breakingAllowCb.Name = "breakingAllowCb";
+            breakingAllowCb.Size = new Size(109, 29);
+            breakingAllowCb.TabIndex = 17;
+            breakingAllowCb.UseVisualStyleBackColor = true;
+            breakingAllowCb.CheckedChanged += breakingAllowCb_CheckedChanged;
+            // 
+            // breakerOffsetTb
+            // 
+            breakerOffsetTb.BackColor = SystemColors.Window;
+            breakerOffsetTb.BorderStyle = BorderStyle.FixedSingle;
+            breakerOffsetTb.Dock = DockStyle.Fill;
+            breakerOffsetTb.Font = new Font("Segoe UI", 7.8F);
+            breakerOffsetTb.Location = new Point(161, 108);
+            breakerOffsetTb.Name = "breakerOffsetTb";
+            breakerOffsetTb.Size = new Size(109, 25);
+            breakerOffsetTb.TabIndex = 21;
+            breakerOffsetTb.Text = "2430";
+            breakerOffsetTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // cameraOffsetTb
+            // 
+            cameraOffsetTb.BackColor = SystemColors.Window;
+            cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
+            cameraOffsetTb.Dock = DockStyle.Fill;
+            cameraOffsetTb.Font = new Font("Segoe UI", 7.8F);
+            cameraOffsetTb.Location = new Point(161, 73);
+            cameraOffsetTb.Name = "cameraOffsetTb";
+            cameraOffsetTb.Size = new Size(109, 25);
+            cameraOffsetTb.TabIndex = 19;
+            cameraOffsetTb.Text = "300";
+            cameraOffsetTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // breakingTimeTb
+            // 
+            breakingTimeTb.BackColor = SystemColors.Window;
+            breakingTimeTb.BorderStyle = BorderStyle.FixedSingle;
+            breakingTimeTb.Dock = DockStyle.Fill;
+            breakingTimeTb.Font = new Font("Segoe UI", 7.8F);
+            breakingTimeTb.Location = new Point(161, 38);
+            breakingTimeTb.Name = "breakingTimeTb";
+            breakingTimeTb.Size = new Size(109, 25);
+            breakingTimeTb.TabIndex = 16;
+            breakingTimeTb.Text = "55";
+            breakingTimeTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label25
+            // 
+            label25.AutoSize = true;
+            label25.Dock = DockStyle.Fill;
+            label25.Font = new Font("Segoe UI", 7.8F);
+            label25.ForeColor = Color.Black;
+            label25.Location = new Point(3, 0);
+            label25.Name = "label25";
+            label25.Size = new Size(152, 35);
+            label25.TabIndex = 15;
+            label25.Text = "Включить сдув:";
+            label25.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label27
+            // 
+            label27.AutoSize = true;
+            label27.Dock = DockStyle.Fill;
+            label27.Font = new Font("Segoe UI", 7.8F);
+            label27.ForeColor = Color.Black;
+            label27.Location = new Point(3, 35);
+            label27.Name = "label27";
+            label27.Size = new Size(152, 35);
+            label27.TabIndex = 18;
+            label27.Text = "Время обдува, мс";
+            label27.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label31
+            // 
+            label31.AutoSize = true;
+            label31.Dock = DockStyle.Fill;
+            label31.Font = new Font("Segoe UI", 7.8F);
+            label31.ForeColor = Color.Black;
+            label31.Location = new Point(3, 70);
+            label31.Name = "label31";
+            label31.Size = new Size(152, 35);
+            label31.TabIndex = 20;
+            label31.Text = "Расстояние от датчика до камеры, шаги:";
+            label31.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Dock = DockStyle.Fill;
+            label7.Font = new Font("Segoe UI", 7.8F);
+            label7.Location = new Point(3, 105);
+            label7.Name = "label7";
+            label7.Size = new Size(152, 37);
+            label7.TabIndex = 22;
+            label7.Text = "Расстояние от датчика до сдува, шаги";
+            label7.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // applyPrBreakerParamButton
+            // 
+            applyPrBreakerParamButton.BackColor = Color.FromArgb(4, 85, 191);
+            applyPrBreakerParamButton.FlatAppearance.BorderSize = 0;
+            applyPrBreakerParamButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            applyPrBreakerParamButton.ForeColor = Color.White;
+            applyPrBreakerParamButton.Location = new Point(337, 37);
+            applyPrBreakerParamButton.Name = "applyPrBreakerParamButton";
+            applyPrBreakerParamButton.Size = new Size(151, 85);
+            applyPrBreakerParamButton.TabIndex = 2;
+            applyPrBreakerParamButton.Text = "Применить настройки";
+            applyPrBreakerParamButton.UseVisualStyleBackColor = false;
+            applyPrBreakerParamButton.Click += ApplyPr_Click;
+            // 
+            // tabControl3
+            // 
+            tabControl3.Controls.Add(tabPrNetworkSettings);
+            tabControl3.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            tabControl3.Location = new Point(13, 30);
+            tabControl3.Name = "tabControl3";
+            tabControl3.SelectedIndex = 0;
+            tabControl3.Size = new Size(507, 123);
+            tabControl3.TabIndex = 33;
+            // 
+            // tabPrNetworkSettings
+            // 
+            tabPrNetworkSettings.Controls.Add(tableLayoutPanel4);
+            tabPrNetworkSettings.Controls.Add(connectPrButton);
+            tabPrNetworkSettings.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point, 204);
+            tabPrNetworkSettings.Location = new Point(4, 26);
+            tabPrNetworkSettings.Name = "tabPrNetworkSettings";
+            tabPrNetworkSettings.Padding = new Padding(3);
+            tabPrNetworkSettings.Size = new Size(499, 93);
+            tabPrNetworkSettings.TabIndex = 0;
+            tabPrNetworkSettings.Text = "Сетевые настройки ПР205";
+            tabPrNetworkSettings.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel4
+            // 
+            tableLayoutPanel4.ColumnCount = 2;
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58.1481476F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.8518524F));
+            tableLayoutPanel4.Controls.Add(prIpTextBox, 1, 2);
+            tableLayoutPanel4.Controls.Add(label30, 0, 0);
+            tableLayoutPanel4.Controls.Add(label40, 0, 2);
+            tableLayoutPanel4.Controls.Add(prStatus, 1, 0);
+            tableLayoutPanel4.Controls.Add(label26, 0, 1);
+            tableLayoutPanel4.Controls.Add(pr205PortTb, 1, 1);
+            tableLayoutPanel4.Location = new Point(3, 1);
+            tableLayoutPanel4.Name = "tableLayoutPanel4";
+            tableLayoutPanel4.RowCount = 3;
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel4.Size = new Size(270, 91);
+            tableLayoutPanel4.TabIndex = 35;
+            // 
+            // prIpTextBox
+            // 
+            prIpTextBox.BackColor = SystemColors.Window;
+            prIpTextBox.Dock = DockStyle.Fill;
+            prIpTextBox.Font = new Font("Segoe UI", 7.8F);
+            prIpTextBox.Location = new Point(160, 63);
+            prIpTextBox.Name = "prIpTextBox";
+            prIpTextBox.Size = new Size(107, 25);
+            prIpTextBox.TabIndex = 31;
+            prIpTextBox.Text = "10.10.69.38";
+            prIpTextBox.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label30
+            // 
+            label30.AutoSize = true;
+            label30.Dock = DockStyle.Fill;
+            label30.Font = new Font("Segoe UI", 7.8F);
+            label30.ForeColor = Color.Black;
+            label30.Location = new Point(3, 0);
+            label30.Name = "label30";
+            label30.Size = new Size(151, 30);
+            label30.TabIndex = 12;
+            label30.Text = "Статус ПР205:";
+            label30.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label40
+            // 
+            label40.AutoSize = true;
+            label40.Dock = DockStyle.Fill;
+            label40.Font = new Font("Segoe UI", 7.8F);
+            label40.ForeColor = Color.Black;
+            label40.Location = new Point(3, 60);
+            label40.Name = "label40";
+            label40.Size = new Size(151, 31);
+            label40.TabIndex = 30;
+            label40.Text = "Ip адрес сдува:";
+            label40.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // prStatus
+            // 
+            prStatus.AutoSize = true;
+            prStatus.Dock = DockStyle.Fill;
+            prStatus.Font = new Font("Segoe UI", 7.8F);
+            prStatus.ForeColor = Color.Black;
+            prStatus.Location = new Point(160, 0);
+            prStatus.Name = "prStatus";
+            prStatus.Size = new Size(107, 30);
+            prStatus.TabIndex = 11;
+            prStatus.Text = "Не подключена";
+            prStatus.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label26
+            // 
+            label26.AutoSize = true;
+            label26.Dock = DockStyle.Fill;
+            label26.Font = new Font("Segoe UI", 7.8F);
+            label26.ForeColor = Color.Black;
+            label26.Location = new Point(3, 30);
+            label26.Name = "label26";
+            label26.Size = new Size(151, 30);
+            label26.TabIndex = 13;
+            label26.Text = "Порт ПР205:";
+            label26.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // pr205PortTb
+            // 
+            pr205PortTb.BackColor = SystemColors.Window;
+            pr205PortTb.BorderStyle = BorderStyle.FixedSingle;
+            pr205PortTb.Dock = DockStyle.Fill;
+            pr205PortTb.Font = new Font("Segoe UI", 7.8F);
+            pr205PortTb.Location = new Point(160, 33);
+            pr205PortTb.Name = "pr205PortTb";
+            pr205PortTb.Size = new Size(107, 25);
+            pr205PortTb.TabIndex = 14;
+            pr205PortTb.Text = "502";
+            pr205PortTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // connectPrButton
+            // 
+            connectPrButton.BackColor = Color.FromArgb(4, 85, 191);
+            connectPrButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            connectPrButton.ForeColor = SystemColors.Control;
+            connectPrButton.Location = new Point(335, 6);
+            connectPrButton.Name = "connectPrButton";
+            connectPrButton.Size = new Size(151, 85);
+            connectPrButton.TabIndex = 32;
+            connectPrButton.Text = "Подключиться к ПР";
+            connectPrButton.UseVisualStyleBackColor = false;
+            connectPrButton.Click += connectPrButton_Click;
+            // 
+            // savePrSettings
+            // 
+            savePrSettings.BackColor = Color.FromArgb(66, 133, 244);
+            savePrSettings.FlatAppearance.BorderSize = 0;
+            savePrSettings.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            savePrSettings.ForeColor = Color.White;
+            savePrSettings.Location = new Point(303, 343);
+            savePrSettings.Name = "savePrSettings";
+            savePrSettings.Size = new Size(129, 52);
+            savePrSettings.TabIndex = 1;
+            savePrSettings.Text = "Сохранить";
+            savePrSettings.UseVisualStyleBackColor = false;
+            savePrSettings.Click += savePrSettings_Click;
+            // 
+            // loadPrSettings
+            // 
+            loadPrSettings.BackColor = Color.FromArgb(66, 133, 244);
+            loadPrSettings.FlatAppearance.BorderSize = 0;
+            loadPrSettings.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            loadPrSettings.ForeColor = Color.White;
+            loadPrSettings.Location = new Point(148, 343);
+            loadPrSettings.Name = "loadPrSettings";
+            loadPrSettings.Size = new Size(134, 52);
+            loadPrSettings.TabIndex = 0;
+            loadPrSettings.Text = "Загрузить настройки";
+            loadPrSettings.UseVisualStyleBackColor = false;
+            loadPrSettings.Click += loadPrSettings_Click;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(openCurrentFolderBtn);
+            tabPage2.Controls.Add(chooseBaseFolderBtn);
+            tabPage2.Controls.Add(currentFolderTb);
+            tabPage2.Controls.Add(label20);
+            tabPage2.Controls.Add(ngCapsSaveCb);
+            tabPage2.Controls.Add(okCapsSaveCb);
+            tabPage2.Controls.Add(label19);
+            tabPage2.Controls.Add(cycleUpDown);
+            tabPage2.Controls.Add(label18);
+            tabPage2.Controls.Add(foldersGroup);
+            tabPage2.Font = new Font("Segoe UI", 4F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(587, 758);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Настройки сохранения";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // openCurrentFolderBtn
+            // 
+            openCurrentFolderBtn.BackColor = Color.FromArgb(66, 133, 244);
+            openCurrentFolderBtn.FlatStyle = FlatStyle.Popup;
+            openCurrentFolderBtn.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            openCurrentFolderBtn.ForeColor = Color.White;
+            openCurrentFolderBtn.Location = new Point(477, 137);
+            openCurrentFolderBtn.Name = "openCurrentFolderBtn";
+            openCurrentFolderBtn.Size = new Size(40, 23);
+            openCurrentFolderBtn.TabIndex = 18;
+            openCurrentFolderBtn.Text = "📂";
+            openCurrentFolderBtn.UseVisualStyleBackColor = false;
+            openCurrentFolderBtn.Click += openCurrentFolderBtn_Click;
+            // 
+            // chooseBaseFolderBtn
+            // 
+            chooseBaseFolderBtn.BackColor = Color.FromArgb(66, 133, 244);
+            chooseBaseFolderBtn.FlatStyle = FlatStyle.Popup;
+            chooseBaseFolderBtn.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            chooseBaseFolderBtn.ForeColor = Color.White;
+            chooseBaseFolderBtn.Location = new Point(416, 137);
+            chooseBaseFolderBtn.Name = "chooseBaseFolderBtn";
+            chooseBaseFolderBtn.Size = new Size(40, 23);
+            chooseBaseFolderBtn.TabIndex = 17;
+            chooseBaseFolderBtn.Text = "...";
+            chooseBaseFolderBtn.UseVisualStyleBackColor = false;
+            chooseBaseFolderBtn.Click += chooseBaseFolderBtn_Click;
+            // 
+            // currentFolderTb
+            // 
+            currentFolderTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            currentFolderTb.Location = new Point(230, 134);
+            currentFolderTb.Name = "currentFolderTb";
+            currentFolderTb.Size = new Size(168, 25);
+            currentFolderTb.TabIndex = 16;
+            // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label20.Location = new Point(176, 137);
+            label20.Name = "label20";
+            label20.Size = new Size(38, 17);
+            label20.TabIndex = 15;
+            label20.Text = "Путь:";
+            // 
+            // ngCapsSaveCb
+            // 
+            ngCapsSaveCb.AutoSize = true;
+            ngCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            ngCapsSaveCb.Location = new Point(331, 94);
+            ngCapsSaveCb.Name = "ngCapsSaveCb";
+            ngCapsSaveCb.Size = new Size(74, 21);
+            ngCapsSaveCb.TabIndex = 14;
+            ngCapsSaveCb.Text = "Плохие";
+            ngCapsSaveCb.UseVisualStyleBackColor = true;
+            // 
+            // okCapsSaveCb
+            // 
+            okCapsSaveCb.AutoSize = true;
+            okCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            okCapsSaveCb.Location = new Point(230, 94);
+            okCapsSaveCb.Name = "okCapsSaveCb";
+            okCapsSaveCb.Size = new Size(87, 21);
+            okCapsSaveCb.TabIndex = 13;
+            okCapsSaveCb.Text = "Хорошие";
+            okCapsSaveCb.UseVisualStyleBackColor = true;
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label19.Location = new Point(103, 94);
+            label19.Name = "label19";
+            label19.Size = new Size(111, 17);
+            label19.TabIndex = 12;
+            label19.Text = "Какие сохранять:";
+            // 
+            // cycleUpDown
+            // 
+            cycleUpDown.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            cycleUpDown.Location = new Point(230, 52);
+            cycleUpDown.Name = "cycleUpDown";
+            cycleUpDown.Size = new Size(168, 25);
+            cycleUpDown.TabIndex = 11;
+            cycleUpDown.Value = new decimal(new int[] { 6, 0, 0, 0 });
+            cycleUpDown.ValueChanged += cycleUpDown_ValueChanged;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label18.Location = new Point(35, 54);
+            label18.Name = "label18";
+            label18.Size = new Size(179, 17);
+            label18.TabIndex = 10;
+            label18.Text = "Цикл создания новой папки:";
+            // 
+            // foldersGroup
+            // 
+            foldersGroup.BackColor = Color.White;
+            foldersGroup.Controls.Add(browseUnderfillButton);
+            foldersGroup.Controls.Add(underfillPathTextBox);
+            foldersGroup.Controls.Add(label13);
+            foldersGroup.Controls.Add(applyFoldersButton);
+            foldersGroup.Controls.Add(browseObloyButton);
+            foldersGroup.Controls.Add(obloyPathTextBox);
+            foldersGroup.Controls.Add(label12);
+            foldersGroup.Controls.Add(browseInpaintButton);
+            foldersGroup.Controls.Add(inpaintPathTextBox);
+            foldersGroup.Controls.Add(label11);
+            foldersGroup.Controls.Add(browseInclusionButton);
+            foldersGroup.Controls.Add(inclusionPathTextBox);
+            foldersGroup.Controls.Add(label10);
+            foldersGroup.Controls.Add(browseOvalityButton);
+            foldersGroup.Controls.Add(ovalityPathTextBox);
+            foldersGroup.Controls.Add(label9);
+            foldersGroup.Controls.Add(browseOriginalButton);
+            foldersGroup.Controls.Add(originalPathTextBox);
+            foldersGroup.Controls.Add(label8);
+            foldersGroup.FlatStyle = FlatStyle.Flat;
+            foldersGroup.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            foldersGroup.ForeColor = Color.FromArgb(4, 85, 191);
+            foldersGroup.Location = new Point(66, 207);
+            foldersGroup.Name = "foldersGroup";
+            foldersGroup.Size = new Size(418, 532);
+            foldersGroup.TabIndex = 9;
+            foldersGroup.TabStop = false;
+            foldersGroup.Text = "Настройки папок";
+            // 
+            // browseUnderfillButton
+            // 
+            browseUnderfillButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseUnderfillButton.FlatAppearance.BorderSize = 0;
+            browseUnderfillButton.FlatStyle = FlatStyle.Popup;
+            browseUnderfillButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseUnderfillButton.ForeColor = Color.White;
+            browseUnderfillButton.Location = new Point(361, 294);
+            browseUnderfillButton.Name = "browseUnderfillButton";
+            browseUnderfillButton.Size = new Size(40, 23);
+            browseUnderfillButton.TabIndex = 18;
+            browseUnderfillButton.Text = "...";
+            browseUnderfillButton.UseVisualStyleBackColor = false;
+            browseUnderfillButton.Click += browseUnderfillButton_Click;
+            // 
+            // underfillPathTextBox
+            // 
+            underfillPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            underfillPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            underfillPathTextBox.Font = new Font("Segoe UI", 8F);
+            underfillPathTextBox.Location = new Point(8, 295);
+            underfillPathTextBox.Name = "underfillPathTextBox";
+            underfillPathTextBox.Size = new Size(347, 25);
+            underfillPathTextBox.TabIndex = 17;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label13.ForeColor = Color.Black;
+            label13.Location = new Point(8, 275);
+            label13.Name = "label13";
+            label13.Size = new Size(130, 20);
+            label13.TabIndex = 16;
+            label13.Text = "Неполный залив:";
+            // 
+            // applyFoldersButton
+            // 
+            applyFoldersButton.BackColor = Color.FromArgb(4, 85, 191);
+            applyFoldersButton.FlatAppearance.BorderSize = 0;
+            applyFoldersButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            applyFoldersButton.ForeColor = Color.White;
+            applyFoldersButton.Location = new Point(75, 465);
+            applyFoldersButton.Name = "applyFoldersButton";
+            applyFoldersButton.Size = new Size(280, 50);
+            applyFoldersButton.TabIndex = 0;
+            applyFoldersButton.Text = "Применить настройки";
+            applyFoldersButton.UseVisualStyleBackColor = false;
+            applyFoldersButton.Click += applyFoldersButton_Click;
+            // 
+            // browseObloyButton
+            // 
+            browseObloyButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseObloyButton.FlatAppearance.BorderSize = 0;
+            browseObloyButton.FlatStyle = FlatStyle.Popup;
+            browseObloyButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseObloyButton.ForeColor = Color.White;
+            browseObloyButton.Location = new Point(361, 234);
+            browseObloyButton.Name = "browseObloyButton";
+            browseObloyButton.Size = new Size(40, 23);
+            browseObloyButton.TabIndex = 15;
+            browseObloyButton.Text = "...";
+            browseObloyButton.UseVisualStyleBackColor = false;
+            browseObloyButton.Click += browseObloyButton_Click;
+            // 
+            // obloyPathTextBox
+            // 
+            obloyPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            obloyPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            obloyPathTextBox.Font = new Font("Segoe UI", 8F);
+            obloyPathTextBox.Location = new Point(8, 235);
+            obloyPathTextBox.Name = "obloyPathTextBox";
+            obloyPathTextBox.Size = new Size(347, 25);
+            obloyPathTextBox.TabIndex = 14;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label12.ForeColor = Color.Black;
+            label12.Location = new Point(8, 215);
+            label12.Name = "label12";
+            label12.Size = new Size(58, 20);
+            label12.TabIndex = 13;
+            label12.Text = "Облой:";
+            // 
+            // browseInpaintButton
+            // 
+            browseInpaintButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseInpaintButton.FlatAppearance.BorderSize = 0;
+            browseInpaintButton.FlatStyle = FlatStyle.Popup;
+            browseInpaintButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseInpaintButton.ForeColor = Color.White;
+            browseInpaintButton.Location = new Point(361, 174);
+            browseInpaintButton.Name = "browseInpaintButton";
+            browseInpaintButton.Size = new Size(40, 23);
+            browseInpaintButton.TabIndex = 12;
+            browseInpaintButton.Text = "...";
+            browseInpaintButton.UseVisualStyleBackColor = false;
+            browseInpaintButton.Click += browseInpaintButton_Click;
+            // 
+            // inpaintPathTextBox
+            // 
+            inpaintPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            inpaintPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            inpaintPathTextBox.Font = new Font("Segoe UI", 8F);
+            inpaintPathTextBox.Location = new Point(8, 175);
+            inpaintPathTextBox.Name = "inpaintPathTextBox";
+            inpaintPathTextBox.Size = new Size(347, 25);
+            inpaintPathTextBox.TabIndex = 11;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label11.ForeColor = Color.Black;
+            label11.Location = new Point(8, 155);
+            label11.Name = "label11";
+            label11.Size = new Size(100, 20);
+            label11.TabIndex = 10;
+            label11.Text = "Непрокрасы:";
+            // 
+            // browseInclusionButton
+            // 
+            browseInclusionButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseInclusionButton.FlatAppearance.BorderSize = 0;
+            browseInclusionButton.FlatStyle = FlatStyle.Popup;
+            browseInclusionButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseInclusionButton.ForeColor = Color.White;
+            browseInclusionButton.Location = new Point(361, 114);
+            browseInclusionButton.Name = "browseInclusionButton";
+            browseInclusionButton.Size = new Size(40, 23);
+            browseInclusionButton.TabIndex = 9;
+            browseInclusionButton.Text = "...";
+            browseInclusionButton.UseVisualStyleBackColor = false;
+            browseInclusionButton.Click += browseInclusionButton_Click;
+            // 
+            // inclusionPathTextBox
+            // 
+            inclusionPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            inclusionPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            inclusionPathTextBox.Font = new Font("Segoe UI", 8F);
+            inclusionPathTextBox.Location = new Point(8, 115);
+            inclusionPathTextBox.Name = "inclusionPathTextBox";
+            inclusionPathTextBox.Size = new Size(347, 25);
+            inclusionPathTextBox.TabIndex = 8;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label10.ForeColor = Color.Black;
+            label10.Location = new Point(8, 95);
+            label10.Name = "label10";
+            label10.Size = new Size(96, 20);
+            label10.TabIndex = 7;
+            label10.Text = "Вкрапления:";
+            // 
+            // browseOvalityButton
+            // 
+            browseOvalityButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseOvalityButton.FlatAppearance.BorderSize = 0;
+            browseOvalityButton.FlatStyle = FlatStyle.Popup;
+            browseOvalityButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseOvalityButton.ForeColor = Color.White;
+            browseOvalityButton.Location = new Point(361, 54);
+            browseOvalityButton.Name = "browseOvalityButton";
+            browseOvalityButton.Size = new Size(40, 23);
+            browseOvalityButton.TabIndex = 6;
+            browseOvalityButton.Text = "...";
+            browseOvalityButton.UseVisualStyleBackColor = false;
+            browseOvalityButton.Click += browseOvalityButton_Click;
+            // 
+            // ovalityPathTextBox
+            // 
+            ovalityPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            ovalityPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            ovalityPathTextBox.Font = new Font("Segoe UI", 8F);
+            ovalityPathTextBox.Location = new Point(8, 55);
+            ovalityPathTextBox.Name = "ovalityPathTextBox";
+            ovalityPathTextBox.Size = new Size(347, 25);
+            ovalityPathTextBox.TabIndex = 5;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label9.ForeColor = Color.Black;
+            label9.Location = new Point(8, 35);
+            label9.Name = "label9";
+            label9.Size = new Size(94, 20);
+            label9.TabIndex = 4;
+            label9.Text = "Овальность:";
+            // 
+            // browseOriginalButton
+            // 
+            browseOriginalButton.BackColor = Color.FromArgb(66, 133, 244);
+            browseOriginalButton.FlatAppearance.BorderSize = 0;
+            browseOriginalButton.FlatStyle = FlatStyle.Popup;
+            browseOriginalButton.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            browseOriginalButton.ForeColor = Color.White;
+            browseOriginalButton.Location = new Point(361, 360);
+            browseOriginalButton.Name = "browseOriginalButton";
+            browseOriginalButton.Size = new Size(40, 23);
+            browseOriginalButton.TabIndex = 3;
+            browseOriginalButton.Text = "...";
+            browseOriginalButton.UseVisualStyleBackColor = false;
+            browseOriginalButton.Click += browseOriginalButton_Click;
+            // 
+            // originalPathTextBox
+            // 
+            originalPathTextBox.BackColor = Color.FromArgb(240, 245, 255);
+            originalPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            originalPathTextBox.Font = new Font("Segoe UI", 8F);
+            originalPathTextBox.Location = new Point(8, 361);
+            originalPathTextBox.Name = "originalPathTextBox";
+            originalPathTextBox.Size = new Size(347, 25);
+            originalPathTextBox.TabIndex = 2;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label8.ForeColor = Color.Black;
+            label8.Location = new Point(8, 341);
+            label8.Name = "label8";
+            label8.Size = new Size(138, 20);
+            label8.TabIndex = 1;
+            label8.Text = "Исходные снимки:";
             // 
             // tabPage4
             // 
@@ -2339,100 +2437,6 @@
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
             // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label18.Location = new Point(35, 54);
-            label18.Name = "label18";
-            label18.Size = new Size(179, 17);
-            label18.TabIndex = 10;
-            label18.Text = "Цикл создания новой папки:";
-            // 
-            // numericUpDown1
-            // 
-            numericUpDown1.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            numericUpDown1.Location = new Point(230, 52);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(168, 25);
-            numericUpDown1.TabIndex = 11;
-            // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label19.Location = new Point(103, 94);
-            label19.Name = "label19";
-            label19.Size = new Size(111, 17);
-            label19.TabIndex = 12;
-            label19.Text = "Какие сохранять:";
-            // 
-            // checkBox1
-            // 
-            checkBox1.AutoSize = true;
-            checkBox1.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            checkBox1.Location = new Point(230, 94);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(87, 21);
-            checkBox1.TabIndex = 13;
-            checkBox1.Text = "Хорошие";
-            checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // checkBox2
-            // 
-            checkBox2.AutoSize = true;
-            checkBox2.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            checkBox2.Location = new Point(331, 94);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(74, 21);
-            checkBox2.TabIndex = 14;
-            checkBox2.Text = "Плохие";
-            checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // label20
-            // 
-            label20.AutoSize = true;
-            label20.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label20.Location = new Point(176, 137);
-            label20.Name = "label20";
-            label20.Size = new Size(38, 17);
-            label20.TabIndex = 15;
-            label20.Text = "Путь:";
-            // 
-            // textBox1
-            // 
-            textBox1.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            textBox1.Location = new Point(230, 134);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(168, 25);
-            textBox1.TabIndex = 16;
-            // 
-            // button1
-            // 
-            button1.BackColor = Color.FromArgb(66, 133, 244);
-            button1.FlatStyle = FlatStyle.Popup;
-            button1.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            button1.ForeColor = Color.White;
-            button1.Location = new Point(416, 137);
-            button1.Name = "button1";
-            button1.Size = new Size(40, 23);
-            button1.TabIndex = 17;
-            button1.Text = "...";
-            button1.UseVisualStyleBackColor = false;
-            // 
-            // button2
-            // 
-            button2.BackColor = Color.FromArgb(66, 133, 244);
-            button2.FlatStyle = FlatStyle.Popup;
-            button2.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(477, 137);
-            button2.Name = "button2";
-            button2.Size = new Size(40, 23);
-            button2.TabIndex = 18;
-            button2.Text = "📂";
-            button2.UseVisualStyleBackColor = false;
-            // 
             // TestForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2450,6 +2454,22 @@
             FormClosing += Form2_FormClosing;
             mainPanel.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
+            tabPage3.ResumeLayout(false);
+            groupBox8.ResumeLayout(false);
+            groupBox8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)testingResultPb).EndInit();
+            tableLayoutPanel8.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)testingPb).EndInit();
+            groupBox7.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            tableLayoutPanel3.ResumeLayout(false);
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             tabPage1.ResumeLayout(false);
             groupBox6.ResumeLayout(false);
             tabControl5.ResumeLayout(false);
@@ -2471,24 +2491,9 @@
             tableLayoutPanel4.PerformLayout();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)cycleUpDown).EndInit();
             foldersGroup.ResumeLayout(false);
             foldersGroup.PerformLayout();
-            tabPage3.ResumeLayout(false);
-            groupBox8.ResumeLayout(false);
-            groupBox8.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)testingResultPb).EndInit();
-            tableLayoutPanel8.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)testingPb).EndInit();
-            groupBox7.ResumeLayout(false);
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
-            tableLayoutPanel3.ResumeLayout(false);
-            groupBox3.ResumeLayout(false);
-            groupBox3.PerformLayout();
-            groupBox4.ResumeLayout(false);
-            groupBox4.PerformLayout();
-            groupBox5.ResumeLayout(false);
-            groupBox5.PerformLayout();
             panel3.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
@@ -2500,7 +2505,6 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
 
         }
@@ -2669,13 +2673,13 @@
         private Label label14;
         private PictureBox testingResultPb;
         private Label label19;
-        private NumericUpDown numericUpDown1;
+        private NumericUpDown cycleUpDown;
         private Label label18;
-        private Button button2;
-        private Button button1;
-        private TextBox textBox1;
+        private Button openCurrentFolderBtn;
+        private Button chooseBaseFolderBtn;
+        private TextBox currentFolderTb;
         private Label label20;
-        private CheckBox checkBox2;
-        private CheckBox checkBox1;
+        private CheckBox ngCapsSaveCb;
+        private CheckBox okCapsSaveCb;
     }
 }
