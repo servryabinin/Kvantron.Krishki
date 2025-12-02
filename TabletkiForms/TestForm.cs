@@ -12,6 +12,7 @@ using KrishkiForms.Hardware;
 using Kvantron.Hardware.SmartDio;
 using Kvantron.UI.Controls.Utils;
 using MathNet.Numerics.IntegralTransforms;
+using Newtonsoft.Json;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using Point = OpenCvSharp.Point;
@@ -136,6 +137,11 @@ namespace KrishkiForms
         private static bool isColored = true;
         private static bool isYellowCap = false;
 
+        //Для работы с файлами цветов крышек
+        private Dictionary<string, CapRecipe> _recipes = new();
+        private string RecipesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Рецепты");
+
+
         // Морфологические элементы
         private Mat element1;
         private Mat element2;
@@ -183,6 +189,7 @@ namespace KrishkiForms
         private Mat _grayForUnderfill;
         private Mat _frameToDisplay;
         private Mat _frameToSave;
+        private Mat _imageOriginReceptParam;
 
         //Изображение для тестирования параметров
         private Mat _imageForTest;
@@ -260,9 +267,10 @@ namespace KrishkiForms
         {
             InitializeHueLUT();
             InitializeImageMatrices();
-            InitializeMorphologicalElements();
             InitializePaths();
             LoadDefectAndCameraParam();
+            InitializeRecepts();
+            InitializeMorphologicalElements();
             Form1_Load();
 
             recognizeButton.Enabled = false;
@@ -309,6 +317,13 @@ namespace KrishkiForms
             CycleImageSaver.SetCycleHours((int)cycleUpDown.Value);
             CycleImageSaver.Init();
             currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
+
+            if (windowCb.Items.Count > 0)
+                windowCb.SelectedIndex = 0;
+
+            if (morphCb.Items.Count > 0)
+                morphCb.SelectedIndex = 0;
+
         }
 
 
@@ -328,23 +343,26 @@ namespace KrishkiForms
             _imageForTest = new Mat();
             _imageForTestForDisplay = new Mat();
             _frameToSave = new Mat();
+            _imageOriginReceptParam = new Mat();
         }
 
         private void InitializeMorphologicalElements()
         {
-            int morphSize = 4;
-            int morphSize2 = 4;
+            RebuildMorphology();
+        }
 
+        private void RebuildMorphology()
+        {
             element1 = Cv2.GetStructuringElement(
                 MorphShapes.Rect,
-                new Size(2 * morphSize + 1, 2 * morphSize + 1),
-                new Point(morphSize, morphSize)
+                new Size(2 * morph_size + 1, 2 * morph_size + 1),
+                new Point(morph_size, morph_size)
             );
 
             element2 = Cv2.GetStructuringElement(
                 MorphShapes.Cross,
-                new Size(2 * morphSize2 + 1, 2 * morphSize2 + 1),
-                new Point(morphSize2, morphSize2)
+                new Size(2 * morph_size_2 + 1, 2 * morph_size_2 + 1),
+                new Point(morph_size_2, morph_size_2)
             );
 
             elementMask = Cv2.GetStructuringElement(
@@ -353,6 +371,7 @@ namespace KrishkiForms
                 new Point(1, 1)
             );
         }
+
 
         private void InitializePaths()
         {
@@ -430,82 +449,42 @@ namespace KrishkiForms
             }
         }
 
-        #endregion
-
-        #region Подключение к оборудованию
-
-        private void ConnectToModbus()
+        private void InitializeRecepts()
         {
-            try
-            {
-                modbusClient = new ModbusTCP("10.10.69.38", 502);
-                modbusClient.Connect();
+            LoadRecipes();
 
-                if (modbusClient.Connected)
-                {
-                    MessageBox.Show("Modbus подключение к ПР205 установлено.");
-                    prStatus.Text = "Подключено";
-                    prStatus.ForeColor = Color.Green;
-                    //button10.Text = "Отключиться от ПР";
-                    prConnected = true;
-                }
-                else
-                {
-                    MessageBox.Show("Не удалось подключиться к ПР205.");
-                    prStatus.Text = "Не подключено";
-                    prStatus.ForeColor = Color.Red;
-                    //button10.Text = "Подключиться к ПР";
-                    prConnected = false;
-                }
-            }
-            catch (Exception ex)
+            receptCapsCmB.Items.Clear();
+            foreach (var recipe in _recipes.Keys)
+                receptCapsCmB.Items.Add(recipe);
+
+            if (_recipes.Count > 0)
             {
-                MessageBox.Show($"Ошибка подключения к ПР205: {ex.Message}");
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
+                receptCapsCmB.SelectedIndex = 0;
+                var first = _recipes.Values.First();
+                ApplyRecipe(first);
             }
         }
 
-        private void ConnectToCamera()
+        private void LoadRecipes()
         {
-            if (cam.Open())
+            _recipes.Clear();
+
+            if (!Directory.Exists(RecipesFolder))
+                Directory.CreateDirectory(RecipesFolder);
+
+            string[] files = Directory.GetFiles(RecipesFolder, "*.json");
+
+            foreach (var file in files)
             {
-                cam.SendImage += GetImage;
-                camStatus.Text = "Подключено";
-                camStatus.ForeColor = Color.Green;
-                connectCameraButton.Text = "Отключиться от камеры";
-                cameraConnected = true;
-            }
-            else
-            {
-                MessageBox.Show("Камера 1 - ошибка");
-                camStatus.Text = "Не подключено";
-                camStatus.ForeColor = Color.Red;
-                connectCameraButton.Text = "Подключиться к камере";
-                cameraConnected = false;
-                cameraError1 = true;
+                string name = Path.GetFileNameWithoutExtension(file);
+                string json = File.ReadAllText(file);
+
+                CapRecipe recipe = JsonConvert.DeserializeObject<CapRecipe>(json);
+                if (recipe != null)
+                    _recipes[name] = recipe;
             }
         }
 
-        private void ConnectToModule()
-        {
-            if (LocalSettings.Instance.UseModule)
-            {
-                try
-                {
-                    module = DioModule.CreateMK210(LocalSettings.Instance.ModuleIP, 502);
-                    if (module != null)
-                    {
-                        module.Connect();
-                        module.DiStateChanged += GetModuleState;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-        }
 
         #endregion
 
@@ -663,7 +642,10 @@ namespace KrishkiForms
                     {
                         imageFiles = [.. openFileDialog.FileNames];
                         currentImageIndex = 0;
-                        isProcessingFromFolder = imageFiles.Count > 0;
+                        if (imageFiles.Count > 0)
+                        {
+                            isProcessingFromFolder = true;
+                        }
 
                         if (imageFiles.Count > 0)
                         {
@@ -782,29 +764,6 @@ namespace KrishkiForms
             else
             {
                 StartProcessing();
-            }
-        }
-
-        private void obduvBatton_Click_1(object sender, EventArgs e)
-        {
-            if (modbusClient == null || !modbusClient.Connected)
-            {
-                MessageBox.Show("ПР205 не подключён.");
-                return;
-            }
-
-            try
-            {
-                obduvEnabled = !obduvEnabled;
-                int register = PLCData.QualityRegisterModbus;
-                int state = obduvEnabled ? 1 : 0;
-
-                modbusClient.WriteSingleRegisterForBreaker(register, state);
-                //obduvBatton.Text = obduvEnabled ? "Включить обдув" : "Выключить обдув";
-            }
-            catch (Exception ex)
-            {
-                // Ошибка отправки сигнала
             }
         }
 
@@ -941,7 +900,7 @@ namespace KrishkiForms
                             if (settings.ContainsKey("BreakingTime"))
                                 breakingTimeTb.Text = settings["BreakingTime"];
                             else
-                                breakingTimeTb.Text = "15"; // значение по умолчанию
+                                breakingTimeTb.Text = "55"; // значение по умолчанию
 
                             // Загружаем задержку
                             if (settings.ContainsKey("CameraOffset"))
@@ -1209,51 +1168,50 @@ namespace KrishkiForms
             CloseProgramButton_Click(null, null);
         }
 
-        private void ovalityCB_CheckedChanged(object sender, EventArgs e)
-        {
-            /*ovalityDefectPanel.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            ovalityDef.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            timeOvality.BackColor = ovalityCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);*/
-        }
-
-        private void inclusionCB_CheckedChanged(object sender, EventArgs e)
-        {
-            /*inclusionDefectPanel.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            inclusionDef.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            inclusionTime.BackColor = inclusionCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);*/
-        }
-
-        private void inpaintCB_CheckedChanged(object sender, EventArgs e)
-        {
-            /*inpaintDefectPanel.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            InpaintDef.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            inpaintTime.BackColor = inpaintCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);*/
-        }
-
-        private void obloyCB_CheckedChanged(object sender, EventArgs e)
-        {
-            /*obloyDefectPanel.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            obloyDef.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);
-            obloyTime.BackColor = obloyCB.Checked ? Color.FromArgb(240, 245, 255) : Color.FromArgb(255, 200, 200);*/
-        }
-
         private void receptCapsCmb_SelectedIndexChanged(object sender, EventArgs e)
         {
-            GetSelectedCapValue();
+            string key = receptCapsCmB.SelectedItem?.ToString();
+            if (key == null || !_recipes.ContainsKey(key))
+                return;
 
+            ApplyRecipe(_recipes[key]);
+        }
+
+        private void ApplyRecipe(CapRecipe r)
+        {
+            // Цветовые флаги
+            isGreenColor = r.IsGreen;
+            isColored = r.IsColored;
+            isYellowCap = r.IsYellow;
+            capsAreWhite = r.IsWhite;
+
+            // Параметры обработки
+            window = r.Window;
+            morph_size = r.MorphSize;
+            morph_size_2 = r.MorphSize2;
+            capsColor = r.CapsColor;
+
+            // Камера
+            if (cam != null)
+            {
+                cam.Saturation = (uint)r.CameraSaturation;
+                cam.SetSaturation();
+            }
+
+            // Логика отключения inpaint
             if (capsAreWhite)
             {
-                // Белые → отключить и сбросить
                 inpaintCB.Checked = false;
-                inpaintCB_CheckedChanged(null, null);
                 inpaintCB.Enabled = false;
             }
             else
             {
-                // Остальные цвета → снова доступно
                 inpaintCB.Enabled = true;
             }
+
+            RebuildMorphology();
         }
+
 
         private void outputImageCmB_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1522,21 +1480,29 @@ namespace KrishkiForms
             if (gray.Empty() || image.Empty())
                 return null;
 
+            //Цветокоррекция (Начало)
             Mat processed = image.Clone();
             NonlinearBackgroundDecolorization(processed, capsColor);
+            //Цветокоррекция (Конец)
 
             Mat[] channels;
             Cv2.Split(processed, out channels);
 
+            //Окно фильтра (Начало)
             Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
+            //Окно фильтра (Конец)
+
+            //Морфологический фильтр (Начало)
             Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
             Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
             Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
+            //Морфологический фильтр (Конец)
 
             blurChannel_0 = channels[0];
             blurChannel_1 = channels[1];
             blurChannel_2 = channels[2];
 
+            //Контур (начало)
             Point[][] contours;
             HierarchyIndex[] hierarchy;
             Cv2.FindContours(
@@ -1557,6 +1523,7 @@ namespace KrishkiForms
                     maxInd = i;
                 }
             }
+            //Контур (Конец)
 
             return contours.Length > 0 ? contours[maxInd] : null;
         }
@@ -1632,12 +1599,9 @@ namespace KrishkiForms
             {
                 modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 1);
             }
-
             cts = new CancellationTokenSource();
             try
             {
-                capsColor = GetSelectedCapValue();
-
                 processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                 isProcessing = true;
                 recognizeButton.Text = "Остановить анализ";
@@ -1662,7 +1626,12 @@ namespace KrishkiForms
             applyPrBreakerParamButton.Enabled = !isLocked;
             loadPrSettings.Enabled = !isLocked;
             savePrSettings.Enabled = !isLocked;
-            startStreamButton.Enabled = !isLocked;
+            receptCapsCmB.Enabled = !isLocked;
+
+            if (!isImageLoaded)
+            {
+                startStreamButton.Enabled = !isLocked;
+            }
         }
 
         private void ApplyCameraSettings()
@@ -1983,107 +1952,6 @@ namespace KrishkiForms
             return (byte)(0.5f * hue);
         }
 
-        private byte GetSelectedCapValue()
-        {
-            capsAreWhite = false;
-            string selected = receptCapsCmB.SelectedItem?.ToString();
-            switch (selected)
-            {
-                case "Желтые":
-                    window = 5;  //15
-                    morph_size = 1;  //11 
-                    morph_size_2 = 1;  //11
-                    if (cam != null)
-                    {
-                        cam.Saturation = 128;
-                        cam.SetSaturation();
-                    }
-                    isGreenColor = false;
-                    isColored = true;
-                    isYellowCap = true;
-                    return YELLOW_CAPS;
-                case "Синие":
-                    window = 3; //15
-                    morph_size = 1; //11
-                    morph_size_2 = 1;  //11
-                    if (cam != null)
-                    {
-                        cam.Saturation = 255;
-                        cam.SetSaturation();
-                    }
-                    isGreenColor = false;
-                    isColored = true;
-                    isYellowCap = false;
-                    return BLUE_CAPS;
-                case "Золотые":
-                    window = 5; //15
-                    morph_size = 1;  //11
-                    morph_size_2 = 1;  //11
-                    if (cam != null)
-                    {
-                        cam.Saturation = 128;
-                        cam.SetSaturation();
-                    }
-                    isGreenColor = false;
-                    isColored = true;
-                    isYellowCap = true;
-                    return GOLD_CAPS;
-                case "Белые":
-                    window = 5;
-                    morph_size = 1;
-                    morph_size_2 = 1;
-                    if (cam != null)
-                    {
-                        cam.Saturation = 128;
-                        cam.SetSaturation();
-                    }
-                    isGreenColor = false;
-                    isColored = false;
-                    capsAreWhite = true;
-                    isYellowCap = false;
-                    return WHITE_CAPS;
-                case "Зеленые":
-                    window = 7;
-                    morph_size = 2;
-                    morph_size_2 = 2;
-                    if (cam != null)
-                    {
-                        cam.Saturation = 128;
-                        cam.SetSaturation();
-                    }
-                    isGreenColor = true;
-                    isColored = true;
-                    isYellowCap = false;
-                    return GREEN_CAPS;
-                case "Оранжевые":
-                    window = 5;
-                    morph_size = 2;
-                    morph_size_2 = 2;
-                    if (cam != null)
-                    {
-                        cam.Saturation = 255;
-                        cam.SetSaturation();
-                    }
-                    isGreenColor = false;
-                    isColored = true;
-                    isYellowCap = false;
-                    return ORANGE_CAPS;
-                default:
-                    window = 5;  //15
-                    morph_size = 1;  //11 
-                    morph_size_2 = 1;  //11
-                    if (cam != null)
-                    {
-                        cam.Saturation = 128;
-                        cam.SetSaturation();
-                    }
-                    isGreenColor = false;
-                    isColored = true;
-                    isYellowCap = true;
-                    return YELLOW_CAPS;
-            }
-        }
-
         private void ApplyRecognitionParameters()
         {
             if (!double.TryParse(ovalityCoef.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out ovalityThreshold))
@@ -2312,38 +2180,6 @@ namespace KrishkiForms
             }
         }
 
-        public void GetModuleState(int number, bool state)
-        {
-            if (number == LocalSettings.Instance.DINumber && currentDetectorState == true)
-            {
-                module.SetOutput(LocalSettings.Instance.DONumber, true);
-
-                if (!cameraError1)
-                {
-                    new System.Threading.Thread(new System.Threading.ThreadStart(() => cam.StartStream())).Start();
-                }
-
-                currentDetectorState = false;
-            }
-            else if (number == LocalSettings.Instance.DINumber && currentDetectorState == false)
-            {
-                System.Threading.Thread th = new System.Threading.Thread(() =>
-                {
-                    System.Threading.Thread.Sleep(LocalSettings.Instance.EndStreamDelay);
-
-                    module.SetOutput(LocalSettings.Instance.DONumber, false);
-
-                    if (!cameraError1)
-                    {
-                        new System.Threading.Thread(new System.Threading.ThreadStart(() => cam.EndStream())).Start();
-                    }
-
-                    currentDetectorState = true;
-                });
-                th.Start();
-            }
-        }
-
         #endregion
 
         #region Методы управления потоком обработки
@@ -2417,7 +2253,6 @@ namespace KrishkiForms
                         try
                         {
                             frameToProcess = new Mat(imageFiles[currentImageIndex]);
-                            //UpdatePictureBox(originPb, frameToProcess);
                             currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
                         }
                         catch (Exception ex)
@@ -2524,8 +2359,10 @@ namespace KrishkiForms
                                 {
                                     okCapsCount++;
                                     percentOkCaps = generalCapsCount > 0 ? okCapsCount / generalCapsCount * 100 : 0;
+                                    percentNgCaps = generalCapsCount > 0 ? ngCapsCount / generalCapsCount * 100 : 0;
                                     UpdateTextBox(okCapsCountTb, okCapsCount, 0);
                                     UpdateTextBox(percentOkCapsTb, percentOkCaps);
+                                    UpdateTextBox(percentNgCapsTb, percentNgCaps);
                                 }
 
                                 // Создаем безопасную копию изображения
@@ -2547,7 +2384,7 @@ namespace KrishkiForms
 
 
                                 BeginInvoke(() => currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder);
- 
+
 
                                 PLCData.QualityStatus qualityStatus = anyDefect
                                             ? PLCData.QualityStatus.Bad
@@ -2607,52 +2444,6 @@ namespace KrishkiForms
             }
         }
 
-        private void SaveAndCleanupAsync(Mat image, string fullPath, string directory)
-        {
-            Task.Run(() =>
-            {
-                try
-                {
-                    var encodingParams = new[]
-                    {
-                        new ImageEncodingParam(ImwriteFlags.JpegQuality, 85)
-                    };
-
-                    Cv2.ImWrite(fullPath, image, encodingParams);
-                }
-                catch { /* игнорируем ошибки */ }
-
-                CleanupOldImages(directory);
-            });
-        }
-
-
-
-        private void CleanupOldImages(string directory)
-        {
-            try
-            {
-                var files = new DirectoryInfo(directory)
-                    .GetFiles("*.jpg")
-                    .OrderBy(f => f.CreationTime)
-                    .ToList();
-
-                if (files.Count > MAX_IMAGES_PER_DEFECT)
-                {
-                    var toRemove = files.Take(100).ToList();
-
-                    foreach (var f in toRemove)
-                    {
-                        try { f.Delete(); } catch { }
-                    }
-                }
-            }
-            catch
-            {
-                // игнорируем ошибки удаления
-            }
-        }
-
         #endregion
 
         #region Методы проверки дефектов
@@ -2673,7 +2464,9 @@ namespace KrishkiForms
             }
 
             stopwatch.Stop();
+            percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
             UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds, 0);
+            UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
 
             return isOval;
         }
@@ -2695,7 +2488,9 @@ namespace KrishkiForms
             }
 
             stopwatch.Stop();
+            percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
             UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds, 0);
+            UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
 
             return hasInclusions;
         }
@@ -2717,7 +2512,9 @@ namespace KrishkiForms
             }
 
             stopwatch.Stop();
+            percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
             UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
+            UpdateTextBox(InpaintDef, paintDefectCount);
 
             return hasPaintDefects;
         }
@@ -2739,8 +2536,9 @@ namespace KrishkiForms
             }
 
             stopwatch.Stop();
+            percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
             UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds, 0);
-
+            UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
             return hasObloyDefects;
         }
 
@@ -3222,7 +3020,6 @@ namespace KrishkiForms
             }
         }
 
-
         private unsafe void GetHueChannel(Mat img, int[] arrIndex, byte[] hueLUT)
         {
             int totalPixels = img.Cols * img.Rows;
@@ -3398,7 +3195,6 @@ namespace KrishkiForms
         private void testDefectParamBt_Click(object sender, EventArgs e)
         {
             ApplyRecognitionParameters();
-            capsColor = GetSelectedCapValue();
             if (_imageForTest == null || _imageForTest.Empty())
             {
                 MessageBox.Show("Сначала загрузите изображение для тестирования!",
@@ -3547,5 +3343,192 @@ namespace KrishkiForms
         }
         #endregion
 
+        #region Создание рецепта
+
+        private Mat SimulateCameraSaturation(Mat img, int saturation)
+        {
+            if (img.Empty()) return null;
+
+            float koeff = saturation / 128.0f;
+
+            Mat imgHSV = new Mat();
+            Cv2.CvtColor(img, imgHSV, ColorConversionCodes.BGR2HSV);
+
+            Mat[] hsv = Cv2.Split(imgHSV);
+            Mat h = hsv[0];
+            Mat s = hsv[1];
+            Mat v = hsv[2];
+
+            unsafe
+            {
+                byte* satPtr = (byte*)s.DataPointer;
+                int total = s.Rows * s.Cols;
+
+                for (int i = 0; i < total; i++)
+                {
+                    float corrected = koeff * satPtr[i];
+                    if (corrected > 255f) corrected = 255f;
+                    satPtr[i] = (byte)corrected;
+                }
+            }
+
+            Cv2.Merge(new Mat[] { h, s, v }, imgHSV);
+
+            Mat imgSat = new Mat();
+            Cv2.CvtColor(imgHSV, imgSat, ColorConversionCodes.HSV2BGR);
+
+            return imgSat;
+        }
+
+        private void RecomputeAll()
+        {
+            if (_imageOriginReceptParam == null || _imageOriginReceptParam.Empty())
+                return;
+
+            // ---------------- 1. Saturation --------------------
+            Mat satImg = SimulateCameraSaturation(_imageOriginReceptParam, (int)saturationUpDown.Value);
+            saturationReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
+
+            // ---------------- 2. CapsColor ----------------------
+            Mat capsImg = satImg.Clone();
+            NonlinearBackgroundDecolorization(capsImg, (byte)capcolorUpDown.Value);
+            capscolorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
+
+            // ---------------- 3. Window filtering ----------------
+            Mat[] channels;
+            Cv2.Split(capsImg, out channels);
+
+            int window = int.Parse(windowCb.Text);
+            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
+            Mat windowImg = channels[1];
+            windowReceptParamSmallPb.Image = BitmapConverter.ToBitmap(windowImg);
+
+            // ---------------- 4. Morphology ---------------------
+            int morph = int.Parse(morphCb.Text);
+            Mat element1 = Cv2.GetStructuringElement(
+                MorphShapes.Rect,
+                new Size(2 * morph + 1, 2 * morph + 1),
+                new Point(morph, morph)
+            );
+
+            Mat element2 = Cv2.GetStructuringElement(
+                MorphShapes.Cross,
+                new Size(2 * morph + 1, 2 * morph + 1),
+                new Point(morph, morph)
+            );
+
+            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
+            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
+            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
+
+            Mat morphImg = channels[2];
+            morphReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
+
+            // ---------------- 5. Contour -------------------------
+            Point[][] contours;
+            HierarchyIndex[] hierarchy;
+
+            Cv2.FindContours(morphImg, out contours, out hierarchy,
+                RetrievalModes.External, ContourApproximationModes.ApproxNone);
+
+            if (contours.Length == 0)
+                return;
+
+            int maxInd = 0;
+            int maxLength = 0;
+            for (int i = 0; i < contours.Length; i++)
+                if (contours[i].Length > maxLength)
+                {
+                    maxLength = contours[i].Length;
+                    maxInd = i;
+                }
+
+            // ---------------- Отрисовать контур -------------------
+            Mat contourDraw = _imageOriginReceptParam.Clone();
+            Cv2.DrawContours(contourDraw, contours, maxInd, Scalar.Red, 2);
+
+            resultContourSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
+        }
+
+
+        private void saturationUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            RecomputeAll();
+        }
+
+        private void capcolorUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            RecomputeAll();
+        }
+
+        private void windowCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RecomputeAll();
+        }
+
+        private void morphCb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RecomputeAll();
+        }
+
+
+        private void loadImageForReceptParamBt_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp";
+                ofd.Title = "Выберите изображение";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    _imageOriginReceptParam = new Mat(ofd.FileName);
+                    originReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
+
+                    RecomputeAll();
+                }
+            }
+        }
+
+        private void originReceptParamSmallPb_Click(object sender, EventArgs e)
+        {
+            ShowInGeneralPreview(originReceptParamSmallPb);
+        }
+
+        private void saturationReceptParamSmallPb_Click(object sender, EventArgs e)
+        {
+            ShowInGeneralPreview(saturationReceptParamSmallPb);
+        }
+
+        private void capscolorReceptParamSmallPb_Click(object sender, EventArgs e)
+        {
+            ShowInGeneralPreview(capscolorReceptParamSmallPb);
+        }
+
+        private void windowReceptParamSmallPb_Click(object sender, EventArgs e)
+        {
+            ShowInGeneralPreview(windowReceptParamSmallPb);
+        }
+
+        private void morphReceptParamSmallPb_Click(object sender, EventArgs e)
+        {
+            ShowInGeneralPreview(morphReceptParamSmallPb);
+        }
+
+        private void resultContourSmallPb_Click(object sender, EventArgs e)
+        {
+            ShowInGeneralPreview(resultContourSmallPb);
+        }
+
+        // Вспомогательный метод
+        private void ShowInGeneralPreview(PictureBox smallPb)
+        {
+            if (smallPb.Image != null)
+            {
+                generalReceptParamPb.Image?.Dispose(); // освобождаем предыдущий Image
+                generalReceptParamPb.Image = (System.Drawing.Image)smallPb.Image.Clone();
+            }
+        }
+
+        #endregion
     }
 }
