@@ -2,10 +2,13 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
+using System.Text;
+using System.Windows.Forms;
 using KrishkiForms.CameraAndModbusClasses;
 using KrishkiForms.FrameProcessing;
 using KrishkiForms.Hardware;
@@ -136,6 +139,7 @@ namespace KrishkiForms
         private static bool isGreenColor = false;
         private static bool isColored = true;
         private static bool isYellowCap = false;
+        private static int saturation = 0;
 
         //Для работы с файлами цветов крышек
         private Dictionary<string, CapRecipe> _recipes = new();
@@ -209,6 +213,7 @@ namespace KrishkiForms
         private string fullPathForPaintDefect = "";
         private string fullPathForInclusionDefect = "";
         private string fullPathForObloyDefect = "";
+        private FileSystemWatcher _recipesWatcher;
 
         // Логирование
         private DateTime? _lastImageReceivedTime = null;
@@ -372,14 +377,52 @@ namespace KrishkiForms
             );
         }
 
-
         private void InitializePaths()
         {
-            settingsFilePath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "файлы настроек");
-            ovalityDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "овальность");
-            paintDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "непрокрас");
-            inclusionDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "вкрапления");
-            obloyDefectPath = Path.Combine(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\..\..\")), "дефектные крышки", "облой");
+            currentReceptFolderTb.Text = RecipesFolder;
+
+            if (!Directory.Exists(RecipesFolder))
+                Directory.CreateDirectory(RecipesFolder);
+
+            // Настройка FileSystemWatcher
+            _recipesWatcher = new FileSystemWatcher
+            {
+                Path = RecipesFolder,
+                Filter = "*.json",
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            };
+
+            _recipesWatcher.Created += OnRecipesFolderChanged;
+            _recipesWatcher.Deleted += OnRecipesFolderChanged;
+            _recipesWatcher.Renamed += OnRecipesFolderChanged;
+
+            _recipesWatcher.EnableRaisingEvents = true;
+        }
+
+        private void OnRecipesFolderChanged(object sender, FileSystemEventArgs e)
+        {
+            // Так как события приходят из другого потока, обновляем UI через Invoke
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => ReloadRecipes()));
+            }
+            else
+            {
+                ReloadRecipes();
+            }
+        }
+
+        // Метод для обновления комбобокса
+        private void ReloadRecipes()
+        {
+            LoadRecipes();
+
+            receptCapsCmB.Items.Clear();
+            foreach (var recipeName in _recipes.Keys)
+                receptCapsCmB.Items.Add(recipeName);
+
+            if (receptCapsCmB.Items.Count > 0 && receptCapsCmB.SelectedIndex == -1)
+                receptCapsCmB.SelectedIndex = 0;
         }
 
         private void LoadDefectAndCameraParam()
@@ -1190,6 +1233,7 @@ namespace KrishkiForms
             morph_size = r.MorphSize;
             morph_size_2 = r.MorphSize2;
             capsColor = r.CapsColor;
+            saturation = r.CameraSaturation;
 
             // Камера
             if (cam != null)
@@ -1207,6 +1251,27 @@ namespace KrishkiForms
             else
             {
                 inpaintCB.Enabled = true;
+            }
+
+            // Обновляем чекбоксы интерфейса
+            isGreenCb.Checked = isGreenColor;
+            isColorCb.Checked = isColored;
+            isYellowCb.Checked = isYellowCap;
+            isWhiteCb.Checked = capsAreWhite;
+
+            // --- Параметры обработки ---
+            capcolorUpDown.Value = r.CapsColor;
+            saturationUpDown.Value = r.CameraSaturation;
+
+            // Для windowCb и morphCb выбираем соответствующее значение
+            if (r.Window >= 0 && r.Window < windowCb.Items.Count)
+            {
+                windowCb.SelectedItem = r.Window.ToString();
+            }
+
+            if (r.MorphSize > 0 && morphCb.Items.Contains(r.MorphSize.ToString()))
+            {
+                morphCb.SelectedItem = r.MorphSize.ToString();
             }
 
             RebuildMorphology();
@@ -1482,6 +1547,7 @@ namespace KrishkiForms
 
             //Цветокоррекция (Начало)
             Mat processed = image.Clone();
+            processed = SimulateCameraSaturation(processed, saturation);
             NonlinearBackgroundDecolorization(processed, capsColor);
             //Цветокоррекция (Конец)
 
@@ -2272,9 +2338,9 @@ namespace KrishkiForms
                         Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
                         Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
 
-                        Point[] capContour = GetCapContour(gray, frameToProcess);
-
                         frameToProcess.CopyTo(_frameToDisplay);
+
+                        Point[] capContour = GetCapContour(gray, frameToProcess);
 
                         generalCapsCount++;
 
@@ -3448,9 +3514,11 @@ namespace KrishkiForms
             Cv2.DrawContours(contourDraw, contours, maxInd, Scalar.Red, 2);
 
             resultContourSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
+
+            // --- Автоматически выводим итоговое изображение в большое окно ---
+            ShowInGeneralPreview(resultContourSmallPb);
+
         }
-
-
         private void saturationUpDown_ValueChanged(object sender, EventArgs e)
         {
             RecomputeAll();
@@ -3527,6 +3595,139 @@ namespace KrishkiForms
                 generalReceptParamPb.Image?.Dispose(); // освобождаем предыдущий Image
                 generalReceptParamPb.Image = (System.Drawing.Image)smallPb.Image.Clone();
             }
+        }
+
+        private void saveReceptBt_Click(object sender, EventArgs e)
+        {
+            if (!ValidateRecept(out string error))
+            {
+                MessageBox.Show(error, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // --- Папка ---
+            string folder = RecipesFolder;
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string name = receptNameTb.Text.Trim();
+            string fileName = name + ".json";
+            string fullPath = Path.Combine(folder, fileName);
+
+            // --- Window ---
+            int windowValue = 0;
+            if (windowCb.SelectedItem != null)
+                int.TryParse(windowCb.SelectedItem.ToString(), out windowValue);
+
+            // --- MorphSize ---
+            int morphSize = 1;
+            if (morphCb.SelectedItem != null)
+                int.TryParse(morphCb.SelectedItem.ToString(), out morphSize);
+
+            int morphSize2 = morphSize;
+
+            // --- Рецепт ---
+            var recipe = new CapRecipe
+            {
+                Name = name,
+                CapsColor = (byte)capcolorUpDown.Value,
+                Window = windowValue,
+                MorphSize = morphSize,
+                MorphSize2 = morphSize2,
+                CameraSaturation = (int)saturationUpDown.Value,
+
+                IsGreen = isGreenColor,
+                IsColored = isColored,
+                IsYellow = isYellowCap,
+                IsWhite = capsAreWhite
+            };
+
+            // --- JSON с нормальной русской кодировкой ---
+            string json = System.Text.Json.JsonSerializer.Serialize(
+                recipe,
+                new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                }
+            );
+
+            File.WriteAllText(fullPath, json, Encoding.UTF8);
+
+            // --- Обновляем список рецептов ---
+            LoadRecipes();
+
+            receptCapsCmB.Items.Clear();
+            foreach (var recipeName in _recipes.Keys)
+                receptCapsCmB.Items.Add(recipeName);
+
+            MessageBox.Show("Рецепт успешно сохранён!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+
+
+        private bool ValidateRecept(out string error)
+        {
+            error = "";
+
+            if (string.IsNullOrWhiteSpace(receptNameTb.Text))
+            {
+                error = "Введите имя рецепта.";
+                return false;
+            }
+
+            if (capcolorUpDown.Value < 0 || capcolorUpDown.Value > 255)
+            {
+                error = "Цв. крышки должен быть в диапазоне 0–255.";
+                return false;
+            }
+
+            if (windowCb.SelectedIndex < 0)
+            {
+                error = "Выберите значение Ок.фильтр.";
+                return false;
+            }
+
+            if (morphCb.SelectedIndex < 0)
+            {
+                error = "Выберите Мф.фильтр.";
+                return false;
+            }
+
+            // Все проверки прошли
+            return true;
+        }
+
+        private void openCurReceptFolderBt_Click(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(RecipesFolder))
+                Directory.CreateDirectory(RecipesFolder);
+
+            System.Diagnostics.Process.Start("explorer.exe", RecipesFolder);
+        }
+
+        private void isGreenCb_CheckedChanged(object sender, EventArgs e)
+        {
+            isGreenColor = isGreenCb.Checked;
+            RecomputeAll();
+        }
+
+        private void isColorCb_CheckedChanged(object sender, EventArgs e)
+        {
+            isColored = isColorCb.Checked;
+            RecomputeAll();
+        }
+
+        private void isYellowCb_CheckedChanged(object sender, EventArgs e)
+        {
+            isYellowCap = isYellowCb.Checked;
+            RecomputeAll();
+        }
+
+        private void isWhiteCb_CheckedChanged(object sender, EventArgs e)
+        {
+            capsAreWhite = isWhiteCb.Checked;
+            RecomputeAll();
         }
 
         #endregion
