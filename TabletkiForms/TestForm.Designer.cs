@@ -42,6 +42,7 @@
             testingPb = new PictureBox();
             groupBox7 = new GroupBox();
             groupBox2 = new GroupBox();
+            numericUpDown1 = new NumericUpDown();
             ovalityCoef = new TextBox();
             label21 = new Label();
             tableLayoutPanel3 = new TableLayoutPanel();
@@ -220,6 +221,7 @@
             ((System.ComponentModel.ISupportInitialize)testingPb).BeginInit();
             groupBox7.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             tableLayoutPanel3.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -425,6 +427,7 @@
             // groupBox2
             // 
             groupBox2.BackColor = Color.White;
+            groupBox2.Controls.Add(numericUpDown1);
             groupBox2.Controls.Add(ovalityCoef);
             groupBox2.Controls.Add(label21);
             groupBox2.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
@@ -435,6 +438,19 @@
             groupBox2.TabIndex = 9;
             groupBox2.TabStop = false;
             groupBox2.Text = "Овальность";
+            // 
+            // numericUpDown1
+            // 
+            numericUpDown1.DecimalPlaces = 2;
+            numericUpDown1.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            numericUpDown1.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            numericUpDown1.Location = new Point(134, 47);
+            numericUpDown1.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown1.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
+            numericUpDown1.Name = "numericUpDown1";
+            numericUpDown1.Size = new Size(100, 25);
+            numericUpDown1.TabIndex = 9;
+            numericUpDown1.Value = new decimal(new int[] { 10, 0, 0, 131072 });
             // 
             // ovalityCoef
             // 
@@ -1662,6 +1678,7 @@
             capcolorUpDown.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             capcolorUpDown.Location = new Point(186, 162);
             capcolorUpDown.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            capcolorUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             capcolorUpDown.Name = "capcolorUpDown";
             capcolorUpDown.Size = new Size(81, 25);
             capcolorUpDown.TabIndex = 3;
@@ -2669,6 +2686,7 @@
             groupBox7.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             tableLayoutPanel3.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
@@ -2916,5 +2934,6 @@
         private CheckBox isGreenCb;
         private CheckBox isWhiteCb;
         private CheckBox isYellowCb;
+        private NumericUpDown numericUpDown1;
     }
 }
