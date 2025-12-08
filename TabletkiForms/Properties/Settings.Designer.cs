@@ -242,12 +242,12 @@ namespace KrishkiForms.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GainFrame {
+        public string SaturationFrame {
             get {
-                return ((string)(this["GainFrame"]));
+                return ((string)(this["SaturationFrame"]));
             }
             set {
-                this["GainFrame"] = value;
+                this["SaturationFrame"] = value;
             }
         }
         

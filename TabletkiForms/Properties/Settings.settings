@@ -56,7 +56,7 @@
     <Setting Name="ExposureFrame" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="GainFrame" Type="System.String" Scope="User">
+    <Setting Name="SaturationFrame" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="IpAdressCamera" Type="System.String" Scope="User">

@@ -401,7 +401,6 @@ namespace KrishkiForms
 
         private void OnRecipesFolderChanged(object sender, FileSystemEventArgs e)
         {
-            // Так как события приходят из другого потока, обновляем UI через Invoke
             if (InvokeRequired)
             {
                 Invoke(new Action(() => ReloadRecipes()));
@@ -420,9 +419,6 @@ namespace KrishkiForms
             receptCapsCmB.Items.Clear();
             foreach (var recipeName in _recipes.Keys)
                 receptCapsCmB.Items.Add(recipeName);
-
-            if (receptCapsCmB.Items.Count > 0 && receptCapsCmB.SelectedIndex == -1)
-                receptCapsCmB.SelectedIndex = 0;
         }
 
         private void LoadDefectAndCameraParam()
@@ -438,38 +434,38 @@ namespace KrishkiForms
 
             // ===== Параметры дефектов (автоподгрузка при запуске) =====
             if (!string.IsNullOrEmpty(Properties.Settings.Default.OvalityThreshold))
-                ovalityCoef.Text = Properties.Settings.Default.OvalityThreshold;
+                ovalityCoefNumUpD.Text = Properties.Settings.Default.OvalityThreshold;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.InclusionThreshold))
-                circleCoefTx.Text = Properties.Settings.Default.InclusionThreshold;
+                circleCoefNumUpD.Text = Properties.Settings.Default.InclusionThreshold;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInclusion))
-                minSquareInclusion.Text = Properties.Settings.Default.MinAreaInclusion;
+                minSquareInclusionNumUpD.Text = Properties.Settings.Default.MinAreaInclusion;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MaxAreaInclusion))
-                maxSquareInclusion.Text = Properties.Settings.Default.MaxAreaInclusion;
+                maxSquareInclusionNumUpD.Text = Properties.Settings.Default.MaxAreaInclusion;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInpaintDefect))
-                minSquareInpaint.Text = Properties.Settings.Default.MinAreaInpaintDefect;
+                minSquareInpaintNumUpD.Text = Properties.Settings.Default.MinAreaInpaintDefect;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MinInpaintWhiteThreshold))
-                whiteThresoldTx.Text = Properties.Settings.Default.MinInpaintWhiteThreshold;
+                whiteThresoldNumUpD.Text = Properties.Settings.Default.MinInpaintWhiteThreshold;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaObloy))
-                obloyPixCount.Text = Properties.Settings.Default.MinAreaObloy;
+                obloyPixCountNumUpD.Text = Properties.Settings.Default.MinAreaObloy;
 
-            // ===== Параметры камеры (Width, Height, Exposure, Gain) =====
+            // ===== Параметры камеры (Width, Height, Exposure, Saturation) =====
             if (!string.IsNullOrEmpty(Properties.Settings.Default.WidthFrame))
-                widthTb.Text = Properties.Settings.Default.WidthFrame;
+                frameWidthNumUpD.Text = Properties.Settings.Default.WidthFrame;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.HeightFrame))
-                heightTb.Text = Properties.Settings.Default.HeightFrame;
+                frameHeightNumUpD.Text = Properties.Settings.Default.HeightFrame;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.ExposureFrame))
-                exposureTb.Text = Properties.Settings.Default.ExposureFrame;
+                frameExposureNumUpD.Text = Properties.Settings.Default.ExposureFrame;
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.GainFrame))
-                gainTb.Text = Properties.Settings.Default.GainFrame;
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.SaturationFrame))
+                frameSaturationNumUpD.Text = Properties.Settings.Default.SaturationFrame;
         }
 
         private void SendStopSignalsToPLC()
@@ -737,15 +733,6 @@ namespace KrishkiForms
             connectPrButton.Enabled = false;
             loadImageButton.Enabled = false;
 
-            // Блокируем настройки во время стрима
-            ovalityCoef.Enabled = false;
-            circleCoefTx.Enabled = false;
-            minSquareInclusion.Enabled = false;
-            maxSquareInclusion.Enabled = false;
-            minSquareInpaint.Enabled = false;
-            whiteThresoldTx.Enabled = false;
-            obloyPixCount.Enabled = false;
-
             StartStop(true);
 
             startStreamButton.Text = "Остановить";
@@ -771,16 +758,6 @@ namespace KrishkiForms
             connectCameraButton.Enabled = true;
             connectPrButton.Enabled = true;
             loadImageButton.Enabled = true;
-
-
-            // Разблокируем настройки
-            ovalityCoef.Enabled = true;
-            circleCoefTx.Enabled = true;
-            minSquareInclusion.Enabled = true;
-            maxSquareInclusion.Enabled = true;
-            minSquareInpaint.Enabled = true;
-            whiteThresoldTx.Enabled = true;
-            obloyPixCount.Enabled = true;
 
             StartStop(false);
 
@@ -1060,13 +1037,13 @@ namespace KrishkiForms
             {
                 var settings = new
                 {
-                    OvalityThreshold = ovalityCoef.Text,
-                    InclusionThreshold = circleCoefTx.Text,
-                    MinAreaInclusion = minSquareInclusion.Text,
-                    MaxAreaInclusion = maxSquareInclusion.Text,
-                    MinAreaInpaintDefect = minSquareInpaint.Text,
-                    MinInpaintWhiteThreshold = whiteThresoldTx.Text,
-                    MinAreaObloy = obloyPixCount.Text
+                    OvalityThreshold = ovalityCoefNumUpD.Text,
+                    InclusionThreshold = circleCoefNumUpD.Text,
+                    MinAreaInclusion = minSquareInclusionNumUpD.Text,
+                    MaxAreaInclusion = maxSquareInclusionNumUpD.Text,
+                    MinAreaInpaintDefect = minSquareInpaintNumUpD.Text,
+                    MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text,
+                    MinAreaObloy = obloyPixCountNumUpD.Text
                 };
 
                 string json = System.Text.Json.JsonSerializer.Serialize(settings,
@@ -1087,13 +1064,13 @@ namespace KrishkiForms
                 }
 
                 // Сохраняем в Settings
-                Properties.Settings.Default.OvalityThreshold = ovalityCoef.Text;
-                Properties.Settings.Default.InclusionThreshold = circleCoefTx.Text;
-                Properties.Settings.Default.MinAreaInclusion = minSquareInclusion.Text;
-                Properties.Settings.Default.MaxAreaInclusion = maxSquareInclusion.Text;
-                Properties.Settings.Default.MinAreaInpaintDefect = minSquareInpaint.Text;
-                Properties.Settings.Default.MinInpaintWhiteThreshold = whiteThresoldTx.Text;
-                Properties.Settings.Default.MinAreaObloy = obloyPixCount.Text;
+                Properties.Settings.Default.OvalityThreshold = ovalityCoefNumUpD.Text;
+                Properties.Settings.Default.InclusionThreshold = circleCoefNumUpD.Text;
+                Properties.Settings.Default.MinAreaInclusion = minSquareInclusionNumUpD.Text;
+                Properties.Settings.Default.MaxAreaInclusion = maxSquareInclusionNumUpD.Text;
+                Properties.Settings.Default.MinAreaInpaintDefect = minSquareInpaintNumUpD.Text;
+                Properties.Settings.Default.MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text;
+                Properties.Settings.Default.MinAreaObloy = obloyPixCountNumUpD.Text;
 
                 Properties.Settings.Default.Save();
             }
@@ -1120,13 +1097,13 @@ namespace KrishkiForms
 
                         if (settings != null)
                         {
-                            ovalityCoef.Text = settings.ContainsKey("OvalityThreshold") ? settings["OvalityThreshold"] : "0.7";
-                            circleCoefTx.Text = settings.ContainsKey("InclusionThreshold") ? settings["InclusionThreshold"] : "0.5";
-                            minSquareInclusion.Text = settings.ContainsKey("MinAreaInclusion") ? settings["MinAreaInclusion"] : "50";
-                            maxSquareInclusion.Text = settings.ContainsKey("MaxAreaInclusion") ? settings["MaxAreaInclusion"] : "500";
-                            minSquareInpaint.Text = settings.ContainsKey("MinAreaInpaintDefect") ? settings["MinAreaInpaintDefect"] : "500";
-                            whiteThresoldTx.Text = settings.ContainsKey("MinInpaintWhiteThreshold") ? settings["MinInpaintWhiteThreshold"] : "150";
-                            obloyPixCount.Text = settings.ContainsKey("MinAreaObloy") ? settings["MinAreaObloy"] : "1000";
+                            ovalityCoefNumUpD.Text = settings.ContainsKey("OvalityThreshold") ? settings["OvalityThreshold"] : "0.7";
+                            circleCoefNumUpD.Text = settings.ContainsKey("InclusionThreshold") ? settings["InclusionThreshold"] : "0.5";
+                            minSquareInclusionNumUpD.Text = settings.ContainsKey("MinAreaInclusion") ? settings["MinAreaInclusion"] : "50";
+                            maxSquareInclusionNumUpD.Text = settings.ContainsKey("MaxAreaInclusion") ? settings["MaxAreaInclusion"] : "500";
+                            minSquareInpaintNumUpD.Text = settings.ContainsKey("MinAreaInpaintDefect") ? settings["MinAreaInpaintDefect"] : "500";
+                            whiteThresoldNumUpD.Text = settings.ContainsKey("MinInpaintWhiteThreshold") ? settings["MinInpaintWhiteThreshold"] : "150";
+                            obloyPixCountNumUpD.Text = settings.ContainsKey("MinAreaObloy") ? settings["MinAreaObloy"] : "1000";
 
                             MessageBox.Show("Настройки дефектов успешно загружены.", "Успех",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1149,43 +1126,43 @@ namespace KrishkiForms
         private bool ValidateDefectSettings()
         {
             // Проверка на корректность чисел
-            if (!double.TryParse(ovalityCoef.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality) || ovality <= 0 || ovality > 1)
+            if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality) || ovality <= 0 || ovality > 1)
             {
                 MessageBox.Show("Параметр 'OvalityThreshold' должен быть числом от 0 до 1.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (!double.TryParse(circleCoefTx.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion) || inclusion <= 0 || inclusion > 1)
+            if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion) || inclusion <= 0 || inclusion > 1)
             {
                 MessageBox.Show("Параметр 'InclusionThreshold' должен быть числом от 0 до 1.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (!double.TryParse(minSquareInclusion.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInclusion) || minInclusion < 0)
+            if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInclusion) || minInclusion < 0)
             {
                 MessageBox.Show("Параметр 'MinAreaInclusion' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (!double.TryParse(maxSquareInclusion.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double maxInclusion) || maxInclusion <= minInclusion)
+            if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double maxInclusion) || maxInclusion <= minInclusion)
             {
                 MessageBox.Show("Параметр 'MaxAreaInclusion' должен быть больше 'MinAreaInclusion'.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (!double.TryParse(minSquareInpaint.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInpaint) || minInpaint <= 0)
+            if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInpaint) || minInpaint <= 0)
             {
                 MessageBox.Show("Параметр 'MinAreaInpaintDefect' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (!double.TryParse(whiteThresoldTx.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double whiteThreshold) || whiteThreshold <= 0)
+            if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double whiteThreshold) || whiteThreshold <= 0)
             {
                 MessageBox.Show("Параметр 'MinInpaintWhiteThreshold' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if (!double.TryParse(obloyPixCount.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double obloy) || obloy <= 0)
+            if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double obloy) || obloy <= 0)
             {
                 MessageBox.Show("Параметр 'MinAreaObloy' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -1273,6 +1250,9 @@ namespace KrishkiForms
             {
                 morphCb.SelectedItem = r.MorphSize.ToString();
             }
+
+            receptNameTb.Text = r.Name.ToString();
+            frameSaturationNumUpD.Text = r.CameraSaturation.ToString();
 
             RebuildMorphology();
         }
@@ -1704,30 +1684,64 @@ namespace KrishkiForms
         {
             try
             {
-                if (!img1.Empty())
+                if (cam == null)
                 {
-                    StopStream();
-                    uint width = uint.Parse(widthTb.Text);
-                    uint height = uint.Parse(heightTb.Text);
-                    uint exposure = uint.Parse(exposureTb.Text);
-                    uint gain = uint.Parse(gainTb.Text);
-                    cam.Width = width;
-                    cam.Height = height;
-                    cam.ExposureTime = exposure;
-                    cam.Gain = gain;
-                    cam.SetHeight();
-                    cam.SetWidth();
-                    cam.SetGain();
-                    cam.SetExposureTime();
-
-                    StartStream();
+                    MessageBox.Show("Камера не инициализирована.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
+
+                // ---------- 1. Валидация параметров ----------
+                if (!uint.TryParse(frameWidthNumUpD.Text, out uint width) || width < 100)
+                {
+                    MessageBox.Show("Некорректная ширина кадра.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (!uint.TryParse(frameHeightNumUpD.Text, out uint height) || height < 100)
+                {
+                    MessageBox.Show("Некорректная высота кадра.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (!uint.TryParse(frameExposureNumUpD.Text, out uint exposure))
+                {
+                    MessageBox.Show("Некорректная выдержка.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (!uint.TryParse(frameSaturationNumUpD.Text, out uint saturation))
+                {
+                    MessageBox.Show("Некорректная насыщенность.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // ---------- 2. Останавливаем поток только если идёт стрим ----------
+                if (isStreamCam == true)
+                    StopStream();
+
+                // ---------- 3. Применяем настройки камеры ----------
+                cam.Width = width;
+                cam.Height = height;
+                cam.ExposureTime = exposure;
+                cam.Saturation = saturation;
+
+                cam.SetWidth();
+                cam.SetHeight();
+                cam.SetExposureTime();
+                cam.SetSaturation();
+
+                // ---------- 4. Возобновляем стрим ----------
+                if (isStreamCam == false)
+                    StartStream();
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}");
+                MessageBox.Show($"Ошибка при применении настроек камеры:\n{ex.Message}",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void ShutdownApplication()
         {
@@ -2020,47 +2034,82 @@ namespace KrishkiForms
 
         private void ApplyRecognitionParameters()
         {
-            if (!double.TryParse(ovalityCoef.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out ovalityThreshold))
+            if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out ovalityThreshold))
             {
                 ovalityThreshold = 0.7;
-                ovalityCoef.Text = ovalityThreshold.ToString();
+                ovalityCoefNumUpD.Text = ovalityThreshold.ToString();
             }
 
-            if (!double.TryParse(circleCoefTx.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out inclusionThreshold))
+            if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out inclusionThreshold))
             {
                 inclusionThreshold = 0.5;
-                circleCoefTx.Text = inclusionThreshold.ToString(CultureInfo.InvariantCulture);
+                circleCoefNumUpD.Text = inclusionThreshold.ToString(CultureInfo.InvariantCulture);
             }
 
-            if (!double.TryParse(minSquareInclusion.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInclusion))
+            if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInclusion))
             {
                 minAreaInclusion = 50;
-                minSquareInclusion.Text = minAreaInclusion.ToString(CultureInfo.InvariantCulture);
+                minSquareInclusionNumUpD.Text = minAreaInclusion.ToString(CultureInfo.InvariantCulture);
             }
 
-            if (!double.TryParse(maxSquareInclusion.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out maxAreaInclusion))
+            if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out maxAreaInclusion))
             {
                 maxAreaInclusion = 500.0;
-                maxSquareInclusion.Text = maxAreaInclusion.ToString(CultureInfo.InvariantCulture);
+                maxSquareInclusionNumUpD.Text = maxAreaInclusion.ToString(CultureInfo.InvariantCulture);
             }
 
-            if (!double.TryParse(minSquareInpaint.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInpaintDefect))
+            if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInpaintDefect))
             {
                 minAreaInpaintDefect = 500;
-                minSquareInpaint.Text = minAreaInpaintDefect.ToString(CultureInfo.InvariantCulture);
+                minSquareInpaintNumUpD.Text = minAreaInpaintDefect.ToString(CultureInfo.InvariantCulture);
             }
 
-            if (!double.TryParse(whiteThresoldTx.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minInpaintWhiteTgreshold))
+            if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minInpaintWhiteTgreshold))
             {
                 minInpaintWhiteTgreshold = 150.0;
-                whiteThresoldTx.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
+                whiteThresoldNumUpD.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
             }
 
-            if (!double.TryParse(obloyPixCount.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaObloy))
+            if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaObloy))
             {
                 minAreaObloy = 1000;
-                obloyPixCount.Text = minAreaObloy.ToString(CultureInfo.InvariantCulture);
+                obloyPixCountNumUpD.Text = minAreaObloy.ToString(CultureInfo.InvariantCulture);
             }
+        }
+
+        private void ovalityCoefNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            ovalityThreshold = (double)ovalityCoefNumUpD.Value;
+        }
+
+        private void circleCoefNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            inclusionThreshold = (double)circleCoefNumUpD.Value;
+        }
+
+        private void minSquareInclusionNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            minAreaInclusion = (double)minSquareInclusionNumUpD.Value;
+        }
+
+        private void maxSquareInclusionNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            maxAreaInclusion = (double)maxSquareInclusionNumUpD.Value;
+        }
+
+        private void minSquareInpaintNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            minAreaInpaintDefect = (double)minSquareInpaintNumUpD.Value;
+        }
+
+        private void whiteThresoldNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            minInpaintWhiteTgreshold = (double)whiteThresoldNumUpD.Value;
+        }
+
+        private void obloyPixCountNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            minAreaObloy = (double)obloyPixCountNumUpD.Value;
         }
 
         private void SaveSettings()
@@ -2068,10 +2117,10 @@ namespace KrishkiForms
             try
             {
                 // Простая валидация
-                if (string.IsNullOrWhiteSpace(widthTb.Text) ||
-                    string.IsNullOrWhiteSpace(heightTb.Text) ||
-                    string.IsNullOrWhiteSpace(exposureTb.Text) ||
-                    string.IsNullOrWhiteSpace(gainTb.Text))
+                if (string.IsNullOrWhiteSpace(frameWidthNumUpD.Text) ||
+                    string.IsNullOrWhiteSpace(frameHeightNumUpD.Text) ||
+                    string.IsNullOrWhiteSpace(frameExposureNumUpD.Text) ||
+                    string.IsNullOrWhiteSpace(frameSaturationNumUpD.Text))
                 {
                     MessageBox.Show("Пожалуйста, заполните все поля перед сохранением.", "Ошибка",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -2080,10 +2129,10 @@ namespace KrishkiForms
 
                 var settings = new
                 {
-                    Width = widthTb.Text,
-                    Height = heightTb.Text,
-                    Exposure = exposureTb.Text,
-                    Gain = gainTb.Text
+                    Width = frameWidthNumUpD.Text,
+                    Height = frameHeightNumUpD.Text,
+                    Exposure = frameExposureNumUpD.Text,
+                    Saturation = frameSaturationNumUpD.Text
                 };
 
                 string json = System.Text.Json.JsonSerializer.Serialize(settings,
@@ -2100,10 +2149,10 @@ namespace KrishkiForms
                         File.WriteAllText(saveFileDialog.FileName, json);
 
                         // ✅ Сохраняем также в Settings
-                        Properties.Settings.Default.WidthFrame = widthTb.Text;
-                        Properties.Settings.Default.HeightFrame = heightTb.Text;
-                        Properties.Settings.Default.ExposureFrame = exposureTb.Text;
-                        Properties.Settings.Default.GainFrame = gainTb.Text;
+                        Properties.Settings.Default.WidthFrame = frameWidthNumUpD.Text;
+                        Properties.Settings.Default.HeightFrame = frameHeightNumUpD.Text;
+                        Properties.Settings.Default.ExposureFrame = frameExposureNumUpD.Text;
+                        Properties.Settings.Default.SaturationFrame = frameSaturationNumUpD.Text;
                         Properties.Settings.Default.Save();
 
                         MessageBox.Show("Настройки успешно сохранены.", "Успех",
@@ -2135,10 +2184,10 @@ namespace KrishkiForms
 
                         if (settings != null)
                         {
-                            widthTb.Text = settings.ContainsKey("Width") ? settings["Width"] : "500";
-                            heightTb.Text = settings.ContainsKey("Height") ? settings["Height"] : "532";
-                            exposureTb.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "450";
-                            gainTb.Text = settings.ContainsKey("Gain") ? settings["Gain"] : "3,01";
+                            frameWidthNumUpD.Text = settings.ContainsKey("Width") ? settings["Width"] : "496";
+                            frameHeightNumUpD.Text = settings.ContainsKey("Height") ? settings["Height"] : "532";
+                            frameExposureNumUpD.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "450";
+                            frameSaturationNumUpD.Text = settings.ContainsKey("Saturation") ? settings["Saturation"] : "128";
 
                             MessageBox.Show("Настройки успешно загружены.", "Успех",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -3614,6 +3663,8 @@ namespace KrishkiForms
             string fileName = name + ".json";
             string fullPath = Path.Combine(folder, fileName);
 
+            bool existedBefore = File.Exists(fullPath);
+
             // --- Window ---
             int windowValue = 0;
             if (windowCb.SelectedItem != null)
@@ -3660,9 +3711,15 @@ namespace KrishkiForms
             receptCapsCmB.Items.Clear();
             foreach (var recipeName in _recipes.Keys)
                 receptCapsCmB.Items.Add(recipeName);
+            receptCapsCmB.SelectedItem = name;
 
-            MessageBox.Show("Рецепт успешно сохранён!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // --- Сообщение ---
+            if (existedBefore)
+                MessageBox.Show($"Рецепт \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show($"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
 
 
 
