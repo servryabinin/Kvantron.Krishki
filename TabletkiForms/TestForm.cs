@@ -2629,7 +2629,7 @@ namespace KrishkiForms
             stopwatch.Stop();
             percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
             UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
-            UpdateTextBox(InpaintDef, paintDefectCount);
+            UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
 
             return hasPaintDefects;
         }

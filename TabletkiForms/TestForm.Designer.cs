@@ -891,9 +891,9 @@
             applySettingsButton.FlatAppearance.BorderSize = 0;
             applySettingsButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             applySettingsButton.ForeColor = Color.White;
-            applySettingsButton.Location = new Point(341, 23);
+            applySettingsButton.Location = new Point(341, 37);
             applySettingsButton.Name = "applySettingsButton";
-            applySettingsButton.Size = new Size(151, 85);
+            applySettingsButton.Size = new Size(151, 47);
             applySettingsButton.TabIndex = 2;
             applySettingsButton.Text = "Применить настройки";
             applySettingsButton.UseVisualStyleBackColor = false;
@@ -1177,9 +1177,9 @@
             applyPrBreakerParamButton.FlatAppearance.BorderSize = 0;
             applyPrBreakerParamButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             applyPrBreakerParamButton.ForeColor = Color.White;
-            applyPrBreakerParamButton.Location = new Point(337, 37);
+            applyPrBreakerParamButton.Location = new Point(337, 56);
             applyPrBreakerParamButton.Name = "applyPrBreakerParamButton";
-            applyPrBreakerParamButton.Size = new Size(151, 85);
+            applyPrBreakerParamButton.Size = new Size(151, 48);
             applyPrBreakerParamButton.TabIndex = 2;
             applyPrBreakerParamButton.Text = "Применить настройки";
             applyPrBreakerParamButton.UseVisualStyleBackColor = false;
@@ -1310,9 +1310,9 @@
             connectPrButton.BackColor = Color.FromArgb(4, 85, 191);
             connectPrButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             connectPrButton.ForeColor = SystemColors.Control;
-            connectPrButton.Location = new Point(335, 6);
+            connectPrButton.Location = new Point(335, 23);
             connectPrButton.Name = "connectPrButton";
-            connectPrButton.Size = new Size(151, 85);
+            connectPrButton.Size = new Size(151, 48);
             connectPrButton.TabIndex = 32;
             connectPrButton.Text = "Подключиться к ПР";
             connectPrButton.UseVisualStyleBackColor = false;
