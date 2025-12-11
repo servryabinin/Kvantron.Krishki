@@ -14,6 +14,7 @@ using KrishkiForms.CameraAndModbusClasses;
 using KrishkiForms.Forms;
 using KrishkiForms.FrameProcessing;
 using KrishkiForms.Hardware;
+using KrishkiForms.Logger;
 using Kvantron.Hardware.SmartDio;
 using Kvantron.UI.Controls.Utils;
 using MathNet.Numerics.IntegralTransforms;
@@ -219,6 +220,7 @@ namespace KrishkiForms
         private FileSystemWatcher _recipesWatcher;
 
         // Логирование
+        private readonly ErrorLogger logger = new ErrorLogger();
         private DateTime? _lastImageReceivedTime = null;
         private readonly string _logFilePath = "SendImageLog.txt";
         private readonly string _processTimeLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProcessTime.txt");
@@ -275,6 +277,16 @@ namespace KrishkiForms
 
         private void InitializeApplication()
         {
+            InitializeCoreSystems();
+            InitializePR205Status();
+            InitializeCameraStatus();
+            InitializeCycleSystem();
+            InitializeUISelections();
+            InitializeAuthorizationSystem();
+        }
+
+        private void InitializeCoreSystems()
+        {
             InitializeHueLUT();
             InitializeImageMatrices();
             InitializePaths();
@@ -285,8 +297,12 @@ namespace KrishkiForms
 
             recognizeButton.Enabled = false;
 
+            StartStop(false, true);
+            LocalSettings.Instance.Save();
+        }
 
-            // --- ПР205 ---
+        private void InitializePR205Status()
+        {
             if (modbusClient != null && modbusClient.Connected)
             {
                 prStatus.Text = "Подключено";
@@ -303,8 +319,10 @@ namespace KrishkiForms
                 connectPrButton.BackColor = disconnectedColor;
                 startStreamButton.Enabled = false;
             }
+        }
 
-            // --- Камера ---
+        private void InitializeCameraStatus()
+        {
             if (cam != null && cam.Connected)
             {
                 cam.SendImage += GetImage;
@@ -320,35 +338,47 @@ namespace KrishkiForms
                 connectCameraButton.Text = "Подключиться";
                 connectCameraButton.BackColor = disconnectedColor;
             }
+        }
 
-            StartStop(false, true);
-            LocalSettings.Instance.Save();
+        private void InitializeCycleSystem()
+        {
+            int cycle = 0;
+            int.TryParse(Properties.Settings.Default.LastCycleTime, out cycle);
 
-            int cycleHoursFromSettings = 0;
-            int.TryParse(Properties.Settings.Default.LastCycleTime, out cycleHoursFromSettings);
-            if (cycleHoursFromSettings < cycleUpDown.Minimum)
+            // защита от неправильного значения
+            if (cycle < cycleUpDown.Minimum)
             {
-                cycleHoursFromSettings = (int)cycleUpDown.Minimum;
-                Properties.Settings.Default.LastCycleTime = cycleHoursFromSettings.ToString();
+                cycle = (int)cycleUpDown.Minimum;
+                Properties.Settings.Default.LastCycleTime = cycle.ToString();
                 Properties.Settings.Default.Save();
             }
-            CycleImageSaver.SetCycleHours(cycleHoursFromSettings);
-            if (cycleUpDown != null) cycleUpDown.Value = cycleHoursFromSettings;
+
+            CycleImageSaver.SetCycleHours(cycle);
+
+            if (cycleUpDown != null)
+                cycleUpDown.Value = cycle;
+
             CycleImageSaver.Init();
             currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
+        }
 
+        private void InitializeUISelections()
+        {
             if (windowCb.Items.Count > 0)
                 windowCb.SelectedIndex = 0;
 
             if (morphCb.Items.Count > 0)
                 morphCb.SelectedIndex = 0;
+        }
 
-            // --- Авторизация ---
+        private void InitializeAuthorizationSystem()
+        {
             AuthManager.Instance.RoleChanged += OnRoleChanged;
+
             AuthManager.Instance.SetRole(Role.Operator);
             ApplyRoleRestrictions(AuthManager.Instance.CurrentRole);
-            AuthManager.Instance.RoleChanged += OnRoleChanged;
             UpdateRoleUI(AuthManager.Instance.CurrentRole);
+
             roleDisplayTimer.Interval = 1000;
             roleDisplayTimer.Tick += (s, e) =>
             {
@@ -357,8 +387,8 @@ namespace KrishkiForms
                 else
                     timeLeftTb.Text = "∞";
             };
-            roleDisplayTimer.Start();
 
+            roleDisplayTimer.Start();
         }
 
         private void InitializeImageMatrices()
@@ -737,42 +767,60 @@ namespace KrishkiForms
 
         private void startStreamButton_Click(object sender, EventArgs e)
         {
-            if (!isStreamRunning)
+            try
             {
-                StartStream();
+                if (!isStreamRunning)
+                {
+                    StartStream();
+                }
+                else
+                {
+                    StopStream();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                StopStream();
+                ErrorLogger.Log(ex, "Ошибка в startStreamButton_Click");
             }
         }
+
 
         private void StartStream()
         {
-            if (originalImage != null)
+            try
             {
-                originalImage = null;
+                if (originalImage != null)
+                {
+                    originalImage = null;
+                }
+
+                isStreamCam = true;
+
+                ApplyRecognitionParameters();
+
+                connectCameraButton.Enabled = false;
+                connectPrButton.Enabled = false;
+                loadImageButton.Enabled = false;
+
+                StartStop(true);
+
+                startStreamButton.Text = "Остановить";
+                startStreamButton.BackColor = Color.FromArgb(229, 115, 115);
+                cameraStatusLabel.Text = "Запущен";
+                cameraStatusLabel.ForeColor = Color.Green;
+                isStreamRunning = true;
+                recognizeButton.Enabled = true;
             }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в StartStream");
 
-            isStreamCam = true;
-            ApplyRecognitionParameters();
-
-            // 🔒 Блокируем кнопки подключения
-            connectCameraButton.Enabled = false;
-            connectPrButton.Enabled = false;
-            loadImageButton.Enabled = false;
-
-            StartStop(true);
-
-            startStreamButton.Text = "Остановить";
-            startStreamButton.BackColor = Color.FromArgb(229, 115, 115);
-            cameraStatusLabel.Text = "Запущен";
-            cameraStatusLabel.ForeColor = Color.Green;
-            isStreamRunning = true;
-            recognizeButton.Enabled = true;
-
+                connectCameraButton.Enabled = true;
+                connectPrButton.Enabled = true;
+                loadImageButton.Enabled = true;
+                isStreamRunning = false;
+            }
         }
-
 
         private void StopStream()
         {
@@ -809,15 +857,23 @@ namespace KrishkiForms
 
         private async void recognizeButton_Click(object sender, EventArgs e)
         {
-            if (isProcessing)
+            try
             {
-                await StopProcessingAsync();
+                if (isProcessing)
+                {
+                    await StopProcessingAsync();
+                }
+                else
+                {
+                    StartProcessing();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                StartProcessing();
+                ErrorLogger.Log(ex, "Ошибка в recognizeButton_Click");
             }
         }
+
 
         #endregion
 
@@ -1632,85 +1688,112 @@ namespace KrishkiForms
 
         private async Task StopProcessingAsync()
         {
-            cts?.Cancel();
-            recognizeButton.Text = "Остановка...";
-            recognizeButton.Enabled = false;
-
-            if (modbusClient != null && modbusClient.Connected)
-            {
-                modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 0);
-            }
-            currentFrameNumber = 0;
-
             try
             {
-                await processingTask;
-            }
-            catch (OperationCanceledException)
-            {
-                // Обработка отмены - нормальная ситуация
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при остановке: {ex.Message}");
+                cts?.Cancel();
+
+                recognizeButton.Text = "Остановка...";
+                recognizeButton.Enabled = false;
+
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    try
+                    {
+                        modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 0);
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync, при отправке стоп-сигнала в ПР");
+                    }
+                }
+
+                currentFrameNumber = 0;
+
+                try
+                {
+                    await processingTask;
+                }
+                catch (OperationCanceledException)
+                {
+                    // Норма
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync, во время остановки обработки");
+                }
             }
             finally
             {
                 isProcessing = false;
+
                 recognizeButton.Text = "Начать анализ";
                 recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
                 recognizeButton.Enabled = true;
 
                 SetUiDuringRecognition(false);
 
+                cts?.Dispose();
+                cts = null;
+            }
+        }
+
+
+        private void StartProcessing()
+        {
+            try
+            {
+                ApplyRecognitionParameters();
+
+                if (modbusClient != null && modbusClient.Connected && !isImageLoaded)
+                {
+                    modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 1);
+                }
+
+                cts = new CancellationTokenSource();
+
+                processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
+                isProcessing = true;
+
+                recognizeButton.Text = "Остановить анализ";
+                recognizeButton.BackColor = Color.FromArgb(229, 115, 115);
+
+                SetUiDuringRecognition(true);
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в StartProcessing");
 
                 cts?.Dispose();
                 cts = null;
             }
         }
 
-        private void StartProcessing()
-        {
-            ApplyRecognitionParameters();
-
-            if (modbusClient != null && modbusClient.Connected && !isImageLoaded)
-            {
-                modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 1);
-            }
-            cts = new CancellationTokenSource();
-            try
-            {
-                processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
-                isProcessing = true;
-                recognizeButton.Text = "Остановить анализ";
-                recognizeButton.BackColor = Color.FromArgb(229, 115, 115);
-
-                SetUiDuringRecognition(true);
-            }
-            catch
-            {
-                cts?.Dispose();
-                throw;
-            }
-        }
 
         private void SetUiDuringRecognition(bool isLocked)
         {
-            applySettingsButton.Enabled = !isLocked;
-            loadSettingsButton.Enabled = !isLocked;
-            saveSettingsButton.Enabled = !isLocked;
-            loadDefectSettings.Enabled = !isLocked;
-            saveDefectSettings.Enabled = !isLocked;
-            applyPrBreakerParamButton.Enabled = !isLocked;
-            loadPrSettings.Enabled = !isLocked;
-            savePrSettings.Enabled = !isLocked;
-            receptCapsCmB.Enabled = !isLocked;
-
-            if (!isImageLoaded)
+            try
             {
-                startStreamButton.Enabled = !isLocked;
+                applySettingsButton.Enabled = !isLocked;
+                loadSettingsButton.Enabled = !isLocked;
+                saveSettingsButton.Enabled = !isLocked;
+                loadDefectSettings.Enabled = !isLocked;
+                saveDefectSettings.Enabled = !isLocked;
+                applyPrBreakerParamButton.Enabled = !isLocked;
+                loadPrSettings.Enabled = !isLocked;
+                savePrSettings.Enabled = !isLocked;
+                receptCapsCmB.Enabled = !isLocked;
+
+                if (!isImageLoaded)
+                {
+                    startStreamButton.Enabled = !isLocked;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в SetUiDuringRecognition");
             }
         }
+
 
         private void ApplyCameraSettings()
         {
@@ -2066,48 +2149,63 @@ namespace KrishkiForms
 
         private void ApplyRecognitionParameters()
         {
-            if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out ovalityThreshold))
+            try
             {
-                ovalityThreshold = 0.7;
-                ovalityCoefNumUpD.Text = ovalityThreshold.ToString();
-            }
+                if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out ovalityThreshold))
+                {
+                    ovalityThreshold = 0.7;
+                    ovalityCoefNumUpD.Text = ovalityThreshold.ToString();
+                }
 
-            if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out inclusionThreshold))
-            {
-                inclusionThreshold = 0.5;
-                circleCoefNumUpD.Text = inclusionThreshold.ToString(CultureInfo.InvariantCulture);
-            }
+                if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out inclusionThreshold))
+                {
+                    inclusionThreshold = 0.5;
+                    circleCoefNumUpD.Text = inclusionThreshold.ToString(CultureInfo.InvariantCulture);
+                }
 
-            if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInclusion))
-            {
-                minAreaInclusion = 50;
-                minSquareInclusionNumUpD.Text = minAreaInclusion.ToString(CultureInfo.InvariantCulture);
-            }
+                if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInclusion))
+                {
+                    minAreaInclusion = 50;
+                    minSquareInclusionNumUpD.Text = minAreaInclusion.ToString(CultureInfo.InvariantCulture);
+                }
 
-            if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out maxAreaInclusion))
-            {
-                maxAreaInclusion = 500.0;
-                maxSquareInclusionNumUpD.Text = maxAreaInclusion.ToString(CultureInfo.InvariantCulture);
-            }
+                if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out maxAreaInclusion))
+                {
+                    maxAreaInclusion = 500.0;
+                    maxSquareInclusionNumUpD.Text = maxAreaInclusion.ToString(CultureInfo.InvariantCulture);
+                }
 
-            if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInpaintDefect))
-            {
-                minAreaInpaintDefect = 500;
-                minSquareInpaintNumUpD.Text = minAreaInpaintDefect.ToString(CultureInfo.InvariantCulture);
-            }
+                if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInpaintDefect))
+                {
+                    minAreaInpaintDefect = 500;
+                    minSquareInpaintNumUpD.Text = minAreaInpaintDefect.ToString(CultureInfo.InvariantCulture);
+                }
 
-            if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minInpaintWhiteTgreshold))
-            {
-                minInpaintWhiteTgreshold = 150.0;
-                whiteThresoldNumUpD.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
-            }
+                if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out minInpaintWhiteTgreshold))
+                {
+                    minInpaintWhiteTgreshold = 150.0;
+                    whiteThresoldNumUpD.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
+                }
 
-            if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaObloy))
+                if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaObloy))
+                {
+                    minAreaObloy = 1000;
+                    obloyPixCountNumUpD.Text = minAreaObloy.ToString(CultureInfo.InvariantCulture);
+                }
+            }
+            catch (Exception ex)
             {
-                minAreaObloy = 1000;
-                obloyPixCountNumUpD.Text = minAreaObloy.ToString(CultureInfo.InvariantCulture);
+                ErrorLogger.Log(ex, "Ошибка в ApplyRecognitionParameters");
             }
         }
+
 
         private void ovalityCoefNumUpD_ValueChanged(object sender, EventArgs e)
         {
@@ -2246,30 +2344,14 @@ namespace KrishkiForms
 
         public void GetImage(Mat img)
         {
-            #region Логирование получения нового кадра
-            /*DateTime now = DateTime.Now;
-
-            if (_lastImageReceivedTime.HasValue)
+            try
             {
-                TimeSpan interval = now - _lastImageReceivedTime.Value;
-                string logEntry = $"{now:HH:mm:ss.fff} | Interval: {interval.TotalMilliseconds} ms";
-
-                try
+                if (isStreamCam)
                 {
-                    File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Ошибка при записи лога: {ex.Message}");
-                }
-            }
 
-            _lastImageReceivedTime = now;*/
-            #endregion
-
-            if (isStreamCam)
-            {
 #if OLD_FRAME_PROCESSING
+            try
+            {
                 lock (frameLock)
                 {
                     latestFrame?.Dispose();
@@ -2277,55 +2359,79 @@ namespace KrishkiForms
                     newFrameAvailable = true;
                     if (isProcessing == true)
                     {
-                        currentFrameNumber = currentFrameNumber + 1;
+                        currentFrameNumber++;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Error in OLD_FRAME_PROCESSING block");
+            }
 #else
-                if (isProcessing)
-                {
-                    _imageQueue.Put(img.Clone());
-                    currentFrameNumber++;
-                }
+                    try
+                    {
+                        if (isProcessing)
+                        {
+                            _imageQueue.Put(img.Clone());
+                            currentFrameNumber++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "Ошибка в GetImage, в _imageQueue.Put");
+                    }
 #endif
-                #region Вывод изображения в originPb
-                // Если ROI не выбран, показываем полное изображение с камеры
-                if (!isProcessing)
-                {
-                    if (!LocalSettings.Instance.UseVConcat)
+
+                    try
                     {
-                        img1 = img.Clone();
-                        if (isRoiProduce == true && isROISelected == true)
+                        // вывод в PictureBox
+                        if (!isProcessing)
                         {
-                            img1 = new Mat(img, roi);
+                            if (!LocalSettings.Instance.UseVConcat)
+                            {
+                                img1 = img.Clone();
+                                if (isRoiProduce && isROISelected)
+                                {
+                                    img1 = new Mat(img, roi);
+                                }
+                                UpdatePictureBox(originPb, img1);
+                            }
+                            else
+                            {
+                                if (!isFirstImageCam1)
+                                {
+                                    img1 = img.Clone();
+                                    if (isRoiProduce && isROISelected)
+                                    {
+                                        img1 = new Mat(img, roi);
+                                    }
+                                    UpdatePictureBox(originPb, img1);
+                                    isFirstImageCam1 = true;
+                                }
+                                else
+                                {
+                                    Cv2.VConcat(img1, img.Clone(), img1);
+                                    if (isRoiProduce && isROISelected)
+                                    {
+                                        img1 = new Mat(img, roi);
+                                    }
+                                    UpdatePictureBox(originPb, img1);
+                                }
+                            }
                         }
-                        UpdatePictureBox(originPb, img1);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        if (!isFirstImageCam1)
-                        {
-                            img1 = img.Clone();
-                            if (isRoiProduce == true && isROISelected == true)
-                            {
-                                img1 = new Mat(img, roi);
-                            }
-                            UpdatePictureBox(originPb, img1);
-                            isFirstImageCam1 = true;
-                        }
-                        else
-                        {
-                            Cv2.VConcat(img1, img.Clone(), img1);
-                            if (isRoiProduce == true && isROISelected == true)
-                            {
-                                img1 = new Mat(img, roi);
-                            }
-                            UpdatePictureBox(originPb, img1);
-                        }
+                        ErrorLogger.Log(ex, "Ошибка в GetImage, в выводе изображения в originPb");
                     }
                 }
-                #endregion
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в GetImage, общая");
             }
         }
+
 
         #endregion
 
@@ -2333,41 +2439,49 @@ namespace KrishkiForms
 
         private void StartStop(bool isStart, bool isInit = false)
         {
-            if (!isStart)
+            try
             {
+                if (!isStart)
+                {
+                    if (!isInit && !LocalSettings.Instance.UseModule)
+                    {
+                        if (!cameraError1)
+                        {
+                            if (cam != null)
+                            {
+                                if (cam.Streamed)
+                                {
+                                    cam.EndStream();
+                                }
+                            }
+                        }
+                    }
+                    return;
+                }
+
+                isFirstImageCam1 = false;
+
                 if (!isInit && !LocalSettings.Instance.UseModule)
                 {
                     if (!cameraError1)
                     {
                         if (cam != null)
                         {
-                            if (cam.Streamed)
+                            if (!cam.Streamed)
                             {
-                                cam.EndStream();
+                                cam.StartStream();
                             }
                         }
                     }
+                    img1 = new Mat();
                 }
-                return;
             }
-
-            isFirstImageCam1 = false;
-
-            if (!isInit && !LocalSettings.Instance.UseModule)
+            catch (Exception ex)
             {
-                if (!cameraError1)
-                {
-                    if (cam != null)
-                    {
-                        if (!cam.Streamed)
-                        {
-                            cam.StartStream();
-                        }
-                    }
-                }
-                img1 = new Mat();
+                ErrorLogger.Log(ex, "Ошибка в StartStop");
             }
         }
+
 
         private async void StartContinuousProcessing(CancellationToken token)
         {
@@ -2375,204 +2489,227 @@ namespace KrishkiForms
             {
                 while (!token.IsCancellationRequested)
                 {
-
                     Mat? frameToProcess = null;
 
-                    if (isStreamCam)
+                    try
                     {
+                        // ===== Получение кадра =====
+                        if (isStreamCam)
+                        {
 #if OLD_FRAME_PROCESSING
-                        lock (frameLock)
-                        {
-                            if (!newFrameAvailable) continue;
-                            frameToProcess = latestFrame.Clone();
-                            newFrameAvailable = false;
-                        }
+                    lock (frameLock)
+                    {
+                        if (!newFrameAvailable) continue;
+                        frameToProcess = latestFrame.Clone();
+                        newFrameAvailable = false;
+                    }
 #else
-                        frameToProcess = _imageQueue.Get(token);
-
+                            frameToProcess = _imageQueue.Get(token);
 #endif
-                    }
-                    else if (isProcessingFromFolder)
-                    {
-                        await Task.Delay(100);
-                        if (imageFiles.Count == 0) continue;
-
-                        try
-                        {
-                            frameToProcess = new Mat(imageFiles[currentImageIndex]);
-                            currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
                         }
-                        catch (Exception ex)
+                        else if (isProcessingFromFolder)
                         {
-                            MessageBox.Show($"Ошибка загрузки изображения: {ex.Message}");
-                            continue;
-                        }
-                    }
+                            await Task.Delay(100);
 
-                    if (frameToProcess == null || frameToProcess.Empty())
-                        continue;
-
-                    using (frameToProcess)
-                    using (Mat gray = new Mat())
-                    {
-                        Stopwatch stopwatch = Stopwatch.StartNew();
-                        Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
-                        Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
-
-                        frameToProcess.CopyTo(_frameToDisplay);
-
-                        Point[] capContour = GetCapContour(gray, frameToProcess);
-
-                        generalCapsCount++;
-
-                        UpdateTextBox(generalCapsCountTb, generalCapsCount, 0);
-
-                        if (capContour != null && capContour.Length > 0)
-                        {
-                            Cv2.DrawContours(_frameToDisplay, new[] { capContour }, -1, new Scalar(255, 0, 0), 2);
-                        }
-
-                        if (ovalityCB.Checked)
-                        {
-                            frameToProcess.CopyTo(_imageForOvality);
-                            gray.CopyTo(_grayForOvality);
-                        }
-
-                        if (inclusionCB.Checked)
-                        {
-                            frameToProcess.CopyTo(_imageForInclusions);
-                            gray.CopyTo(_grayForInclusions);
-                        }
-
-                        if (inpaintCB.Checked)
-                        {
-                            frameToProcess.CopyTo(_imageForPaintDefects);
-                            gray.CopyTo(_grayForPaintDefects);
-                        }
-
-                        if (obloyCB.Checked)
-                        {
-                            frameToProcess.CopyTo(_imageForObloyDefects);
-                            gray.CopyTo(_grayForObloyDefects);
-                        }
-
-                        using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
-                        {
-                            timeoutCts.CancelAfter(60);
+                            if (imageFiles.Count == 0) continue;
 
                             try
                             {
-                                var ovalityTask = Task.FromResult(false);
-                                var inclusionsTask = Task.FromResult(false);
-                                var paintTask = Task.FromResult(false);
-                                var obloyTask = Task.FromResult(false);
+                                frameToProcess = new Mat(imageFiles[currentImageIndex]);
+                                currentImageIndex = (currentImageIndex + 1) % imageFiles.Count;
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorLogger.Log(ex, "Ошибка загрузки изображения из папки");
+                                continue;
+                            }
+                        }
 
+                        if (frameToProcess == null || frameToProcess.Empty())
+                            continue;
+
+                        using (frameToProcess)
+                        using (Mat gray = new Mat())
+                        {
+                            Stopwatch stopwatch = Stopwatch.StartNew();
+
+                            try
+                            {
+                                // === PRE-PROCESS ===
+                                Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
+                                Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
+
+                                frameToProcess.CopyTo(_frameToDisplay);
+
+                                Point[] capContour = GetCapContour(gray, frameToProcess);
+
+                                generalCapsCount++;
+                                UpdateTextBox(generalCapsCountTb, generalCapsCount, 0);
+
+                                if (capContour != null && capContour.Length > 0)
+                                {
+                                    Cv2.DrawContours(_frameToDisplay, new[] { capContour }, -1, new Scalar(255, 0, 0), 2);
+                                }
+
+                                // === Подготовка изображений по категориям ===
                                 if (ovalityCB.Checked)
                                 {
-                                    ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality, capContour);
+                                    frameToProcess.CopyTo(_imageForOvality);
+                                    gray.CopyTo(_grayForOvality);
                                 }
 
                                 if (inclusionCB.Checked)
                                 {
-                                    inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions, capContour);
-
+                                    frameToProcess.CopyTo(_imageForInclusions);
+                                    gray.CopyTo(_grayForInclusions);
                                 }
 
                                 if (inpaintCB.Checked)
                                 {
-                                    paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects, capContour);
+                                    frameToProcess.CopyTo(_imageForPaintDefects);
+                                    gray.CopyTo(_grayForPaintDefects);
                                 }
 
                                 if (obloyCB.Checked)
                                 {
-                                    obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, timeoutCts.Token, RunCheckForObloyDefects, capContour);
+                                    frameToProcess.CopyTo(_imageForObloyDefects);
+                                    gray.CopyTo(_grayForObloyDefects);
                                 }
 
-                                await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask);
-
-                                bool anyDefect = (ovalityCB.Checked && ovalityTask.Result) ||
-                                                 (inclusionCB.Checked && inclusionsTask.Result) ||
-                                                 (inpaintCB.Checked && paintTask.Result) ||
-                                                 (obloyCB.Checked && obloyTask.Result);
-
-                                if (anyDefect)
+                                // === Запуск проверок ===
+                                using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                                 {
-                                    ngCapsCount++;
-                                    percentNgCaps = generalCapsCount > 0 ? ngCapsCount / generalCapsCount * 100 : 0;
-                                    UpdateTextBox(ngCapsCountTb, ngCapsCount, 0);
-                                    UpdateTextBox(percentNgCapsTb, percentNgCaps);
-                                }
-                                else
-                                {
-                                    okCapsCount++;
-                                    percentOkCaps = generalCapsCount > 0 ? okCapsCount / generalCapsCount * 100 : 0;
-                                    percentNgCaps = generalCapsCount > 0 ? ngCapsCount / generalCapsCount * 100 : 0;
-                                    UpdateTextBox(okCapsCountTb, okCapsCount, 0);
-                                    UpdateTextBox(percentOkCapsTb, percentOkCaps);
-                                    UpdateTextBox(percentNgCapsTb, percentNgCaps);
-                                }
+                                    timeoutCts.CancelAfter(60);
 
-                                // Создаем безопасную копию изображения
-                                Mat imageCopy = frameToProcess.Clone();
+                                    try
+                                    {
+                                        var ovalityTask = Task.FromResult(false);
+                                        var inclusionsTask = Task.FromResult(false);
+                                        var paintTask = Task.FromResult(false);
+                                        var obloyTask = Task.FromResult(false);
 
-                                // === Сохранение изображений ===
-                                Task.Run(() =>
-                                {
-                                    CycleImageSaver.Save(
-                                        imageCopy,
-                                        isNG: anyDefect,
-                                        allowOk: okCapsSaveCb.Checked,
-                                        allowNg: ngCapsSaveCb.Checked,
-                                        generalCount: generalCapsCount
-                                    );
+                                        if (ovalityCB.Checked)
+                                            ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality, capContour);
 
-                                    imageCopy.Dispose(); // освобождаем память после сохранения
-                                });
+                                        if (inclusionCB.Checked)
+                                            inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions, capContour);
 
+                                        if (inpaintCB.Checked)
+                                            paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects, capContour);
 
-                                BeginInvoke(() => currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder);
+                                        if (obloyCB.Checked)
+                                            obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, timeoutCts.Token, RunCheckForObloyDefects, capContour);
 
+                                        await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask);
 
-                                PLCData.QualityStatus qualityStatus = anyDefect
+                                        bool anyDefect =
+                                            (ovalityCB.Checked && ovalityTask.Result) ||
+                                            (inclusionCB.Checked && inclusionsTask.Result) ||
+                                            (inpaintCB.Checked && paintTask.Result) ||
+                                            (obloyCB.Checked && obloyTask.Result);
+
+                                        // === счётчики ===
+                                        if (anyDefect)
+                                        {
+                                            ngCapsCount++;
+                                            percentNgCaps = generalCapsCount > 0 ? ngCapsCount / generalCapsCount * 100 : 0;
+                                            UpdateTextBox(ngCapsCountTb, ngCapsCount, 0);
+                                            UpdateTextBox(percentNgCapsTb, percentNgCaps);
+                                        }
+                                        else
+                                        {
+                                            okCapsCount++;
+                                            percentOkCaps = generalCapsCount > 0 ? okCapsCount / generalCapsCount * 100 : 0;
+                                            percentNgCaps = generalCapsCount > 0 ? ngCapsCount / generalCapsCount * 100 : 0;
+
+                                            UpdateTextBox(okCapsCountTb, okCapsCount, 0);
+                                            UpdateTextBox(percentOkCapsTb, percentOkCaps);
+                                            UpdateTextBox(percentNgCapsTb, percentNgCaps);
+                                        }
+
+                                        // === Сохранение изображения ===
+                                        Mat copy = frameToProcess.Clone();
+                                        _ = Task.Run(() =>
+                                        {
+                                            try
+                                            {
+                                                CycleImageSaver.Save(
+                                                    copy,
+                                                    isNG: anyDefect,
+                                                    allowOk: okCapsSaveCb.Checked,
+                                                    allowNg: ngCapsSaveCb.Checked,
+                                                    generalCount: generalCapsCount
+                                                );
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                ErrorLogger.Log(ex, "Ошибка при сохранении изображения в CycleImageSaver");
+                                            }
+                                            finally { copy.Dispose(); }
+                                        });
+
+                                        BeginInvoke(() => currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder);
+
+                                        // === Передача результата в ПЛК ===
+                                        PLCData.QualityStatus st = anyDefect
                                             ? PLCData.QualityStatus.Bad
                                             : PLCData.QualityStatus.Good;
-                                _ = Task.Run(() => SendQualityStatus(qualityStatus), token);
 
-                                bool showFrame =
-                                    _outputMode == OutputMode.All ||
-                                    (_outputMode == OutputMode.Good && !anyDefect) ||
-                                    (_outputMode == OutputMode.Bad && anyDefect);
+                                        _ = Task.Run(() =>
+                                        {
+                                            try { SendQualityStatus(st); }
+                                            catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка при отправке статуса качества в ПЛК"); }
+                                        });
 
-                                if (showFrame)
-                                {
-                                    BeginInvoke(() => UpdatePictureBox(originPb, _frameToDisplay));
+                                        bool show =
+                                            _outputMode == OutputMode.All ||
+                                            (_outputMode == OutputMode.Good && !anyDefect) ||
+                                            (_outputMode == OutputMode.Bad && anyDefect);
+
+                                        if (show)
+                                        {
+                                            BeginInvoke(() => UpdatePictureBox(originPb, _frameToDisplay));
+                                        }
+
+                                        stopwatch.Stop();
+                                        UpdateTextBox(generalTimeTb, stopwatch.ElapsedMilliseconds, 0);
+                                    }
+                                    catch (OperationCanceledException)
+                                    {
+                                        // Норма
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        ErrorLogger.Log(ex, "Ошибка внутри обработки одного кадра");
+                                    }
                                 }
-
-                                stopwatch.Stop();
-                                UpdateTextBox(generalTimeTb, stopwatch.ElapsedMilliseconds, 0);
                             }
-                            catch (OperationCanceledException)
+                            catch (Exception ex)
                             {
-                                // ОК
+                                ErrorLogger.Log(ex, "Ошибка обработки кадра перед проверками");
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "Ошибка цикла StartContinuousProcessing");
+                    }
                 }
             }
-            catch (TaskCanceledException ex)
+            catch (TaskCanceledException)
             {
-
+                ErrorLogger.Log(new Exception("StartContinuousProcessing отменён"), "TaskCanceledException");
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
-
+                ErrorLogger.Log(new Exception("StartContinuousProcessing прерван"), "OperationCanceledException");
             }
             catch (Exception ex)
             {
-                BeginInvoke((Action)(() =>
-                    MessageBox.Show($"Ошибка обработки: {ex.Message}")));
+                ErrorLogger.Log(ex, "Фатальная ошибка в StartContinuousProcessing");
             }
         }
+
 
 
         private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, CancellationToken token, Func<Mat, Mat, CancellationToken, Point[], bool> checkFunc, Point[] capContour)
@@ -2589,6 +2726,11 @@ namespace KrishkiForms
             {
                 return false;
             }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в RunCheckWithTimeout при запуске проверки дефекта");
+                return false;
+            }
         }
 
         #endregion
@@ -2596,121 +2738,128 @@ namespace KrishkiForms
         #region Методы проверки дефектов
 
         private bool RunCheckOvality(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+{
+    try
+    {
+        token.ThrowIfCancellationRequested();
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        bool isOval = CheckOvality(gray, image, token, capContour);
+
+        if (isOval)
         {
-            token.ThrowIfCancellationRequested();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-
-            bool isOval = CheckOvality(gray, image, token, capContour);
-
-            if (isOval)
-            {
-                ovalityCount++;
-                percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
-                UpdateTextBox(ovalityDef, ovalityCount);
-                UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
-            }
-
-            stopwatch.Stop();
+            ovalityCount++;
             percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
-            UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds, 0);
+            UpdateTextBox(ovalityDef, ovalityCount);
             UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
-
-            return isOval;
         }
 
+        stopwatch.Stop();
+        percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
+        UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds, 0);
+        UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
 
-        private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        return isOval;
+    }
+    catch (Exception ex)
+    {
+        ErrorLogger.Log(ex, "Ошибка в RunCheckOvality");
+        return false;
+    }
+}
+
+private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+{
+    try
+    {
+        token.ThrowIfCancellationRequested();
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        bool hasInclusions = CheckForInclusions(gray, image, token, capContour);
+
+        if (hasInclusions)
         {
-            token.ThrowIfCancellationRequested();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-
-            bool hasInclusions = CheckForInclusions(gray, image, token, capContour);
-
-            if (hasInclusions)
-            {
-                inclusionCount++;
-                percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
-                UpdateTextBox(inclusionDef, inclusionCount);
-                UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
-            }
-
-            stopwatch.Stop();
+            inclusionCount++;
             percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
-            UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds, 0);
+            UpdateTextBox(inclusionDef, inclusionCount);
             UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
-
-            return hasInclusions;
         }
 
+        stopwatch.Stop();
+        percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
+        UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds, 0);
+        UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
 
-        private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        return hasInclusions;
+    }
+    catch (Exception ex)
+    {
+        ErrorLogger.Log(ex, "Ошибка в RunCheckForInclusions");
+        return false;
+    }
+}
+
+private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+{
+    try
+    {
+        token.ThrowIfCancellationRequested();
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        bool hasPaintDefects = CheckForPaintDefects(gray, image, token, capContour);
+
+        if (hasPaintDefects)
         {
-            token.ThrowIfCancellationRequested();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-
-            bool hasPaintDefects = CheckForPaintDefects(gray, image, token, capContour);
-
-            if (hasPaintDefects)
-            {
-                paintDefectCount++;
-                percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
-                UpdateTextBox(InpaintDef, paintDefectCount);
-                UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
-            }
-
-            stopwatch.Stop();
+            paintDefectCount++;
             percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
-            UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
+            UpdateTextBox(InpaintDef, paintDefectCount);
             UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
-
-            return hasPaintDefects;
         }
 
+        stopwatch.Stop();
+        percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
+        UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
+        UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
 
-        private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        return hasPaintDefects;
+    }
+    catch (Exception ex)
+    {
+        ErrorLogger.Log(ex, "Ошибка в RunCheckForPaintDefects");
+        return false;
+    }
+}
+
+private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+{
+    try
+    {
+        token.ThrowIfCancellationRequested();
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        bool hasObloyDefects = CheckForObloyDefects(gray, image, token, capContour);
+
+        if (hasObloyDefects)
         {
-            token.ThrowIfCancellationRequested();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-
-            bool hasObloyDefects = CheckForObloyDefects(gray, image, token, capContour);
-
-            if (hasObloyDefects)
-            {
-                obloyDefectCount++;
-                percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
-                UpdateTextBox(obloyDef, obloyDefectCount);
-                UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
-            }
-
-            stopwatch.Stop();
+            obloyDefectCount++;
             percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
-            UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds, 0);
+            UpdateTextBox(obloyDef, obloyDefectCount);
             UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
-            return hasObloyDefects;
         }
 
+        stopwatch.Stop();
+        percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
+        UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds, 0);
+        UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
 
-        private bool RunCheckUnderfill(Mat gray, Mat image, CancellationToken token)
-        {
-            if (token.IsCancellationRequested) return false;
-
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            bool underfillResult = CheckUnderfill(gray, image);
-
-            if (underfillResult)
-            {
-                underfillCount++;
-                //UpdateTextBox(underfillDef, underfillCount);
-            }
-
-            stopwatch.Stop();
-            //UpdateTextBox(timeUnderfill, stopwatch.ElapsedMilliseconds);
-            //UpdatePictureBox(underfillPictureBox, image);
-
-            return underfillResult;
-        }
+        return hasObloyDefects;
+    }
+    catch (Exception ex)
+    {
+        ErrorLogger.Log(ex, "Ошибка в RunCheckForObloyDefects");
+        return false;
+    }
+}
 
         #endregion
 
@@ -2884,20 +3033,42 @@ namespace KrishkiForms
 
         private void UpdatePictureBox(PictureBox pictureBox, Mat image)
         {
-            if (pictureBox.InvokeRequired)
+            try
             {
-                pictureBox.Invoke(new Action(() =>
+                if (pictureBox.InvokeRequired)
                 {
-                    pictureBox.Image?.Dispose();
-                    pictureBox.Image = BitmapConverter.ToBitmap(image);
-                }));
+                    pictureBox.Invoke(new Action(() =>
+                    {
+                        try
+                        {
+                            pictureBox.Image?.Dispose();
+                            pictureBox.Image = BitmapConverter.ToBitmap(image);
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.Log(ex, "Ошибка в UpdatePictureBox, при обновлении {pictureBox}");
+                        }
+                    }));
+                }
+                else
+                {
+                    try
+                    {
+                        pictureBox.Image?.Dispose();
+                        pictureBox.Image = BitmapConverter.ToBitmap(image);
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "Ошибка в UpdatePictureBox, при прямом обновлении изображения для PictureBox: {pictureBox}");
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                pictureBox.Image?.Dispose();
-                pictureBox.Image = BitmapConverter.ToBitmap(image);
+                ErrorLogger.Log(ex, "Ошибка в UpdatePictureBox, (внешний уровень) для PictureBox: {pictureBox}");
             }
         }
+
 
         private void UpdateTextBox(System.Windows.Forms.TextBox textBox, float value, int decimals = 1)
         {
