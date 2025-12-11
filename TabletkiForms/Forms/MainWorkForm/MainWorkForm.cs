@@ -592,53 +592,67 @@ namespace KrishkiForms
 
         private void connectCameraButton_Click(object sender, EventArgs e)
         {
-
-
-            if (cameraConnected)
+            try
             {
-                cam.Close();
-                cameraConnected = false;
-                connectCameraButton.Text = "Подключиться";
-                connectCameraButton.BackColor = disconnectedColor;
-
-                camStatus.Text = "Не подключено";
-                camStatus.ForeColor = Color.Red;
-
-                startStreamButton.Enabled = false;
-            }
-            else
-            {
-                if (cam.Open())
+                if (cameraConnected)
                 {
-                    cam.SendImage += GetImage;
-                    cameraConnected = true;
-                    connectCameraButton.Text = "Отключиться";
-                    connectCameraButton.BackColor = connectedColor;
-
-                    camStatus.Text = "Подключено";
-                    camStatus.ForeColor = Color.Green;
-
-                    startStreamButton.Enabled = true;
-                }
-                else
-                {
-                    MessageBox.Show("Не удалось подключиться к камере.");
-                    camStatus.Text = "Не подключено";
-                    camStatus.ForeColor = Color.Red;
-
+                    cam.Close();
                     cameraConnected = false;
                     connectCameraButton.Text = "Подключиться";
                     connectCameraButton.BackColor = disconnectedColor;
 
+                    camStatus.Text = "Не подключено";
+                    camStatus.ForeColor = Color.Red;
+
                     startStreamButton.Enabled = false;
+
+                    ErrorLogger.Log(new Exception("Камера отключена пользователем"), "connectCameraButton_Click");
                 }
+                else
+                {
+                    if (cam.Open())
+                    {
+                        cam.SendImage += GetImage;
+                        cameraConnected = true;
+                        connectCameraButton.Text = "Отключиться";
+                        connectCameraButton.BackColor = connectedColor;
+
+                        camStatus.Text = "Подключено";
+                        camStatus.ForeColor = Color.Green;
+
+                        startStreamButton.Enabled = true;
+
+                        ErrorLogger.Log(new Exception("Камера успешно подключена"), "connectCameraButton_Click");
+                    }
+                    else
+                    {
+                        cameraConnected = false;
+                        connectCameraButton.Text = "Подключиться";
+                        connectCameraButton.BackColor = disconnectedColor;
+
+                        camStatus.Text = "Не подключено";
+                        camStatus.ForeColor = Color.Red;
+
+                        startStreamButton.Enabled = false;
+
+                        ErrorLogger.Log(new Exception("Не удалось подключиться к камере"), "connectCameraButton_Click");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в connectCameraButton_Click");
+                cameraConnected = false;
+                connectCameraButton.Text = "Подключиться";
+                connectCameraButton.BackColor = disconnectedColor;
+                camStatus.Text = "Не подключено";
+                camStatus.ForeColor = Color.Red;
+                startStreamButton.Enabled = false;
             }
         }
 
-
         private void connectPrButton_Click(object sender, EventArgs e)
         {
-
             if (prConnected && modbusClient != null && modbusClient.Connected)
             {
                 try
@@ -647,7 +661,7 @@ namespace KrishkiForms
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка при отключении от ПР205: {ex.Message}");
+                    ErrorLogger.Log(ex, "Ошибка при отключении от ПР205");
                 }
 
                 prConnected = false;
@@ -662,46 +676,52 @@ namespace KrishkiForms
             try
             {
                 string ip = prIpTextBox.Text.Trim();
-                int port = int.Parse(pr205PortTb.Text.Trim());
+                if (!int.TryParse(pr205PortTb.Text.Trim(), out int port))
+                {
+                    throw new Exception("Неверный формат порта ПР205");
+                }
+
                 modbusClient = new ModbusTCP(ip, port);
                 modbusClient.Connect();
 
                 if (modbusClient.Connected)
                 {
                     prConnected = true;
-                    MessageBox.Show("Modbus подключение к ПР205 установлено.");
 
                     prStatus.Text = "Подключено";
                     prStatus.ForeColor = Color.Green;
 
                     connectPrButton.Text = "Отключиться от ПР";
                     connectPrButton.BackColor = connectedColor;
+
+                    ErrorLogger.Log(new Exception("Подключение к ПР205 установлено"), "connectPrButton_Click");
                 }
                 else
                 {
                     prConnected = false;
-                    MessageBox.Show("Не удалось подключиться к ПР205.");
 
                     prStatus.Text = "Не подключено";
                     prStatus.ForeColor = Color.Red;
 
                     connectPrButton.Text = "Подключиться к ПР";
                     connectPrButton.BackColor = disconnectedColor;
+
+                    ErrorLogger.Log(new Exception("Не удалось подключиться к ПР205"), "connectPrButton_Click");
                 }
             }
             catch (Exception ex)
             {
                 prConnected = false;
-                MessageBox.Show($"Ошибка подключения к ПР205: {ex.Message}");
 
                 prStatus.Text = "Не подключено";
                 prStatus.ForeColor = Color.Red;
 
                 connectPrButton.Text = "Подключиться к ПР";
                 connectPrButton.BackColor = disconnectedColor;
+
+                ErrorLogger.Log(ex, "Ошибка подключения к ПР205");
             }
         }
-
 
         #endregion
 
@@ -902,11 +922,6 @@ namespace KrishkiForms
         #region Кнопки настроек
 
         #region Настройки камеры
-        private void ApplySettingsButton_Click(object sender, EventArgs e)
-        {
-            ApplyCameraSettings();
-        }
-
         private void applySettingsButton_Click(object sender, EventArgs e)
         {
             ApplyCameraSettings();
@@ -960,19 +975,15 @@ namespace KrishkiForms
                         Properties.Settings.Default.BreakerOffset = breakerOffsetTb.Text;
                         Properties.Settings.Default.IpAdressPr = prIpTextBox.Text;
                         Properties.Settings.Default.PortPr = pr205PortTb.Text;
-
-                        // сохраняем изменения в Settings
                         Properties.Settings.Default.Save();
 
-                        MessageBox.Show("Настройки ПР205 успешно сохранены.", "Успех",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Настройки ПР205 успешно сохранены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при сохранении настроек ПР205: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при сохранении настроек ПР205 (savePrSettings_Click)");
             }
         }
 
@@ -992,98 +1003,56 @@ namespace KrishkiForms
 
                         if (settings != null)
                         {
-                            // Загружаем IP адрес
-                            if (settings.ContainsKey("IPAddress"))
-                                prIpTextBox.Text = settings["IPAddress"];
-                            else
-                                prIpTextBox.Text = "10.10.69.38"; // значение по умолчанию
+                            prIpTextBox.Text = settings.ContainsKey("IPAddress") ? settings["IPAddress"] : "10.10.69.38";
+                            pr205PortTb.Text = settings.ContainsKey("Port") ? settings["Port"] : "502";
+                            breakingTimeTb.Text = settings.ContainsKey("BreakingTime") ? settings["BreakingTime"] : "55";
+                            cameraOffsetTb.Text = settings.ContainsKey("CameraOffset") ? settings["CameraOffset"] : "300";
+                            breakerOffsetTb.Text = settings.ContainsKey("BreakerOffset") ? settings["BreakerOffset"] : "2430";
 
-                            // Загружаем порт
-                            if (settings.ContainsKey("Port"))
-                                pr205PortTb.Text = settings["Port"];
-                            else
-                                pr205PortTb.Text = "502"; // значение по умолчанию
-
-                            // Загружаем задержку
-                            if (settings.ContainsKey("BreakingTime"))
-                                breakingTimeTb.Text = settings["BreakingTime"];
-                            else
-                                breakingTimeTb.Text = "55"; // значение по умолчанию
-
-                            // Загружаем задержку
-                            if (settings.ContainsKey("CameraOffset"))
-                                cameraOffsetTb.Text = settings["CameraOffset"];
-                            else
-                                cameraOffsetTb.Text = "300"; // значение по умолчанию
-
-                            // Загружаем задержку
-                            if (settings.ContainsKey("BreakerOffset"))
-                                breakerOffsetTb.Text = settings["BreakerOffset"];
-                            else
-                                breakerOffsetTb.Text = "2430"; // значение по умолчанию
-
-                            MessageBox.Show("Настройки ПР205 успешно загружены.", "Успех",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("Настройки ПР205 успешно загружены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
                         {
-                            MessageBox.Show("Не удалось прочитать настройки из файла.",
-                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            ErrorLogger.Log(new Exception("Не удалось прочитать настройки из файла"),
+                                "loadPrSettings_Click");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при загрузке настроек ПР205: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при загрузке настроек ПР205 (loadPrSettings_Click)");
             }
         }
 
         private bool ValidatePrSettings()
         {
-            // Проверка IP адреса
-            if (!System.Net.IPAddress.TryParse(prIpTextBox.Text, out _))
+            try
             {
-                MessageBox.Show("Неверный формат IP адреса", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!System.Net.IPAddress.TryParse(prIpTextBox.Text, out _))
+                    throw new Exception("Неверный формат IP адреса");
+
+                if (!int.TryParse(pr205PortTb.Text, out int port) || port < 1 || port > 65535)
+                    throw new Exception("Порт должен быть числом от 1 до 65535");
+
+                if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0)
+                    throw new Exception("Задержка должна быть положительным числом");
+
+                if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset) || cameraOffset < 0)
+                    throw new Exception("Расстояние от датчика до камеры должно быть положительным числом");
+
+                if (!int.TryParse(breakerOffsetTb.Text, out int breakerOffset) || breakerOffset < 0)
+                    throw new Exception("Расстояние от датчика до отбраковщика должно быть положительным числом");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка валидации настроек ПР205 (ValidatePrSettings)");
                 return false;
             }
-
-            // Проверка порта
-            if (!int.TryParse(pr205PortTb.Text, out int port) || port < 1 || port > 65535)
-            {
-                MessageBox.Show("Порт должен быть числом от 1 до 65535", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Проверка задержки
-            if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0)
-            {
-                MessageBox.Show("Задержка должна быть положительным числом", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Проверка порта
-            if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset) || cameraOffset < 0)
-            {
-                MessageBox.Show("Расстояние от датчика до камеры должно быть положительным числом", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Проверка задержки
-            if (!int.TryParse(breakerOffsetTb.Text, out int breakerOffset) || breakerOffset < 0)
-            {
-                MessageBox.Show("Расстояние от датчика до отбраковщика должно быть положительным числом", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            return true;
         }
+
 
         private async void ApplyPr_Click(object sender, EventArgs e)
         {
@@ -1108,7 +1077,7 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при отправке параметров: {ex.Message}");
+                ErrorLogger.Log(ex, "Ошибка при отправке параметров на ПР205 (ApplyPr_Click)");
             }
         }
 
@@ -1146,8 +1115,6 @@ namespace KrishkiForms
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         File.WriteAllText(saveFileDialog.FileName, json);
-                        MessageBox.Show("Настройки дефектов успешно сохранены.", "Успех",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
 
@@ -1164,8 +1131,7 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при сохранении настроек дефектов: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при сохранении настроек дефектов");
             }
         }
 
@@ -1192,73 +1158,70 @@ namespace KrishkiForms
                             minSquareInpaintNumUpD.Text = settings.ContainsKey("MinAreaInpaintDefect") ? settings["MinAreaInpaintDefect"] : "500";
                             whiteThresoldNumUpD.Text = settings.ContainsKey("MinInpaintWhiteThreshold") ? settings["MinInpaintWhiteThreshold"] : "150";
                             obloyPixCountNumUpD.Text = settings.ContainsKey("MinAreaObloy") ? settings["MinAreaObloy"] : "1000";
-
-                            MessageBox.Show("Настройки дефектов успешно загружены.", "Успех",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Не удалось прочитать настройки из файла.",
-                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при загрузке настроек дефектов: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при загрузке настроек дефектов");
             }
         }
 
         private bool ValidateDefectSettings()
         {
-            // Проверка на корректность чисел
-            if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality) || ovality <= 0 || ovality > 1)
+            try
             {
-                MessageBox.Show("Параметр 'OvalityThreshold' должен быть числом от 0 до 1.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality) || ovality <= 0 || ovality > 1)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'OvalityThreshold' некорректен"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion) || inclusion <= 0 || inclusion > 1)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'InclusionThreshold' некорректен"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInclusion) || minInclusion < 0)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'MinAreaInclusion' некорректен"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double maxInclusion) || maxInclusion <= minInclusion)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'MaxAreaInclusion' должен быть больше MinAreaInclusion"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInpaint) || minInpaint <= 0)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'MinAreaInpaintDefect' некорректен"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double whiteThreshold) || whiteThreshold <= 0)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'MinInpaintWhiteThreshold' некорректен"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double obloy) || obloy <= 0)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'MinAreaObloy' некорректен"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "ValidateDefectSettings - непредвиденная ошибка");
                 return false;
             }
-
-            if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion) || inclusion <= 0 || inclusion > 1)
-            {
-                MessageBox.Show("Параметр 'InclusionThreshold' должен быть числом от 0 до 1.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInclusion) || minInclusion < 0)
-            {
-                MessageBox.Show("Параметр 'MinAreaInclusion' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double maxInclusion) || maxInclusion <= minInclusion)
-            {
-                MessageBox.Show("Параметр 'MaxAreaInclusion' должен быть больше 'MinAreaInclusion'.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInpaint) || minInpaint <= 0)
-            {
-                MessageBox.Show("Параметр 'MinAreaInpaintDefect' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double whiteThreshold) || whiteThreshold <= 0)
-            {
-                MessageBox.Show("Параметр 'MinInpaintWhiteThreshold' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double obloy) || obloy <= 0)
-            {
-                MessageBox.Show("Параметр 'MinAreaObloy' должен быть положительным числом.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            return true;
         }
-
 
         #endregion
 
@@ -1373,235 +1336,442 @@ namespace KrishkiForms
 
         private bool CheckOvality(Mat gray, Mat image, CancellationToken token, Point[] largestContourOvality)
         {
-            token.ThrowIfCancellationRequested();
+            try
+            {
+                token.ThrowIfCancellationRequested();
 
-            //largestContourOvality = GetCapContour(gray, image);
-            token.ThrowIfCancellationRequested();
+                // Если контур пустой или null, сразу возвращаем false
+                if (largestContourOvality == null || largestContourOvality.Length < 5)
+                {
+                    ErrorLogger.Log(new Exception("Контур для проверки овальности пустой или содержит недостаточно точек"),
+                        "CheckOvality - проверка наличия контуров");
+                    return false;
+                }
 
-            RotatedRect ellipse = Cv2.FitEllipse(largestContourOvality);
-            majorAxis = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
-            minorAxis = Math.Min(ellipse.Size.Width, ellipse.Size.Height);
-            axisRatio = minorAxis / majorAxis;
+                token.ThrowIfCancellationRequested();
 
-            token.ThrowIfCancellationRequested();
-            bool isOval = axisRatio < ovalityThreshold;
+                RotatedRect ellipse = Cv2.FitEllipse(largestContourOvality);
+                majorAxis = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
+                minorAxis = Math.Min(ellipse.Size.Width, ellipse.Size.Height);
+                axisRatio = minorAxis / majorAxis;
 
-            Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
-            Cv2.Ellipse(_frameToDisplay, ellipse, color, 2);
-            Cv2.PutText(_frameToDisplay, $"Ratio: {axisRatio:F5}", new Point(10, 30),
-                           HersheyFonts.HersheySimplex, 1, color, 2);
-            return isOval;
+                token.ThrowIfCancellationRequested();
+                bool isOval = axisRatio < ovalityThreshold;
+
+                try
+                {
+                    Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
+                    Cv2.Ellipse(_frameToDisplay, ellipse, color, 2);
+                    Cv2.PutText(_frameToDisplay, $"Ratio: {axisRatio:F5}", new Point(10, 30),
+                                   HersheyFonts.HersheySimplex, 1, color, 2);
+                }
+                catch (Exception drawEx)
+                {
+                    ErrorLogger.Log(drawEx, "CheckOvality - ошибка при рисовании эллипса или текста");
+                }
+
+                return isOval;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "CheckOvality - ошибка при расчёте овальности крышки");
+                return false;
+            }
         }
 
         private bool CheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] bestContour)
         {
-            token.ThrowIfCancellationRequested();
-
-            //Point[] bestContour = GetCapContour(gray, image);
-            token.ThrowIfCancellationRequested();
-
-            RotatedRect ellipse = Cv2.FitEllipse(bestContour);
-            Point2f ellipseCenter = ellipse.Center;
-            float ellipseRadius = (float)(0.7 * (ellipse.Size.Width + ellipse.Size.Height) / 4.0);
-
-            Cv2.Circle(_frameToDisplay, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(0, 255, 0), 2);
-
-            using (Mat mask = Mat.Zeros(gray.Size(), MatType.CV_8UC1))
-            using (Mat croppedRegion = new Mat())
+            try
             {
-                Cv2.Circle(mask, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(255), -1);
-                gray.CopyTo(croppedRegion, mask);
-
-                using (Mat binary = new Mat())
-                using (Mat maskedBinary = new Mat())
-                using (Mat filteredBinary = new Mat())
-                {
-                    Cv2.AdaptiveThreshold(croppedRegion, binary, 255,
-                                        AdaptiveThresholdTypes.MeanC,
-                                        ThresholdTypes.BinaryInv, 11, 2);
-
-                    var kernel = Cv2.GetStructuringElement(MorphShapes.Ellipse, new Size(3, 3));
-                    Cv2.MorphologyEx(binary, filteredBinary, MorphTypes.Open, kernel, iterations: 1);
-
-                    Point[][] inclusionContours;
-                    HierarchyIndex[] inclusionHierarchy;
-                    Cv2.FindContours(filteredBinary, out inclusionContours, out inclusionHierarchy,
-                                   RetrievalModes.List, ContourApproximationModes.ApproxSimple);
-
-                    token.ThrowIfCancellationRequested();
-
-                    bool inclusionsFound = false;
-                    foreach (var contour in inclusionContours)
-                    {
-                        token.ThrowIfCancellationRequested();
-
-                        double area = Cv2.ContourArea(contour);
-                        if (area > minAreaInclusion && area < maxAreaInclusion && IsCircularContour(contour))
-                        {
-                            Rect bbox = Cv2.BoundingRect(contour);
-                            Cv2.Rectangle(_frameToDisplay, bbox.TopLeft, bbox.BottomRight,
-                                         new Scalar(0, 0, 255), 2);
-                            inclusionsFound = true;
-                        }
-                    }
-
-                    return inclusionsFound;
-                }
-            }
-        }
-
-        private bool CheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
-        {
-            token.ThrowIfCancellationRequested();
-
-            using (Mat hsv = new Mat())
-            {
-                Cv2.CvtColor(image, hsv, ColorConversionCodes.BGR2HSV);
                 token.ThrowIfCancellationRequested();
 
-                //Point[] capContour = GetCapContour(gray, image);
-                token.ThrowIfCancellationRequested();
-
-                if (capContour == null || capContour.Length == 0)
+                if (bestContour == null || bestContour.Length < 5)
                 {
+                    ErrorLogger.Log(new Exception("Контур для проверки включений пустой или содержит недостаточно точек"),
+                        "CheckForInclusions - проверка наличия контура");
                     return false;
                 }
 
-                using (Mat capMask = Mat.Zeros(image.Size(), MatType.CV_8UC1))
+                token.ThrowIfCancellationRequested();
+
+                RotatedRect ellipse;
+                try
                 {
-                    Cv2.FillPoly(capMask, new[] { capContour }, new Scalar(255));
-                    token.ThrowIfCancellationRequested();
+                    ellipse = Cv2.FitEllipse(bestContour);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "CheckForInclusions - ошибка при расчёте эллипса");
+                    return false;
+                }
 
-                    using (Mat maskedHSV = new Mat())
+                Point2f ellipseCenter = ellipse.Center;
+                float ellipseRadius = (float)(0.7 * (ellipse.Size.Width + ellipse.Size.Height) / 4.0);
+
+                try
+                {
+                    Cv2.Circle(_frameToDisplay, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(0, 255, 0), 2);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "CheckForInclusions - ошибка при рисовании эллипса");
+                }
+
+                try
+                {
+                    using (Mat mask = Mat.Zeros(gray.Size(), MatType.CV_8UC1))
+                    using (Mat croppedRegion = new Mat())
                     {
-                        Cv2.BitwiseAnd(hsv, hsv, maskedHSV, capMask);
-                        token.ThrowIfCancellationRequested();
+                        Cv2.Circle(mask, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(255), -1);
+                        gray.CopyTo(croppedRegion, mask);
 
-                        Mat[] hsvChannels;
-                        Cv2.Split(maskedHSV, out hsvChannels);
-                        using (Mat sChannel = hsvChannels[1])
-                        using (Mat vChannel = hsvChannels[2])
-                        using (Mat whiteMask = new Mat())
+                        using (Mat binary = new Mat())
+                        using (Mat maskedBinary = new Mat())
+                        using (Mat filteredBinary = new Mat())
                         {
-                            Cv2.InRange(hsv, new Scalar(0, 255 * 0.05, 255 * 0.05),
-                                      new Scalar(180, 255 * 0.95, 255 * 0.95), whiteMask);
+                            Cv2.AdaptiveThreshold(croppedRegion, binary, 255,
+                                                  AdaptiveThresholdTypes.MeanC,
+                                                  ThresholdTypes.BinaryInv, 11, 2);
+
+                            var kernel = Cv2.GetStructuringElement(MorphShapes.Ellipse, new Size(3, 3));
+                            Cv2.MorphologyEx(binary, filteredBinary, MorphTypes.Open, kernel, iterations: 1);
+
+                            Point[][] inclusionContours;
+                            HierarchyIndex[] inclusionHierarchy;
+                            Cv2.FindContours(filteredBinary, out inclusionContours, out inclusionHierarchy,
+                                             RetrievalModes.List, ContourApproximationModes.ApproxSimple);
+
                             token.ThrowIfCancellationRequested();
 
-                            using (Mat defectsMask = new Mat())
+                            bool inclusionsFound = false;
+                            foreach (var contour in inclusionContours)
                             {
-                                Cv2.BitwiseNot(whiteMask, defectsMask);
-                                using (Mat maskedDefects = new Mat())
+                                token.ThrowIfCancellationRequested();
+
+                                double area = Cv2.ContourArea(contour);
+                                if (area > minAreaInclusion && area < maxAreaInclusion && IsCircularContour(contour))
                                 {
-                                    Cv2.BitwiseAnd(defectsMask, capMask, maskedDefects);
-                                    token.ThrowIfCancellationRequested();
-
-                                    Point[][] contours;
-                                    HierarchyIndex[] hierarchy;
-                                    Cv2.FindContours(maskedDefects, out contours, out hierarchy,
-                                                    RetrievalModes.External,
-                                                    ContourApproximationModes.ApproxSimple);
-
-                                    var significantContours = contours.Where(c =>
-                                        Cv2.ContourArea(c) > minAreaInpaintDefect).ToList();
-                                    token.ThrowIfCancellationRequested();
-
-                                    var whiteDefects = new List<Point[]>();
-                                    foreach (var contour in significantContours)
+                                    try
                                     {
-                                        token.ThrowIfCancellationRequested();
+                                        Rect bbox = Cv2.BoundingRect(contour);
+                                        Cv2.Rectangle(_frameToDisplay, bbox.TopLeft, bbox.BottomRight, new Scalar(0, 0, 255), 2);
+                                        inclusionsFound = true;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        ErrorLogger.Log(ex, "CheckForInclusions - ошибка при рисовании прямоугольника вокруг включения");
+                                    }
+                                }
+                            }
 
-                                        using (Mat contourMask = Mat.Zeros(image.Size(), MatType.CV_8UC1))
+                            return inclusionsFound;
+                        }
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "CheckForInclusions - ошибка при обработке изображения для поиска включений");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "CheckForInclusions - непредвиденная ошибка");
+                return false;
+            }
+        }
+        private bool CheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        {
+            try
+            {
+                token.ThrowIfCancellationRequested();
+
+                if (capContour == null || capContour.Length < 5)
+                {
+                    ErrorLogger.Log(new Exception("Контур крышки пустой или содержит недостаточно точек"),
+                        "CheckForPaintDefects - проверка контура");
+                    return false;
+                }
+
+                using (Mat hsv = new Mat())
+                {
+                    try
+                    {
+                        Cv2.CvtColor(image, hsv, ColorConversionCodes.BGR2HSV);
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при преобразовании в HSV");
+                        return false;
+                    }
+
+                    token.ThrowIfCancellationRequested();
+
+                    using (Mat capMask = Mat.Zeros(image.Size(), MatType.CV_8UC1))
+                    {
+                        try
+                        {
+                            Cv2.FillPoly(capMask, new[] { capContour }, new Scalar(255));
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при создании маски крышки");
+                            return false;
+                        }
+
+                        token.ThrowIfCancellationRequested();
+
+                        using (Mat maskedHSV = new Mat())
+                        {
+                            try
+                            {
+                                Cv2.BitwiseAnd(hsv, hsv, maskedHSV, capMask);
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при применении маски к HSV");
+                                return false;
+                            }
+
+                            token.ThrowIfCancellationRequested();
+
+                            Mat[] hsvChannels;
+                            try
+                            {
+                                Cv2.Split(maskedHSV, out hsvChannels);
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при разделении HSV каналов");
+                                return false;
+                            }
+
+                            using (Mat sChannel = hsvChannels[1])
+                            using (Mat vChannel = hsvChannels[2])
+                            using (Mat whiteMask = new Mat())
+                            {
+                                try
+                                {
+                                    Cv2.InRange(hsv, new Scalar(0, 255 * 0.05, 255 * 0.05),
+                                                  new Scalar(180, 255 * 0.95, 255 * 0.95), whiteMask);
+                                }
+                                catch (Exception ex)
+                                {
+                                    ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при создании белой маски");
+                                    return false;
+                                }
+
+                                token.ThrowIfCancellationRequested();
+
+                                using (Mat defectsMask = new Mat())
+                                {
+                                    try
+                                    {
+                                        Cv2.BitwiseNot(whiteMask, defectsMask);
+                                        using (Mat maskedDefects = new Mat())
                                         {
-                                            Cv2.FillPoly(contourMask, new[] { contour }, new Scalar(255));
-                                            using (Mat maskedImage = new Mat())
-                                            {
-                                                Cv2.BitwiseAnd(image, image, maskedImage, contourMask);
-                                                Scalar meanColor = Cv2.Mean(maskedImage, contourMask);
+                                            Cv2.BitwiseAnd(defectsMask, capMask, maskedDefects);
+                                            token.ThrowIfCancellationRequested();
 
-                                                if (Math.Abs(meanColor.Val2 - 255) < minInpaintWhiteTgreshold)
+                                            Point[][] contours;
+                                            HierarchyIndex[] hierarchy;
+                                            Cv2.FindContours(maskedDefects, out contours, out hierarchy,
+                                                             RetrievalModes.External,
+                                                             ContourApproximationModes.ApproxSimple);
+
+                                            var significantContours = contours.Where(c =>
+                                                Cv2.ContourArea(c) > minAreaInpaintDefect).ToList();
+                                            token.ThrowIfCancellationRequested();
+
+                                            var whiteDefects = new List<Point[]>();
+                                            foreach (var contour in significantContours)
+                                            {
+                                                token.ThrowIfCancellationRequested();
+                                                try
                                                 {
-                                                    whiteDefects.Add(contour);
+                                                    using (Mat contourMask = Mat.Zeros(image.Size(), MatType.CV_8UC1))
+                                                    {
+                                                        Cv2.FillPoly(contourMask, new[] { contour }, new Scalar(255));
+                                                        using (Mat maskedImage = new Mat())
+                                                        {
+                                                            Cv2.BitwiseAnd(image, image, maskedImage, contourMask);
+                                                            Scalar meanColor = Cv2.Mean(maskedImage, contourMask);
+
+                                                            if (Math.Abs(meanColor.Val2 - 255) < minInpaintWhiteTgreshold)
+                                                            {
+                                                                whiteDefects.Add(contour);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при обработке контура дефекта");
                                                 }
                                             }
+
+                                            if (whiteDefects.Count > 0)
+                                            {
+                                                try
+                                                {
+                                                    Cv2.DrawContours(_frameToDisplay, whiteDefects, -1, new Scalar(0, 0, 255), 2);
+                                                    foreach (var contour in whiteDefects)
+                                                    {
+                                                        Rect boundingBox = Cv2.BoundingRect(contour);
+                                                        Cv2.Rectangle(_frameToDisplay, boundingBox, new Scalar(0, 255, 255), 2);
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при рисовании контуров дефектов");
+                                                }
+                                            }
+
+                                            return whiteDefects.Count > 0;
                                         }
                                     }
-
-                                    if (whiteDefects.Count > 0)
+                                    catch (Exception ex)
                                     {
-                                        Cv2.DrawContours(_frameToDisplay, whiteDefects, -1, new Scalar(0, 0, 255), 2);
-                                        foreach (var contour in whiteDefects)
-                                        {
-                                            Rect boundingBox = Cv2.BoundingRect(contour);
-                                            Cv2.Rectangle(_frameToDisplay, boundingBox, new Scalar(0, 255, 255), 2);
-                                        }
+                                        ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при создании маски дефектов");
+                                        return false;
                                     }
-
-                                    return whiteDefects.Count > 0;
                                 }
                             }
                         }
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "CheckForPaintDefects - непредвиденная ошибка");
+                return false;
+            }
         }
 
         private bool CheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
-            token.ThrowIfCancellationRequested();
+            try
+            {
+                token.ThrowIfCancellationRequested();
 
-            if (capContour == null || capContour.Length == 0)
+                if (capContour == null || capContour.Length < 3)
+                {
+                    ErrorLogger.Log(new Exception("Контур крышки пустой или содержит слишком мало точек"),
+                        "CheckForObloyDefects - проверка контура");
+                    return false;
+                }
+
+                if (blurChannel_1 == null || blurChannel_2 == null)
+                {
+                    ErrorLogger.Log(new Exception("Каналы blurChannel_1 или blurChannel_2 не инициализированы"),
+                        "CheckForObloyDefects - проверка инициализации каналов");
+                    return false;
+                }
+
+                // Вычисляем центр крышки
+                double sumX = 0, sumY = 0;
+                foreach (var pt in capContour)
+                {
+                    sumX += pt.X;
+                    sumY += pt.Y;
+                }
+                var capCenter = new Point((int)(sumX / capContour.Length), (int)(sumY / capContour.Length));
+
+                double radius = 0;
+                foreach (var pt in capContour)
+                {
+                    double dx = pt.X - capCenter.X;
+                    double dy = pt.Y - capCenter.Y;
+                    radius += Math.Sqrt(dx * dx + dy * dy);
+                }
+                radius /= capContour.Length;
+
+                try
+                {
+                    if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
+                    {
+                        CapRadiusMask?.Dispose();
+                        CapRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
+                    }
+
+                    GetIdealCapMask(CapRadiusMask, capCenter,
+                                    (float)(radius + 3.0f),
+                                    (float)(radius + 3.0f + CAP_FLASH_OFFSET));
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при создании маски крышки");
+                    return false;
+                }
+
+                try
+                {
+                    Cv2.BitwiseAnd(CapRadiusMask, blurChannel_2, blurChannel_2);
+                    Cv2.MorphologyEx(blurChannel_2, blurChannel_1, MorphTypes.Erode, elementMask);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при применении морфологии");
+                    return false;
+                }
+
+                Point[][] obloyContours;
+                HierarchyIndex[] hierarchyObloy;
+                try
+                {
+                    Cv2.FindContours(blurChannel_1, out obloyContours, out hierarchyObloy,
+                                     RetrievalModes.External, ContourApproximationModes.ApproxNone);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при поиске контуров");
+                    return false;
+                }
+
+                int pixCount;
+                try
+                {
+                    pixCount = Cv2.CountNonZero(blurChannel_1);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при подсчете ненулевых пикселей");
+                    return false;
+                }
+
+                if (pixCount > minAreaObloy)
+                {
+                    try
+                    {
+                        Cv2.DrawContours(_frameToDisplay, obloyContours, -1, new Scalar(0, 0, 255), 2);
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при рисовании контуров дефектов");
+                    }
+                }
+
+                return pixCount > minAreaObloy;
+            }
+            catch (OperationCanceledException)
+            {
                 return false;
-
-            // Проверяем, что каналы уже вычислены
-            if (blurChannel_1 == null || blurChannel_2 == null)
-                throw new InvalidOperationException("Каналы не были инициализированы. Сначала вызовите GetCapContour().");
-
-            // Вычисляем центр и радиус крышки по контуру
-            double sumX = 0, sumY = 0;
-            foreach (var pt in capContour)
-            {
-                sumX += pt.X;
-                sumY += pt.Y;
             }
-            var capCenter = new Point((int)(sumX / capContour.Length), (int)(sumY / capContour.Length));
-
-            double radius = 0;
-            foreach (var pt in capContour)
+            catch (Exception ex)
             {
-                double dx = pt.X - capCenter.X;
-                double dy = pt.Y - capCenter.Y;
-                radius += Math.Sqrt(dx * dx + dy * dy);
+                ErrorLogger.Log(ex, "CheckForObloyDefects - непредвиденная ошибка");
+                return false;
             }
-            radius /= capContour.Length;
-
-            if (CapRadiusMask == null || CapRadiusMask.Size() != image.Size())
-            {
-                CapRadiusMask?.Dispose();
-                CapRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
-            }
-
-            GetIdealCapMask(CapRadiusMask, capCenter,
-                            (float)(radius + 3.0f),
-                            (float)(radius + 3.0f + CAP_FLASH_OFFSET));
-
-            // Используем готовые глобальные каналы
-            Cv2.BitwiseAnd(CapRadiusMask, blurChannel_2, blurChannel_2);
-            Cv2.MorphologyEx(blurChannel_2, blurChannel_1, MorphTypes.Erode, elementMask);
-
-            Point[][] obloyContours;
-            HierarchyIndex[] hierarchyObloy;
-            Cv2.FindContours(blurChannel_1, out obloyContours, out hierarchyObloy,
-                             RetrievalModes.External, ContourApproximationModes.ApproxNone);
-
-            int pixCount = Cv2.CountNonZero(blurChannel_1);
-
-            if (pixCount > minAreaObloy)
-            {
-                Cv2.DrawContours(_frameToDisplay, obloyContours, -1, new Scalar(0, 0, 255), 2);
-            }
-
-            return pixCount > minAreaObloy;
         }
+
 
 
         #endregion
@@ -1854,6 +2024,7 @@ namespace KrishkiForms
             {
                 MessageBox.Show($"Ошибка при применении настроек камеры:\n{ex.Message}",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при применении настроек камеры в ApplyCameraSettings");
             }
         }
 
@@ -2294,6 +2465,7 @@ namespace KrishkiForms
             {
                 MessageBox.Show("Ошибка при сохранении настроек: " + ex.Message,
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при сохранении настроек камеры в SaveSettings");
             }
         }
 
@@ -2334,6 +2506,7 @@ namespace KrishkiForms
             {
                 MessageBox.Show("Ошибка при загрузке настроек: " + ex.Message,
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при загрузке настроек камеры в LoadSettings");
             }
         }
 
@@ -2864,13 +3037,6 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
         #endregion
 
         #region Методы работы с Modbus
-        /// <summary>
-        /// Отправка статуса состояния <paramref name="qualityStatus"/> на ПЛК.
-        /// Установка предыдущего значения регистра ПЛК не делается. Предполагается,
-        /// что логика сброса, если она необходима, будет реализована в других
-        /// модулях или ПЛК
-        /// </summary>
-        /// <param name="qualityStatus"></param>
         private void SendQualityStatus(PLCData.QualityStatus qualityStatus)
         {
             try
@@ -2878,27 +3044,20 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
                 if (modbusClient != null && modbusClient.Connected)
                 {
                     var stopwatch = Stopwatch.StartNew();
-
-                    // Обновление состояния обдува
                     modbusClient.WriteSingleRegisterForBreaker(PLCData.QualityRegisterModbus, (int)qualityStatus);
-
                     stopwatch.Stop();
                 }
             }
             catch (TaskCanceledException)
             {
-                // отмена - ничего страшного
+                
             }
             catch (Exception ex)
             {
-                // TODO Логирование ошибки
+                ErrorLogger.Log(ex, $"Ошибка отправки статуса качества {qualityStatus} на ПЛК");
             }
         }
 
-        /// <summary>
-        /// Отправка на ПЛК время обдува, то есть сколько обдув будет работать по времени.
-        /// </summary>
-        /// /// <param name="breakingTime"></param>
         private void SendBreakingTime(int breakingTime)
         {
             try
@@ -2910,18 +3069,14 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             }
             catch (TaskCanceledException)
             {
-                // отмена - ничего страшного
+               
             }
             catch (Exception ex)
             {
-                // TODO Логирование ошибки
+                ErrorLogger.Log(ex, $"Ошибка отправки времени обдува ({breakingTime}) на ПЛК");
             }
         }
 
-        /// <summary>
-        /// Отправка на ПЛК расстояния от датчика до камеры, в тиках энкодера.
-        /// </summary>
-        /// /// <param name="cameraOffset"></param>
         private void SendCameraOffset(int cameraOffset)
         {
             try
@@ -2933,18 +3088,14 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             }
             catch (TaskCanceledException)
             {
-                // отмена - ничего страшного
+                
             }
             catch (Exception ex)
             {
-                // TODO Логирование ошибки
+                ErrorLogger.Log(ex, $"Ошибка отправки смещения камеры ({cameraOffset}) на ПЛК");
             }
         }
 
-        /// <summary>
-        /// Отправка на ПЛК расстояния от датчика до отбраковщика.
-        /// </summary>
-        /// /// <param name="breakerOffset"></param>
         private void SendBreakerOffset(int breakerOffset)
         {
             try
@@ -2956,11 +3107,11 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             }
             catch (TaskCanceledException)
             {
-                // отмена - ничего страшного
+                // отмена - нормально
             }
             catch (Exception ex)
             {
-                // TODO Логирование ошибки
+                ErrorLogger.Log(ex, $"Ошибка отправки смещения отбраковщика ({breakerOffset}) на ПЛК");
             }
         }
 
@@ -2978,17 +3129,15 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
                 }
                 else
                 {
-                    MessageBox.Show("Нет подключения к ПР205. Сигнал не отправлен.",
-                        "Ошибка подключения", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ErrorLogger.Log(new InvalidOperationException("Нет подключения к ПР205. Сигнал не отправлен."),
+                        "breakingAllowCb_CheckedChanged");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при отправке сигнала на ПР205: {ex.Message}",
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при отправке сигнала на ПР205 (breakingAllowCb_CheckedChanged)");
             }
         }
-
 
         #endregion
 
@@ -3470,11 +3619,7 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
 
         #endregion
 
-        private void originPb_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        #region Тестирование нахождения брака
         private void loadImageTestTb_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
@@ -3491,7 +3636,7 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
 
                         if (_imageForTest.Empty())
                         {
-                            MessageBox.Show("Не удалось загрузить изображение.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            ErrorLogger.Log(new Exception("Не удалось загрузить изображение"), "loadImageTestTb_Click");
                             return;
                         }
 
@@ -3504,7 +3649,7 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Ошибка при загрузке изображения: " + ex.Message);
+                        ErrorLogger.Log(ex, "Ошибка при загрузке тестового изображения");
                     }
                 }
             }
@@ -3512,16 +3657,16 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
 
         private void testDefectParamBt_Click(object sender, EventArgs e)
         {
-            ApplyRecognitionParameters();
-            if (_imageForTest == null || _imageForTest.Empty())
-            {
-                MessageBox.Show("Сначала загрузите изображение для тестирования!",
-                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
             try
             {
+                ApplyRecognitionParameters();
+
+                if (_imageForTest == null || _imageForTest.Empty())
+                {
+                    ErrorLogger.Log(new Exception("Тестовое изображение не загружено"), "testDefectParamBt_Click");
+                    return;
+                }
+
                 // Исходные копии
                 Mat frameBase = _imageForTest.Clone();
                 Mat grayBase = new Mat();
@@ -3532,10 +3677,11 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
 
                 // Контур крышки
                 Point[] contour = GetCapContour(grayBase, frameBase);
-
                 if (contour == null || contour.Length == 0)
                 {
-                    MessageBox.Show("Контур крышки не найден.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ErrorLogger.Log(new Exception("Контур крышки не найден"), "testDefectParamBt_Click");
+                    frameBase.Dispose();
+                    grayBase.Dispose();
                     return;
                 }
 
@@ -3543,96 +3689,55 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
                 Mat finalFrame = frameBase.Clone();
                 Cv2.DrawContours(finalFrame, new[] { contour }, -1, new Scalar(0, 255, 0), 2);
 
-
-                // === Независимые копии для каждого дефекта ===
+                // Независимые копии для каждого дефекта
                 Mat frameO = null, frameI = null, frameP = null, frameOb = null;
                 Mat grayO = null, grayI = null, grayP = null, grayOb = null;
 
-                if (ovalityCB.Checked)
-                {
-                    frameO = frameBase.Clone();
-                    grayO = grayBase.Clone();
-                }
+                if (ovalityCB.Checked) { frameO = frameBase.Clone(); grayO = grayBase.Clone(); }
+                if (inclusionCB.Checked) { frameI = frameBase.Clone(); grayI = grayBase.Clone(); }
+                if (inpaintCB.Checked) { frameP = frameBase.Clone(); grayP = grayBase.Clone(); }
+                if (obloyCB.Checked) { frameOb = frameBase.Clone(); grayOb = grayBase.Clone(); }
 
-                if (inclusionCB.Checked)
-                {
-                    frameI = frameBase.Clone();
-                    grayI = grayBase.Clone();
-                }
-
-                if (inpaintCB.Checked)
-                {
-                    frameP = frameBase.Clone();
-                    grayP = grayBase.Clone();
-                }
-
-                if (obloyCB.Checked)
-                {
-                    frameOb = frameBase.Clone();
-                    grayOb = grayBase.Clone();
-                }
-
-
-                // === Запуск проверок ===
+                // Запуск проверок
                 CancellationToken fake = CancellationToken.None;
-
                 bool oval = false, incl = false, paint = false, obloy = false;
 
-                if (ovalityCB.Checked)
-                    oval = CheckOvality(grayO, frameO, fake, contour);
+                try { if (ovalityCB.Checked) oval = CheckOvality(grayO, frameO, fake, contour); }
+                catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки овальности"); }
 
-                if (inclusionCB.Checked)
-                    incl = CheckForInclusions(grayI, frameI, fake, contour);
+                try { if (inclusionCB.Checked) incl = CheckForInclusions(grayI, frameI, fake, contour); }
+                catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки включений"); }
 
-                if (inpaintCB.Checked)
-                    paint = CheckForPaintDefects(grayP, frameP, fake, contour);
+                try { if (inpaintCB.Checked) paint = CheckForPaintDefects(grayP, frameP, fake, contour); }
+                catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки дефектов краски"); }
 
-                if (obloyCB.Checked)
-                    obloy = CheckForObloyDefects(grayOb, frameOb, fake, contour);
+                try { if (obloyCB.Checked) obloy = CheckForObloyDefects(grayOb, frameOb, fake, contour); }
+                catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки облоя"); }
 
+                // Отметка на финальном изображении
+                if (oval) Cv2.PutText(finalFrame, "OVALITY", new Point(20, 40), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
+                if (incl) Cv2.PutText(finalFrame, "INCLUSIONS", new Point(20, 80), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
+                if (paint) Cv2.PutText(finalFrame, "PAINT DEFECT", new Point(20, 120), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
+                if (obloy) Cv2.PutText(finalFrame, "OBLOY", new Point(20, 160), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
 
-                // === Объединяем результаты (если хочешь — можно рисовать только на независимых кадрах) ===
-                if (oval && frameO != null)
-                    Cv2.PutText(finalFrame, "OVALITY", new Point(20, 40), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
-
-                if (incl && frameI != null)
-                    Cv2.PutText(finalFrame, "INCLUSIONS", new Point(20, 80), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
-
-                if (paint && frameP != null)
-                    Cv2.PutText(finalFrame, "PAINT DEFECT", new Point(20, 120), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
-
-                if (obloy && frameOb != null)
-                    Cv2.PutText(finalFrame, "OBLOY", new Point(20, 160), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
-
-
-                // === Показ результата в PictureBox ===
+                // Показ результата
                 using (var bmp = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(finalFrame))
                 {
                     testingResultPb.Image?.Dispose();
                     testingResultPb.Image = (Bitmap)bmp.Clone();
                 }
 
-                // === Очистка ===
-                frameO?.Dispose();
-                frameI?.Dispose();
-                frameP?.Dispose();
-                frameOb?.Dispose();
-
-                grayO?.Dispose();
-                grayI?.Dispose();
-                grayP?.Dispose();
-                grayOb?.Dispose();
-
-                frameBase.Dispose();
-                grayBase.Dispose();
-                finalFrame.Dispose();
+                // Очистка
+                frameO?.Dispose(); frameI?.Dispose(); frameP?.Dispose(); frameOb?.Dispose();
+                grayO?.Dispose(); grayI?.Dispose(); grayP?.Dispose(); grayOb?.Dispose();
+                frameBase.Dispose(); grayBase.Dispose(); finalFrame.Dispose();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка во время тестирования: " + ex.Message,
-                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка во время тестирования параметров дефектов");
             }
         }
+        #endregion
 
         #region Сохранение изображений и обработчики
         private void cycleUpDown_ValueChanged(object sender, EventArgs e)
@@ -3670,112 +3775,131 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
 
         private Mat SimulateCameraSaturation(Mat img, int saturation)
         {
-            if (img.Empty()) return null;
-
-            float koeff = saturation / 128.0f;
-
-            Mat imgHSV = new Mat();
-            Cv2.CvtColor(img, imgHSV, ColorConversionCodes.BGR2HSV);
-
-            Mat[] hsv = Cv2.Split(imgHSV);
-            Mat h = hsv[0];
-            Mat s = hsv[1];
-            Mat v = hsv[2];
-
-            unsafe
+            if (img.Empty())
             {
-                byte* satPtr = (byte*)s.DataPointer;
-                int total = s.Rows * s.Cols;
-
-                for (int i = 0; i < total; i++)
-                {
-                    float corrected = koeff * satPtr[i];
-                    if (corrected > 255f) corrected = 255f;
-                    satPtr[i] = (byte)corrected;
-                }
+                ErrorLogger.Log(new Exception("Попытка симуляции насыщенности на пустом изображении"), "SimulateCameraSaturation");
+                return null;
             }
 
-            Cv2.Merge(new Mat[] { h, s, v }, imgHSV);
+            try
+            {
+                float koeff = saturation / 128.0f;
 
-            Mat imgSat = new Mat();
-            Cv2.CvtColor(imgHSV, imgSat, ColorConversionCodes.HSV2BGR);
+                Mat imgHSV = new Mat();
+                Cv2.CvtColor(img, imgHSV, ColorConversionCodes.BGR2HSV);
 
-            return imgSat;
+                Mat[] hsv = Cv2.Split(imgHSV);
+                Mat h = hsv[0];
+                Mat s = hsv[1];
+                Mat v = hsv[2];
+
+                unsafe
+                {
+                    byte* satPtr = (byte*)s.DataPointer;
+                    int total = s.Rows * s.Cols;
+
+                    for (int i = 0; i < total; i++)
+                    {
+                        float corrected = koeff * satPtr[i];
+                        if (corrected > 255f) corrected = 255f;
+                        satPtr[i] = (byte)corrected;
+                    }
+                }
+
+                Cv2.Merge(new Mat[] { h, s, v }, imgHSV);
+
+                Mat imgSat = new Mat();
+                Cv2.CvtColor(imgHSV, imgSat, ColorConversionCodes.HSV2BGR);
+
+                return imgSat;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка при симуляции насыщенности в SimulateCameraSaturation");
+                return null;
+            }
         }
 
         private void RecomputeAll()
         {
             if (_imageOriginReceptParam == null || _imageOriginReceptParam.Empty())
+            {
+                ErrorLogger.Log(new Exception("Исходное изображение для перерасчета отсутствует"), "RecomputeAll");
                 return;
+            }
 
-            // ---------------- 1. Saturation --------------------
-            Mat satImg = SimulateCameraSaturation(_imageOriginReceptParam, (int)saturationUpDown.Value);
-            saturationReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
+            try
+            {
+                // ---------------- 1. Saturation --------------------
+                Mat satImg = SimulateCameraSaturation(_imageOriginReceptParam, (int)saturationUpDown.Value);
+                saturationReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
+                ErrorLogger.Log(new Exception("Перерасчет: насыщенность завершена"), "RecomputeAll");
 
-            // ---------------- 2. CapsColor ----------------------
-            Mat capsImg = satImg.Clone();
-            NonlinearBackgroundDecolorization(capsImg, (byte)capcolorUpDown.Value);
-            capscolorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
+                // ---------------- 2. CapsColor ----------------------
+                Mat capsImg = satImg.Clone();
+                NonlinearBackgroundDecolorization(capsImg, (byte)capcolorUpDown.Value);
+                capscolorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
+                ErrorLogger.Log(new Exception("Перерасчет: цвет крышек обработан"), "RecomputeAll");
 
-            // ---------------- 3. Window filtering ----------------
-            Mat[] channels;
-            Cv2.Split(capsImg, out channels);
+                // ---------------- 3. Window filtering ----------------
+                Mat[] channels;
+                Cv2.Split(capsImg, out channels);
 
-            int window = int.Parse(windowCb.Text);
-            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
-            Mat windowImg = channels[1];
-            windowReceptParamSmallPb.Image = BitmapConverter.ToBitmap(windowImg);
+                int window = int.Parse(windowCb.Text);
+                Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
+                Mat windowImg = channels[1];
+                windowReceptParamSmallPb.Image = BitmapConverter.ToBitmap(windowImg);
+                ErrorLogger.Log(new Exception($"Перерасчет: фильтрация окна {window}x{window} завершена"), "RecomputeAll");
 
-            // ---------------- 4. Morphology ---------------------
-            int morph = int.Parse(morphCb.Text);
-            Mat element1 = Cv2.GetStructuringElement(
-                MorphShapes.Rect,
-                new Size(2 * morph + 1, 2 * morph + 1),
-                new Point(morph, morph)
-            );
+                // ---------------- 4. Morphology ---------------------
+                int morph = int.Parse(morphCb.Text);
+                Mat element1 = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
+                Mat element2 = Cv2.GetStructuringElement(MorphShapes.Cross, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
 
-            Mat element2 = Cv2.GetStructuringElement(
-                MorphShapes.Cross,
-                new Size(2 * morph + 1, 2 * morph + 1),
-                new Point(morph, morph)
-            );
+                Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
+                Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
+                Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
 
-            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
-            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
-            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
+                Mat morphImg = channels[2];
+                morphReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
+                ErrorLogger.Log(new Exception($"Перерасчет: морфология с элементом {morph} завершена"), "RecomputeAll");
 
-            Mat morphImg = channels[2];
-            morphReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
+                // ---------------- 5. Contour -------------------------
+                Point[][] contours;
+                HierarchyIndex[] hierarchy;
+                Cv2.FindContours(morphImg, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxNone);
 
-            // ---------------- 5. Contour -------------------------
-            Point[][] contours;
-            HierarchyIndex[] hierarchy;
-
-            Cv2.FindContours(morphImg, out contours, out hierarchy,
-                RetrievalModes.External, ContourApproximationModes.ApproxNone);
-
-            if (contours.Length == 0)
-                return;
-
-            int maxInd = 0;
-            int maxLength = 0;
-            for (int i = 0; i < contours.Length; i++)
-                if (contours[i].Length > maxLength)
+                if (contours.Length == 0)
                 {
-                    maxLength = contours[i].Length;
-                    maxInd = i;
+                    ErrorLogger.Log(new Exception("Перерасчет: контуры не найдены"), "RecomputeAll");
+                    return;
                 }
 
-            // ---------------- Отрисовать контур -------------------
-            Mat contourDraw = _imageOriginReceptParam.Clone();
-            Cv2.DrawContours(contourDraw, contours, maxInd, Scalar.Red, 2);
+                int maxInd = 0;
+                int maxLength = 0;
+                for (int i = 0; i < contours.Length; i++)
+                    if (contours[i].Length > maxLength)
+                    {
+                        maxLength = contours[i].Length;
+                        maxInd = i;
+                    }
 
-            resultContourSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
+                // ---------------- Отрисовать контур -------------------
+                Mat contourDraw = _imageOriginReceptParam.Clone();
+                Cv2.DrawContours(contourDraw, contours, maxInd, Scalar.Red, 2);
+                resultContourSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
+                ErrorLogger.Log(new Exception("Перерасчет: контур отрисован"), "RecomputeAll");
 
-            // --- Автоматически выводим итоговое изображение в большое окно ---
-            ShowInGeneralPreview(resultContourSmallPb);
-
+                // --- Автоматически выводим итоговое изображение в большое окно ---
+                ShowInGeneralPreview(resultContourSmallPb);
+                ErrorLogger.Log(new Exception("Перерасчет: итоговое изображение показано"), "RecomputeAll");
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка при перерасчете изображения в RecomputeAll");
+            }
         }
+
         private void saturationUpDown_ValueChanged(object sender, EventArgs e)
         {
             RecomputeAll();
@@ -3856,80 +3980,95 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
 
         private void saveReceptBt_Click(object sender, EventArgs e)
         {
-            if (!ValidateRecept(out string error))
+            try
             {
-                MessageBox.Show(error, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            // --- Папка ---
-            string folder = RecipesFolder;
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
-
-            string name = receptNameTb.Text.Trim();
-            string fileName = name + ".json";
-            string fullPath = Path.Combine(folder, fileName);
-
-            bool existedBefore = File.Exists(fullPath);
-
-            // --- Window ---
-            int windowValue = 0;
-            if (windowCb.SelectedItem != null)
-                int.TryParse(windowCb.SelectedItem.ToString(), out windowValue);
-
-            // --- MorphSize ---
-            int morphSize = 1;
-            if (morphCb.SelectedItem != null)
-                int.TryParse(morphCb.SelectedItem.ToString(), out morphSize);
-
-            int morphSize2 = morphSize;
-
-            // --- Рецепт ---
-            var recipe = new CapRecipe
-            {
-                Name = name,
-                CapsColor = (byte)capcolorUpDown.Value,
-                Window = windowValue,
-                MorphSize = morphSize,
-                MorphSize2 = morphSize2,
-                CameraSaturation = (int)saturationUpDown.Value,
-
-                IsGreen = isGreenColor,
-                IsColored = isColored,
-                IsYellow = isYellowCap,
-                IsWhite = capsAreWhite
-            };
-
-            // --- JSON с нормальной русской кодировкой ---
-            string json = System.Text.Json.JsonSerializer.Serialize(
-                recipe,
-                new System.Text.Json.JsonSerializerOptions
+                if (!ValidateRecept(out string error))
                 {
-                    WriteIndented = true,
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    MessageBox.Show(error, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ErrorLogger.Log(new Exception($"Валидация рецепта не пройдена: {error}"), "saveReceptBt_Click");
+                    return;
                 }
-            );
 
-            File.WriteAllText(fullPath, json, Encoding.UTF8);
+                // --- Папка ---
+                string folder = RecipesFolder;
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                    ErrorLogger.Log(new Exception($"Создана папка рецептов: {folder}"), "saveReceptBt_Click");
+                }
 
-            // --- Обновляем список рецептов ---
-            LoadRecipes();
+                string name = receptNameTb.Text.Trim();
+                string fileName = name + ".json";
+                string fullPath = Path.Combine(folder, fileName);
 
-            receptCapsCmB.Items.Clear();
-            foreach (var recipeName in _recipes.Keys)
-                receptCapsCmB.Items.Add(recipeName);
-            receptCapsCmB.SelectedItem = name;
+                bool existedBefore = File.Exists(fullPath);
 
-            // --- Сообщение ---
-            if (existedBefore)
-                MessageBox.Show($"Рецепт \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else
-                MessageBox.Show($"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // --- Window ---
+                int windowValue = 0;
+                if (windowCb.SelectedItem != null)
+                    int.TryParse(windowCb.SelectedItem.ToString(), out windowValue);
+
+                // --- MorphSize ---
+                int morphSize = 1;
+                if (morphCb.SelectedItem != null)
+                    int.TryParse(morphCb.SelectedItem.ToString(), out morphSize);
+
+                int morphSize2 = morphSize;
+
+                // --- Рецепт ---
+                var recipe = new CapRecipe
+                {
+                    Name = name,
+                    CapsColor = (byte)capcolorUpDown.Value,
+                    Window = windowValue,
+                    MorphSize = morphSize,
+                    MorphSize2 = morphSize2,
+                    CameraSaturation = (int)saturationUpDown.Value,
+
+                    IsGreen = isGreenColor,
+                    IsColored = isColored,
+                    IsYellow = isYellowCap,
+                    IsWhite = capsAreWhite
+                };
+
+                // --- JSON с нормальной русской кодировкой ---
+                string json = System.Text.Json.JsonSerializer.Serialize(
+                    recipe,
+                    new System.Text.Json.JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                    }
+                );
+
+                File.WriteAllText(fullPath, json, Encoding.UTF8);
+                ErrorLogger.Log(new Exception($"Рецепт '{name}' сохранен по пути: {fullPath}"), "saveReceptBt_Click");
+
+                // --- Обновляем список рецептов ---
+                LoadRecipes();
+                receptCapsCmB.Items.Clear();
+                foreach (var recipeName in _recipes.Keys)
+                    receptCapsCmB.Items.Add(recipeName);
+                receptCapsCmB.SelectedItem = name;
+
+                // --- Сообщение ---
+                if (existedBefore)
+                {
+                    MessageBox.Show($"Рецепт \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ErrorLogger.Log(new Exception($"Рецепт '{name}' был редактирован"), "saveReceptBt_Click");
+                }
+                else
+                {
+                    MessageBox.Show($"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ErrorLogger.Log(new Exception($"Создан новый рецепт '{name}'"), "saveReceptBt_Click");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении рецепта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "saveReceptBt_Click");
+            }
         }
-
-
-
 
         private bool ValidateRecept(out string error)
         {
@@ -3938,30 +4077,36 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             if (string.IsNullOrWhiteSpace(receptNameTb.Text))
             {
                 error = "Введите имя рецепта.";
+                ErrorLogger.Log(new Exception("Валидация не пройдена: имя рецепта пустое"), "ValidateRecept");
                 return false;
             }
 
             if (capcolorUpDown.Value < 0 || capcolorUpDown.Value > 255)
             {
                 error = "Цв. крышки должен быть в диапазоне 0–255.";
+                ErrorLogger.Log(new Exception("Валидация не пройдена: CapsColor вне диапазона 0-255"), "ValidateRecept");
                 return false;
             }
 
             if (windowCb.SelectedIndex < 0)
             {
                 error = "Выберите значение Ок.фильтр.";
+                ErrorLogger.Log(new Exception("Валидация не пройдена: окно фильтра не выбрано"), "ValidateRecept");
                 return false;
             }
 
             if (morphCb.SelectedIndex < 0)
             {
                 error = "Выберите Мф.фильтр.";
+                ErrorLogger.Log(new Exception("Валидация не пройдена: морфологический фильтр не выбран"), "ValidateRecept");
                 return false;
             }
 
-            // Все проверки прошли
+            // Все проверки пройдены
+            ErrorLogger.Log(new Exception("Валидация рецепта прошла успешно"), "ValidateRecept");
             return true;
         }
+
 
         private void openCurReceptFolderBt_Click(object sender, EventArgs e)
         {
