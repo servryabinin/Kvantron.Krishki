@@ -3772,132 +3772,113 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
         #endregion
 
         #region Создание рецепта
-
         private Mat SimulateCameraSaturation(Mat img, int saturation)
         {
-            if (img.Empty())
+            if (img.Empty()) return null;
+
+            float koeff = saturation / 128.0f;
+
+            Mat imgHSV = new Mat();
+            Cv2.CvtColor(img, imgHSV, ColorConversionCodes.BGR2HSV);
+
+            Mat[] hsv = Cv2.Split(imgHSV);
+            Mat h = hsv[0];
+            Mat s = hsv[1];
+            Mat v = hsv[2];
+
+            unsafe
             {
-                ErrorLogger.Log(new Exception("Попытка симуляции насыщенности на пустом изображении"), "SimulateCameraSaturation");
-                return null;
-            }
+                byte* satPtr = (byte*)s.DataPointer;
+                int total = s.Rows * s.Cols;
 
-            try
-            {
-                float koeff = saturation / 128.0f;
-
-                Mat imgHSV = new Mat();
-                Cv2.CvtColor(img, imgHSV, ColorConversionCodes.BGR2HSV);
-
-                Mat[] hsv = Cv2.Split(imgHSV);
-                Mat h = hsv[0];
-                Mat s = hsv[1];
-                Mat v = hsv[2];
-
-                unsafe
+                for (int i = 0; i < total; i++)
                 {
-                    byte* satPtr = (byte*)s.DataPointer;
-                    int total = s.Rows * s.Cols;
-
-                    for (int i = 0; i < total; i++)
-                    {
-                        float corrected = koeff * satPtr[i];
-                        if (corrected > 255f) corrected = 255f;
-                        satPtr[i] = (byte)corrected;
-                    }
+                    float corrected = koeff * satPtr[i];
+                    if (corrected > 255f) corrected = 255f;
+                    satPtr[i] = (byte)corrected;
                 }
-
-                Cv2.Merge(new Mat[] { h, s, v }, imgHSV);
-
-                Mat imgSat = new Mat();
-                Cv2.CvtColor(imgHSV, imgSat, ColorConversionCodes.HSV2BGR);
-
-                return imgSat;
             }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка при симуляции насыщенности в SimulateCameraSaturation");
-                return null;
-            }
+
+            Cv2.Merge(new Mat[] { h, s, v }, imgHSV);
+
+            Mat imgSat = new Mat();
+            Cv2.CvtColor(imgHSV, imgSat, ColorConversionCodes.HSV2BGR);
+
+            return imgSat;
         }
 
         private void RecomputeAll()
         {
             if (_imageOriginReceptParam == null || _imageOriginReceptParam.Empty())
-            {
-                ErrorLogger.Log(new Exception("Исходное изображение для перерасчета отсутствует"), "RecomputeAll");
                 return;
-            }
 
-            try
-            {
-                // ---------------- 1. Saturation --------------------
-                Mat satImg = SimulateCameraSaturation(_imageOriginReceptParam, (int)saturationUpDown.Value);
-                saturationReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
-                ErrorLogger.Log(new Exception("Перерасчет: насыщенность завершена"), "RecomputeAll");
+            // ---------------- 1. Saturation --------------------
+            Mat satImg = SimulateCameraSaturation(_imageOriginReceptParam, (int)saturationUpDown.Value);
+            saturationReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
-                // ---------------- 2. CapsColor ----------------------
-                Mat capsImg = satImg.Clone();
-                NonlinearBackgroundDecolorization(capsImg, (byte)capcolorUpDown.Value);
-                capscolorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
-                ErrorLogger.Log(new Exception("Перерасчет: цвет крышек обработан"), "RecomputeAll");
+            // ---------------- 2. CapsColor ----------------------
+            Mat capsImg = satImg.Clone();
+            NonlinearBackgroundDecolorization(capsImg, (byte)capcolorUpDown.Value);
+            capscolorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
 
-                // ---------------- 3. Window filtering ----------------
-                Mat[] channels;
-                Cv2.Split(capsImg, out channels);
+            // ---------------- 3. Window filtering ----------------
+            Mat[] channels;
+            Cv2.Split(capsImg, out channels);
 
-                int window = int.Parse(windowCb.Text);
-                Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
-                Mat windowImg = channels[1];
-                windowReceptParamSmallPb.Image = BitmapConverter.ToBitmap(windowImg);
-                ErrorLogger.Log(new Exception($"Перерасчет: фильтрация окна {window}x{window} завершена"), "RecomputeAll");
+            int window = int.Parse(windowCb.Text);
+            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
+            Mat windowImg = channels[1];
+            windowReceptParamSmallPb.Image = BitmapConverter.ToBitmap(windowImg);
 
-                // ---------------- 4. Morphology ---------------------
-                int morph = int.Parse(morphCb.Text);
-                Mat element1 = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
-                Mat element2 = Cv2.GetStructuringElement(MorphShapes.Cross, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
+            // ---------------- 4. Morphology ---------------------
+            int morph = int.Parse(morphCb.Text);
+            Mat element1 = Cv2.GetStructuringElement(
+                MorphShapes.Rect,
+                new Size(2 * morph + 1, 2 * morph + 1),
+                new Point(morph, morph)
+            );
 
-                Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
-                Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
-                Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
+            Mat element2 = Cv2.GetStructuringElement(
+                MorphShapes.Cross,
+                new Size(2 * morph + 1, 2 * morph + 1),
+                new Point(morph, morph)
+            );
 
-                Mat morphImg = channels[2];
-                morphReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
-                ErrorLogger.Log(new Exception($"Перерасчет: морфология с элементом {morph} завершена"), "RecomputeAll");
+            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
+            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
+            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
 
-                // ---------------- 5. Contour -------------------------
-                Point[][] contours;
-                HierarchyIndex[] hierarchy;
-                Cv2.FindContours(morphImg, out contours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxNone);
+            Mat morphImg = channels[2];
+            morphReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
 
-                if (contours.Length == 0)
+            // ---------------- 5. Contour -------------------------
+            Point[][] contours;
+            HierarchyIndex[] hierarchy;
+
+            Cv2.FindContours(morphImg, out contours, out hierarchy,
+                RetrievalModes.External, ContourApproximationModes.ApproxNone);
+
+            if (contours.Length == 0)
+                return;
+
+            int maxInd = 0;
+            int maxLength = 0;
+            for (int i = 0; i < contours.Length; i++)
+                if (contours[i].Length > maxLength)
                 {
-                    ErrorLogger.Log(new Exception("Перерасчет: контуры не найдены"), "RecomputeAll");
-                    return;
+                    maxLength = contours[i].Length;
+                    maxInd = i;
                 }
 
-                int maxInd = 0;
-                int maxLength = 0;
-                for (int i = 0; i < contours.Length; i++)
-                    if (contours[i].Length > maxLength)
-                    {
-                        maxLength = contours[i].Length;
-                        maxInd = i;
-                    }
+            // ---------------- Отрисовать контур -------------------
+            Mat contourDraw = _imageOriginReceptParam.Clone();
+            Cv2.DrawContours(contourDraw, contours, maxInd, Scalar.Red, 2);
 
-                // ---------------- Отрисовать контур -------------------
-                Mat contourDraw = _imageOriginReceptParam.Clone();
-                Cv2.DrawContours(contourDraw, contours, maxInd, Scalar.Red, 2);
-                resultContourSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
-                ErrorLogger.Log(new Exception("Перерасчет: контур отрисован"), "RecomputeAll");
+            resultContourSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
 
-                // --- Автоматически выводим итоговое изображение в большое окно ---
-                ShowInGeneralPreview(resultContourSmallPb);
-                ErrorLogger.Log(new Exception("Перерасчет: итоговое изображение показано"), "RecomputeAll");
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка при перерасчете изображения в RecomputeAll");
-            }
+            // --- Автоматически выводим итоговое изображение в большое окно ---
+            ShowInGeneralPreview(resultContourSmallPb);
+
         }
 
         private void saturationUpDown_ValueChanged(object sender, EventArgs e)
@@ -3980,94 +3961,76 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
 
         private void saveReceptBt_Click(object sender, EventArgs e)
         {
-            try
+            if (!ValidateRecept(out string error))
             {
-                if (!ValidateRecept(out string error))
-                {
-                    MessageBox.Show(error, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    ErrorLogger.Log(new Exception($"Валидация рецепта не пройдена: {error}"), "saveReceptBt_Click");
-                    return;
-                }
-
-                // --- Папка ---
-                string folder = RecipesFolder;
-                if (!Directory.Exists(folder))
-                {
-                    Directory.CreateDirectory(folder);
-                    ErrorLogger.Log(new Exception($"Создана папка рецептов: {folder}"), "saveReceptBt_Click");
-                }
-
-                string name = receptNameTb.Text.Trim();
-                string fileName = name + ".json";
-                string fullPath = Path.Combine(folder, fileName);
-
-                bool existedBefore = File.Exists(fullPath);
-
-                // --- Window ---
-                int windowValue = 0;
-                if (windowCb.SelectedItem != null)
-                    int.TryParse(windowCb.SelectedItem.ToString(), out windowValue);
-
-                // --- MorphSize ---
-                int morphSize = 1;
-                if (morphCb.SelectedItem != null)
-                    int.TryParse(morphCb.SelectedItem.ToString(), out morphSize);
-
-                int morphSize2 = morphSize;
-
-                // --- Рецепт ---
-                var recipe = new CapRecipe
-                {
-                    Name = name,
-                    CapsColor = (byte)capcolorUpDown.Value,
-                    Window = windowValue,
-                    MorphSize = morphSize,
-                    MorphSize2 = morphSize2,
-                    CameraSaturation = (int)saturationUpDown.Value,
-
-                    IsGreen = isGreenColor,
-                    IsColored = isColored,
-                    IsYellow = isYellowCap,
-                    IsWhite = capsAreWhite
-                };
-
-                // --- JSON с нормальной русской кодировкой ---
-                string json = System.Text.Json.JsonSerializer.Serialize(
-                    recipe,
-                    new System.Text.Json.JsonSerializerOptions
-                    {
-                        WriteIndented = true,
-                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                    }
-                );
-
-                File.WriteAllText(fullPath, json, Encoding.UTF8);
-                ErrorLogger.Log(new Exception($"Рецепт '{name}' сохранен по пути: {fullPath}"), "saveReceptBt_Click");
-
-                // --- Обновляем список рецептов ---
-                LoadRecipes();
-                receptCapsCmB.Items.Clear();
-                foreach (var recipeName in _recipes.Keys)
-                    receptCapsCmB.Items.Add(recipeName);
-                receptCapsCmB.SelectedItem = name;
-
-                // --- Сообщение ---
-                if (existedBefore)
-                {
-                    MessageBox.Show($"Рецепт \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    ErrorLogger.Log(new Exception($"Рецепт '{name}' был редактирован"), "saveReceptBt_Click");
-                }
-                else
-                {
-                    MessageBox.Show($"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    ErrorLogger.Log(new Exception($"Создан новый рецепт '{name}'"), "saveReceptBt_Click");
-                }
+                MessageBox.Show(error, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
-            catch (Exception ex)
+
+            // --- Папка ---
+            string folder = RecipesFolder;
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string name = receptNameTb.Text.Trim();
+            string fileName = name + ".json";
+            string fullPath = Path.Combine(folder, fileName);
+
+            bool existedBefore = File.Exists(fullPath);
+
+            // --- Window ---
+            int windowValue = 0;
+            if (windowCb.SelectedItem != null)
+                int.TryParse(windowCb.SelectedItem.ToString(), out windowValue);
+
+            // --- MorphSize ---
+            int morphSize = 1;
+            if (morphCb.SelectedItem != null)
+                int.TryParse(morphCb.SelectedItem.ToString(), out morphSize);
+
+            int morphSize2 = morphSize;
+
+            // --- Рецепт ---
+            var recipe = new CapRecipe
             {
-                MessageBox.Show($"Ошибка при сохранении рецепта: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ErrorLogger.Log(ex, "saveReceptBt_Click");
-            }
+                Name = name,
+                CapsColor = (byte)capcolorUpDown.Value,
+                Window = windowValue,
+                MorphSize = morphSize,
+                MorphSize2 = morphSize2,
+                CameraSaturation = (int)saturationUpDown.Value,
+
+                IsGreen = isGreenColor,
+                IsColored = isColored,
+                IsYellow = isYellowCap,
+                IsWhite = capsAreWhite
+            };
+
+            // --- JSON с нормальной русской кодировкой ---
+            string json = System.Text.Json.JsonSerializer.Serialize(
+                recipe,
+                new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                }
+            );
+
+            File.WriteAllText(fullPath, json, Encoding.UTF8);
+
+            // --- Обновляем список рецептов ---
+            LoadRecipes();
+
+            receptCapsCmB.Items.Clear();
+            foreach (var recipeName in _recipes.Keys)
+                receptCapsCmB.Items.Add(recipeName);
+            receptCapsCmB.SelectedItem = name;
+
+            // --- Сообщение ---
+            if (existedBefore)
+                MessageBox.Show($"Рецепт \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show($"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private bool ValidateRecept(out string error)
@@ -4077,33 +4040,28 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             if (string.IsNullOrWhiteSpace(receptNameTb.Text))
             {
                 error = "Введите имя рецепта.";
-                ErrorLogger.Log(new Exception("Валидация не пройдена: имя рецепта пустое"), "ValidateRecept");
                 return false;
             }
 
             if (capcolorUpDown.Value < 0 || capcolorUpDown.Value > 255)
             {
                 error = "Цв. крышки должен быть в диапазоне 0–255.";
-                ErrorLogger.Log(new Exception("Валидация не пройдена: CapsColor вне диапазона 0-255"), "ValidateRecept");
                 return false;
             }
 
             if (windowCb.SelectedIndex < 0)
             {
                 error = "Выберите значение Ок.фильтр.";
-                ErrorLogger.Log(new Exception("Валидация не пройдена: окно фильтра не выбрано"), "ValidateRecept");
                 return false;
             }
 
             if (morphCb.SelectedIndex < 0)
             {
                 error = "Выберите Мф.фильтр.";
-                ErrorLogger.Log(new Exception("Валидация не пройдена: морфологический фильтр не выбран"), "ValidateRecept");
                 return false;
             }
 
-            // Все проверки пройдены
-            ErrorLogger.Log(new Exception("Валидация рецепта прошла успешно"), "ValidateRecept");
+            // Все проверки прошли
             return true;
         }
 
