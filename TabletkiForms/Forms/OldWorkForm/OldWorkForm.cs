@@ -13,7 +13,7 @@ using Size = OpenCvSharp.Size;
 
 namespace KrishkiForms
 {
-    public partial class MainWorkForm : Form
+    public partial class OldWorkForm : Form
     {
         #region Поля и константы
 
@@ -172,7 +172,7 @@ namespace KrishkiForms
 
         #region Конструктор и инициализация
 
-        public MainWorkForm(HikCamera camera, ModbusTCP modbus)
+        public OldWorkForm(HikCamera camera, ModbusTCP modbus)
         {
             cam = camera;
             modbusClient = modbus;

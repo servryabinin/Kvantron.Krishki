@@ -6,7 +6,7 @@ public static class CycleImageSaver
 {
     public static string BaseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Дефектные крышки");
     public static string CurrentCycleFolder = "";
-    public static int CycleHours = 6; // Значение подставляется из cycleUpDown
+    public static int CycleHours; // Значение подставляется из cycleUpDown
 
     public static void Init()
     {

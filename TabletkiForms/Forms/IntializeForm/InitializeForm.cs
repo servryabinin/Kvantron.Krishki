@@ -238,7 +238,7 @@ namespace KrishkiForms
             /*var mainForm = new MainWorkForm(Camera, ModbusClient);
             mainForm.Show();*/
 
-            var mainForm = new TestForm(Camera, ModbusClient);
+            var mainForm = new MainWorkForm(Camera, ModbusClient);
             mainForm.Show();
 
             this.Hide(); // скрываем InitializeForm

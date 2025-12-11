@@ -286,5 +286,17 @@ namespace KrishkiForms.Properties {
                 this["PortPr"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastCycleTime {
+            get {
+                return ((string)(this["LastCycleTime"]));
+            }
+            set {
+                this["LastCycleTime"] = value;
+            }
+        }
     }
 }

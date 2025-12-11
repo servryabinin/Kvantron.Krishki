@@ -9,7 +9,9 @@ using System.Globalization;
 using System.Numerics;
 using System.Text;
 using System.Windows.Forms;
+using KrishkiForms.Authorization;
 using KrishkiForms.CameraAndModbusClasses;
+using KrishkiForms.Forms;
 using KrishkiForms.FrameProcessing;
 using KrishkiForms.Hardware;
 using Kvantron.Hardware.SmartDio;
@@ -20,10 +22,11 @@ using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
+using Timer = System.Windows.Forms.Timer;
 
 namespace KrishkiForms
 {
-    public partial class TestForm : Form
+    public partial class MainWorkForm : Form
     {
         #region Поля и константы
 
@@ -234,11 +237,13 @@ namespace KrishkiForms
         }
         private OutputMode _outputMode = OutputMode.All;
 
+        private Timer roleDisplayTimer = new Timer();
+
         #endregion
 
         #region Конструктор и инициализация
 
-        public TestForm(HikCamera camera, ModbusTCP modbus)
+        public MainWorkForm(HikCamera camera, ModbusTCP modbus)
         {
             // Проверяем, что камера не null и подключена
             if (camera != null)
@@ -319,7 +324,16 @@ namespace KrishkiForms
             StartStop(false, true);
             LocalSettings.Instance.Save();
 
-            CycleImageSaver.SetCycleHours((int)cycleUpDown.Value);
+            int cycleHoursFromSettings = 0;
+            int.TryParse(Properties.Settings.Default.LastCycleTime, out cycleHoursFromSettings);
+            if (cycleHoursFromSettings < cycleUpDown.Minimum)
+            {
+                cycleHoursFromSettings = (int)cycleUpDown.Minimum;
+                Properties.Settings.Default.LastCycleTime = cycleHoursFromSettings.ToString();
+                Properties.Settings.Default.Save();
+            }
+            CycleImageSaver.SetCycleHours(cycleHoursFromSettings);
+            if (cycleUpDown != null) cycleUpDown.Value = cycleHoursFromSettings;
             CycleImageSaver.Init();
             currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
 
@@ -329,8 +343,23 @@ namespace KrishkiForms
             if (morphCb.Items.Count > 0)
                 morphCb.SelectedIndex = 0;
 
-        }
+            // --- Авторизация ---
+            AuthManager.Instance.RoleChanged += OnRoleChanged;
+            AuthManager.Instance.SetRole(Role.Operator);
+            ApplyRoleRestrictions(AuthManager.Instance.CurrentRole);
+            AuthManager.Instance.RoleChanged += OnRoleChanged;
+            UpdateRoleUI(AuthManager.Instance.CurrentRole);
+            roleDisplayTimer.Interval = 1000;
+            roleDisplayTimer.Tick += (s, e) =>
+            {
+                if (AuthManager.Instance.CurrentRole == Role.Admin)
+                    timeLeftTb.Text = AuthManager.Instance.GetSecondsLeft().ToString();
+                else
+                    timeLeftTb.Text = "∞";
+            };
+            roleDisplayTimer.Start();
 
+        }
 
         private void InitializeImageMatrices()
         {
@@ -755,8 +784,11 @@ namespace KrishkiForms
             originPb.Image = null;
 
             // 🔓 Разблокируем кнопки подключения
-            connectCameraButton.Enabled = true;
-            connectPrButton.Enabled = true;
+            if (AuthManager.Instance.CurrentRole == Role.Admin)
+            {
+                connectCameraButton.Enabled = true;
+                connectPrButton.Enabled = true;
+            }
             loadImageButton.Enabled = true;
 
             StartStop(false);
@@ -3434,8 +3466,13 @@ namespace KrishkiForms
         #region Сохранение изображений и обработчики
         private void cycleUpDown_ValueChanged(object sender, EventArgs e)
         {
-            CycleImageSaver.SetCycleHours((int)cycleUpDown.Value);
+            int hours = (int)cycleUpDown.Value;
+            CycleImageSaver.SetCycleHours(hours);
             currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
+
+            // Сохраняем в настройки
+            Properties.Settings.Default.LastCycleTime = hours.ToString();
+            Properties.Settings.Default.Save();
         }
 
         private void chooseBaseFolderBtn_Click(object sender, EventArgs e)
@@ -3785,6 +3822,62 @@ namespace KrishkiForms
         {
             capsAreWhite = isWhiteCb.Checked;
             RecomputeAll();
+        }
+
+        #endregion
+
+        #region Авторизация
+
+        private void changeProfileBt_Click(object sender, EventArgs e)
+        {
+            using (ProfileForm pf = new ProfileForm())
+            {
+                if (pf.ShowDialog() == DialogResult.OK)
+                {
+                }
+            }
+        }
+
+        private void OnRoleChanged(Role newRole)
+        {
+            UpdateRoleUI(newRole);
+            ApplyRoleRestrictions(newRole);
+        }
+
+
+        private void UpdateRoleUI(Role role)
+        {
+            if (role == Role.Admin)
+            {
+                profileStatusTb.Text = "Администратор";
+                timeLeftTb.Text = AuthManager.Instance.GetSecondsLeft().ToString();
+            }
+            if (role == Role.Operator)
+            {
+                profileStatusTb.Text = "Оператор";
+                timeLeftTb.Text = "∞";
+            }
+        }
+
+        private void ApplyRoleRestrictions(Role role)
+        {
+            bool admin = role == Role.Admin;
+
+            pr205PortTb.Enabled = admin;
+            prIpTextBox.Enabled = admin;
+            connectPrButton.Enabled = admin;
+
+            cameraIpTextBox.Enabled = admin;
+            connectCameraButton.Enabled = admin;
+
+            frameHeightNumUpD.Enabled = admin;
+            frameWidthNumUpD.Enabled = admin;
+            frameExposureNumUpD.Enabled = admin;
+            frameSaturationNumUpD.Enabled = admin;
+
+            applySettingsButton.Enabled = admin;
+            loadSettingsButton.Enabled = admin;
+            saveSettingsButton.Enabled = admin;
         }
 
         #endregion
