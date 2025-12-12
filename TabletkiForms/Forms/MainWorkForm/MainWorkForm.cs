@@ -303,13 +303,20 @@ namespace KrishkiForms
 
         private void InitializePR205Status()
         {
+            prIpTextBox.Text = Properties.Settings.Default.IpAdressPr;
+
+            int savedPort;
+            if (int.TryParse(Properties.Settings.Default.PortPr, out savedPort))
+                pr205PortTb.Text = savedPort.ToString();
+            else
+                pr205PortTb.Text = "502"; 
+
             if (modbusClient != null && modbusClient.Connected)
             {
                 prStatus.Text = "Подключено";
                 prStatus.ForeColor = Color.Green;
                 connectPrButton.Text = "Отключиться от ПР";
                 connectPrButton.BackColor = connectedColor;
-                startStreamButton.Enabled = true;
             }
             else
             {
@@ -317,7 +324,6 @@ namespace KrishkiForms
                 prStatus.ForeColor = Color.Red;
                 connectPrButton.Text = "Подключиться к ПР";
                 connectPrButton.BackColor = disconnectedColor;
-                startStreamButton.Enabled = false;
             }
         }
 
@@ -328,14 +334,14 @@ namespace KrishkiForms
                 cam.SendImage += GetImage;
                 camStatus.Text = "Подключено";
                 camStatus.ForeColor = Color.Green;
-                connectCameraButton.Text = "Отключиться";
+                connectCameraButton.Text = "Отключиться от камеры";
                 connectCameraButton.BackColor = connectedColor;
             }
             else
             {
                 camStatus.Text = "Не подключено";
                 camStatus.ForeColor = Color.Red;
-                connectCameraButton.Text = "Подключиться";
+                connectCameraButton.Text = "Подключиться к камере";
                 connectCameraButton.BackColor = disconnectedColor;
             }
         }
@@ -598,7 +604,7 @@ namespace KrishkiForms
                 {
                     cam.Close();
                     cameraConnected = false;
-                    connectCameraButton.Text = "Подключиться";
+                    connectCameraButton.Text = "Подключиться к камере";
                     connectCameraButton.BackColor = disconnectedColor;
 
                     camStatus.Text = "Не подключено";
@@ -614,7 +620,7 @@ namespace KrishkiForms
                     {
                         cam.SendImage += GetImage;
                         cameraConnected = true;
-                        connectCameraButton.Text = "Отключиться";
+                        connectCameraButton.Text = "Отключиться от камеры";
                         connectCameraButton.BackColor = connectedColor;
 
                         camStatus.Text = "Подключено";
@@ -627,7 +633,7 @@ namespace KrishkiForms
                     else
                     {
                         cameraConnected = false;
-                        connectCameraButton.Text = "Подключиться";
+                        connectCameraButton.Text = "Подключиться к камере";
                         connectCameraButton.BackColor = disconnectedColor;
 
                         camStatus.Text = "Не подключено";
@@ -658,18 +664,35 @@ namespace KrishkiForms
                 try
                 {
                     modbusClient.Disconnect();
+
+                    prConnected = false;
+                    prStatus.Text = "Не подключено";
+                    prStatus.ForeColor = Color.Red;
+
+                    connectPrButton.Text = "Подключиться к ПР";
+                    connectPrButton.BackColor = disconnectedColor;
+
+                    ErrorLogger.Log(new Exception("Отключение от ПР205 выполнено успешно"), "connectPrButton_Click");
+
+                    MessageBox.Show(
+                        "Соединение с ПР205 разорвано.",
+                        "Отключение",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
                 }
                 catch (Exception ex)
                 {
                     ErrorLogger.Log(ex, "Ошибка при отключении от ПР205");
+
+                    MessageBox.Show(
+                        $"Ошибка при отключении от ПР205:\n{ex.Message}",
+                        "Ошибка",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
                 }
 
-                prConnected = false;
-                connectPrButton.Text = "Подключиться к ПР";
-                connectPrButton.BackColor = disconnectedColor;
-
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
                 return;
             }
 
@@ -677,9 +700,7 @@ namespace KrishkiForms
             {
                 string ip = prIpTextBox.Text.Trim();
                 if (!int.TryParse(pr205PortTb.Text.Trim(), out int port))
-                {
                     throw new Exception("Неверный формат порта ПР205");
-                }
 
                 modbusClient = new ModbusTCP(ip, port);
                 modbusClient.Connect();
@@ -694,7 +715,14 @@ namespace KrishkiForms
                     connectPrButton.Text = "Отключиться от ПР";
                     connectPrButton.BackColor = connectedColor;
 
-                    ErrorLogger.Log(new Exception("Подключение к ПР205 установлено"), "connectPrButton_Click");
+                    ErrorLogger.Log(new Exception("Подключение к ПР205 установлено успешно"), "connectPrButton_Click");
+
+                    MessageBox.Show(
+                        "Соединение с ПР205 успешно установлено!",
+                        "Успех",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
                 }
                 else
                 {
@@ -707,6 +735,13 @@ namespace KrishkiForms
                     connectPrButton.BackColor = disconnectedColor;
 
                     ErrorLogger.Log(new Exception("Не удалось подключиться к ПР205"), "connectPrButton_Click");
+
+                    MessageBox.Show(
+                        "Не удалось подключиться к ПР205.\nПроверьте IP, порт и кабель.",
+                        "Ошибка подключения",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
                 }
             }
             catch (Exception ex)
@@ -720,6 +755,13 @@ namespace KrishkiForms
                 connectPrButton.BackColor = disconnectedColor;
 
                 ErrorLogger.Log(ex, "Ошибка подключения к ПР205");
+
+                MessageBox.Show(
+                    $"Ошибка подключения к ПР205:\n{ex.Message}",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
@@ -818,9 +860,17 @@ namespace KrishkiForms
 
                 ApplyRecognitionParameters();
 
-                connectCameraButton.Enabled = false;
-                connectPrButton.Enabled = false;
-                loadImageButton.Enabled = false;
+                if (AuthManager.Instance.CurrentRole == Role.Operator)
+                {
+                   loadImageButton.Enabled = false;
+                }
+
+                if (AuthManager.Instance.CurrentRole == Role.Admin)
+                {
+                    loadImageButton.Enabled = false;
+                    connectCameraButton.Enabled = false;
+                    connectPrButton.Enabled = false;
+                }
 
                 StartStop(true);
 
@@ -1900,8 +1950,9 @@ namespace KrishkiForms
                 recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
                 recognizeButton.Enabled = true;
 
-                SetUiDuringRecognition(false);
-
+                //if (AuthManager.Instance.CurrentRole = Role.Admin)
+                //SetUiDuringRecognition(false);
+                startStreamButton.Enabled = true;
                 cts?.Dispose();
                 cts = null;
             }
@@ -1927,7 +1978,8 @@ namespace KrishkiForms
                 recognizeButton.Text = "Остановить анализ";
                 recognizeButton.BackColor = Color.FromArgb(229, 115, 115);
 
-                SetUiDuringRecognition(true);
+                startStreamButton.Enabled = false;
+                //SetUiDuringRecognition(true);
             }
             catch (Exception ex)
             {
@@ -2841,8 +2893,28 @@ namespace KrishkiForms
 
                                         if (show)
                                         {
-                                            BeginInvoke(() => UpdatePictureBox(originPb, _frameToDisplay));
+                                            BeginInvoke(() =>
+                                            {
+                                                UpdatePictureBox(originPb, _frameToDisplay);
+
+                                                try
+                                                {
+                                                    _imageOriginReceptParam?.Dispose();
+                                                    _imageOriginReceptParam = frameToProcess.Clone();
+                                                    _imageForTest?.Dispose();
+                                                    _imageForTest = frameToProcess.Clone();
+
+                                                    UpdatePictureBox(generalReceptParamPb, _imageOriginReceptParam);
+                                                    UpdatePictureBox(originReceptParamSmallPb, _imageOriginReceptParam);
+                                                    UpdatePictureBox(testingPb, _imageForTest);
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    ErrorLogger.Log(ex, "Ошибка при обновлении рецептурных изображений");
+                                                }
+                                            });
                                         }
+
 
                                         stopwatch.Stop();
                                         UpdateTextBox(generalTimeTb, stopwatch.ElapsedMilliseconds, 0);
@@ -2911,128 +2983,128 @@ namespace KrishkiForms
         #region Методы проверки дефектов
 
         private bool RunCheckOvality(Mat gray, Mat image, CancellationToken token, Point[] capContour)
-{
-    try
-    {
-        token.ThrowIfCancellationRequested();
-        Stopwatch stopwatch = Stopwatch.StartNew();
-
-        bool isOval = CheckOvality(gray, image, token, capContour);
-
-        if (isOval)
         {
-            ovalityCount++;
-            percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
-            UpdateTextBox(ovalityDef, ovalityCount);
-            UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
+            try
+            {
+                token.ThrowIfCancellationRequested();
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                bool isOval = CheckOvality(gray, image, token, capContour);
+
+                if (isOval)
+                {
+                    ovalityCount++;
+                    percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
+                    UpdateTextBox(ovalityDef, ovalityCount);
+                    UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
+                }
+
+                stopwatch.Stop();
+                percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
+                UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds, 0);
+                UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
+
+                return isOval;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в RunCheckOvality");
+                return false;
+            }
         }
 
-        stopwatch.Stop();
-        percentOvalityCaps = generalCapsCount > 0 ? ovalityCount / generalCapsCount * 100 : 0;
-        UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds, 0);
-        UpdateTextBox(percentOvalityCapsTb, percentOvalityCaps);
-
-        return isOval;
-    }
-    catch (Exception ex)
-    {
-        ErrorLogger.Log(ex, "Ошибка в RunCheckOvality");
-        return false;
-    }
-}
-
-private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] capContour)
-{
-    try
-    {
-        token.ThrowIfCancellationRequested();
-        Stopwatch stopwatch = Stopwatch.StartNew();
-
-        bool hasInclusions = CheckForInclusions(gray, image, token, capContour);
-
-        if (hasInclusions)
+        private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
-            inclusionCount++;
-            percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
-            UpdateTextBox(inclusionDef, inclusionCount);
-            UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
+            try
+            {
+                token.ThrowIfCancellationRequested();
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                bool hasInclusions = CheckForInclusions(gray, image, token, capContour);
+
+                if (hasInclusions)
+                {
+                    inclusionCount++;
+                    percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
+                    UpdateTextBox(inclusionDef, inclusionCount);
+                    UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
+                }
+
+                stopwatch.Stop();
+                percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
+                UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds, 0);
+                UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
+
+                return hasInclusions;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в RunCheckForInclusions");
+                return false;
+            }
         }
 
-        stopwatch.Stop();
-        percentInclusionCaps = generalCapsCount > 0 ? inclusionCount / generalCapsCount * 100 : 0;
-        UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds, 0);
-        UpdateTextBox(percentInclusionCapsTb, percentInclusionCaps);
-
-        return hasInclusions;
-    }
-    catch (Exception ex)
-    {
-        ErrorLogger.Log(ex, "Ошибка в RunCheckForInclusions");
-        return false;
-    }
-}
-
-private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
-{
-    try
-    {
-        token.ThrowIfCancellationRequested();
-        Stopwatch stopwatch = Stopwatch.StartNew();
-
-        bool hasPaintDefects = CheckForPaintDefects(gray, image, token, capContour);
-
-        if (hasPaintDefects)
+        private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
-            paintDefectCount++;
-            percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
-            UpdateTextBox(InpaintDef, paintDefectCount);
-            UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
+            try
+            {
+                token.ThrowIfCancellationRequested();
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                bool hasPaintDefects = CheckForPaintDefects(gray, image, token, capContour);
+
+                if (hasPaintDefects)
+                {
+                    paintDefectCount++;
+                    percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
+                    UpdateTextBox(InpaintDef, paintDefectCount);
+                    UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
+                }
+
+                stopwatch.Stop();
+                percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
+                UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
+                UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
+
+                return hasPaintDefects;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в RunCheckForPaintDefects");
+                return false;
+            }
         }
 
-        stopwatch.Stop();
-        percentInpaintCaps = generalCapsCount > 0 ? paintDefectCount / generalCapsCount * 100 : 0;
-        UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
-        UpdateTextBox(percentInpaintCapsTb, percentInpaintCaps);
-
-        return hasPaintDefects;
-    }
-    catch (Exception ex)
-    {
-        ErrorLogger.Log(ex, "Ошибка в RunCheckForPaintDefects");
-        return false;
-    }
-}
-
-private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
-{
-    try
-    {
-        token.ThrowIfCancellationRequested();
-        Stopwatch stopwatch = Stopwatch.StartNew();
-
-        bool hasObloyDefects = CheckForObloyDefects(gray, image, token, capContour);
-
-        if (hasObloyDefects)
+        private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
         {
-            obloyDefectCount++;
-            percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
-            UpdateTextBox(obloyDef, obloyDefectCount);
-            UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
+            try
+            {
+                token.ThrowIfCancellationRequested();
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                bool hasObloyDefects = CheckForObloyDefects(gray, image, token, capContour);
+
+                if (hasObloyDefects)
+                {
+                    obloyDefectCount++;
+                    percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
+                    UpdateTextBox(obloyDef, obloyDefectCount);
+                    UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
+                }
+
+                stopwatch.Stop();
+                percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
+                UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds, 0);
+                UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
+
+                return hasObloyDefects;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в RunCheckForObloyDefects");
+                return false;
+            }
         }
-
-        stopwatch.Stop();
-        percentObloyCaps = generalCapsCount > 0 ? obloyDefectCount / generalCapsCount * 100 : 0;
-        UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds, 0);
-        UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
-
-        return hasObloyDefects;
-    }
-    catch (Exception ex)
-    {
-        ErrorLogger.Log(ex, "Ошибка в RunCheckForObloyDefects");
-        return false;
-    }
-}
 
         #endregion
 
@@ -3050,7 +3122,7 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             }
             catch (TaskCanceledException)
             {
-                
+
             }
             catch (Exception ex)
             {
@@ -3069,7 +3141,7 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             }
             catch (TaskCanceledException)
             {
-               
+
             }
             catch (Exception ex)
             {
@@ -3088,7 +3160,7 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             }
             catch (TaskCanceledException)
             {
-                
+
             }
             catch (Exception ex)
             {
@@ -3450,6 +3522,16 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
                         int val = (255 * data[i]) / nWhite;
                         if (val > 255) val = 255;
                         data[i] = (byte)val;
+                    }
+                }
+                else
+                {
+                    // 2️⃣ Ветка для зелёных крышек — как в C++-коде
+                    for (int i = 0; i < total; i += 3)
+                    {
+                        data[i + 1] = (byte)Math.Abs(
+                            data[i + 1] - ((data[i] + data[i + 2]) >> 1)
+                        );
                     }
                 }
 
@@ -3913,10 +3995,14 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
                 {
                     _imageOriginReceptParam = new Mat(ofd.FileName);
                     originReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
-
                     RecomputeAll();
                 }
             }
+        }
+
+        private void findContourCreateReceptBt_Click(object sender, EventArgs e)
+        {
+            RecomputeAll();
         }
 
         private void originReceptParamSmallPb_Click(object sender, EventArgs e)
@@ -4137,12 +4223,15 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
         {
             bool admin = role == Role.Admin;
 
+            // --- Кнопки доступны ТОЛЬКО админу и ТОЛЬКО когда система не работает ---
+            bool allowConnectButtons = admin && !isStreamRunning && !isProcessing;
+
             pr205PortTb.Enabled = admin;
             prIpTextBox.Enabled = admin;
-            connectPrButton.Enabled = admin;
+            connectPrButton.Enabled = allowConnectButtons;
 
             cameraIpTextBox.Enabled = admin;
-            connectCameraButton.Enabled = admin;
+            connectCameraButton.Enabled = allowConnectButtons;
 
             frameHeightNumUpD.Enabled = admin;
             frameWidthNumUpD.Enabled = admin;
@@ -4153,6 +4242,7 @@ private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken toke
             loadSettingsButton.Enabled = admin;
             saveSettingsButton.Enabled = admin;
         }
+
 
         #endregion
     }

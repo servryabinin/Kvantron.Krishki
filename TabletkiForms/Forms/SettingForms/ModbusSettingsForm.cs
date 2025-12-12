@@ -16,7 +16,7 @@ namespace KrishkiForms
         public string ModbusIP { get; private set; }
         public int ModbusPort { get; private set; }
 
-        public ModbusSettingsForm(string currentIP = "10.10.69.38", int currentPort = 502)
+        public ModbusSettingsForm(string currentIP, int currentPort)
         {
             InitializeComponent();
             ipTextBox.Text = currentIP;

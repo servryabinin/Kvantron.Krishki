@@ -14,6 +14,7 @@ namespace KrishkiForms.CameraAndModbusClasses
         Multi,
         Continuous        
     }
+
     public class HikCamera
     {
         //Acquisition Control
@@ -44,6 +45,8 @@ namespace KrishkiForms.CameraAndModbusClasses
         bool isGrabbing = false;
 
         Thread mainThread = null;
+
+        public uint LastErrorCode { get; private set; } = 0; // новое свойство
 
         public HikCamera(string serialNumber)
         {
@@ -188,13 +191,20 @@ namespace KrishkiForms.CameraAndModbusClasses
                 {
                     nDeviceNum = 0
                 };
+
                 int nRet = MyCamera.MV_CC_EnumDevices_NET(MyCamera.MV_GIGE_DEVICE | MyCamera.MV_USB_DEVICE, ref m_stDeviceList);
                 if (nRet != MyCamera.MV_OK)
+                {
+                    LastErrorCode = (uint)nRet;
                     return false;
+                }
 
-                if (m_stDeviceList.nDeviceNum == 0) return false;
+                if (m_stDeviceList.nDeviceNum == 0)
+                {
+                    LastErrorCode = 2147484169; // "Нет данных"
+                    return false;
+                }
 
-                // Будем искать устройство с совпадающим серийником, если он задан.
                 bool opened = false;
 
                 for (int i = 0; i < m_stDeviceList.nDeviceNum; i++)
@@ -214,60 +224,51 @@ namespace KrishkiForms.CameraAndModbusClasses
                         deviceSerial = new string(usbInfo.chSerialNumber).TrimEnd('\0');
                     }
 
-                    // Если задан SerialNumber — пропускаем все, что не совпадает
                     if (!string.IsNullOrEmpty(this.SerialNumber) && !string.Equals(deviceSerial, this.SerialNumber, StringComparison.OrdinalIgnoreCase))
-                    {
                         continue;
-                    }
 
-                    // Попытка открыть устройство
                     m_MyCamera = new MyCamera();
-                    if (m_MyCamera == null)
-                        continue;
-
                     nRet = m_MyCamera.MV_CC_CreateDevice_NET(ref device);
-                    if (MyCamera.MV_OK != nRet)
+                    if (nRet != MyCamera.MV_OK)
                     {
+                        LastErrorCode = (uint)nRet;
                         m_MyCamera = null;
                         continue;
                     }
 
                     nRet = m_MyCamera.MV_CC_OpenDevice_NET();
-
-                    if (MyCamera.MV_OK != nRet)
+                    if (nRet != MyCamera.MV_OK)
                     {
-                        try
-                        {
-                            m_MyCamera.MV_CC_DestroyDevice_NET();
-                        }
-                        catch { }
+                        LastErrorCode = (uint)nRet;
+                        try { m_MyCamera.MV_CC_DestroyDevice_NET(); } catch { }
                         m_MyCamera = null;
                         continue;
                     }
 
-                    // Detection network optimal package size (for GigE)
+                    // Оптимальный пакет для GigE
                     if (device.nTLayerType == MyCamera.MV_GIGE_DEVICE)
                     {
                         int nPacketSize = m_MyCamera.MV_CC_GetOptimalPacketSize_NET();
                         if (nPacketSize > 0)
-                        {
                             m_MyCamera.MV_CC_SetIntValue_NET("GevSCPSPacketSize", (uint)nPacketSize);
-                        }
                     }
 
-                    // Всё успешно
                     Connected = true;
                     opened = true;
+                    LastErrorCode = 0;
                     break;
                 }
+
+                if (!opened && LastErrorCode == 0)
+                    LastErrorCode = 2147484163; // дефолтная ошибка "Нет доступа"
 
                 return opened;
             }
             catch (Exception ex)
             {
-                // Логируем, но не выбрасываем
                 Console.WriteLine($"HikCamera.Open exception: {ex.Message}");
                 Connected = false;
+                LastErrorCode = 2147484166; // "Не поддерживается"
                 return false;
             }
         }

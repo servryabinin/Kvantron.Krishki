@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using KrishkiForms.CameraAndModbusClasses;
@@ -21,6 +17,20 @@ namespace KrishkiForms
 
         private System.Windows.Forms.Timer initializationTimer;
         private int initializationStep = 0;
+
+        // Словарь ошибок камеры
+        private static readonly Dictionary<uint, string> CAMERA_ERRORS = new Dictionary<uint, string>
+        {
+            { 2147484163u, "Нет доступа - камера уже используется другим приложением" },
+            { 2147484164u, "Неверный handle устройства" },
+            { 2147484165u, "Неверный параметр" },
+            { 2147484166u, "Не поддерживается" },
+            { 2147484167u, "Неверный режим доступа" },
+            { 2147484168u, "Нет свободных ресурсов" },
+            { 2147484169u, "Нет данных" },
+            { 2147484170u, "Таймаут" },
+            { 2147484171u, "Параметр вне диапазона" }
+        };
 
         public InitializeForm()
         {
@@ -40,26 +50,21 @@ namespace KrishkiForms
             btnRetry.Visible = false;
             btnContinue.Visible = false;
 
-            // Запускаем процесс инициализации
             initializationTimer.Start();
         }
 
         private void InitializationTimer_Tick(object sender, EventArgs e)
         {
             initializationStep++;
-
             switch (initializationStep)
             {
                 case 1:
-                    // Подключение камеры
                     Task.Run(() => ConnectToCamera());
                     break;
                 case 2:
-                    // Подключение Modbus
                     Task.Run(() => ConnectToModbus());
                     break;
                 case 3:
-                    // Завершение инициализации
                     CompleteInitialization();
                     break;
             }
@@ -76,8 +81,9 @@ namespace KrishkiForms
                 }));
 
                 Camera = new HikCamera(LocalSettings.Instance.Cam1SN);
+                bool opened = Camera.Open();
 
-                if (Camera.Open())
+                if (opened)
                 {
                     CameraConnected = true;
                     this.Invoke(new Action(() =>
@@ -88,20 +94,27 @@ namespace KrishkiForms
                 }
                 else
                 {
-                    // Если не удалось подключиться, зануляем объект камеры
                     Camera = null;
                     CameraConnected = false;
-                    throw new Exception("Не удалось открыть камеру");
+
+                    // Получаем код ошибки камеры
+                    uint errorCode = Camera?.LastErrorCode ?? 2147484163u; // пример дефолтной ошибки
+                    string errorText = CAMERA_ERRORS.ContainsKey(errorCode) ? CAMERA_ERRORS[errorCode] : "Неизвестная ошибка";
+
+                    this.Invoke(new Action(() =>
+                    {
+                        cameraConectLabel.Text = $"[Fail] Ошибка камеры: {errorText} (0x{errorCode:X8})";
+                        cameraConectLabel.ForeColor = Color.Red;
+                    }));
                 }
             }
             catch (Exception ex)
             {
-                // При любой ошибке зануляем объект камеры
                 Camera = null;
                 CameraConnected = false;
                 this.Invoke(new Action(() =>
                 {
-                    cameraConectLabel.Text = $"[Fail] Ошибка камеры: {ex.Message}";
+                    cameraConectLabel.Text = $"[Fail] Исключение: {ex.Message}";
                     cameraConectLabel.ForeColor = Color.Red;
                 }));
             }
@@ -117,22 +130,33 @@ namespace KrishkiForms
                     prConnectLabel.ForeColor = SystemColors.ControlDarkDark;
                 }));
 
-                ModbusClient = new ModbusTCP("10.10.69.38", 502);
-                ModbusClient.Connect();
+                // Используем значения из Settings
+                string ip = Properties.Settings.Default.IpAdressPr;
+                string portString = Properties.Settings.Default.PortPr;
+                int port = 502; // значение по умолчанию
+                if (!int.TryParse(portString, out port))
+                {
+                    port = 502; // или другое дефолтное значение
+                }
 
-                if (ModbusClient.Connected)
+                ModbusClient = new ModbusTCP(ip, port);
+                bool connected = ModbusClient.Connect();
+
+                this.Invoke(new Action(() =>
                 {
-                    ModbusConnected = true;
-                    this.Invoke(new Action(() =>
+                    if (connected)
                     {
-                        prConnectLabel.Text = "[ОК] ПР205 подключена";
+                        ModbusConnected = true;
+                        prConnectLabel.Text = $"[ОК] ПР205 подключена ({ip}:{port})";
                         prConnectLabel.ForeColor = Color.LimeGreen;
-                    }));
-                }
-                else
-                {
-                    throw new Exception("Не удалось подключиться к Modbus");
-                }
+                    }
+                    else
+                    {
+                        ModbusConnected = false;
+                        prConnectLabel.Text = $"[Fail] Не удалось подключиться ({ip}:{port})";
+                        prConnectLabel.ForeColor = Color.Red;
+                    }
+                }));
             }
             catch (Exception ex)
             {
@@ -148,33 +172,24 @@ namespace KrishkiForms
         private void CompleteInitialization()
         {
             initializationTimer.Stop();
-
-            this.Invoke(new Action(() =>
-            {
-                // Просто показываем все кнопки
-                SetupButtons();
-            }));
+            this.Invoke(new Action(SetupButtons));
         }
 
         private void SetupButtons()
         {
-            // Убедимся, что обработчики не дублируются
             btnRetry.Click -= btnRetry_Click;
             btnExit.Click -= btnExit_Click;
             btnContinue.Click -= btnContinue_Click;
 
-            // Добавляем обработчики
             btnRetry.Click += btnRetry_Click;
             btnExit.Click += btnExit_Click;
             btnContinue.Click += btnContinue_Click;
 
-            // Показываем все кнопки
             btnRetry.Visible = true;
             btnExit.Visible = true;
             btnContinue.Visible = true;
         }
 
-        // Методы для разрыва соединений
         private void DisconnectCamera()
         {
             try
@@ -190,10 +205,8 @@ namespace KrishkiForms
             }
             finally
             {
-                // Всегда зануляем объект камеры после отключения
                 Camera = null;
                 CameraConnected = false;
-                Console.WriteLine("Камера отключена");
             }
         }
 
@@ -205,7 +218,6 @@ namespace KrishkiForms
                 {
                     ModbusClient.Disconnect();
                     ModbusConnected = false;
-                    Console.WriteLine("Modbus отключен");
                 }
             }
             catch (Exception ex)
@@ -222,86 +234,33 @@ namespace KrishkiForms
 
         private void btnContinue_Click(object sender, EventArgs e)
         {
-            if (!CameraConnected)
-            {
-                /*MessageBox.Show("Камера не подключена!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;*/
-            }
-
-            if (!ModbusConnected)
-            {
-                /*MessageBox.Show("Modbus не подключён!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;*/
-            }
-
-            // Передаем камеру и Modbus в MainWorkForm
-            /*var mainForm = new MainWorkForm(Camera, ModbusClient);
-            mainForm.Show();*/
-
             var mainForm = new MainWorkForm(Camera, ModbusClient);
             mainForm.Show();
-
-            this.Hide(); // скрываем InitializeForm
+            this.Hide();
         }
-
 
         private void btnRetry_Click(object sender, EventArgs e)
         {
-            // Сначала разрываем существующие соединения
             DisconnectAll();
-
-            // Затем перезапускаем инициализацию
             initializationStep = 0;
             cameraConectLabel.Text = "[...] Подключение камеры...";
-            cameraConectLabel.ForeColor = SystemColors.ControlDarkDark;
             prConnectLabel.Text = "[...] Подключение ПР205...";
-            prConnectLabel.ForeColor = SystemColors.ControlDarkDark;
-
-            // Убеждаемся, что объекты занулены
-            Camera = null;
-            ModbusClient = null;
-            CameraConnected = false;
-            ModbusConnected = false;
-
-            btnExit.Visible = false;
-            btnRetry.Visible = false;
-            btnContinue.Visible = false;
-
+            btnExit.Visible = btnRetry.Visible = btnContinue.Visible = false;
             initializationTimer.Start();
         }
 
         private void btnExit_Click(object sender, EventArgs e)
         {
-            // Разрываем все соединения перед закрытием
             DisconnectAll();
-
-            // Закрываем приложение
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
-        // Обработчик для кнопки закрытия (на случай если она есть в дизайнере)
-        private void btnParams_Click(object sender, EventArgs e)
-        {
-            // Разрываем все соединения перед закрытием
-            DisconnectAll();
-
-            // Закрываем приложение
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
-        // Обработчик закрытия формы (на случай закрытия через крестик)
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
-
-            // Если форма закрывается не для перехода к основной форме,
-            // разрываем соединения
             if (this.DialogResult != DialogResult.OK)
-            {
                 DisconnectAll();
-            }
         }
 
         private void paramCameraConnect_Click(object sender, EventArgs e)
@@ -312,39 +271,78 @@ namespace KrishkiForms
             {
                 if (cameraSettingsForm.ShowDialog() == DialogResult.OK)
                 {
-                    // Сохраняем серийный номер в настройках
                     LocalSettings.Instance.Cam1SN = cameraSettingsForm.SelectedCameraSN;
                     LocalSettings.Instance.Save();
-
-                    // Получаем подключенную камеру (может быть null если подключение не удалось)
                     Camera = cameraSettingsForm.SelectedCamera;
                     CameraConnected = (Camera != null);
-
-                    if (Camera != null)
-                    {
-                        MessageBox.Show($"Выбрана камера: {Camera.SerialNumber}",
-                                        "Настройки сохранены", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Камера не подключена",
-                                        "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
                 }
             }
         }
 
         private void paramPrConnect_Click(object sender, EventArgs e)
         {
-            using (var modbusSettingsForm = new ModbusSettingsForm("10.10.69.38", 502))
+            // Считываем текущие настройки из Properties.Settings
+            string currentIP = Properties.Settings.Default.IpAdressPr;
+            int currentPort = 502; // значение по умолчанию
+            if (!int.TryParse(Properties.Settings.Default.PortPr, out currentPort))
+            {
+                currentPort = 502;
+            }
+
+            using (var modbusSettingsForm = new ModbusSettingsForm(currentIP, currentPort))
             {
                 if (modbusSettingsForm.ShowDialog() == DialogResult.OK)
                 {
-                    // Здесь можно сохранить настройки Modbus
-                    MessageBox.Show($"Modbus настроен: {modbusSettingsForm.ModbusIP}:{modbusSettingsForm.ModbusPort}",
-                                  "Настройки сохранены", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Сохраняем новые значения в Settings
+                    Properties.Settings.Default.IpAdressPr = modbusSettingsForm.ModbusIP;
+                    Properties.Settings.Default.PortPr = modbusSettingsForm.ModbusPort.ToString();
+                    Properties.Settings.Default.Save();
+
+                    // Переподключаемся к Modbus с новыми настройками
+                    Task.Run(() =>
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            prConnectLabel.Text = "[...] Подключение ПР205...";
+                            prConnectLabel.ForeColor = SystemColors.ControlDarkDark;
+                        }));
+
+                        try
+                        {
+                            // Создаем новый клиент
+                            ModbusClient?.Disconnect();
+                            ModbusClient = new ModbusTCP(modbusSettingsForm.ModbusIP, modbusSettingsForm.ModbusPort);
+                            bool connected = ModbusClient.Connect();
+
+                            this.Invoke(new Action(() =>
+                            {
+                                if (connected)
+                                {
+                                    ModbusConnected = true;
+                                    prConnectLabel.Text = "[ОК] ПР205 подключена";
+                                    prConnectLabel.ForeColor = Color.LimeGreen;
+                                }
+                                else
+                                {
+                                    ModbusConnected = false;
+                                    prConnectLabel.Text = "[Fail] Ошибка ПР205";
+                                    prConnectLabel.ForeColor = Color.Red;
+                                }
+                            }));
+                        }
+                        catch (Exception ex)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                ModbusConnected = false;
+                                prConnectLabel.Text = $"[Fail] Ошибка ПР205: {ex.Message}";
+                                prConnectLabel.ForeColor = Color.Red;
+                            }));
+                        }
+                    });
                 }
             }
         }
+
     }
 }
