@@ -265,19 +265,37 @@ namespace KrishkiForms
 
         private void paramCameraConnect_Click(object sender, EventArgs e)
         {
-            string currentCameraSN = Camera?.SerialNumber ?? "";
+            string currentSN = Camera?.SerialNumber ?? "";
 
-            using (var cameraSettingsForm = new CameraSettingsForm(currentCameraSN, Camera))
+            using (var f = new CameraSettingsForm(currentSN, Camera))
             {
-                if (cameraSettingsForm.ShowDialog() == DialogResult.OK)
+                var result = f.ShowDialog();
+
+                if (result == DialogResult.OK && f.SelectedCamera != null)
                 {
-                    LocalSettings.Instance.Cam1SN = cameraSettingsForm.SelectedCameraSN;
+                    // сохраняем серийник
+                    LocalSettings.Instance.Cam1SN = f.SelectedCameraSN;
                     LocalSettings.Instance.Save();
-                    Camera = cameraSettingsForm.SelectedCamera;
-                    CameraConnected = (Camera != null);
+
+                    // обновляем камеру
+                    Camera = f.SelectedCamera;
+                    CameraConnected = true;
+
+                    cameraConectLabel.Text = "[ОК] Камера подключена";
+                    cameraConectLabel.ForeColor = Color.LimeGreen;
+                }
+                else
+                {
+                    // пользователь вышел крестиком — камеры нет
+                    Camera = null;
+                    CameraConnected = false;
+
+                    cameraConectLabel.Text = "[Fail] Камера не выбрана";
+                    cameraConectLabel.ForeColor = Color.Red;
                 }
             }
         }
+
 
         private void paramPrConnect_Click(object sender, EventArgs e)
         {

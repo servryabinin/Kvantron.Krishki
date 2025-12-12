@@ -290,12 +290,26 @@ namespace KrishkiForms
 
         private void CameraSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // при закрытии — не держим лишние тестовые подключения
+            /*// при закрытии — не держим лишние тестовые подключения
             if (DialogResult != DialogResult.OK && currentCamera != null && currentCamera.Connected)
             {
                 try { currentCamera.Close(); }
                 catch { }
+            }*/
+
+            // Если камера не выбрана, устанавливаем SelectedCamera в null
+            if (string.IsNullOrEmpty(SelectedCameraSN) || currentCamera == null)
+            {
+                SelectedCamera = null;
             }
+            else
+            {
+                // Передаём текущую камеру наружу
+                SelectedCamera = currentCamera;
+            }
+
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }
