@@ -15,6 +15,8 @@ namespace KrishkiForms
         public HikCamera SelectedCamera { get; private set; }
         private string currentCameraSN;  // серийный номер текущей подключенной камеры
         public string SelectedCameraSN { get; private set; } // выбранный серийник для сохранения
+        public string SelectedCameraIp { get; private set; }
+
 
         public CameraSettingsForm(string currentSN, HikCamera camera)
         {
@@ -290,26 +292,7 @@ namespace KrishkiForms
 
         private void CameraSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            /*// при закрытии — не держим лишние тестовые подключения
-            if (DialogResult != DialogResult.OK && currentCamera != null && currentCamera.Connected)
-            {
-                try { currentCamera.Close(); }
-                catch { }
-            }*/
-
-            // Если камера не выбрана, устанавливаем SelectedCamera в null
-            if (string.IsNullOrEmpty(SelectedCameraSN) || currentCamera == null)
-            {
-                SelectedCamera = null;
-            }
-            else
-            {
-                // Передаём текущую камеру наружу
-                SelectedCamera = currentCamera;
-            }
-
-            DialogResult = DialogResult.OK;
-            Close();
+           
         }
     }
 }

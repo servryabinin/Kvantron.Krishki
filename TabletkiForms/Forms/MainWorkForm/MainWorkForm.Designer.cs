@@ -1637,7 +1637,7 @@
             loadImageForReceptParamBt.FlatAppearance.BorderSize = 0;
             loadImageForReceptParamBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             loadImageForReceptParamBt.ForeColor = Color.White;
-            loadImageForReceptParamBt.Location = new Point(6, 24);
+            loadImageForReceptParamBt.Location = new Point(6, 26);
             loadImageForReceptParamBt.Name = "loadImageForReceptParamBt";
             loadImageForReceptParamBt.Size = new Size(103, 52);
             loadImageForReceptParamBt.TabIndex = 4;
@@ -1649,7 +1649,7 @@
             // 
             generalReceptParamPb.Anchor = AnchorStyles.Top;
             generalReceptParamPb.BorderStyle = BorderStyle.Fixed3D;
-            generalReceptParamPb.Location = new Point(115, 24);
+            generalReceptParamPb.Location = new Point(116, 24);
             generalReceptParamPb.Name = "generalReceptParamPb";
             generalReceptParamPb.Size = new Size(294, 345);
             generalReceptParamPb.SizeMode = PictureBoxSizeMode.Zoom;
@@ -2425,7 +2425,7 @@
             label27.Name = "label27";
             label27.Size = new Size(152, 35);
             label27.TabIndex = 18;
-            label27.Text = "Время обдува, мс";
+            label27.Text = "Время сдува, мс";
             label27.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label31

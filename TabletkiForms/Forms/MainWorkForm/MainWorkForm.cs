@@ -336,6 +336,7 @@ namespace KrishkiForms
                 camStatus.ForeColor = Color.Green;
                 connectCameraButton.Text = "Отключиться от камеры";
                 connectCameraButton.BackColor = connectedColor;
+                cameraIpTextBox.Text = cam.IpAdress;
             }
             else
             {
@@ -343,6 +344,7 @@ namespace KrishkiForms
                 camStatus.ForeColor = Color.Red;
                 connectCameraButton.Text = "Подключиться к камере";
                 connectCameraButton.BackColor = disconnectedColor;
+                cameraIpTextBox.Text = "Камера не выбрана на этапе инициализации";
             }
         }
 
@@ -1950,9 +1952,14 @@ namespace KrishkiForms
                 recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
                 recognizeButton.Enabled = true;
 
-                //if (AuthManager.Instance.CurrentRole = Role.Admin)
-                //SetUiDuringRecognition(false);
-                startStreamButton.Enabled = true;
+                if (!isImageLoaded)
+                {
+                    startStreamButton.Enabled = true;
+                }
+                if (isImageLoaded)
+                {
+                    loadImageButton.Enabled = true;
+                }
                 cts?.Dispose();
                 cts = null;
             }
@@ -1979,6 +1986,10 @@ namespace KrishkiForms
                 recognizeButton.BackColor = Color.FromArgb(229, 115, 115);
 
                 startStreamButton.Enabled = false;
+                if (isImageLoaded)
+                {
+                    loadImageButton.Enabled = false;
+                }
                 //SetUiDuringRecognition(true);
             }
             catch (Exception ex)

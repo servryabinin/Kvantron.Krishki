@@ -45,6 +45,8 @@ namespace KrishkiForms.CameraAndModbusClasses
         bool isGrabbing = false;
 
         Thread mainThread = null;
+        public string IpAdress { get; private set; }
+
 
         public uint LastErrorCode { get; private set; } = 0; // новое свойство
 
@@ -217,6 +219,8 @@ namespace KrishkiForms.CameraAndModbusClasses
                     {
                         MyCamera.MV_GIGE_DEVICE_INFO gigeInfo = (MyCamera.MV_GIGE_DEVICE_INFO)MyCamera.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MyCamera.MV_GIGE_DEVICE_INFO));
                         deviceSerial = new string(gigeInfo.chSerialNumber).TrimEnd('\0');
+                        uint ip = gigeInfo.nCurrentIp;
+                        IpAdress = $"{(ip >> 24) & 0xFF}.{(ip >> 16) & 0xFF}.{(ip >> 8) & 0xFF}.{ip & 0xFF}";
                     }
                     else if (device.nTLayerType == MyCamera.MV_USB_DEVICE)
                     {

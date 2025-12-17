@@ -35,7 +35,7 @@
             // 
             camerasDataGridView.AllowUserToAddRows = false;
             camerasDataGridView.AllowUserToDeleteRows = false;
-            camerasDataGridView.BackgroundColor = Color.White;
+            camerasDataGridView.BackgroundColor = Color.WhiteSmoke;
             camerasDataGridView.BorderStyle = BorderStyle.None;
             camerasDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -60,7 +60,7 @@
             camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
             camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
             camerasDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            camerasDataGridView.Size = new Size(850, 267);
+            camerasDataGridView.Size = new Size(815, 267);
             camerasDataGridView.TabIndex = 0;
             camerasDataGridView.CellContentClick += camerasDataGridView_CellContentClick;
             camerasDataGridView.CellFormatting += camerasDataGridView_CellFormatting;
@@ -117,7 +117,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label1.ForeColor = Color.FromArgb(0, 51, 102);
+            label1.ForeColor = Color.Black;
             label1.Location = new Point(14, 12);
             label1.Name = "label1";
             label1.Size = new Size(177, 23);
@@ -133,7 +133,7 @@
             manualSNTextBox.Margin = new Padding(3, 4, 3, 4);
             manualSNTextBox.Name = "manualSNTextBox";
             manualSNTextBox.PlaceholderText = "Введите серийный номер камеры";
-            manualSNTextBox.Size = new Size(850, 27);
+            manualSNTextBox.Size = new Size(815, 27);
             manualSNTextBox.TabIndex = 2;
             manualSNTextBox.TextChanged += manualSNTextBox_TextChanged;
             // 
@@ -141,7 +141,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label2.ForeColor = Color.FromArgb(0, 51, 102);
+            label2.ForeColor = Color.Black;
             label2.Location = new Point(14, 309);
             label2.Name = "label2";
             label2.Size = new Size(349, 23);
@@ -155,10 +155,10 @@
             okButton.FlatStyle = FlatStyle.Flat;
             okButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             okButton.ForeColor = Color.White;
-            okButton.Location = new Point(778, 385);
+            okButton.Location = new Point(734, 385);
             okButton.Margin = new Padding(3, 4, 3, 4);
             okButton.Name = "okButton";
-            okButton.Size = new Size(86, 37);
+            okButton.Size = new Size(95, 37);
             okButton.TabIndex = 4;
             okButton.Text = "OK";
             okButton.UseVisualStyleBackColor = false;
@@ -185,7 +185,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(878, 432);
+            ClientSize = new Size(839, 432);
             Controls.Add(refreshButton);
             Controls.Add(okButton);
             Controls.Add(label2);

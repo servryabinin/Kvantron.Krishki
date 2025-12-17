@@ -86,12 +86,18 @@ namespace KrishkiForms
                 if (opened)
                 {
                     CameraConnected = true;
+
+                    // СОХРАНЯЕМ IP КАМЕРЫ
+                    Properties.Settings.Default.IpAdressCamera = Camera.IpAdress;
+                    Properties.Settings.Default.Save();
+
                     this.Invoke(new Action(() =>
                     {
-                        cameraConectLabel.Text = "[ОК] Камера подключена";
+                        cameraConectLabel.Text = $"[ОК] Камера подключена ({Camera.IpAdress})";
                         cameraConectLabel.ForeColor = Color.LimeGreen;
                     }));
                 }
+
                 else
                 {
                     Camera = null;
@@ -271,37 +277,43 @@ namespace KrishkiForms
             {
                 var result = f.ShowDialog();
 
-                if (result == DialogResult.OK && f.SelectedCamera != null)
+                if (result == DialogResult.OK)
                 {
-                    // сохраняем серийник
-                    LocalSettings.Instance.Cam1SN = f.SelectedCameraSN;
-                    LocalSettings.Instance.Save();
+                    if (f.SelectedCamera != null)
+                    {
+                        // сохраняем серийник
+                        LocalSettings.Instance.Cam1SN = f.SelectedCameraSN;
+                        LocalSettings.Instance.Save();
 
-                    // обновляем камеру
-                    Camera = f.SelectedCamera;
-                    CameraConnected = true;
+                        // обновляем камеру
+                        Camera = f.SelectedCamera;
+                        CameraConnected = true;
 
-                    cameraConectLabel.Text = "[ОК] Камера подключена";
-                    cameraConectLabel.ForeColor = Color.LimeGreen;
-                }
-                else
-                {
-                    // пользователь вышел крестиком — камеры нет
-                    Camera = null;
-                    CameraConnected = false;
+                        Properties.Settings.Default.IpAdressCamera = Camera.IpAdress;
+                        Properties.Settings.Default.Save();
 
-                    cameraConectLabel.Text = "[Fail] Камера не выбрана";
-                    cameraConectLabel.ForeColor = Color.Red;
+                        cameraConectLabel.Text = "[ОК] Камера подключена";
+                        cameraConectLabel.ForeColor = Color.LimeGreen;
+                    }
+                    else
+                    {
+                        // OK, но камера реально не выбрана
+                        Camera = null;
+                        CameraConnected = false;
+
+                        cameraConectLabel.Text = "[Fail] Камера не выбрана";
+                        cameraConectLabel.ForeColor = Color.Red;
+                    }
                 }
             }
         }
 
 
+
         private void paramPrConnect_Click(object sender, EventArgs e)
         {
-            // Считываем текущие настройки из Properties.Settings
             string currentIP = Properties.Settings.Default.IpAdressPr;
-            int currentPort = 502; // значение по умолчанию
+            int currentPort = 502; 
             if (!int.TryParse(Properties.Settings.Default.PortPr, out currentPort))
             {
                 currentPort = 502;
@@ -311,7 +323,6 @@ namespace KrishkiForms
             {
                 if (modbusSettingsForm.ShowDialog() == DialogResult.OK)
                 {
-                    // Сохраняем новые значения в Settings
                     Properties.Settings.Default.IpAdressPr = modbusSettingsForm.ModbusIP;
                     Properties.Settings.Default.PortPr = modbusSettingsForm.ModbusPort.ToString();
                     Properties.Settings.Default.Save();
