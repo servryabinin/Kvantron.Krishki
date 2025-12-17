@@ -263,6 +263,9 @@ namespace KrishkiForms
             {
                 modbusClient = modbus;
                 prConnected = true;
+
+                modbusClient.ConnectionStatusChanged += ModbusClient_ConnectionStatusChanged;
+                modbusClient.StartPolling();
             }
             else
             {
@@ -274,6 +277,39 @@ namespace KrishkiForms
             InitializeApplication();
             SendStopSignalsToPLC();
         }
+
+        private void ModbusClient_ConnectionStatusChanged(bool isConnected)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => ModbusClient_ConnectionStatusChanged(isConnected)));
+                return;
+            }
+
+            if (isConnected)
+            {
+                prStatus.Text = "Подключено";
+                prStatus.ForeColor = Color.Green;
+                connectPrButton.Text = "Отключиться от ПР";
+                connectPrButton.BackColor = connectedColor;
+                prConnected = true;
+
+                breakingAllowCb.Enabled = true;
+                applyPrBreakerParamButton.Enabled = true;
+            }
+            else
+            {
+                prStatus.Text = "Не подключено";
+                prStatus.ForeColor = Color.Red;
+                connectPrButton.Text = "Подключиться к ПР";
+                connectPrButton.BackColor = disconnectedColor;
+                prConnected = false;
+
+                breakingAllowCb.Enabled = false;
+                applyPrBreakerParamButton.Enabled = false;
+            }
+        }
+
 
         private void InitializeApplication()
         {
@@ -591,7 +627,6 @@ namespace KrishkiForms
             }
         }
 
-
         #endregion
 
         #region Обработчики событий UI
@@ -667,12 +702,18 @@ namespace KrishkiForms
                 {
                     modbusClient.Disconnect();
 
+                    modbusClient.DisableAutoReconnect();
+                    modbusClient.StopPolling();
+
                     prConnected = false;
                     prStatus.Text = "Не подключено";
                     prStatus.ForeColor = Color.Red;
 
                     connectPrButton.Text = "Подключиться к ПР";
                     connectPrButton.BackColor = disconnectedColor;
+
+                    breakingAllowCb.Enabled = false;
+                    applyPrBreakerParamButton.Enabled = false;
 
                     ErrorLogger.Log(new Exception("Отключение от ПР205 выполнено успешно"), "connectPrButton_Click");
 
@@ -709,6 +750,9 @@ namespace KrishkiForms
 
                 if (modbusClient.Connected)
                 {
+                    modbusClient.EnableAutoReconnect();
+                    modbusClient.StartPolling();
+
                     prConnected = true;
 
                     prStatus.Text = "Подключено";
@@ -716,6 +760,9 @@ namespace KrishkiForms
 
                     connectPrButton.Text = "Отключиться от ПР";
                     connectPrButton.BackColor = connectedColor;
+
+                    breakingAllowCb.Enabled = true;
+                    applyPrBreakerParamButton.Enabled = true;
 
                     ErrorLogger.Log(new Exception("Подключение к ПР205 установлено успешно"), "connectPrButton_Click");
 
@@ -735,6 +782,9 @@ namespace KrishkiForms
 
                     connectPrButton.Text = "Подключиться к ПР";
                     connectPrButton.BackColor = disconnectedColor;
+
+                    breakingAllowCb.Enabled = false;
+                    applyPrBreakerParamButton.Enabled = false;
 
                     ErrorLogger.Log(new Exception("Не удалось подключиться к ПР205"), "connectPrButton_Click");
 
@@ -1108,30 +1158,55 @@ namespace KrishkiForms
 
         private async void ApplyPr_Click(object sender, EventArgs e)
         {
+            if (modbusClient == null || !modbusClient.Connected)
+            {
+                // Централизованное обновление интерфейса при отсутствии соединения
+                ModbusClient_ConnectionStatusChanged(false);
+                return;
+            }
+
             cts = new CancellationTokenSource();
 
             try
             {
-                // BreakingTime
-                if (!int.TryParse(breakingTimeTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakingTime) || BreakingTime <= 0)
+                if (!int.TryParse(breakingTimeTb.Text.Trim(),
+                        NumberStyles.Integer,
+                        CultureInfo.InvariantCulture,
+                        out BreakingTime) || BreakingTime <= 0)
+                {
                     BreakingTime = 55;
+                }
+
                 await Task.Run(() => SendBreakingTime(BreakingTime), cts.Token);
 
-                // CameraOffset
-                if (!int.TryParse(cameraOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out CameraOffset) || CameraOffset <= 0)
+                if (!int.TryParse(cameraOffsetTb.Text.Trim(),
+                        NumberStyles.Integer,
+                        CultureInfo.InvariantCulture,
+                        out CameraOffset) || CameraOffset <= 0)
+                {
                     CameraOffset = 300;
+                }
+
                 await Task.Run(() => SendCameraOffset(CameraOffset), cts.Token);
 
-                // BreakerOffset
-                if (!int.TryParse(breakerOffsetTb.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out BreakerOffset) || BreakerOffset <= 0)
+                if (!int.TryParse(breakerOffsetTb.Text.Trim(),
+                        NumberStyles.Integer,
+                        CultureInfo.InvariantCulture,
+                        out BreakerOffset) || BreakerOffset <= 0)
+                {
                     BreakerOffset = 2430;
+                }
+
                 await Task.Run(() => SendBreakerOffset(BreakerOffset), cts.Token);
             }
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Ошибка при отправке параметров на ПР205 (ApplyPr_Click)");
+                ModbusClient_ConnectionStatusChanged(false); // тоже блокируем элементы при ошибке
             }
         }
+
+
 
         #endregion
 
@@ -1917,6 +1992,7 @@ namespace KrishkiForms
                 recognizeButton.Text = "Остановка...";
                 recognizeButton.Enabled = false;
 
+                // Если есть подключение, отправляем стоп-сигнал
                 if (modbusClient != null && modbusClient.Connected)
                 {
                     try
@@ -1925,23 +2001,29 @@ namespace KrishkiForms
                     }
                     catch (Exception ex)
                     {
-                        ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync, при отправке стоп-сигнала в ПР");
+                        ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync при отправке стоп-сигнала в ПР");
                     }
+                }
+                else
+                {
+                    // Централизованное обновление интерфейса при отсутствии соединения
+                    ModbusClient_ConnectionStatusChanged(false);
                 }
 
                 currentFrameNumber = 0;
 
                 try
                 {
-                    await processingTask;
+                    if (processingTask != null)
+                        await processingTask;
                 }
                 catch (OperationCanceledException)
                 {
-                    // Норма
+                    // Норма, ничего не делаем
                 }
                 catch (Exception ex)
                 {
-                    ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync, во время остановки обработки");
+                    ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync во время остановки обработки");
                 }
             }
             finally
@@ -1960,6 +2042,7 @@ namespace KrishkiForms
                 {
                     loadImageButton.Enabled = true;
                 }
+
                 cts?.Dispose();
                 cts = null;
             }
@@ -1972,13 +2055,20 @@ namespace KrishkiForms
             {
                 ApplyRecognitionParameters();
 
-                if (modbusClient != null && modbusClient.Connected && !isImageLoaded)
+                if (modbusClient == null || !modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 1);
+                    ModbusClient_ConnectionStatusChanged(false);
+                }
+                else
+                {
+                    if (!isImageLoaded)
+                    {
+                        // Отправляем сигнал на ПР
+                        modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 1);
+                    }
                 }
 
                 cts = new CancellationTokenSource();
-
                 processingTask = Task.Run(() => StartContinuousProcessing(cts.Token));
                 isProcessing = true;
 
@@ -1990,7 +2080,6 @@ namespace KrishkiForms
                 {
                     loadImageButton.Enabled = false;
                 }
-                //SetUiDuringRecognition(true);
             }
             catch (Exception ex)
             {
@@ -2000,6 +2089,7 @@ namespace KrishkiForms
                 cts = null;
             }
         }
+
 
 
         private void SetUiDuringRecognition(bool isLocked)
@@ -3126,14 +3216,17 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    var stopwatch = Stopwatch.StartNew();
                     modbusClient.WriteSingleRegisterForBreaker(PLCData.QualityRegisterModbus, (int)qualityStatus);
-                    stopwatch.Stop();
+                }
+                else
+                {
+                    // Централизованное обновление UI при разрыве соединения
+                    ModbusClient_ConnectionStatusChanged(false);
                 }
             }
             catch (TaskCanceledException)
             {
-
+                // Норма, ничего не делаем
             }
             catch (Exception ex)
             {
@@ -3212,15 +3305,18 @@ namespace KrishkiForms
                 }
                 else
                 {
-                    ErrorLogger.Log(new InvalidOperationException("Нет подключения к ПР205. Сигнал не отправлен."),
-                        "breakingAllowCb_CheckedChanged");
+                    // Централизованное обновление UI при разрыве соединения
+                    ModbusClient_ConnectionStatusChanged(false);
                 }
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex, "Ошибка при отправке сигнала на ПР205 (breakingAllowCb_CheckedChanged)");
+                ErrorLogger.Log(ex, "Ошибка при отправке сигнала на ПР205");
+                ModbusClient_ConnectionStatusChanged(false);
             }
         }
+
+
 
         #endregion
 
