@@ -20,6 +20,8 @@ namespace KrishkiForms.CameraAndModbusClasses
         private int pollInterval = 5000; // 5 секунд
         private int connectTestRegister = 16403;
 
+        private bool autoReconnectEnabled = true;
+
         // Событие для уведомления об изменении соединения
         public event Action<bool> ConnectionStatusChanged;
 
@@ -30,6 +32,17 @@ namespace KrishkiForms.CameraAndModbusClasses
             ipAddress = ip;
             this.port = port;
         }
+
+        public void EnableAutoReconnect()
+        {
+            autoReconnectEnabled = true;
+        }
+
+        public void DisableAutoReconnect()
+        {
+            autoReconnectEnabled = false;
+        }
+
 
         public bool Connect()
         {
@@ -69,8 +82,15 @@ namespace KrishkiForms.CameraAndModbusClasses
         {
             try
             {
-                if (!connected) Connect();
-                // Пытаемся прочитать любой существующий регистр (например, 0)
+                if (!connected)
+                {
+                    if (!autoReconnectEnabled)
+                        return false;
+
+                    if (!Connect())
+                        return false;
+                }
+
                 ReadSingleRegister(connectTestRegister);
                 return true;
             }
@@ -80,6 +100,7 @@ namespace KrishkiForms.CameraAndModbusClasses
                 return false;
             }
         }
+
 
         /// <summary>
         /// Запуск периодического опроса соединения
@@ -99,6 +120,9 @@ namespace KrishkiForms.CameraAndModbusClasses
 
         private void PollDevice()
         {
+            if (!autoReconnectEnabled)
+                return;
+
             bool prevConnected = connected;
             connected = CheckConnection();
 
@@ -107,6 +131,7 @@ namespace KrishkiForms.CameraAndModbusClasses
                 ConnectionStatusChanged?.Invoke(connected);
             }
         }
+
 
         public void WriteSingleRegisterForBreaker(int register, int state)
         {

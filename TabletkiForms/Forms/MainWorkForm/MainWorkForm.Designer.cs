@@ -2059,17 +2059,17 @@
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel7.Size = new Size(280, 112);
+            tableLayoutPanel7.Size = new Size(298, 112);
             tableLayoutPanel7.TabIndex = 0;
             // 
             // frameSaturationNumUpD
             // 
             frameSaturationNumUpD.Dock = DockStyle.Fill;
             frameSaturationNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            frameSaturationNumUpD.Location = new Point(166, 87);
+            frameSaturationNumUpD.Location = new Point(176, 87);
             frameSaturationNumUpD.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             frameSaturationNumUpD.Name = "frameSaturationNumUpD";
-            frameSaturationNumUpD.Size = new Size(111, 25);
+            frameSaturationNumUpD.Size = new Size(119, 25);
             frameSaturationNumUpD.TabIndex = 23;
             frameSaturationNumUpD.TextAlign = HorizontalAlignment.Center;
             frameSaturationNumUpD.Value = new decimal(new int[] { 128, 0, 0, 0 });
@@ -2078,11 +2078,11 @@
             // 
             frameExposureNumUpD.Dock = DockStyle.Fill;
             frameExposureNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            frameExposureNumUpD.Location = new Point(166, 59);
+            frameExposureNumUpD.Location = new Point(176, 59);
             frameExposureNumUpD.Maximum = new decimal(new int[] { 9999555, 0, 0, 0 });
             frameExposureNumUpD.Minimum = new decimal(new int[] { 15, 0, 0, 0 });
             frameExposureNumUpD.Name = "frameExposureNumUpD";
-            frameExposureNumUpD.Size = new Size(111, 25);
+            frameExposureNumUpD.Size = new Size(119, 25);
             frameExposureNumUpD.TabIndex = 22;
             frameExposureNumUpD.TextAlign = HorizontalAlignment.Center;
             frameExposureNumUpD.Value = new decimal(new int[] { 450, 0, 0, 0 });
@@ -2092,11 +2092,11 @@
             frameWidthNumUpD.Dock = DockStyle.Fill;
             frameWidthNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             frameWidthNumUpD.Increment = new decimal(new int[] { 4, 0, 0, 0 });
-            frameWidthNumUpD.Location = new Point(166, 31);
+            frameWidthNumUpD.Location = new Point(176, 31);
             frameWidthNumUpD.Maximum = new decimal(new int[] { 500, 0, 0, 0 });
             frameWidthNumUpD.Minimum = new decimal(new int[] { 32, 0, 0, 0 });
             frameWidthNumUpD.Name = "frameWidthNumUpD";
-            frameWidthNumUpD.Size = new Size(111, 25);
+            frameWidthNumUpD.Size = new Size(119, 25);
             frameWidthNumUpD.TabIndex = 21;
             frameWidthNumUpD.TextAlign = HorizontalAlignment.Center;
             frameWidthNumUpD.Value = new decimal(new int[] { 496, 0, 0, 0 });
@@ -2106,11 +2106,11 @@
             frameHeightNumUpD.Dock = DockStyle.Fill;
             frameHeightNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             frameHeightNumUpD.Increment = new decimal(new int[] { 2, 0, 0, 0 });
-            frameHeightNumUpD.Location = new Point(166, 3);
+            frameHeightNumUpD.Location = new Point(176, 3);
             frameHeightNumUpD.Maximum = new decimal(new int[] { 536, 0, 0, 0 });
             frameHeightNumUpD.Minimum = new decimal(new int[] { 32, 0, 0, 0 });
             frameHeightNumUpD.Name = "frameHeightNumUpD";
-            frameHeightNumUpD.Size = new Size(111, 25);
+            frameHeightNumUpD.Size = new Size(119, 25);
             frameHeightNumUpD.TabIndex = 20;
             frameHeightNumUpD.TextAlign = HorizontalAlignment.Center;
             frameHeightNumUpD.Value = new decimal(new int[] { 532, 0, 0, 0 });
@@ -2123,7 +2123,7 @@
             label3.ForeColor = Color.Black;
             label3.Location = new Point(3, 0);
             label3.Name = "label3";
-            label3.Size = new Size(157, 28);
+            label3.Size = new Size(167, 28);
             label3.TabIndex = 0;
             label3.Text = "Высота:";
             label3.TextAlign = ContentAlignment.MiddleLeft;
@@ -2136,7 +2136,7 @@
             label6.ForeColor = Color.Black;
             label6.Location = new Point(3, 84);
             label6.Name = "label6";
-            label6.Size = new Size(157, 28);
+            label6.Size = new Size(167, 28);
             label6.TabIndex = 6;
             label6.Text = "Сатурация:";
             label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -2149,7 +2149,7 @@
             label4.ForeColor = Color.Black;
             label4.Location = new Point(3, 28);
             label4.Name = "label4";
-            label4.Size = new Size(157, 28);
+            label4.Size = new Size(167, 28);
             label4.TabIndex = 2;
             label4.Text = "Ширина:";
             label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -2162,7 +2162,7 @@
             label5.ForeColor = Color.Black;
             label5.Location = new Point(3, 56);
             label5.Name = "label5";
-            label5.Size = new Size(157, 28);
+            label5.Size = new Size(167, 28);
             label5.TabIndex = 4;
             label5.Text = "Экспозиция:";
             label5.TextAlign = ContentAlignment.MiddleLeft;
@@ -2215,7 +2215,7 @@
             tableLayoutPanel6.RowCount = 1;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel6.Size = new Size(280, 32);
+            tableLayoutPanel6.Size = new Size(298, 32);
             tableLayoutPanel6.TabIndex = 7;
             // 
             // label1
@@ -2226,7 +2226,7 @@
             label1.ForeColor = Color.Black;
             label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(157, 32);
+            label1.Size = new Size(167, 32);
             label1.TabIndex = 4;
             label1.Text = "IP адрес камеры:";
             label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -2237,9 +2237,9 @@
             cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
             cameraIpTextBox.Dock = DockStyle.Fill;
             cameraIpTextBox.Font = new Font("Segoe UI", 7.8F);
-            cameraIpTextBox.Location = new Point(166, 3);
+            cameraIpTextBox.Location = new Point(176, 3);
             cameraIpTextBox.Name = "cameraIpTextBox";
-            cameraIpTextBox.Size = new Size(111, 25);
+            cameraIpTextBox.Size = new Size(119, 25);
             cameraIpTextBox.TabIndex = 5;
             cameraIpTextBox.Text = "169.254.205.254";
             cameraIpTextBox.TextAlign = HorizontalAlignment.Center;
@@ -2347,7 +2347,7 @@
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.Size = new Size(273, 142);
+            tableLayoutPanel5.Size = new Size(291, 142);
             tableLayoutPanel5.TabIndex = 22;
             // 
             // breakingAllowCb
@@ -2356,9 +2356,9 @@
             breakingAllowCb.Dock = DockStyle.Fill;
             breakingAllowCb.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             breakingAllowCb.ForeColor = Color.Black;
-            breakingAllowCb.Location = new Point(161, 3);
+            breakingAllowCb.Location = new Point(172, 3);
             breakingAllowCb.Name = "breakingAllowCb";
-            breakingAllowCb.Size = new Size(109, 29);
+            breakingAllowCb.Size = new Size(116, 29);
             breakingAllowCb.TabIndex = 17;
             breakingAllowCb.UseVisualStyleBackColor = true;
             breakingAllowCb.CheckedChanged += breakingAllowCb_CheckedChanged;
@@ -2369,9 +2369,9 @@
             breakerOffsetTb.BorderStyle = BorderStyle.FixedSingle;
             breakerOffsetTb.Dock = DockStyle.Fill;
             breakerOffsetTb.Font = new Font("Segoe UI", 7.8F);
-            breakerOffsetTb.Location = new Point(161, 108);
+            breakerOffsetTb.Location = new Point(172, 108);
             breakerOffsetTb.Name = "breakerOffsetTb";
-            breakerOffsetTb.Size = new Size(109, 25);
+            breakerOffsetTb.Size = new Size(116, 25);
             breakerOffsetTb.TabIndex = 21;
             breakerOffsetTb.Text = "2430";
             breakerOffsetTb.TextAlign = HorizontalAlignment.Center;
@@ -2382,9 +2382,9 @@
             cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
             cameraOffsetTb.Dock = DockStyle.Fill;
             cameraOffsetTb.Font = new Font("Segoe UI", 7.8F);
-            cameraOffsetTb.Location = new Point(161, 73);
+            cameraOffsetTb.Location = new Point(172, 73);
             cameraOffsetTb.Name = "cameraOffsetTb";
-            cameraOffsetTb.Size = new Size(109, 25);
+            cameraOffsetTb.Size = new Size(116, 25);
             cameraOffsetTb.TabIndex = 19;
             cameraOffsetTb.Text = "300";
             cameraOffsetTb.TextAlign = HorizontalAlignment.Center;
@@ -2395,9 +2395,9 @@
             breakingTimeTb.BorderStyle = BorderStyle.FixedSingle;
             breakingTimeTb.Dock = DockStyle.Fill;
             breakingTimeTb.Font = new Font("Segoe UI", 7.8F);
-            breakingTimeTb.Location = new Point(161, 38);
+            breakingTimeTb.Location = new Point(172, 38);
             breakingTimeTb.Name = "breakingTimeTb";
-            breakingTimeTb.Size = new Size(109, 25);
+            breakingTimeTb.Size = new Size(116, 25);
             breakingTimeTb.TabIndex = 16;
             breakingTimeTb.Text = "55";
             breakingTimeTb.TextAlign = HorizontalAlignment.Center;
@@ -2410,7 +2410,7 @@
             label25.ForeColor = Color.Black;
             label25.Location = new Point(3, 0);
             label25.Name = "label25";
-            label25.Size = new Size(152, 35);
+            label25.Size = new Size(163, 35);
             label25.TabIndex = 15;
             label25.Text = "Включить сдув:";
             label25.TextAlign = ContentAlignment.MiddleLeft;
@@ -2423,7 +2423,7 @@
             label27.ForeColor = Color.Black;
             label27.Location = new Point(3, 35);
             label27.Name = "label27";
-            label27.Size = new Size(152, 35);
+            label27.Size = new Size(163, 35);
             label27.TabIndex = 18;
             label27.Text = "Время сдува, мс";
             label27.TextAlign = ContentAlignment.MiddleLeft;
@@ -2436,7 +2436,7 @@
             label31.ForeColor = Color.Black;
             label31.Location = new Point(3, 70);
             label31.Name = "label31";
-            label31.Size = new Size(152, 35);
+            label31.Size = new Size(163, 35);
             label31.TabIndex = 20;
             label31.Text = "Расстояние от датчика до камеры, шаги:";
             label31.TextAlign = ContentAlignment.MiddleLeft;
@@ -2448,7 +2448,7 @@
             label7.Font = new Font("Segoe UI", 7.8F);
             label7.Location = new Point(3, 105);
             label7.Name = "label7";
-            label7.Size = new Size(152, 37);
+            label7.Size = new Size(163, 37);
             label7.TabIndex = 22;
             label7.Text = "Расстояние от датчика до сдува, шаги";
             label7.TextAlign = ContentAlignment.MiddleLeft;
@@ -2507,7 +2507,7 @@
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel4.Size = new Size(270, 91);
+            tableLayoutPanel4.Size = new Size(292, 91);
             tableLayoutPanel4.TabIndex = 35;
             // 
             // prIpTextBox
@@ -2515,9 +2515,9 @@
             prIpTextBox.BackColor = SystemColors.Window;
             prIpTextBox.Dock = DockStyle.Fill;
             prIpTextBox.Font = new Font("Segoe UI", 7.8F);
-            prIpTextBox.Location = new Point(160, 63);
+            prIpTextBox.Location = new Point(172, 63);
             prIpTextBox.Name = "prIpTextBox";
-            prIpTextBox.Size = new Size(107, 25);
+            prIpTextBox.Size = new Size(117, 25);
             prIpTextBox.TabIndex = 31;
             prIpTextBox.Text = "10.10.69.38";
             prIpTextBox.TextAlign = HorizontalAlignment.Center;
@@ -2530,7 +2530,7 @@
             label30.ForeColor = Color.Black;
             label30.Location = new Point(3, 0);
             label30.Name = "label30";
-            label30.Size = new Size(151, 30);
+            label30.Size = new Size(163, 30);
             label30.TabIndex = 12;
             label30.Text = "Статус ПР205:";
             label30.TextAlign = ContentAlignment.MiddleLeft;
@@ -2543,7 +2543,7 @@
             label40.ForeColor = Color.Black;
             label40.Location = new Point(3, 60);
             label40.Name = "label40";
-            label40.Size = new Size(151, 31);
+            label40.Size = new Size(163, 31);
             label40.TabIndex = 30;
             label40.Text = "Ip адрес сдува:";
             label40.TextAlign = ContentAlignment.MiddleLeft;
@@ -2554,9 +2554,9 @@
             prStatus.Dock = DockStyle.Fill;
             prStatus.Font = new Font("Segoe UI", 7.8F);
             prStatus.ForeColor = Color.Black;
-            prStatus.Location = new Point(160, 0);
+            prStatus.Location = new Point(172, 0);
             prStatus.Name = "prStatus";
-            prStatus.Size = new Size(107, 30);
+            prStatus.Size = new Size(117, 30);
             prStatus.TabIndex = 11;
             prStatus.Text = "Не подключена";
             prStatus.TextAlign = ContentAlignment.MiddleCenter;
@@ -2569,7 +2569,7 @@
             label26.ForeColor = Color.Black;
             label26.Location = new Point(3, 30);
             label26.Name = "label26";
-            label26.Size = new Size(151, 30);
+            label26.Size = new Size(163, 30);
             label26.TabIndex = 13;
             label26.Text = "Порт ПР205:";
             label26.TextAlign = ContentAlignment.MiddleLeft;
@@ -2580,9 +2580,9 @@
             pr205PortTb.BorderStyle = BorderStyle.FixedSingle;
             pr205PortTb.Dock = DockStyle.Fill;
             pr205PortTb.Font = new Font("Segoe UI", 7.8F);
-            pr205PortTb.Location = new Point(160, 33);
+            pr205PortTb.Location = new Point(172, 33);
             pr205PortTb.Name = "pr205PortTb";
-            pr205PortTb.Size = new Size(107, 25);
+            pr205PortTb.Size = new Size(117, 25);
             pr205PortTb.TabIndex = 14;
             pr205PortTb.Text = "502";
             pr205PortTb.TextAlign = HorizontalAlignment.Center;

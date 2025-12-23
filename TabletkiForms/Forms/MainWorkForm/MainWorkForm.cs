@@ -37,6 +37,7 @@ namespace KrishkiForms
         private Color connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
         private Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
         private bool capsAreWhite = false;
+        private bool manualDisconnect = false;
 
         // Оборудование
         private DioModule module = null;
@@ -265,6 +266,7 @@ namespace KrishkiForms
                 prConnected = true;
 
                 modbusClient.ConnectionStatusChanged += ModbusClient_ConnectionStatusChanged;
+                modbusClient.EnableAutoReconnect();
                 modbusClient.StartPolling();
             }
             else
@@ -288,27 +290,40 @@ namespace KrishkiForms
 
             if (isConnected)
             {
+                manualDisconnect = false;
+
                 prStatus.Text = "Подключено";
                 prStatus.ForeColor = Color.Green;
+
                 connectPrButton.Text = "Отключиться от ПР";
                 connectPrButton.BackColor = connectedColor;
-                prConnected = true;
 
+                prConnected = true;
                 breakingAllowCb.Enabled = true;
                 applyPrBreakerParamButton.Enabled = true;
             }
             else
             {
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
+                if (manualDisconnect)
+                {
+                    prStatus.Text = "Откл. вручную";
+                    prStatus.ForeColor = Color.Red;
+                }
+                else
+                {
+                    prStatus.Text = "Не подключено";
+                    prStatus.ForeColor = Color.Red;
+                }
+
                 connectPrButton.Text = "Подключиться к ПР";
                 connectPrButton.BackColor = disconnectedColor;
-                prConnected = false;
 
+                prConnected = false;
                 breakingAllowCb.Enabled = false;
                 applyPrBreakerParamButton.Enabled = false;
             }
         }
+
 
 
         private void InitializeApplication()
@@ -700,19 +715,18 @@ namespace KrishkiForms
             {
                 try
                 {
+                    manualDisconnect = true;
+
+                    modbusClient.DisableAutoReconnect();
+                    modbusClient.StopPolling();
                     modbusClient.Disconnect();
 
-                    prConnected = false;
-                    prStatus.Text = "Не подключено";
-                    prStatus.ForeColor = Color.Red;
+                    ModbusClient_ConnectionStatusChanged(false);
 
-                    connectPrButton.Text = "Подключиться к ПР";
-                    connectPrButton.BackColor = disconnectedColor;
-
-                    breakingAllowCb.Enabled = false;
-                    applyPrBreakerParamButton.Enabled = false;
-
-                    ErrorLogger.Log(new Exception("Отключение от ПР205 выполнено успешно"), "connectPrButton_Click");
+                    ErrorLogger.Log(
+                        new Exception("Отключение от ПР205 выполнено успешно"),
+                        "connectPrButton_Click"
+                    );
 
                     MessageBox.Show(
                         "Соединение с ПР205 разорвано.",
@@ -739,26 +753,27 @@ namespace KrishkiForms
             try
             {
                 string ip = prIpTextBox.Text.Trim();
+
                 if (!int.TryParse(pr205PortTb.Text.Trim(), out int port))
                     throw new Exception("Неверный формат порта ПР205");
 
+                if (modbusClient != null)
+                    modbusClient.ConnectionStatusChanged -= ModbusClient_ConnectionStatusChanged;
+
                 modbusClient = new ModbusTCP(ip, port);
-                modbusClient.Connect();
+                modbusClient.ConnectionStatusChanged += ModbusClient_ConnectionStatusChanged;
+                modbusClient.EnableAutoReconnect();
 
-                if (modbusClient.Connected)
+                if (modbusClient.Connect())
                 {
-                    prConnected = true;
+                    modbusClient.StartPolling();
 
-                    prStatus.Text = "Подключено";
-                    prStatus.ForeColor = Color.Green;
+                    ModbusClient_ConnectionStatusChanged(true);
 
-                    connectPrButton.Text = "Отключиться от ПР";
-                    connectPrButton.BackColor = connectedColor;
-
-                    breakingAllowCb.Enabled = true;
-                    applyPrBreakerParamButton.Enabled = true;
-
-                    ErrorLogger.Log(new Exception("Подключение к ПР205 установлено успешно"), "connectPrButton_Click");
+                    ErrorLogger.Log(
+                        new Exception("Подключение к ПР205 установлено успешно"),
+                        "connectPrButton_Click"
+                    );
 
                     MessageBox.Show(
                         "Соединение с ПР205 успешно установлено!",
@@ -769,18 +784,13 @@ namespace KrishkiForms
                 }
                 else
                 {
-                    prConnected = false;
+                    manualDisconnect = false;
+                    ModbusClient_ConnectionStatusChanged(false);
 
-                    prStatus.Text = "Не подключено";
-                    prStatus.ForeColor = Color.Red;
-
-                    connectPrButton.Text = "Подключиться к ПР";
-                    connectPrButton.BackColor = disconnectedColor;
-
-                    breakingAllowCb.Enabled = false;
-                    applyPrBreakerParamButton.Enabled = false;
-
-                    ErrorLogger.Log(new Exception("Не удалось подключиться к ПР205"), "connectPrButton_Click");
+                    ErrorLogger.Log(
+                        new Exception("Не удалось подключиться к ПР205"),
+                        "connectPrButton_Click"
+                    );
 
                     MessageBox.Show(
                         "Не удалось подключиться к ПР205.\nПроверьте IP, порт и кабель.",
@@ -792,13 +802,8 @@ namespace KrishkiForms
             }
             catch (Exception ex)
             {
-                prConnected = false;
-
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
-
-                connectPrButton.Text = "Подключиться к ПР";
-                connectPrButton.BackColor = disconnectedColor;
+                manualDisconnect = false;
+                ModbusClient_ConnectionStatusChanged(false);
 
                 ErrorLogger.Log(ex, "Ошибка подключения к ПР205");
 
@@ -810,6 +815,7 @@ namespace KrishkiForms
                 );
             }
         }
+
 
         #endregion
 
