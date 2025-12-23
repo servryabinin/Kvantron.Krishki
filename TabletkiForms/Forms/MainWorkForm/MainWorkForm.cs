@@ -702,9 +702,6 @@ namespace KrishkiForms
                 {
                     modbusClient.Disconnect();
 
-                    modbusClient.DisableAutoReconnect();
-                    modbusClient.StopPolling();
-
                     prConnected = false;
                     prStatus.Text = "Не подключено";
                     prStatus.ForeColor = Color.Red;
@@ -750,9 +747,6 @@ namespace KrishkiForms
 
                 if (modbusClient.Connected)
                 {
-                    modbusClient.EnableAutoReconnect();
-                    modbusClient.StartPolling();
-
                     prConnected = true;
 
                     prStatus.Text = "Подключено";

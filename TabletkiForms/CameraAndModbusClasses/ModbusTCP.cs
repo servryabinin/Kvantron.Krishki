@@ -17,17 +17,11 @@ namespace KrishkiForms.CameraAndModbusClasses
         private bool connected = false;
         private int transactionNumber = 0;
         private Timer pollTimer;
-        private int pollInterval = 5000; 
+        private int pollInterval = 5000; // 5 секунд
         private int connectTestRegister = 16403;
 
         // Событие для уведомления об изменении соединения
         public event Action<bool> ConnectionStatusChanged;
-
-        private bool autoReconnectEnabled = true;
-
-        public void EnableAutoReconnect() => autoReconnectEnabled = true;
-        public void DisableAutoReconnect() => autoReconnectEnabled = false;
-
 
         public bool Connected => connected;
 
@@ -105,9 +99,6 @@ namespace KrishkiForms.CameraAndModbusClasses
 
         private void PollDevice()
         {
-            if (!autoReconnectEnabled)
-                return;
-
             bool prevConnected = connected;
             connected = CheckConnection();
 
@@ -116,7 +107,6 @@ namespace KrishkiForms.CameraAndModbusClasses
                 ConnectionStatusChanged?.Invoke(connected);
             }
         }
-
 
         public void WriteSingleRegisterForBreaker(int register, int state)
         {
@@ -239,7 +229,6 @@ namespace KrishkiForms.CameraAndModbusClasses
                 byte[] response = new byte[11];
                 int bytesRead = stream.Read(response, 0, response.Length);
 
-                
                 ushort value = (ushort)(response[9] << 8 | response[10]);
 
                 return value;
