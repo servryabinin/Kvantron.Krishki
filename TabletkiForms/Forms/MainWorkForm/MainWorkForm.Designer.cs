@@ -127,12 +127,19 @@
             label29 = new Label();
             tabPage4 = new TabPage();
             groupBox10 = new GroupBox();
-            findContourCreateReceptBt = new Button();
-            isWhiteCb = new CheckBox();
-            isYellowCb = new CheckBox();
-            isColorCb = new CheckBox();
-            isGreenCb = new CheckBox();
+            tableLayoutPanel13 = new TableLayoutPanel();
             loadImageForReceptParamBt = new Button();
+            findContourCreateReceptBt = new Button();
+            groupBox12 = new GroupBox();
+            tableLayoutPanel12 = new TableLayoutPanel();
+            isWhiteCb = new CheckBox();
+            label11 = new Label();
+            label50 = new Label();
+            isGreenCb = new CheckBox();
+            isColorCb = new CheckBox();
+            label51 = new Label();
+            label59 = new Label();
+            isYellowCb = new CheckBox();
             generalReceptParamPb = new PictureBox();
             tableLayoutPanel9 = new TableLayoutPanel();
             morphCb = new ComboBox();
@@ -220,6 +227,7 @@
             mainPanel = new Panel();
             panel1 = new Panel();
             pictureBox2 = new PictureBox();
+            groupBox13 = new GroupBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
             tableLayoutPanel11.SuspendLayout();
@@ -250,6 +258,9 @@
             ((System.ComponentModel.ISupportInitialize)minSquareInpaintNumUpD).BeginInit();
             tabPage4.SuspendLayout();
             groupBox10.SuspendLayout();
+            tableLayoutPanel13.SuspendLayout();
+            groupBox12.SuspendLayout();
+            tableLayoutPanel12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)generalReceptParamPb).BeginInit();
             tableLayoutPanel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)originReceptParamSmallPb).BeginInit();
@@ -1548,12 +1559,9 @@
             // 
             // groupBox10
             // 
-            groupBox10.Controls.Add(findContourCreateReceptBt);
-            groupBox10.Controls.Add(isWhiteCb);
-            groupBox10.Controls.Add(isYellowCb);
-            groupBox10.Controls.Add(isColorCb);
-            groupBox10.Controls.Add(isGreenCb);
-            groupBox10.Controls.Add(loadImageForReceptParamBt);
+            groupBox10.Controls.Add(groupBox13);
+            groupBox10.Controls.Add(tableLayoutPanel13);
+            groupBox10.Controls.Add(groupBox12);
             groupBox10.Controls.Add(generalReceptParamPb);
             groupBox10.Controls.Add(tableLayoutPanel9);
             groupBox10.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
@@ -1565,91 +1573,188 @@
             groupBox10.TabStop = false;
             groupBox10.Text = "Подбор параметров рецепта";
             // 
-            // findContourCreateReceptBt
+            // tableLayoutPanel13
             // 
-            findContourCreateReceptBt.BackColor = Color.FromArgb(66, 133, 244);
-            findContourCreateReceptBt.FlatAppearance.BorderSize = 0;
-            findContourCreateReceptBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            findContourCreateReceptBt.ForeColor = Color.White;
-            findContourCreateReceptBt.Location = new Point(6, 82);
-            findContourCreateReceptBt.Name = "findContourCreateReceptBt";
-            findContourCreateReceptBt.Size = new Size(103, 52);
-            findContourCreateReceptBt.TabIndex = 9;
-            findContourCreateReceptBt.Text = "Найти контур";
-            findContourCreateReceptBt.UseVisualStyleBackColor = false;
-            findContourCreateReceptBt.Click += findContourCreateReceptBt_Click;
-            // 
-            // isWhiteCb
-            // 
-            isWhiteCb.AutoSize = true;
-            isWhiteCb.Font = new Font("Segoe UI", 7.8F);
-            isWhiteCb.ForeColor = Color.Black;
-            isWhiteCb.Location = new Point(6, 227);
-            isWhiteCb.Name = "isWhiteCb";
-            isWhiteCb.Size = new Size(72, 21);
-            isWhiteCb.TabIndex = 8;
-            isWhiteCb.Text = "isWhite";
-            isWhiteCb.UseVisualStyleBackColor = true;
-            isWhiteCb.CheckedChanged += isWhiteCb_CheckedChanged;
-            // 
-            // isYellowCb
-            // 
-            isYellowCb.AutoSize = true;
-            isYellowCb.Font = new Font("Segoe UI", 7.8F);
-            isYellowCb.ForeColor = Color.Black;
-            isYellowCb.Location = new Point(6, 200);
-            isYellowCb.Name = "isYellowCb";
-            isYellowCb.Size = new Size(75, 21);
-            isYellowCb.TabIndex = 7;
-            isYellowCb.Text = "isYellow";
-            isYellowCb.UseVisualStyleBackColor = true;
-            isYellowCb.CheckedChanged += isYellowCb_CheckedChanged;
-            // 
-            // isColorCb
-            // 
-            isColorCb.AutoSize = true;
-            isColorCb.Font = new Font("Segoe UI", 7.8F);
-            isColorCb.ForeColor = Color.Black;
-            isColorCb.Location = new Point(6, 173);
-            isColorCb.Name = "isColorCb";
-            isColorCb.Size = new Size(71, 21);
-            isColorCb.TabIndex = 6;
-            isColorCb.Text = "isColor";
-            isColorCb.UseVisualStyleBackColor = true;
-            isColorCb.CheckedChanged += isColorCb_CheckedChanged;
-            // 
-            // isGreenCb
-            // 
-            isGreenCb.AutoSize = true;
-            isGreenCb.Font = new Font("Segoe UI", 7.8F);
-            isGreenCb.ForeColor = Color.Black;
-            isGreenCb.Location = new Point(6, 146);
-            isGreenCb.Name = "isGreenCb";
-            isGreenCb.Size = new Size(74, 21);
-            isGreenCb.TabIndex = 5;
-            isGreenCb.Text = "isGreen";
-            isGreenCb.UseVisualStyleBackColor = true;
-            isGreenCb.CheckedChanged += isGreenCb_CheckedChanged;
+            tableLayoutPanel13.ColumnCount = 2;
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel13.Controls.Add(loadImageForReceptParamBt, 0, 0);
+            tableLayoutPanel13.Controls.Add(findContourCreateReceptBt, 1, 0);
+            tableLayoutPanel13.Location = new Point(6, 26);
+            tableLayoutPanel13.Name = "tableLayoutPanel13";
+            tableLayoutPanel13.RowCount = 1;
+            tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel13.Size = new Size(245, 53);
+            tableLayoutPanel13.TabIndex = 11;
             // 
             // loadImageForReceptParamBt
             // 
             loadImageForReceptParamBt.BackColor = Color.FromArgb(66, 133, 244);
+            loadImageForReceptParamBt.Dock = DockStyle.Fill;
             loadImageForReceptParamBt.FlatAppearance.BorderSize = 0;
             loadImageForReceptParamBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             loadImageForReceptParamBt.ForeColor = Color.White;
-            loadImageForReceptParamBt.Location = new Point(6, 26);
+            loadImageForReceptParamBt.Location = new Point(3, 3);
             loadImageForReceptParamBt.Name = "loadImageForReceptParamBt";
-            loadImageForReceptParamBt.Size = new Size(103, 52);
+            loadImageForReceptParamBt.Size = new Size(116, 47);
             loadImageForReceptParamBt.TabIndex = 4;
             loadImageForReceptParamBt.Text = "Загрузить изображение";
             loadImageForReceptParamBt.UseVisualStyleBackColor = false;
             loadImageForReceptParamBt.Click += loadImageForReceptParamBt_Click;
             // 
+            // findContourCreateReceptBt
+            // 
+            findContourCreateReceptBt.BackColor = Color.FromArgb(66, 133, 244);
+            findContourCreateReceptBt.Dock = DockStyle.Fill;
+            findContourCreateReceptBt.FlatAppearance.BorderSize = 0;
+            findContourCreateReceptBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            findContourCreateReceptBt.ForeColor = Color.White;
+            findContourCreateReceptBt.Location = new Point(125, 3);
+            findContourCreateReceptBt.Name = "findContourCreateReceptBt";
+            findContourCreateReceptBt.Size = new Size(117, 47);
+            findContourCreateReceptBt.TabIndex = 9;
+            findContourCreateReceptBt.Text = "Найти контур";
+            findContourCreateReceptBt.UseVisualStyleBackColor = false;
+            findContourCreateReceptBt.Click += findContourCreateReceptBt_Click;
+            // 
+            // groupBox12
+            // 
+            groupBox12.Controls.Add(tableLayoutPanel12);
+            groupBox12.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox12.ForeColor = Color.Black;
+            groupBox12.Location = new Point(6, 164);
+            groupBox12.Name = "groupBox12";
+            groupBox12.Size = new Size(245, 205);
+            groupBox12.TabIndex = 10;
+            groupBox12.TabStop = false;
+            groupBox12.Text = "Параметры для Цвет кр.";
+            // 
+            // tableLayoutPanel12
+            // 
+            tableLayoutPanel12.ColumnCount = 2;
+            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 78.2426758F));
+            tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.7573223F));
+            tableLayoutPanel12.Controls.Add(isWhiteCb, 1, 0);
+            tableLayoutPanel12.Controls.Add(label11, 0, 0);
+            tableLayoutPanel12.Controls.Add(label50, 0, 1);
+            tableLayoutPanel12.Controls.Add(isGreenCb, 1, 3);
+            tableLayoutPanel12.Controls.Add(isColorCb, 1, 1);
+            tableLayoutPanel12.Controls.Add(label51, 0, 2);
+            tableLayoutPanel12.Controls.Add(label59, 0, 3);
+            tableLayoutPanel12.Controls.Add(isYellowCb, 1, 2);
+            tableLayoutPanel12.Dock = DockStyle.Fill;
+            tableLayoutPanel12.Location = new Point(3, 21);
+            tableLayoutPanel12.Name = "tableLayoutPanel12";
+            tableLayoutPanel12.RowCount = 4;
+            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel12.Size = new Size(239, 181);
+            tableLayoutPanel12.TabIndex = 0;
+            // 
+            // isWhiteCb
+            // 
+            isWhiteCb.Anchor = AnchorStyles.None;
+            isWhiteCb.AutoSize = true;
+            isWhiteCb.Font = new Font("Segoe UI", 7.8F);
+            isWhiteCb.ForeColor = Color.Black;
+            isWhiteCb.Location = new Point(204, 14);
+            isWhiteCb.Name = "isWhiteCb";
+            isWhiteCb.Size = new Size(18, 17);
+            isWhiteCb.TabIndex = 8;
+            isWhiteCb.UseVisualStyleBackColor = true;
+            isWhiteCb.CheckedChanged += isWhiteCb_CheckedChanged;
+            // 
+            // label11
+            // 
+            label11.Anchor = AnchorStyles.Left;
+            label11.AutoSize = true;
+            label11.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label11.Location = new Point(3, 5);
+            label11.Name = "label11";
+            label11.Size = new Size(129, 34);
+            label11.TabIndex = 0;
+            label11.Text = "Крышка бесцветная\r\n(белая, серая и т.д)\r\n";
+            // 
+            // label50
+            // 
+            label50.Anchor = AnchorStyles.Left;
+            label50.AutoSize = true;
+            label50.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label50.Location = new Point(3, 59);
+            label50.Name = "label50";
+            label50.Size = new Size(108, 17);
+            label50.TabIndex = 1;
+            label50.Text = "Крышка цветная";
+            // 
+            // isGreenCb
+            // 
+            isGreenCb.Anchor = AnchorStyles.None;
+            isGreenCb.AutoSize = true;
+            isGreenCb.Font = new Font("Segoe UI", 7.8F);
+            isGreenCb.ForeColor = Color.Black;
+            isGreenCb.Location = new Point(204, 149);
+            isGreenCb.Name = "isGreenCb";
+            isGreenCb.Size = new Size(18, 17);
+            isGreenCb.TabIndex = 5;
+            isGreenCb.UseVisualStyleBackColor = true;
+            isGreenCb.CheckedChanged += isGreenCb_CheckedChanged;
+            // 
+            // isColorCb
+            // 
+            isColorCb.Anchor = AnchorStyles.None;
+            isColorCb.AutoSize = true;
+            isColorCb.Font = new Font("Segoe UI", 7.8F);
+            isColorCb.ForeColor = Color.Black;
+            isColorCb.Location = new Point(204, 59);
+            isColorCb.Name = "isColorCb";
+            isColorCb.Size = new Size(18, 17);
+            isColorCb.TabIndex = 6;
+            isColorCb.UseVisualStyleBackColor = true;
+            isColorCb.CheckedChanged += isColorCb_CheckedChanged;
+            // 
+            // label51
+            // 
+            label51.Anchor = AnchorStyles.Left;
+            label51.AutoSize = true;
+            label51.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label51.Location = new Point(3, 95);
+            label51.Name = "label51";
+            label51.Size = new Size(170, 34);
+            label51.TabIndex = 2;
+            label51.Text = "Крышка слабоконтрастная\r\n(желтая, оранжевая и т.д)\r\n";
+            // 
+            // label59
+            // 
+            label59.Anchor = AnchorStyles.Left;
+            label59.AutoSize = true;
+            label59.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label59.Location = new Point(3, 141);
+            label59.Name = "label59";
+            label59.Size = new Size(180, 34);
+            label59.TabIndex = 3;
+            label59.Text = "Крышка сильноконтрастная \r\n(зеленая, синия и т.д)";
+            // 
+            // isYellowCb
+            // 
+            isYellowCb.Anchor = AnchorStyles.None;
+            isYellowCb.AutoSize = true;
+            isYellowCb.Font = new Font("Segoe UI", 7.8F);
+            isYellowCb.ForeColor = Color.Black;
+            isYellowCb.Location = new Point(204, 104);
+            isYellowCb.Name = "isYellowCb";
+            isYellowCb.Size = new Size(18, 17);
+            isYellowCb.TabIndex = 7;
+            isYellowCb.UseVisualStyleBackColor = true;
+            isYellowCb.CheckedChanged += isYellowCb_CheckedChanged;
+            // 
             // generalReceptParamPb
             // 
             generalReceptParamPb.Anchor = AnchorStyles.Top;
             generalReceptParamPb.BorderStyle = BorderStyle.Fixed3D;
-            generalReceptParamPb.Location = new Point(116, 24);
+            generalReceptParamPb.Location = new Point(257, 26);
             generalReceptParamPb.Name = "generalReceptParamPb";
             generalReceptParamPb.Size = new Size(294, 345);
             generalReceptParamPb.SizeMode = PictureBoxSizeMode.Zoom;
@@ -2804,6 +2909,15 @@
             pictureBox2.TabIndex = 6;
             pictureBox2.TabStop = false;
             // 
+            // groupBox13
+            // 
+            groupBox13.Location = new Point(6, 85);
+            groupBox13.Name = "groupBox13";
+            groupBox13.Size = new Size(245, 75);
+            groupBox13.TabIndex = 12;
+            groupBox13.TabStop = false;
+            groupBox13.Text = "Способ нахождения контура";
+            // 
             // MainWorkForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2858,7 +2972,10 @@
             ((System.ComponentModel.ISupportInitialize)minSquareInpaintNumUpD).EndInit();
             tabPage4.ResumeLayout(false);
             groupBox10.ResumeLayout(false);
-            groupBox10.PerformLayout();
+            tableLayoutPanel13.ResumeLayout(false);
+            groupBox12.ResumeLayout(false);
+            tableLayoutPanel12.ResumeLayout(false);
+            tableLayoutPanel12.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)generalReceptParamPb).EndInit();
             tableLayoutPanel9.ResumeLayout(false);
             tableLayoutPanel9.PerformLayout();
@@ -3100,5 +3217,13 @@
         private Panel panel1;
         private PictureBox pictureBox2;
         private Button findContourCreateReceptBt;
+        private GroupBox groupBox12;
+        private TableLayoutPanel tableLayoutPanel12;
+        private Label label11;
+        private Label label50;
+        private Label label51;
+        private Label label59;
+        private TableLayoutPanel tableLayoutPanel13;
+        private GroupBox groupBox13;
     }
 }

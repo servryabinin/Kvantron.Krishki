@@ -4270,27 +4270,85 @@ namespace KrishkiForms
         private void isGreenCb_CheckedChanged(object sender, EventArgs e)
         {
             isGreenColor = isGreenCb.Checked;
+            UpdateColorModeUI();
             RecomputeAll();
         }
 
         private void isColorCb_CheckedChanged(object sender, EventArgs e)
         {
             isColored = isColorCb.Checked;
+            UpdateColorModeUI();
             RecomputeAll();
         }
 
         private void isYellowCb_CheckedChanged(object sender, EventArgs e)
         {
             isYellowCap = isYellowCb.Checked;
+            UpdateColorModeUI();
             RecomputeAll();
         }
 
         private void isWhiteCb_CheckedChanged(object sender, EventArgs e)
         {
             capsAreWhite = isWhiteCb.Checked;
+            UpdateColorModeUI();
             RecomputeAll();
         }
 
+        private void UpdateColorModeUI()
+        {
+            // --- WHITE режим ---
+            if (isWhiteCb.Checked)
+            {
+                isColorCb.Checked = false;
+                isGreenCb.Checked = false;
+                isYellowCb.Checked = false;
+
+                isColorCb.Enabled = false;
+                isGreenCb.Enabled = false;
+                isYellowCb.Enabled = false;
+                return;
+            }
+            else
+            {
+                isColorCb.Enabled = true;
+                isGreenCb.Enabled = true;
+            }
+
+            // --- COLOR режим ---
+            if (isColorCb.Checked)
+            {
+                isYellowCb.Enabled = true;
+                isGreenCb.Enabled = true;
+                isWhiteCb.Enabled = false;
+            }
+            else
+            {
+                isGreenCb.Checked = false;
+                isYellowCb.Checked = false;
+
+                isGreenCb.Enabled = false;
+                isYellowCb.Enabled = false;
+                isWhiteCb.Enabled = true;
+            }
+
+            // --- GREEN подрежим ---
+            if (isGreenCb.Checked)
+            {
+                // green всегда подразумевает color
+                if (!isColorCb.Checked)
+                    isColorCb.Checked = true;
+
+                isYellowCb.Checked = false;
+                isYellowCb.Enabled = false;
+            }
+
+            // --- YELLOW подрежим ---
+            if (isYellowCb.Checked)
+            {
+                isGreenCb.Checked = false;
+            }
+        }
         #endregion
 
         #region Авторизация
