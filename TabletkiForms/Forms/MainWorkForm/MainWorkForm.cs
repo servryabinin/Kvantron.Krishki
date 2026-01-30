@@ -149,7 +149,7 @@ namespace KrishkiForms
         //Для работы с файлами цветов крышек
         private Dictionary<string, CapRecipe> _recipes = new();
         private string RecipesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Рецепты");
-
+        private bool _isApplyingRecipe = false;
 
         // Морфологические элементы
         private Mat element1;
@@ -158,6 +158,7 @@ namespace KrishkiForms
         private int window = 15;
         private int morph_size = 7;
         private int morph_size_2 = 7;
+        const float outlierThreshold = 1.15f;
 
         // Параметры дефектов
         private double ovalityThreshold = 0.7;
@@ -546,9 +547,23 @@ namespace KrishkiForms
             int.TryParse(Properties.Settings.Default.BreakerOffset, out BreakerOffset);
             int.TryParse(Properties.Settings.Default.CameraOffset, out CameraOffset);
 
-            if (cameraOffsetTb != null) cameraOffsetTb.Text = CameraOffset.ToString();
-            if (breakerOffsetTb != null) breakerOffsetTb.Text = BreakerOffset.ToString();
-            if (breakingTimeTb != null) breakingTimeTb.Text = BreakingTime.ToString();
+            if (cameraOffsetTb != null)
+            {
+                cameraOffsetTb.Text = CameraOffset.ToString();
+                SendCameraOffset(CameraOffset);
+            }
+
+            if (breakerOffsetTb != null)
+            {
+                breakerOffsetTb.Text = BreakerOffset.ToString();
+                SendBreakerOffset(BreakerOffset);
+            }
+
+            if (breakingTimeTb != null)
+            {
+                breakingTimeTb.Text = BreakingTime.ToString();
+                SendBreakingTime(BreakingTime);
+            }
 
             // ===== Параметры дефектов (автоподгрузка при запуске) =====
             if (!string.IsNullOrEmpty(Properties.Settings.Default.OvalityThreshold))
@@ -1377,27 +1392,29 @@ namespace KrishkiForms
 
         private void ApplyRecipe(CapRecipe r)
         {
-            // Цветовые флаги
+            _isApplyingRecipe = true;
+
+            // ---------- Цветовые флаги ----------
             isGreenColor = r.IsGreen;
             isColored = r.IsColored;
             isYellowCap = r.IsYellow;
             capsAreWhite = r.IsWhite;
 
-            // Параметры обработки
+            // ---------- Параметры обработки ----------
             window = r.Window;
             morph_size = r.MorphSize;
             morph_size_2 = r.MorphSize2;
             capsColor = r.CapsColor;
             saturation = r.CameraSaturation;
 
-            // Камера
+            // ---------- Камера ----------
             if (cam != null)
             {
                 cam.Saturation = (uint)r.CameraSaturation;
                 cam.SetSaturation();
             }
 
-            // Логика отключения inpaint
+            // ---------- inpaint ----------
             if (capsAreWhite)
             {
                 inpaintCB.Checked = false;
@@ -1408,32 +1425,33 @@ namespace KrishkiForms
                 inpaintCB.Enabled = true;
             }
 
-            // Обновляем чекбоксы интерфейса
-            isGreenCb.Checked = isGreenColor;
-            isColorCb.Checked = isColored;
-            isYellowCb.Checked = isYellowCap;
+            // ---------- Чекбоксы UI (ВАЖЕН ПОРЯДОК) ----------
             isWhiteCb.Checked = capsAreWhite;
+            isColorCb.Checked = isColored;
+            isGreenCb.Checked = isGreenColor;
+            isYellowCb.Checked = isYellowCap;
 
-            // --- Параметры обработки ---
+            // Один раз применяем логику UI
+            UpdateColorModeUI();
+
+            _isApplyingRecipe = false;
+
+            // ---------- Numeric / Combo ----------
             capcolorUpDown.Value = r.CapsColor;
             saturationUpDown.Value = r.CameraSaturation;
 
-            // Для windowCb и morphCb выбираем соответствующее значение
-            if (r.Window >= 0 && r.Window < windowCb.Items.Count)
-            {
+            if (windowCb.Items.Contains(r.Window.ToString()))
                 windowCb.SelectedItem = r.Window.ToString();
-            }
 
-            if (r.MorphSize > 0 && morphCb.Items.Contains(r.MorphSize.ToString()))
-            {
+            if (morphCb.Items.Contains(r.MorphSize.ToString()))
                 morphCb.SelectedItem = r.MorphSize.ToString();
-            }
 
-            receptNameTb.Text = r.Name.ToString();
+            receptNameTb.Text = r.Name;
             frameSaturationNumUpD.Text = r.CameraSaturation.ToString();
 
             RebuildMorphology();
         }
+
 
 
         private void outputImageCmB_SelectedIndexChanged(object sender, EventArgs e)
@@ -1905,7 +1923,7 @@ namespace KrishkiForms
 
         #region Вспомогательные методы обработки
 
-        private Point[] GetCapContour(Mat gray, Mat image)
+        /*private Point[] GetCapContour(Mat gray, Mat image)
         {
             if (gray.Empty() || image.Empty())
                 return null;
@@ -1957,7 +1975,109 @@ namespace KrishkiForms
             //Контур (Конец)
 
             return contours.Length > 0 ? contours[maxInd] : null;
+        }*/
+
+        private Point[] GetCapContour(Mat gray, Mat image)
+        {
+            if (gray.Empty() || image.Empty())
+                return null;
+
+            // ===== Цветокоррекция =====
+            Mat processed = image.Clone();
+            processed = SimulateCameraSaturation(processed, saturation);
+            NonlinearBackgroundDecolorization(processed, capsColor);
+
+            Mat[] channels;
+            Cv2.Split(processed, out channels);
+
+            // ===== Blur =====
+            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
+
+            // ===== Threshold + Morphology =====
+            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
+
+            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
+            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
+
+            // лёгкий антишум перед контурами
+            Cv2.MedianBlur(channels[2], channels[2], 5);
+
+            blurChannel_0 = channels[0];
+            blurChannel_1 = channels[1];
+            blurChannel_2 = channels[2];
+
+            // ===== Поиск контуров =====
+            Point[][] contours;
+            HierarchyIndex[] hierarchy;
+
+            Cv2.FindContours(
+                channels[2],
+                out contours,
+                out hierarchy,
+                RetrievalModes.External,
+                ContourApproximationModes.ApproxSimple
+            );
+
+            if (contours.Length == 0)
+                return null;
+
+            // ===== Берём самый большой =====
+            int maxInd = 0;
+            double maxArea = 0;
+
+            for (int i = 0; i < contours.Length; i++)
+            {
+                double area = Cv2.ContourArea(contours[i]);
+                if (area > maxArea)
+                {
+                    maxArea = area;
+                    maxInd = i;
+                }
+            }
+
+            var contour = contours[maxInd];
+
+            // защита: FitEllipse требует минимум 5 точек
+            if (contour.Length < 5)
+                return contour;
+
+            // ===== Fit ellipse =====
+            RotatedRect ellipse = Cv2.FitEllipse(contour);
+
+            Point2f center = ellipse.Center;
+
+            float a = ellipse.Size.Width / 2f;
+            float b = ellipse.Size.Height / 2f;
+
+            List<Point> fixedContour = new(contour.Length); HttpStyleUriParser://cpskj.oss-cn-shanghai.aliyuncs.com/CPS-Digital.zip
+
+
+            foreach (var p in contour)
+            {
+                float dx = p.X - center.X;
+                float dy = p.Y - center.Y;
+
+                float norm = (dx * dx) / (a * a) + (dy * dy) / (b * b);
+
+                // выброс → проекция обратно на эллипс
+                if (norm > outlierThreshold)
+                {
+                    float scale = 1.0f / (float)Math.Sqrt(norm);
+
+                    int nx = (int)(center.X + dx * scale);
+                    int ny = (int)(center.Y + dy * scale);
+
+                    fixedContour.Add(new Point(nx, ny));
+                }
+                else
+                {
+                    fixedContour.Add(p);
+                }
+            }
+
+            return fixedContour.ToArray();
         }
+
 
         private void GetIdealCapMask(Mat mask, Point center, float innerRadius, float outerRadius)
         {
@@ -4037,6 +4157,9 @@ namespace KrishkiForms
             Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
             Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
 
+            // лёгкий антишум перед контурами
+            Cv2.MedianBlur(channels[2], channels[2], 5);
+
             Mat morphImg = channels[2];
             morphReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
 
@@ -4045,7 +4168,7 @@ namespace KrishkiForms
             HierarchyIndex[] hierarchy;
 
             Cv2.FindContours(morphImg, out contours, out hierarchy,
-                RetrievalModes.External, ContourApproximationModes.ApproxNone);
+                RetrievalModes.External, ContourApproximationModes.ApproxSimple);
 
             if (contours.Length == 0)
                 return;
@@ -4059,13 +4182,55 @@ namespace KrishkiForms
                     maxInd = i;
                 }
 
+            // ---------------- УСТРАНЕНИЕ ПРИЦЕПКИ ФОНА ----------------
+            var contour = contours[maxInd];
+
+            if (contour.Length >= 5)
+            {
+                RotatedRect ellipse = Cv2.FitEllipse(contour);
+
+                Point2f center = ellipse.Center;
+                float a = ellipse.Size.Width / 2f;
+                float b = ellipse.Size.Height / 2f;
+
+                List<Point> fixedContour = new(contour.Length);
+
+                foreach (var p in contour)
+                {
+                    float dx = p.X - center.X;
+                    float dy = p.Y - center.Y;
+
+                    float norm = (dx * dx) / (a * a) + (dy * dy) / (b * b);
+
+                    if (norm > outlierThreshold)
+                    {
+                        float scale = 1.0f / (float)Math.Sqrt(norm);
+
+                        int nx = (int)(center.X + dx * scale);
+                        int ny = (int)(center.Y + dy * scale);
+
+                        fixedContour.Add(new Point(nx, ny));
+                    }
+                    else
+                    {
+                        fixedContour.Add(p);
+                    }
+                }
+
+                contour = fixedContour.ToArray();
+            }
+
             // ---------------- Отрисовать контур -------------------
             Mat contourDraw = _imageOriginReceptParam.Clone();
-            Cv2.DrawContours(contourDraw, contours, maxInd, Scalar.Red, 2);
+
+            Cv2.DrawContours(contourDraw,
+                new[] { contour },
+                -1,
+                Scalar.Red,
+                2);
 
             resultContourSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
 
-            // --- Автоматически выводим итоговое изображение в большое окно ---
             ShowInGeneralPreview(resultContourSmallPb);
 
         }
@@ -4269,6 +4434,7 @@ namespace KrishkiForms
 
         private void isGreenCb_CheckedChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
             isGreenColor = isGreenCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
@@ -4276,6 +4442,7 @@ namespace KrishkiForms
 
         private void isColorCb_CheckedChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
             isColored = isColorCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
@@ -4283,6 +4450,7 @@ namespace KrishkiForms
 
         private void isYellowCb_CheckedChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
             isYellowCap = isYellowCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
@@ -4290,6 +4458,7 @@ namespace KrishkiForms
 
         private void isWhiteCb_CheckedChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
             capsAreWhite = isWhiteCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
@@ -4300,6 +4469,8 @@ namespace KrishkiForms
             // --- WHITE режим ---
             if (isWhiteCb.Checked)
             {
+                isWhiteCb.Enabled = true;   // ← ВОТ ЭТО КРИТИЧНО
+
                 isColorCb.Checked = false;
                 isGreenCb.Checked = false;
                 isYellowCb.Checked = false;
@@ -4307,12 +4478,14 @@ namespace KrishkiForms
                 isColorCb.Enabled = false;
                 isGreenCb.Enabled = false;
                 isYellowCb.Enabled = false;
+
                 return;
             }
             else
             {
                 isColorCb.Enabled = true;
                 isGreenCb.Enabled = true;
+                isWhiteCb.Enabled = true;  // ← и тут тоже
             }
 
             // --- COLOR режим ---
@@ -4332,10 +4505,9 @@ namespace KrishkiForms
                 isWhiteCb.Enabled = true;
             }
 
-            // --- GREEN подрежим ---
+            // --- GREEN ---
             if (isGreenCb.Checked)
             {
-                // green всегда подразумевает color
                 if (!isColorCb.Checked)
                     isColorCb.Checked = true;
 
@@ -4343,12 +4515,13 @@ namespace KrishkiForms
                 isYellowCb.Enabled = false;
             }
 
-            // --- YELLOW подрежим ---
+            // --- YELLOW ---
             if (isYellowCb.Checked)
             {
                 isGreenCb.Checked = false;
             }
         }
+
         #endregion
 
         #region Авторизация

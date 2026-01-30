@@ -227,7 +227,6 @@
             mainPanel = new Panel();
             panel1 = new Panel();
             pictureBox2 = new PictureBox();
-            groupBox13 = new GroupBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
             tableLayoutPanel11.SuspendLayout();
@@ -1289,9 +1288,9 @@
             // 
             // ovalityCoefNumUpD
             // 
-            ovalityCoefNumUpD.DecimalPlaces = 2;
+            ovalityCoefNumUpD.DecimalPlaces = 3;
             ovalityCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            ovalityCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            ovalityCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
             ovalityCoefNumUpD.Location = new Point(8, 46);
             ovalityCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             ovalityCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
@@ -1559,7 +1558,6 @@
             // 
             // groupBox10
             // 
-            groupBox10.Controls.Add(groupBox13);
             groupBox10.Controls.Add(tableLayoutPanel13);
             groupBox10.Controls.Add(groupBox12);
             groupBox10.Controls.Add(generalReceptParamPb);
@@ -1623,7 +1621,7 @@
             groupBox12.Controls.Add(tableLayoutPanel12);
             groupBox12.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox12.ForeColor = Color.Black;
-            groupBox12.Location = new Point(6, 164);
+            groupBox12.Location = new Point(6, 118);
             groupBox12.Name = "groupBox12";
             groupBox12.Size = new Size(245, 205);
             groupBox12.TabIndex = 10;
@@ -2862,6 +2860,8 @@
             // ngCapsSaveCb
             // 
             ngCapsSaveCb.AutoSize = true;
+            ngCapsSaveCb.Checked = true;
+            ngCapsSaveCb.CheckState = CheckState.Checked;
             ngCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             ngCapsSaveCb.ForeColor = Color.Black;
             ngCapsSaveCb.Location = new Point(302, 81);
@@ -2908,15 +2908,6 @@
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 6;
             pictureBox2.TabStop = false;
-            // 
-            // groupBox13
-            // 
-            groupBox13.Location = new Point(6, 85);
-            groupBox13.Name = "groupBox13";
-            groupBox13.Size = new Size(245, 75);
-            groupBox13.TabIndex = 12;
-            groupBox13.TabStop = false;
-            groupBox13.Text = "Способ нахождения контура";
             // 
             // MainWorkForm
             // 
@@ -3224,6 +3215,5 @@
         private Label label51;
         private Label label59;
         private TableLayoutPanel tableLayoutPanel13;
-        private GroupBox groupBox13;
     }
 }
