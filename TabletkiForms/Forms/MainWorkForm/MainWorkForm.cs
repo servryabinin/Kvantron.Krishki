@@ -852,7 +852,10 @@ namespace KrishkiForms
                 loadImageButton.BackColor = Color.FromArgb(66, 133, 244); // Синий
 
                 // Разблокируем кнопку запуска потока
-                startStreamButton.Enabled = true;
+                if (cameraConnected)
+                {
+                    startStreamButton.Enabled = true;
+                }
 
                 isImageLoaded = false;
                 recognizeButton.Enabled = false;
