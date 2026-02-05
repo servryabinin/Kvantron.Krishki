@@ -221,6 +221,9 @@ namespace KrishkiForms
         private string fullPathForInclusionDefect = "";
         private string fullPathForObloyDefect = "";
         private FileSystemWatcher _recipesWatcher;
+        private string folderParamDefect = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка параметров дефектов";
+        private string folderParamCamera= AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки камеры";
+        private string folderParamPr205 = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки ПР205";
 
         // Логирование
         private readonly ErrorLogger logger = new ErrorLogger();
@@ -1089,6 +1092,7 @@ namespace KrishkiForms
                     saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
                     saveFileDialog.Title = "Сохранить настройки ПР205";
                     saveFileDialog.FileName = "pr205_settings.json";
+                    saveFileDialog.InitialDirectory = folderParamPr205;
 
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
@@ -1119,6 +1123,7 @@ namespace KrishkiForms
                 {
                     openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
                     openFileDialog.Title = "Загрузить настройки ПР205";
+                    openFileDialog.InitialDirectory = folderParamPr205;
 
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
@@ -1256,16 +1261,18 @@ namespace KrishkiForms
                 string json = System.Text.Json.JsonSerializer.Serialize(settings,
                     new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
 
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-                {
-                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    saveFileDialog.Title = "Сохранить настройки дефектов";
-                    saveFileDialog.FileName = "defect_settings.json";
+                if (!Directory.Exists(folderParamDefect))
+                    Directory.CreateDirectory(folderParamDefect);
 
-                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(saveFileDialog.FileName, json);
-                    }
+                using (SaveFileDialog dlg = new SaveFileDialog())
+                {
+                    dlg.InitialDirectory = folderParamDefect;
+                    dlg.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                    dlg.Title = "Сохранить настройки дефектов";
+                    dlg.FileName = "defect_settings.json";
+
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                        File.WriteAllText(dlg.FileName, json);
                 }
 
                 // Сохраняем в Settings
@@ -1290,27 +1297,32 @@ namespace KrishkiForms
         {
             try
             {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                if (!Directory.Exists(folderParamDefect))
+                    Directory.CreateDirectory(folderParamDefect);
+
+                using (OpenFileDialog dlg = new OpenFileDialog())
                 {
-                    openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    openFileDialog.Title = "Загрузить настройки дефектов";
+                    dlg.InitialDirectory = folderParamDefect;
+                    dlg.Title = "Загрузка параметров дефектов";
+                    dlg.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
 
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    if (dlg.ShowDialog() == DialogResult.OK)
                     {
-                        string json = File.ReadAllText(openFileDialog.FileName);
-                        var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                        string json = File.ReadAllText(dlg.FileName);
 
-                        if (settings != null)
-                        {
-                            ovalityCoefNumUpD.Text = settings.ContainsKey("OvalityThreshold") ? settings["OvalityThreshold"] : "0.7";
-                            circleCoefNumUpD.Text = settings.ContainsKey("InclusionThreshold") ? settings["InclusionThreshold"] : "0.5";
-                            minSquareInclusionNumUpD.Text = settings.ContainsKey("MinAreaInclusion") ? settings["MinAreaInclusion"] : "50";
-                            maxSquareInclusionNumUpD.Text = settings.ContainsKey("MaxAreaInclusion") ? settings["MaxAreaInclusion"] : "500";
-                            coefCapRadiusInclusionUpD.Text = settings.ContainsKey("CoefCapRadiusInclusion") ? settings["CoefCapRadiusInclusion"] : "0,7";
-                            minSquareInpaintNumUpD.Text = settings.ContainsKey("MinAreaInpaintDefect") ? settings["MinAreaInpaintDefect"] : "500";
-                            whiteThresoldNumUpD.Text = settings.ContainsKey("MinInpaintWhiteThreshold") ? settings["MinInpaintWhiteThreshold"] : "150";
-                            obloyPixCountNumUpD.Text = settings.ContainsKey("MinAreaObloy") ? settings["MinAreaObloy"] : "1000";
-                        }
+                        var settings =
+                            System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+                        if (settings == null) return;
+
+                        ovalityCoefNumUpD.Text = settings.GetValueOrDefault("OvalityThreshold", "0.7");
+                        circleCoefNumUpD.Text = settings.GetValueOrDefault("InclusionThreshold", "0.5");
+                        minSquareInclusionNumUpD.Text = settings.GetValueOrDefault("MinAreaInclusion", "50");
+                        maxSquareInclusionNumUpD.Text = settings.GetValueOrDefault("MaxAreaInclusion", "500");
+                        coefCapRadiusInclusionUpD.Text = settings.GetValueOrDefault("CoefCapRadiusInclusion", "0,7");
+                        minSquareInpaintNumUpD.Text = settings.GetValueOrDefault("MinAreaInpaintDefect", "500");
+                        whiteThresoldNumUpD.Text = settings.GetValueOrDefault("MinInpaintWhiteThreshold", "150");
+                        obloyPixCountNumUpD.Text = settings.GetValueOrDefault("MinAreaObloy", "1000");
                     }
                 }
             }
@@ -1319,6 +1331,7 @@ namespace KrishkiForms
                 ErrorLogger.Log(ex, "Ошибка при загрузке настроек дефектов");
             }
         }
+
 
         private bool ValidateDefectSettings()
         {
@@ -1495,7 +1508,7 @@ namespace KrishkiForms
 
         #region Методы обработки изображений
 
-        private bool CheckOvality(Mat gray, Mat image, CancellationToken token, Point[] largestContourOvality)
+        private bool CheckOvality(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] largestContourOvality)
         {
             try
             {
@@ -1522,8 +1535,8 @@ namespace KrishkiForms
                 try
                 {
                     Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
-                    Cv2.Ellipse(_frameToDisplay, ellipse, color, 2);
-                    Cv2.PutText(_frameToDisplay, $"Ratio: {axisRatio:F5}", new Point(10, 30),
+                    Cv2.Ellipse(drawFrame, ellipse, color, 2);
+                    Cv2.PutText(drawFrame, $"Ratio: {axisRatio:F5}", new Point(10, 30),
                                    HersheyFonts.HersheySimplex, 1, color, 2);
                 }
                 catch (Exception drawEx)
@@ -1540,7 +1553,7 @@ namespace KrishkiForms
             }
         }
 
-        private bool CheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] bestContour)
+        private bool CheckForInclusions(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] bestContour)
         {
             try
             {
@@ -1571,7 +1584,7 @@ namespace KrishkiForms
 
                 try
                 {
-                    Cv2.Circle(_frameToDisplay, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(255, 0, 0), 2);
+                    Cv2.Circle(drawFrame, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(255, 0, 0), 2);
                 }
                 catch (Exception ex)
                 {
@@ -1615,7 +1628,7 @@ namespace KrishkiForms
                                     try
                                     {
                                         Rect bbox = Cv2.BoundingRect(contour);
-                                        Cv2.Rectangle(_frameToDisplay, bbox.TopLeft, bbox.BottomRight, new Scalar(0, 0, 255), 2);
+                                        Cv2.Rectangle(drawFrame, bbox.TopLeft, bbox.BottomRight, new Scalar(0, 0, 255), 2);
                                         inclusionsFound = true;
                                     }
                                     catch (Exception ex)
@@ -1645,7 +1658,7 @@ namespace KrishkiForms
                 return false;
             }
         }
-        private bool CheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        private bool CheckForPaintDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
@@ -1779,11 +1792,11 @@ namespace KrishkiForms
                                             {
                                                 try
                                                 {
-                                                    Cv2.DrawContours(_frameToDisplay, whiteDefects, -1, new Scalar(0, 0, 255), 2);
+                                                    Cv2.DrawContours(drawFrame, whiteDefects, -1, new Scalar(0, 0, 255), 2);
                                                     foreach (var contour in whiteDefects)
                                                     {
                                                         Rect boundingBox = Cv2.BoundingRect(contour);
-                                                        Cv2.Rectangle(_frameToDisplay, boundingBox, new Scalar(0, 255, 255), 2);
+                                                        Cv2.Rectangle(drawFrame, boundingBox, new Scalar(0, 255, 255), 2);
                                                     }
                                                 }
                                                 catch (Exception ex)
@@ -1817,7 +1830,7 @@ namespace KrishkiForms
             }
         }
 
-        private bool CheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        private bool CheckForObloyDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
@@ -1912,7 +1925,7 @@ namespace KrishkiForms
                 {
                     try
                     {
-                        Cv2.DrawContours(_frameToDisplay, obloyContours, -1, new Scalar(0, 0, 255), 2);
+                        Cv2.DrawContours(drawFrame, obloyContours, -1, new Scalar(0, 0, 255), 2);
                     }
                     catch (Exception ex)
                     {
@@ -2742,6 +2755,7 @@ namespace KrishkiForms
                     saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
                     saveFileDialog.Title = "Сохранить настройки";
                     saveFileDialog.FileName = "settings.json";
+                    saveFileDialog.InitialDirectory = folderParamCamera;
 
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
@@ -2776,6 +2790,7 @@ namespace KrishkiForms
                 {
                     openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
                     openFileDialog.Title = "Загрузить настройки";
+                    openFileDialog.InitialDirectory = folderParamCamera;
 
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
@@ -3060,16 +3075,16 @@ namespace KrishkiForms
                                         var obloyTask = Task.FromResult(false);
 
                                         if (ovalityCB.Checked)
-                                            ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, timeoutCts.Token, RunCheckOvality, capContour);
+                                            ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, _frameToDisplay, timeoutCts.Token, RunCheckOvality, capContour);
 
                                         if (inclusionCB.Checked)
-                                            inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, timeoutCts.Token, RunCheckForInclusions, capContour);
+                                            inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, _frameToDisplay, timeoutCts.Token, RunCheckForInclusions, capContour);
 
                                         if (inpaintCB.Checked)
-                                            paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, timeoutCts.Token, RunCheckForPaintDefects, capContour);
+                                            paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, _frameToDisplay, timeoutCts.Token, RunCheckForPaintDefects, capContour);
 
                                         if (obloyCB.Checked)
-                                            obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, timeoutCts.Token, RunCheckForObloyDefects, capContour);
+                                            obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, _frameToDisplay, timeoutCts.Token, RunCheckForObloyDefects, capContour);
 
                                         await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask);
 
@@ -3201,14 +3216,14 @@ namespace KrishkiForms
             }
         }
 
-        private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, CancellationToken token, Func<Mat, Mat, CancellationToken, Point[], bool> checkFunc, Point[] capContour)
+        private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Func<Mat, Mat, Mat, CancellationToken, Point[], bool> checkFunc, Point[] capContour)
         {
             try
             {
                 return await Task.Run(() =>
                 {
                     token.ThrowIfCancellationRequested();
-                    return checkFunc(gray, image, token, capContour);
+                    return checkFunc(gray, image, drawFrame, token, capContour);
                 }, token);
             }
             catch (OperationCanceledException)
@@ -3226,14 +3241,14 @@ namespace KrishkiForms
 
         #region Методы проверки дефектов
 
-        private bool RunCheckOvality(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        private bool RunCheckOvality(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-                bool isOval = CheckOvality(gray, image, token, capContour);
+                bool isOval = CheckOvality(gray, image, drawFrame, token, capContour);
 
                 if (isOval)
                 {
@@ -3257,14 +3272,14 @@ namespace KrishkiForms
             }
         }
 
-        private bool RunCheckForInclusions(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        private bool RunCheckForInclusions(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-                bool hasInclusions = CheckForInclusions(gray, image, token, capContour);
+                bool hasInclusions = CheckForInclusions(gray, image, drawFrame, token, capContour);
 
                 if (hasInclusions)
                 {
@@ -3288,14 +3303,14 @@ namespace KrishkiForms
             }
         }
 
-        private bool RunCheckForPaintDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        private bool RunCheckForPaintDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-                bool hasPaintDefects = CheckForPaintDefects(gray, image, token, capContour);
+                bool hasPaintDefects = CheckForPaintDefects(gray, image, drawFrame, token, capContour);
 
                 if (hasPaintDefects)
                 {
@@ -3319,14 +3334,14 @@ namespace KrishkiForms
             }
         }
 
-        private bool RunCheckForObloyDefects(Mat gray, Mat image, CancellationToken token, Point[] capContour)
+        private bool RunCheckForObloyDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-                bool hasObloyDefects = CheckForObloyDefects(gray, image, token, capContour);
+                bool hasObloyDefects = CheckForObloyDefects(gray, image, drawFrame, token, capContour);
 
                 if (hasObloyDefects)
                 {
@@ -3958,6 +3973,7 @@ namespace KrishkiForms
             {
                 ofd.Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp";
                 ofd.Title = "Выберите изображение";
+                ofd.InitialDirectory = CycleImageSaver.CurrentCycleFolder;
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
@@ -4058,16 +4074,16 @@ namespace KrishkiForms
                 CancellationToken fake = CancellationToken.None;
                 bool oval = false, incl = false, paint = false, obloy = false;
 
-                try { if (ovalityCB.Checked) oval = CheckOvality(grayO, frameO, fake, contour); }
+                try { if (ovalityCB.Checked) oval = CheckOvality(grayO, frameO, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки овальности"); }
 
-                try { if (inclusionCB.Checked) incl = CheckForInclusions(grayI, frameI, fake, contour); }
+                try { if (inclusionCB.Checked) incl = CheckForInclusions(grayI, frameI, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки включений"); }
 
-                try { if (inpaintCB.Checked) paint = CheckForPaintDefects(grayP, frameP, fake, contour); }
+                try { if (inpaintCB.Checked) paint = CheckForPaintDefects(grayP, frameP, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки дефектов краски"); }
 
-                try { if (obloyCB.Checked) obloy = CheckForObloyDefects(grayOb, frameOb, fake, contour); }
+                try { if (obloyCB.Checked) obloy = CheckForObloyDefects(grayOb, frameOb, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки облоя"); }
 
                 // Отметка на финальном изображении
@@ -4309,6 +4325,7 @@ namespace KrishkiForms
             {
                 ofd.Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp";
                 ofd.Title = "Выберите изображение";
+                ofd.InitialDirectory = CycleImageSaver.CurrentCycleFolder;
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {

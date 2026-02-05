@@ -1739,7 +1739,8 @@
             // 
             // testingResultPb
             // 
-            testingResultPb.Location = new Point(6, 345);
+            testingResultPb.BorderStyle = BorderStyle.Fixed3D;
+            testingResultPb.Location = new Point(6, 318);
             testingResultPb.Name = "testingResultPb";
             testingResultPb.Size = new Size(274, 245);
             testingResultPb.SizeMode = PictureBoxSizeMode.Zoom;
@@ -1752,9 +1753,9 @@
             testDefectParamBt.FlatAppearance.BorderSize = 0;
             testDefectParamBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             testDefectParamBt.ForeColor = Color.White;
-            testDefectParamBt.Location = new Point(9, 674);
+            testDefectParamBt.Location = new Point(9, 649);
             testDefectParamBt.Name = "testDefectParamBt";
-            testDefectParamBt.Size = new Size(271, 45);
+            testDefectParamBt.Size = new Size(271, 72);
             testDefectParamBt.TabIndex = 14;
             testDefectParamBt.Text = "Протестировать";
             testDefectParamBt.UseVisualStyleBackColor = false;
@@ -1765,7 +1766,7 @@
             label17.AutoSize = true;
             label17.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label17.ForeColor = Color.Black;
-            label17.Location = new Point(6, 325);
+            label17.Location = new Point(6, 298);
             label17.Name = "label17";
             label17.Size = new Size(153, 17);
             label17.TabIndex = 18;
@@ -1789,7 +1790,7 @@
             tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel8.Controls.Add(loadImageForTestDefectFromCameraBt, 1, 0);
             tableLayoutPanel8.Controls.Add(loadImageTestTb, 0, 0);
-            tableLayoutPanel8.Location = new Point(6, 596);
+            tableLayoutPanel8.Location = new Point(6, 569);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 1;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -1829,6 +1830,7 @@
             // 
             // testingPb
             // 
+            testingPb.BorderStyle = BorderStyle.Fixed3D;
             testingPb.Location = new Point(6, 48);
             testingPb.Name = "testingPb";
             testingPb.Size = new Size(274, 245);
@@ -1898,7 +1900,7 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.Controls.Add(loadDefectSettings, 0, 0);
             tableLayoutPanel3.Controls.Add(saveDefectSettings, 1, 0);
-            tableLayoutPanel3.Location = new Point(7, 641);
+            tableLayoutPanel3.Location = new Point(7, 646);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -2061,7 +2063,7 @@
             groupBox4.ForeColor = Color.Black;
             groupBox4.Location = new Point(7, 524);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(256, 93);
+            groupBox4.Size = new Size(256, 117);
             groupBox4.TabIndex = 13;
             groupBox4.TabStop = false;
             groupBox4.Text = "Облой";
