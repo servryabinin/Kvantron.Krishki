@@ -162,11 +162,12 @@ namespace KrishkiForms
 
         // Параметры дефектов
         private double ovalityThreshold = 0.7;
-        private double minInpaintWhiteTgreshold = 150.0;
+        private double minInpaintWhiteThreshold = 150.0;
         private double minAreaInpaintDefect = 500.0;
         private double inclusionThreshold = 0.5;
         private double minAreaInclusion = 50.0;
         private double maxAreaInclusion = 500.0;
+        private double coefCapRadiusInclusion = 0.7;
         private double minAreaObloy = 1000.0;
 
         // Контуры и геометрия
@@ -577,6 +578,9 @@ namespace KrishkiForms
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MaxAreaInclusion))
                 maxSquareInclusionNumUpD.Text = Properties.Settings.Default.MaxAreaInclusion;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.CoefCapRadiusInclusion))
+                coefCapRadiusInclusionUpD.Text = Properties.Settings.Default.CoefCapRadiusInclusion;
 
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaInpaintDefect))
                 minSquareInpaintNumUpD.Text = Properties.Settings.Default.MinAreaInpaintDefect;
@@ -1243,6 +1247,7 @@ namespace KrishkiForms
                     InclusionThreshold = circleCoefNumUpD.Text,
                     MinAreaInclusion = minSquareInclusionNumUpD.Text,
                     MaxAreaInclusion = maxSquareInclusionNumUpD.Text,
+                    CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text,
                     MinAreaInpaintDefect = minSquareInpaintNumUpD.Text,
                     MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text,
                     MinAreaObloy = obloyPixCountNumUpD.Text
@@ -1268,6 +1273,7 @@ namespace KrishkiForms
                 Properties.Settings.Default.InclusionThreshold = circleCoefNumUpD.Text;
                 Properties.Settings.Default.MinAreaInclusion = minSquareInclusionNumUpD.Text;
                 Properties.Settings.Default.MaxAreaInclusion = maxSquareInclusionNumUpD.Text;
+                Properties.Settings.Default.CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text;
                 Properties.Settings.Default.MinAreaInpaintDefect = minSquareInpaintNumUpD.Text;
                 Properties.Settings.Default.MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text;
                 Properties.Settings.Default.MinAreaObloy = obloyPixCountNumUpD.Text;
@@ -1300,6 +1306,7 @@ namespace KrishkiForms
                             circleCoefNumUpD.Text = settings.ContainsKey("InclusionThreshold") ? settings["InclusionThreshold"] : "0.5";
                             minSquareInclusionNumUpD.Text = settings.ContainsKey("MinAreaInclusion") ? settings["MinAreaInclusion"] : "50";
                             maxSquareInclusionNumUpD.Text = settings.ContainsKey("MaxAreaInclusion") ? settings["MaxAreaInclusion"] : "500";
+                            coefCapRadiusInclusionUpD.Text = settings.ContainsKey("CoefCapRadiusInclusion") ? settings["CoefCapRadiusInclusion"] : "0,7";
                             minSquareInpaintNumUpD.Text = settings.ContainsKey("MinAreaInpaintDefect") ? settings["MinAreaInpaintDefect"] : "500";
                             whiteThresoldNumUpD.Text = settings.ContainsKey("MinInpaintWhiteThreshold") ? settings["MinInpaintWhiteThreshold"] : "150";
                             obloyPixCountNumUpD.Text = settings.ContainsKey("MinAreaObloy") ? settings["MinAreaObloy"] : "1000";
@@ -1326,6 +1333,12 @@ namespace KrishkiForms
                 if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion) || inclusion <= 0 || inclusion > 1)
                 {
                     ErrorLogger.Log(new Exception("Параметр 'InclusionThreshold' некорректен"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                if (!double.TryParse(coefCapRadiusInclusionUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double coefCapRadius) || coefCapRadius <= 0 || coefCapRadius > 1)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'coefCapRadius' некорректен"), "ValidateDefectSettings");
                     return false;
                 }
 
@@ -1554,11 +1567,11 @@ namespace KrishkiForms
                 }
 
                 Point2f ellipseCenter = ellipse.Center;
-                float ellipseRadius = (float)(0.7 * (ellipse.Size.Width + ellipse.Size.Height) / 4.0);
+                float ellipseRadius = (float)(coefCapRadiusInclusion * (ellipse.Size.Width + ellipse.Size.Height) / 4.0);
 
                 try
                 {
-                    Cv2.Circle(_frameToDisplay, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(0, 255, 0), 2);
+                    Cv2.Circle(_frameToDisplay, (Point)ellipseCenter, (int)ellipseRadius, new Scalar(255, 0, 0), 2);
                 }
                 catch (Exception ex)
                 {
@@ -1749,7 +1762,7 @@ namespace KrishkiForms
                                                             Cv2.BitwiseAnd(image, image, maskedImage, contourMask);
                                                             Scalar meanColor = Cv2.Mean(maskedImage, contourMask);
 
-                                                            if (Math.Abs(meanColor.Val2 - 255) < minInpaintWhiteTgreshold)
+                                                            if (Math.Abs(meanColor.Val2 - 255) < minInpaintWhiteThreshold)
                                                             {
                                                                 whiteDefects.Add(contour);
                                                             }
@@ -1919,9 +1932,6 @@ namespace KrishkiForms
                 return false;
             }
         }
-
-
-
         #endregion
 
         #region Вспомогательные методы обработки
@@ -2612,6 +2622,13 @@ namespace KrishkiForms
                     circleCoefNumUpD.Text = inclusionThreshold.ToString(CultureInfo.InvariantCulture);
                 }
 
+                if (!double.TryParse(coefCapRadiusInclusionUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out coefCapRadiusInclusion))
+                {
+                    coefCapRadiusInclusion = 0.7;
+                    coefCapRadiusInclusionUpD.Text = coefCapRadiusInclusion.ToString(CultureInfo.InvariantCulture);
+                }
+
                 if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'),
                     NumberStyles.Float, CultureInfo.InvariantCulture, out minAreaInclusion))
                 {
@@ -2634,10 +2651,10 @@ namespace KrishkiForms
                 }
 
                 if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out minInpaintWhiteTgreshold))
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out minInpaintWhiteThreshold))
                 {
-                    minInpaintWhiteTgreshold = 150.0;
-                    whiteThresoldNumUpD.Text = minInpaintWhiteTgreshold.ToString(CultureInfo.InvariantCulture);
+                    minInpaintWhiteThreshold = 150.0;
+                    whiteThresoldNumUpD.Text = minInpaintWhiteThreshold.ToString(CultureInfo.InvariantCulture);
                 }
 
                 if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'),
@@ -2664,6 +2681,11 @@ namespace KrishkiForms
             inclusionThreshold = (double)circleCoefNumUpD.Value;
         }
 
+        private void coefCapRadiusInclusionUpD_ValueChanged(object sender, EventArgs e)
+        {
+            coefCapRadiusInclusion = (double)coefCapRadiusInclusionUpD.Value;
+        }
+
         private void minSquareInclusionNumUpD_ValueChanged(object sender, EventArgs e)
         {
             minAreaInclusion = (double)minSquareInclusionNumUpD.Value;
@@ -2681,7 +2703,7 @@ namespace KrishkiForms
 
         private void whiteThresoldNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            minInpaintWhiteTgreshold = (double)whiteThresoldNumUpD.Value;
+            minInpaintWhiteThreshold = (double)whiteThresoldNumUpD.Value;
         }
 
         private void obloyPixCountNumUpD_ValueChanged(object sender, EventArgs e)
@@ -3178,8 +3200,6 @@ namespace KrishkiForms
                 ErrorLogger.Log(ex, "Фатальная ошибка в StartContinuousProcessing");
             }
         }
-
-
 
         private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, CancellationToken token, Func<Mat, Mat, CancellationToken, Point[], bool> checkFunc, Point[] capContour)
         {

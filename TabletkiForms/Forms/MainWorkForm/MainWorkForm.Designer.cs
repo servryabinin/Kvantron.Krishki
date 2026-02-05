@@ -154,6 +154,8 @@
             loadDefectSettings = new Button();
             saveDefectSettings = new Button();
             groupBox3 = new GroupBox();
+            coefCapRadiusInclusionUpD = new NumericUpDown();
+            label60 = new Label();
             maxSquareInclusionNumUpD = new NumericUpDown();
             minSquareInclusionNumUpD = new NumericUpDown();
             circleCoefNumUpD = new NumericUpDown();
@@ -266,6 +268,7 @@
             ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).BeginInit();
             tableLayoutPanel3.SuspendLayout();
             groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)coefCapRadiusInclusionUpD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)maxSquareInclusionNumUpD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)minSquareInclusionNumUpD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)circleCoefNumUpD).BeginInit();
@@ -1936,6 +1939,8 @@
             // groupBox3
             // 
             groupBox3.BackColor = Color.White;
+            groupBox3.Controls.Add(coefCapRadiusInclusionUpD);
+            groupBox3.Controls.Add(label60);
             groupBox3.Controls.Add(maxSquareInclusionNumUpD);
             groupBox3.Controls.Add(minSquareInclusionNumUpD);
             groupBox3.Controls.Add(circleCoefNumUpD);
@@ -1946,15 +1951,40 @@
             groupBox3.ForeColor = Color.Black;
             groupBox3.Location = new Point(6, 140);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(257, 179);
+            groupBox3.Size = new Size(257, 238);
             groupBox3.TabIndex = 10;
             groupBox3.TabStop = false;
             groupBox3.Text = "Вкрапления";
             // 
+            // coefCapRadiusInclusionUpD
+            // 
+            coefCapRadiusInclusionUpD.DecimalPlaces = 2;
+            coefCapRadiusInclusionUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            coefCapRadiusInclusionUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            coefCapRadiusInclusionUpD.Location = new Point(12, 107);
+            coefCapRadiusInclusionUpD.Maximum = new decimal(new int[] { 99, 0, 0, 131072 });
+            coefCapRadiusInclusionUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
+            coefCapRadiusInclusionUpD.Name = "coefCapRadiusInclusionUpD";
+            coefCapRadiusInclusionUpD.Size = new Size(100, 25);
+            coefCapRadiusInclusionUpD.TabIndex = 22;
+            coefCapRadiusInclusionUpD.Value = new decimal(new int[] { 70, 0, 0, 131072 });
+            coefCapRadiusInclusionUpD.ValueChanged += coefCapRadiusInclusionUpD_ValueChanged;
+            // 
+            // label60
+            // 
+            label60.AutoSize = true;
+            label60.Font = new Font("Segoe UI", 7.8F);
+            label60.ForeColor = Color.Black;
+            label60.Location = new Point(10, 86);
+            label60.Name = "label60";
+            label60.Size = new Size(211, 17);
+            label60.TabIndex = 21;
+            label60.Text = "Коэффициент от радиуса крышки:";
+            // 
             // maxSquareInclusionNumUpD
             // 
             maxSquareInclusionNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            maxSquareInclusionNumUpD.Location = new Point(12, 145);
+            maxSquareInclusionNumUpD.Location = new Point(12, 202);
             maxSquareInclusionNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             maxSquareInclusionNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             maxSquareInclusionNumUpD.Name = "maxSquareInclusionNumUpD";
@@ -1966,7 +1996,7 @@
             // minSquareInclusionNumUpD
             // 
             minSquareInclusionNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            minSquareInclusionNumUpD.Location = new Point(12, 101);
+            minSquareInclusionNumUpD.Location = new Point(12, 155);
             minSquareInclusionNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             minSquareInclusionNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             minSquareInclusionNumUpD.Name = "minSquareInclusionNumUpD";
@@ -2005,7 +2035,7 @@
             label22.AutoSize = true;
             label22.Font = new Font("Segoe UI", 7.8F);
             label22.ForeColor = Color.Black;
-            label22.Location = new Point(9, 125);
+            label22.Location = new Point(9, 182);
             label22.Name = "label22";
             label22.Size = new Size(232, 17);
             label22.TabIndex = 16;
@@ -2016,7 +2046,7 @@
             label23.AutoSize = true;
             label23.Font = new Font("Segoe UI", 7.8F);
             label23.ForeColor = Color.Black;
-            label23.Location = new Point(9, 81);
+            label23.Location = new Point(9, 135);
             label23.Name = "label23";
             label23.Size = new Size(227, 17);
             label23.TabIndex = 14;
@@ -2029,7 +2059,7 @@
             groupBox4.Controls.Add(label47);
             groupBox4.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox4.ForeColor = Color.Black;
-            groupBox4.Location = new Point(6, 497);
+            groupBox4.Location = new Point(7, 524);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(256, 93);
             groupBox4.TabIndex = 13;
@@ -2068,7 +2098,7 @@
             groupBox5.Controls.Add(label29);
             groupBox5.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox5.ForeColor = Color.Black;
-            groupBox5.Location = new Point(6, 340);
+            groupBox5.Location = new Point(7, 384);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new Size(257, 134);
             groupBox5.TabIndex = 11;
@@ -3002,6 +3032,7 @@
             tableLayoutPanel3.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)coefCapRadiusInclusionUpD).EndInit();
             ((System.ComponentModel.ISupportInitialize)maxSquareInclusionNumUpD).EndInit();
             ((System.ComponentModel.ISupportInitialize)minSquareInclusionNumUpD).EndInit();
             ((System.ComponentModel.ISupportInitialize)circleCoefNumUpD).EndInit();
@@ -3248,5 +3279,7 @@
         private TableLayoutPanel tableLayoutPanel13;
         private Button loadImageForCreateReceptFromCameraBt;
         private Button loadImageForTestDefectFromCameraBt;
+        private Label label60;
+        private NumericUpDown coefCapRadiusInclusionUpD;
     }
 }

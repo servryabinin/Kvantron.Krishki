@@ -298,5 +298,17 @@ namespace KrishkiForms.Properties {
                 this["LastCycleTime"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CoefCapRadiusInclusion {
+            get {
+                return ((string)(this["CoefCapRadiusInclusion"]));
+            }
+            set {
+                this["CoefCapRadiusInclusion"] = value;
+            }
+        }
     }
 }
