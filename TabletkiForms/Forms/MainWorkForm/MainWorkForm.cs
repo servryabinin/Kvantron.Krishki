@@ -361,7 +361,7 @@ namespace KrishkiForms
             if (int.TryParse(Properties.Settings.Default.PortPr, out savedPort))
                 pr205PortTb.Text = savedPort.ToString();
             else
-                pr205PortTb.Text = "502"; 
+                pr205PortTb.Text = "502";
 
             if (modbusClient != null && modbusClient.Connected)
             {
@@ -932,7 +932,7 @@ namespace KrishkiForms
 
                 if (AuthManager.Instance.CurrentRole == Role.Operator)
                 {
-                   loadImageButton.Enabled = false;
+                    loadImageButton.Enabled = false;
                 }
 
                 if (AuthManager.Instance.CurrentRole == Role.Admin)
@@ -981,7 +981,7 @@ namespace KrishkiForms
 
             StartStop(false);
 
-            startStreamButton.Text = "Запустить";
+            startStreamButton.Text = "Изображение с камеры";
             startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
             cameraStatusLabel.Text = "Не запущен";
             cameraStatusLabel.ForeColor = Color.Black;
@@ -4523,6 +4523,26 @@ namespace KrishkiForms
             {
                 isGreenCb.Checked = false;
             }
+        }
+
+        private void loadImageForCreateReceptFromCameraBt_Click(object sender, EventArgs e)
+        {
+            if (img1 == null || img1.Empty())
+            {
+                MessageBox.Show("Нет изображения от камеры");
+                return;
+            }
+
+            _imageOriginReceptParam?.Dispose();
+            _imageOriginReceptParam = img1.Clone();
+
+            originReceptParamSmallPb.Image?.Dispose();
+            originReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
+
+            generalReceptParamPb.Image?.Dispose();
+            generalReceptParamPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
+
+            RecomputeAll();
         }
 
         #endregion

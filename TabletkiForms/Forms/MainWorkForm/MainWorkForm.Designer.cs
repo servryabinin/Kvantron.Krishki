@@ -44,6 +44,7 @@
             imagesGroup = new GroupBox();
             originPb = new PictureBox();
             panel3 = new Panel();
+            loadImageButton = new Button();
             tableLayoutPanel2 = new TableLayoutPanel();
             inpaintTime = new TextBox();
             obloyTime = new TextBox();
@@ -71,6 +72,7 @@
             percentInpaintCapsTb = new TextBox();
             percentObloyCapsTb = new TextBox();
             label44 = new Label();
+            startStreamButton = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
             generalTimeTb = new TextBox();
             ngCapsCountTb = new TextBox();
@@ -86,19 +88,14 @@
             okCapsCountTb = new TextBox();
             percentOkCapsTb = new TextBox();
             percentNgCapsTb = new TextBox();
-            label34 = new Label();
             recognizeButton = new Button();
+            label34 = new Label();
             groupBox1 = new GroupBox();
             outputImageCmB = new ComboBox();
-            startStreamButton = new Button();
             label2 = new Label();
-            loadImageButton = new Button();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
             groupBox10 = new GroupBox();
-            tableLayoutPanel13 = new TableLayoutPanel();
-            loadImageForReceptParamBt = new Button();
-            findContourCreateReceptBt = new Button();
             groupBox12 = new GroupBox();
             tableLayoutPanel12 = new TableLayoutPanel();
             isWhiteCb = new CheckBox();
@@ -109,7 +106,11 @@
             label51 = new Label();
             label59 = new Label();
             isYellowCb = new CheckBox();
+            findContourCreateReceptBt = new Button();
             generalReceptParamPb = new PictureBox();
+            tableLayoutPanel13 = new TableLayoutPanel();
+            loadImageForCreateReceptFromCameraBt = new Button();
+            loadImageForReceptParamBt = new Button();
             tableLayoutPanel9 = new TableLayoutPanel();
             morphCb = new ComboBox();
             originReceptParamSmallPb = new PictureBox();
@@ -239,10 +240,10 @@
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             groupBox10.SuspendLayout();
-            tableLayoutPanel13.SuspendLayout();
             groupBox12.SuspendLayout();
             tableLayoutPanel12.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)generalReceptParamPb).BeginInit();
+            tableLayoutPanel13.SuspendLayout();
             tableLayoutPanel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)originReceptParamSmallPb).BeginInit();
             ((System.ComponentModel.ISupportInitialize)saturationReceptParamSmallPb).BeginInit();
@@ -465,19 +466,33 @@
             // panel3
             // 
             panel3.BorderStyle = BorderStyle.Fixed3D;
+            panel3.Controls.Add(loadImageButton);
             panel3.Controls.Add(tableLayoutPanel2);
             panel3.Controls.Add(label44);
-            panel3.Controls.Add(tableLayoutPanel1);
-            panel3.Controls.Add(label34);
-            panel3.Controls.Add(recognizeButton);
-            panel3.Controls.Add(groupBox1);
             panel3.Controls.Add(startStreamButton);
+            panel3.Controls.Add(tableLayoutPanel1);
+            panel3.Controls.Add(recognizeButton);
+            panel3.Controls.Add(label34);
+            panel3.Controls.Add(groupBox1);
             panel3.Controls.Add(label2);
-            panel3.Controls.Add(loadImageButton);
             panel3.Location = new Point(696, 145);
             panel3.Name = "panel3";
             panel3.Size = new Size(431, 786);
             panel3.TabIndex = 10;
+            // 
+            // loadImageButton
+            // 
+            loadImageButton.BackColor = Color.FromArgb(66, 133, 244);
+            loadImageButton.FlatAppearance.BorderSize = 0;
+            loadImageButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            loadImageButton.ForeColor = Color.White;
+            loadImageButton.Location = new Point(4, 56);
+            loadImageButton.Name = "loadImageButton";
+            loadImageButton.Size = new Size(89, 51);
+            loadImageButton.TabIndex = 1;
+            loadImageButton.Text = "Загрузить";
+            loadImageButton.UseVisualStyleBackColor = false;
+            loadImageButton.Click += loadImageButton_Click;
             // 
             // tableLayoutPanel2
             // 
@@ -857,6 +872,20 @@
             label44.Text = "Результаты работы";
             label44.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // startStreamButton
+            // 
+            startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
+            startStreamButton.FlatAppearance.BorderSize = 0;
+            startStreamButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            startStreamButton.ForeColor = Color.White;
+            startStreamButton.Location = new Point(93, 56);
+            startStreamButton.Name = "startStreamButton";
+            startStreamButton.Size = new Size(108, 51);
+            startStreamButton.TabIndex = 2;
+            startStreamButton.Text = "Получить изображение";
+            startStreamButton.UseVisualStyleBackColor = false;
+            startStreamButton.Click += startStreamButton_Click;
+            // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 2;
@@ -1039,6 +1068,20 @@
             percentNgCapsTb.Size = new Size(209, 25);
             percentNgCapsTb.TabIndex = 42;
             // 
+            // recognizeButton
+            // 
+            recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
+            recognizeButton.FlatAppearance.BorderSize = 0;
+            recognizeButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            recognizeButton.ForeColor = Color.White;
+            recognizeButton.Location = new Point(200, 56);
+            recognizeButton.Name = "recognizeButton";
+            recognizeButton.Size = new Size(93, 51);
+            recognizeButton.TabIndex = 4;
+            recognizeButton.Text = "Начать анализ";
+            recognizeButton.UseVisualStyleBackColor = false;
+            recognizeButton.Click += recognizeButton_Click;
+            // 
             // label34
             // 
             label34.BackColor = Color.FromArgb(4, 85, 191);
@@ -1052,28 +1095,14 @@
             label34.Text = "Общая информация";
             label34.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // recognizeButton
-            // 
-            recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
-            recognizeButton.FlatAppearance.BorderSize = 0;
-            recognizeButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            recognizeButton.ForeColor = Color.White;
-            recognizeButton.Location = new Point(192, 53);
-            recognizeButton.Name = "recognizeButton";
-            recognizeButton.Size = new Size(99, 51);
-            recognizeButton.TabIndex = 4;
-            recognizeButton.Text = "Начать анализ";
-            recognizeButton.UseVisualStyleBackColor = false;
-            recognizeButton.Click += recognizeButton_Click;
-            // 
             // groupBox1
             // 
             groupBox1.Controls.Add(outputImageCmB);
             groupBox1.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox1.ForeColor = Color.FromArgb(4, 85, 191);
-            groupBox1.Location = new Point(297, 44);
+            groupBox1.Location = new Point(295, 49);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(127, 60);
+            groupBox1.Size = new Size(128, 58);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Что выводить";
@@ -1089,20 +1118,6 @@
             outputImageCmB.TabIndex = 0;
             outputImageCmB.SelectedIndexChanged += outputImageCmB_SelectedIndexChanged;
             // 
-            // startStreamButton
-            // 
-            startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
-            startStreamButton.FlatAppearance.BorderSize = 0;
-            startStreamButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            startStreamButton.ForeColor = Color.White;
-            startStreamButton.Location = new Point(93, 53);
-            startStreamButton.Name = "startStreamButton";
-            startStreamButton.Size = new Size(97, 51);
-            startStreamButton.TabIndex = 2;
-            startStreamButton.Text = "Получить";
-            startStreamButton.UseVisualStyleBackColor = false;
-            startStreamButton.Click += startStreamButton_Click;
-            // 
             // label2
             // 
             label2.BackColor = Color.FromArgb(4, 85, 191);
@@ -1115,20 +1130,6 @@
             label2.TabIndex = 0;
             label2.Text = "Получение изображения и анализ";
             label2.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // loadImageButton
-            // 
-            loadImageButton.BackColor = Color.FromArgb(66, 133, 244);
-            loadImageButton.FlatAppearance.BorderSize = 0;
-            loadImageButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            loadImageButton.ForeColor = Color.White;
-            loadImageButton.Location = new Point(3, 54);
-            loadImageButton.Name = "loadImageButton";
-            loadImageButton.Size = new Size(88, 50);
-            loadImageButton.TabIndex = 1;
-            loadImageButton.Text = "Загрузить";
-            loadImageButton.UseVisualStyleBackColor = false;
-            loadImageButton.Click += loadImageButton_Click;
             // 
             // tabControl1
             // 
@@ -1157,9 +1158,10 @@
             // 
             // groupBox10
             // 
-            groupBox10.Controls.Add(tableLayoutPanel13);
             groupBox10.Controls.Add(groupBox12);
+            groupBox10.Controls.Add(findContourCreateReceptBt);
             groupBox10.Controls.Add(generalReceptParamPb);
+            groupBox10.Controls.Add(tableLayoutPanel13);
             groupBox10.Controls.Add(tableLayoutPanel9);
             groupBox10.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox10.ForeColor = Color.FromArgb(4, 85, 191);
@@ -1170,59 +1172,14 @@
             groupBox10.TabStop = false;
             groupBox10.Text = "Подбор параметров рецепта";
             // 
-            // tableLayoutPanel13
-            // 
-            tableLayoutPanel13.ColumnCount = 2;
-            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel13.Controls.Add(loadImageForReceptParamBt, 0, 0);
-            tableLayoutPanel13.Controls.Add(findContourCreateReceptBt, 1, 0);
-            tableLayoutPanel13.Location = new Point(6, 26);
-            tableLayoutPanel13.Name = "tableLayoutPanel13";
-            tableLayoutPanel13.RowCount = 1;
-            tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel13.Size = new Size(245, 53);
-            tableLayoutPanel13.TabIndex = 11;
-            // 
-            // loadImageForReceptParamBt
-            // 
-            loadImageForReceptParamBt.BackColor = Color.FromArgb(66, 133, 244);
-            loadImageForReceptParamBt.Dock = DockStyle.Fill;
-            loadImageForReceptParamBt.FlatAppearance.BorderSize = 0;
-            loadImageForReceptParamBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            loadImageForReceptParamBt.ForeColor = Color.White;
-            loadImageForReceptParamBt.Location = new Point(3, 3);
-            loadImageForReceptParamBt.Name = "loadImageForReceptParamBt";
-            loadImageForReceptParamBt.Size = new Size(116, 47);
-            loadImageForReceptParamBt.TabIndex = 4;
-            loadImageForReceptParamBt.Text = "Загрузить изображение";
-            loadImageForReceptParamBt.UseVisualStyleBackColor = false;
-            loadImageForReceptParamBt.Click += loadImageForReceptParamBt_Click;
-            // 
-            // findContourCreateReceptBt
-            // 
-            findContourCreateReceptBt.BackColor = Color.FromArgb(66, 133, 244);
-            findContourCreateReceptBt.Dock = DockStyle.Fill;
-            findContourCreateReceptBt.FlatAppearance.BorderSize = 0;
-            findContourCreateReceptBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            findContourCreateReceptBt.ForeColor = Color.White;
-            findContourCreateReceptBt.Location = new Point(125, 3);
-            findContourCreateReceptBt.Name = "findContourCreateReceptBt";
-            findContourCreateReceptBt.Size = new Size(117, 47);
-            findContourCreateReceptBt.TabIndex = 9;
-            findContourCreateReceptBt.Text = "Найти контур";
-            findContourCreateReceptBt.UseVisualStyleBackColor = false;
-            findContourCreateReceptBt.Click += findContourCreateReceptBt_Click;
-            // 
             // groupBox12
             // 
             groupBox12.Controls.Add(tableLayoutPanel12);
             groupBox12.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox12.ForeColor = Color.Black;
-            groupBox12.Location = new Point(6, 85);
+            groupBox12.Location = new Point(6, 167);
             groupBox12.Name = "groupBox12";
-            groupBox12.Size = new Size(245, 205);
+            groupBox12.Size = new Size(245, 203);
             groupBox12.TabIndex = 10;
             groupBox12.TabStop = false;
             groupBox12.Text = "Параметры для Цвет кр.";
@@ -1248,7 +1205,7 @@
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel12.Size = new Size(239, 181);
+            tableLayoutPanel12.Size = new Size(239, 179);
             tableLayoutPanel12.TabIndex = 0;
             // 
             // isWhiteCb
@@ -1257,7 +1214,7 @@
             isWhiteCb.AutoSize = true;
             isWhiteCb.Font = new Font("Segoe UI", 7.8F);
             isWhiteCb.ForeColor = Color.Black;
-            isWhiteCb.Location = new Point(204, 14);
+            isWhiteCb.Location = new Point(204, 13);
             isWhiteCb.Name = "isWhiteCb";
             isWhiteCb.Size = new Size(18, 17);
             isWhiteCb.TabIndex = 8;
@@ -1280,7 +1237,7 @@
             label50.Anchor = AnchorStyles.Left;
             label50.AutoSize = true;
             label50.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label50.Location = new Point(3, 59);
+            label50.Location = new Point(3, 57);
             label50.Name = "label50";
             label50.Size = new Size(108, 17);
             label50.TabIndex = 1;
@@ -1292,7 +1249,7 @@
             isGreenCb.AutoSize = true;
             isGreenCb.Font = new Font("Segoe UI", 7.8F);
             isGreenCb.ForeColor = Color.Black;
-            isGreenCb.Location = new Point(204, 149);
+            isGreenCb.Location = new Point(204, 147);
             isGreenCb.Name = "isGreenCb";
             isGreenCb.Size = new Size(18, 17);
             isGreenCb.TabIndex = 5;
@@ -1305,7 +1262,7 @@
             isColorCb.AutoSize = true;
             isColorCb.Font = new Font("Segoe UI", 7.8F);
             isColorCb.ForeColor = Color.Black;
-            isColorCb.Location = new Point(204, 59);
+            isColorCb.Location = new Point(204, 57);
             isColorCb.Name = "isColorCb";
             isColorCb.Size = new Size(18, 17);
             isColorCb.TabIndex = 6;
@@ -1317,7 +1274,7 @@
             label51.Anchor = AnchorStyles.Left;
             label51.AutoSize = true;
             label51.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label51.Location = new Point(3, 95);
+            label51.Location = new Point(3, 93);
             label51.Name = "label51";
             label51.Size = new Size(170, 34);
             label51.TabIndex = 2;
@@ -1328,7 +1285,7 @@
             label59.Anchor = AnchorStyles.Left;
             label59.AutoSize = true;
             label59.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label59.Location = new Point(3, 141);
+            label59.Location = new Point(3, 138);
             label59.Name = "label59";
             label59.Size = new Size(180, 34);
             label59.TabIndex = 3;
@@ -1340,12 +1297,26 @@
             isYellowCb.AutoSize = true;
             isYellowCb.Font = new Font("Segoe UI", 7.8F);
             isYellowCb.ForeColor = Color.Black;
-            isYellowCb.Location = new Point(204, 104);
+            isYellowCb.Location = new Point(204, 101);
             isYellowCb.Name = "isYellowCb";
             isYellowCb.Size = new Size(18, 17);
             isYellowCb.TabIndex = 7;
             isYellowCb.UseVisualStyleBackColor = true;
             isYellowCb.CheckedChanged += isYellowCb_CheckedChanged;
+            // 
+            // findContourCreateReceptBt
+            // 
+            findContourCreateReceptBt.BackColor = Color.FromArgb(4, 85, 191);
+            findContourCreateReceptBt.FlatAppearance.BorderSize = 0;
+            findContourCreateReceptBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            findContourCreateReceptBt.ForeColor = Color.White;
+            findContourCreateReceptBt.Location = new Point(9, 96);
+            findContourCreateReceptBt.Name = "findContourCreateReceptBt";
+            findContourCreateReceptBt.Size = new Size(239, 64);
+            findContourCreateReceptBt.TabIndex = 9;
+            findContourCreateReceptBt.Text = "Найти контур";
+            findContourCreateReceptBt.UseVisualStyleBackColor = false;
+            findContourCreateReceptBt.Click += findContourCreateReceptBt_Click;
             // 
             // generalReceptParamPb
             // 
@@ -1357,6 +1328,50 @@
             generalReceptParamPb.SizeMode = PictureBoxSizeMode.Zoom;
             generalReceptParamPb.TabIndex = 1;
             generalReceptParamPb.TabStop = false;
+            // 
+            // tableLayoutPanel13
+            // 
+            tableLayoutPanel13.ColumnCount = 2;
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel13.Controls.Add(loadImageForCreateReceptFromCameraBt, 1, 0);
+            tableLayoutPanel13.Controls.Add(loadImageForReceptParamBt, 0, 0);
+            tableLayoutPanel13.Location = new Point(6, 26);
+            tableLayoutPanel13.Name = "tableLayoutPanel13";
+            tableLayoutPanel13.RowCount = 1;
+            tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel13.Size = new Size(245, 70);
+            tableLayoutPanel13.TabIndex = 11;
+            // 
+            // loadImageForCreateReceptFromCameraBt
+            // 
+            loadImageForCreateReceptFromCameraBt.BackColor = Color.FromArgb(66, 133, 244);
+            loadImageForCreateReceptFromCameraBt.Dock = DockStyle.Fill;
+            loadImageForCreateReceptFromCameraBt.FlatAppearance.BorderSize = 0;
+            loadImageForCreateReceptFromCameraBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            loadImageForCreateReceptFromCameraBt.ForeColor = Color.White;
+            loadImageForCreateReceptFromCameraBt.Location = new Point(125, 3);
+            loadImageForCreateReceptFromCameraBt.Name = "loadImageForCreateReceptFromCameraBt";
+            loadImageForCreateReceptFromCameraBt.Size = new Size(117, 64);
+            loadImageForCreateReceptFromCameraBt.TabIndex = 12;
+            loadImageForCreateReceptFromCameraBt.Text = "Загрузить изображение с камеры";
+            loadImageForCreateReceptFromCameraBt.UseVisualStyleBackColor = false;
+            loadImageForCreateReceptFromCameraBt.Click += loadImageForCreateReceptFromCameraBt_Click;
+            // 
+            // loadImageForReceptParamBt
+            // 
+            loadImageForReceptParamBt.BackColor = Color.FromArgb(66, 133, 244);
+            loadImageForReceptParamBt.Dock = DockStyle.Fill;
+            loadImageForReceptParamBt.FlatAppearance.BorderSize = 0;
+            loadImageForReceptParamBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            loadImageForReceptParamBt.ForeColor = Color.White;
+            loadImageForReceptParamBt.Location = new Point(3, 3);
+            loadImageForReceptParamBt.Name = "loadImageForReceptParamBt";
+            loadImageForReceptParamBt.Size = new Size(116, 64);
+            loadImageForReceptParamBt.TabIndex = 4;
+            loadImageForReceptParamBt.Text = "Загрузить изображение из папки";
+            loadImageForReceptParamBt.UseVisualStyleBackColor = false;
+            loadImageForReceptParamBt.Click += loadImageForReceptParamBt_Click;
             // 
             // tableLayoutPanel9
             // 
@@ -2940,11 +2955,11 @@
             tabControl1.ResumeLayout(false);
             tabPage4.ResumeLayout(false);
             groupBox10.ResumeLayout(false);
-            tableLayoutPanel13.ResumeLayout(false);
             groupBox12.ResumeLayout(false);
             tableLayoutPanel12.ResumeLayout(false);
             tableLayoutPanel12.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)generalReceptParamPb).EndInit();
+            tableLayoutPanel13.ResumeLayout(false);
             tableLayoutPanel9.ResumeLayout(false);
             tableLayoutPanel9.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)originReceptParamSmallPb).EndInit();
@@ -3215,5 +3230,6 @@
         private Label label51;
         private Label label59;
         private TableLayoutPanel tableLayoutPanel13;
+        private Button loadImageForCreateReceptFromCameraBt;
     }
 }
