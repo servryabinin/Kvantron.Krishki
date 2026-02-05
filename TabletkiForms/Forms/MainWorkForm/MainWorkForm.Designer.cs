@@ -139,11 +139,12 @@
             tabPage3 = new TabPage();
             groupBox8 = new GroupBox();
             testingResultPb = new PictureBox();
+            testDefectParamBt = new Button();
             label17 = new Label();
             label14 = new Label();
             tableLayoutPanel8 = new TableLayoutPanel();
+            loadImageForTestDefectFromCameraBt = new Button();
             loadImageTestTb = new Button();
-            testDefectParamBt = new Button();
             testingPb = new PictureBox();
             groupBox7 = new GroupBox();
             groupBox2 = new GroupBox();
@@ -1719,6 +1720,7 @@
             // groupBox8
             // 
             groupBox8.Controls.Add(testingResultPb);
+            groupBox8.Controls.Add(testDefectParamBt);
             groupBox8.Controls.Add(label17);
             groupBox8.Controls.Add(label14);
             groupBox8.Controls.Add(tableLayoutPanel8);
@@ -1736,10 +1738,24 @@
             // 
             testingResultPb.Location = new Point(6, 345);
             testingResultPb.Name = "testingResultPb";
-            testingResultPb.Size = new Size(274, 265);
+            testingResultPb.Size = new Size(274, 245);
             testingResultPb.SizeMode = PictureBoxSizeMode.Zoom;
             testingResultPb.TabIndex = 19;
             testingResultPb.TabStop = false;
+            // 
+            // testDefectParamBt
+            // 
+            testDefectParamBt.BackColor = Color.FromArgb(66, 133, 244);
+            testDefectParamBt.FlatAppearance.BorderSize = 0;
+            testDefectParamBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            testDefectParamBt.ForeColor = Color.White;
+            testDefectParamBt.Location = new Point(9, 674);
+            testDefectParamBt.Name = "testDefectParamBt";
+            testDefectParamBt.Size = new Size(271, 45);
+            testDefectParamBt.TabIndex = 14;
+            testDefectParamBt.Text = "Протестировать";
+            testDefectParamBt.UseVisualStyleBackColor = false;
+            testDefectParamBt.Click += testDefectParamBt_Click;
             // 
             // label17
             // 
@@ -1768,15 +1784,30 @@
             tableLayoutPanel8.ColumnCount = 2;
             tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel8.Controls.Add(loadImageForTestDefectFromCameraBt, 1, 0);
             tableLayoutPanel8.Controls.Add(loadImageTestTb, 0, 0);
-            tableLayoutPanel8.Controls.Add(testDefectParamBt, 1, 0);
-            tableLayoutPanel8.Location = new Point(15, 626);
+            tableLayoutPanel8.Location = new Point(6, 596);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 1;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel8.Size = new Size(256, 78);
+            tableLayoutPanel8.Size = new Size(274, 75);
             tableLayoutPanel8.TabIndex = 16;
+            // 
+            // loadImageForTestDefectFromCameraBt
+            // 
+            loadImageForTestDefectFromCameraBt.BackColor = Color.FromArgb(66, 133, 244);
+            loadImageForTestDefectFromCameraBt.Dock = DockStyle.Fill;
+            loadImageForTestDefectFromCameraBt.FlatAppearance.BorderSize = 0;
+            loadImageForTestDefectFromCameraBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            loadImageForTestDefectFromCameraBt.ForeColor = Color.White;
+            loadImageForTestDefectFromCameraBt.Location = new Point(140, 3);
+            loadImageForTestDefectFromCameraBt.Name = "loadImageForTestDefectFromCameraBt";
+            loadImageForTestDefectFromCameraBt.Size = new Size(131, 69);
+            loadImageForTestDefectFromCameraBt.TabIndex = 13;
+            loadImageForTestDefectFromCameraBt.Text = "Загрузить изображение с камеры";
+            loadImageForTestDefectFromCameraBt.UseVisualStyleBackColor = false;
+            loadImageForTestDefectFromCameraBt.Click += loadImageForTestDefectFromCameraBt_Click;
             // 
             // loadImageTestTb
             // 
@@ -1787,32 +1818,17 @@
             loadImageTestTb.ForeColor = Color.White;
             loadImageTestTb.Location = new Point(3, 3);
             loadImageTestTb.Name = "loadImageTestTb";
-            loadImageTestTb.Size = new Size(122, 72);
+            loadImageTestTb.Size = new Size(131, 69);
             loadImageTestTb.TabIndex = 12;
-            loadImageTestTb.Text = "Загрузить изображение";
+            loadImageTestTb.Text = "Загрузить изображение с папки";
             loadImageTestTb.UseVisualStyleBackColor = false;
             loadImageTestTb.Click += loadImageTestTb_Click;
-            // 
-            // testDefectParamBt
-            // 
-            testDefectParamBt.BackColor = Color.FromArgb(66, 133, 244);
-            testDefectParamBt.Dock = DockStyle.Fill;
-            testDefectParamBt.FlatAppearance.BorderSize = 0;
-            testDefectParamBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            testDefectParamBt.ForeColor = Color.White;
-            testDefectParamBt.Location = new Point(131, 3);
-            testDefectParamBt.Name = "testDefectParamBt";
-            testDefectParamBt.Size = new Size(122, 72);
-            testDefectParamBt.TabIndex = 14;
-            testDefectParamBt.Text = "Протестировать";
-            testDefectParamBt.UseVisualStyleBackColor = false;
-            testDefectParamBt.Click += testDefectParamBt_Click;
             // 
             // testingPb
             // 
             testingPb.Location = new Point(6, 48);
             testingPb.Name = "testingPb";
-            testingPb.Size = new Size(274, 265);
+            testingPb.Size = new Size(274, 245);
             testingPb.SizeMode = PictureBoxSizeMode.Zoom;
             testingPb.TabIndex = 0;
             testingPb.TabStop = false;
@@ -1879,7 +1895,7 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.Controls.Add(loadDefectSettings, 0, 0);
             tableLayoutPanel3.Controls.Add(saveDefectSettings, 1, 0);
-            tableLayoutPanel3.Location = new Point(10, 626);
+            tableLayoutPanel3.Location = new Point(7, 641);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -3231,5 +3247,6 @@
         private Label label59;
         private TableLayoutPanel tableLayoutPanel13;
         private Button loadImageForCreateReceptFromCameraBt;
+        private Button loadImageForTestDefectFromCameraBt;
     }
 }

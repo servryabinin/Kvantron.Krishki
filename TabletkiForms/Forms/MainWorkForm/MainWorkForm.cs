@@ -3958,6 +3958,8 @@ namespace KrishkiForms
                             testingPb.Image?.Dispose();  // чистим старое изображение
                             testingPb.Image = (Bitmap)bitmap.Clone();
                         }
+
+                        TestDefectParams();
                     }
                     catch (Exception ex)
                     {
@@ -3967,7 +3969,29 @@ namespace KrishkiForms
             }
         }
 
+        private void loadImageForTestDefectFromCameraBt_Click(object sender, EventArgs e)
+        {
+            if (img1 == null || img1.Empty())
+            {
+                MessageBox.Show("Нет изображения от камеры");
+                return;
+            }
+
+            _imageForTest?.Dispose();
+            _imageForTest = img1.Clone();
+
+            testingPb.Image?.Dispose();
+            testingPb.Image = BitmapConverter.ToBitmap(_imageForTest);
+
+            TestDefectParams();
+        }
+
         private void testDefectParamBt_Click(object sender, EventArgs e)
+        {
+            TestDefectParams();
+        }
+
+        public void TestDefectParams()
         {
             try
             {
@@ -3998,7 +4022,7 @@ namespace KrishkiForms
                 }
 
                 // Для отображения на экране
-                Mat finalFrame = frameBase.Clone();
+                using Mat finalFrame = frameBase.Clone();
                 Cv2.DrawContours(finalFrame, new[] { contour }, -1, new Scalar(0, 255, 0), 2);
 
                 // Независимые копии для каждого дефекта
