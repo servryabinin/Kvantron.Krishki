@@ -367,6 +367,7 @@ namespace KrishkiForms.CameraAndModbusClasses
 
                     if (nRet == MyCamera.MV_OK)
                     {
+
                         stInputFrameInfo.pData = stImageOut.pBufAddr;
                         stInputFrameInfo.nDataLen = stImageOut.stFrameInfo.nFrameLen;
                         nRet = m_MyCamera.MV_CC_InputOneFrame_NET(ref stInputFrameInfo);

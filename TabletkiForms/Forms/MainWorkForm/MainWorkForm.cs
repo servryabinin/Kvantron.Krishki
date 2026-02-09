@@ -38,6 +38,7 @@ namespace KrishkiForms
         private Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
         private bool capsAreWhite = false;
         private bool manualDisconnect = false;
+        private int _cameraFrameCounter = 0;
 
         // Оборудование
         private DioModule module = null;
@@ -48,6 +49,7 @@ namespace KrishkiForms
         private int breakerOffsetRegister = 16399;
         private int breakerAllowRegister = 16401;
         private int startRecognizeProcessing = 16400;
+        private int startCountingImagesAfterReceivngImages = 16700;
         private int BreakingTime = 55;
         private int CameraOffset = 300;
         private int BreakerOffset = 2430;
@@ -236,6 +238,11 @@ namespace KrishkiForms
         private int _writeOneFailCount = 0;
         private int currentFrameNumber = 0;
 
+        //Избежание дубликатов кадров
+        private ulong _lastFrameHash = 0;
+        private bool _hasLastHash = false;
+        private long _skippedDuplicateFrames = 0;
+
         //Режим вывода изображения: Все, хорошие, плохие
         private enum OutputMode
         {
@@ -295,6 +302,25 @@ namespace KrishkiForms
 
             if (isConnected)
             {
+
+                if (cameraOffsetTb != null)
+                {
+                    cameraOffsetTb.Text = CameraOffset.ToString();
+                    SendCameraOffset(CameraOffset);
+                }
+
+                if (breakerOffsetTb != null)
+                {
+                    breakerOffsetTb.Text = BreakerOffset.ToString();
+                    SendBreakerOffset(BreakerOffset);
+                }
+
+                if (breakingTimeTb != null)
+                {
+                    breakingTimeTb.Text = BreakingTime.ToString();
+                    SendBreakingTime(BreakingTime);
+                }
+
                 manualDisconnect = false;
 
                 prStatus.Text = "Подключено";
@@ -935,6 +961,11 @@ namespace KrishkiForms
 
                 isStreamCam = true;
 
+                /*if (modbusClient != null || !modbusClient.Connected)
+                {
+                    modbusClient.WriteSingleRegisterForBreaker(startCountingImagesAfterReceivngImages, 1);
+                }*/
+
                 ApplyRecognitionParameters();
 
                 if (AuthManager.Instance.CurrentRole == Role.Operator)
@@ -974,6 +1005,11 @@ namespace KrishkiForms
             isRoiProduce = false;
             isROISelected = false;
             isStreamCam = false;
+
+            /*if (modbusClient != null || !modbusClient.Connected)
+            {
+                modbusClient.WriteSingleRegisterForBreaker(startCountingImagesAfterReceivngImages, 0);
+            }*/
 
             originPb.Image?.Dispose();
             originPb.Image = null;
@@ -1836,7 +1872,7 @@ namespace KrishkiForms
             {
                 token.ThrowIfCancellationRequested();
 
-                if (capContour == null || capContour.Length < 3)
+                if (capContour == null || capContour.Length < 5)
                 {
                     ErrorLogger.Log(new Exception("Контур крышки пустой или содержит слишком мало точек"),
                         "CheckForObloyDefects - проверка контура");
@@ -2211,6 +2247,7 @@ namespace KrishkiForms
                     {
                         // Отправляем сигнал на ПР
                         modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 1);
+                  
                     }
                 }
 
@@ -2832,6 +2869,12 @@ namespace KrishkiForms
         {
             try
             {
+                //long camCount = Interlocked.Increment(ref _cameraFrameCounter);
+                _cameraFrameCounter = _cameraFrameCounter + 1;
+                BeginInvoke(() =>
+                {
+                    cameraFramesTb.Text = _cameraFrameCounter.ToString();
+                });
                 if (isStreamCam)
                 {
 
@@ -2968,6 +3011,56 @@ namespace KrishkiForms
             }
         }
 
+        #region Избежание дубликатов кадров
+        private bool IsDuplicateFrameByHash(Mat frame)
+        {
+            try
+            {
+                ulong currentHash = ComputeAverageHash(frame);
+
+                if (_hasLastHash && currentHash == _lastFrameHash)
+                {
+                    long skipped = Interlocked.Increment(ref _skippedDuplicateFrames);
+                    Debug.WriteLine($"[HASH] Duplicate frame skipped. Total skipped: {skipped}");
+                    return true; // ДУБЛЬ
+                }
+
+                _lastFrameHash = currentHash;
+                _hasLastHash = true;
+                return false; // УНИКАЛЬНЫЙ КАДР
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка вычисления hash изображения");
+                return false; // лучше обработать кадр, чем потерять
+            }
+        }
+
+        private static ulong ComputeAverageHash(Mat src)
+        {
+            using var gray = new Mat();
+            using var small = new Mat();
+
+            Cv2.CvtColor(src, gray, ColorConversionCodes.BGR2GRAY);
+            Cv2.Resize(gray, small, new Size(8, 8));
+
+            double avg = Cv2.Mean(small).Val0;
+
+            ulong hash = 0;
+            int bit = 0;
+
+            for (int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++, bit++)
+                {
+                    if (small.At<byte>(y, x) > avg)
+                        hash |= 1UL << bit;
+                }
+            }
+
+            return hash;
+        }
+        #endregion
 
         private async void StartContinuousProcessing(CancellationToken token)
         {
@@ -2982,16 +3075,16 @@ namespace KrishkiForms
                         // ===== Получение кадра =====
                         if (isStreamCam)
                         {
-#if OLD_FRAME_PROCESSING
+                    #if OLD_FRAME_PROCESSING
                     lock (frameLock)
                     {
                         if (!newFrameAvailable) continue;
                         frameToProcess = latestFrame.Clone();
                         newFrameAvailable = false;
                     }
-#else
+                    #else
                             frameToProcess = _imageQueue.Get(token);
-#endif
+                    #endif
                         }
                         else if (isProcessingFromFolder)
                         {
@@ -3018,6 +3111,9 @@ namespace KrishkiForms
                         using (Mat gray = new Mat())
                         {
                             Stopwatch stopwatch = Stopwatch.StartNew();
+
+                            if (IsDuplicateFrameByHash(frameToProcess))
+                                continue;
 
                             try
                             {

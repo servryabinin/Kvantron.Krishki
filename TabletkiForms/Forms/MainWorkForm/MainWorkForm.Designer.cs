@@ -74,6 +74,8 @@
             label44 = new Label();
             startStreamButton = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
+            cameraFramesTb = new TextBox();
+            label61 = new Label();
             generalTimeTb = new TextBox();
             ngCapsCountTb = new TextBox();
             label35 = new Label();
@@ -310,7 +312,7 @@
             pictureBox1.Image = Properties.Resources.лого;
             pictureBox1.Location = new Point(1492, 3);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(245, 126);
+            pictureBox1.Size = new Size(236, 126);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
@@ -895,6 +897,8 @@
             tableLayoutPanel1.ColumnCount = 2;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(cameraFramesTb, 1, 7);
+            tableLayoutPanel1.Controls.Add(label61, 0, 7);
             tableLayoutPanel1.Controls.Add(generalTimeTb, 1, 6);
             tableLayoutPanel1.Controls.Add(ngCapsCountTb, 1, 3);
             tableLayoutPanel1.Controls.Add(label35, 0, 0);
@@ -911,22 +915,44 @@
             tableLayoutPanel1.Controls.Add(percentNgCapsTb, 1, 5);
             tableLayoutPanel1.Location = new Point(0, 159);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 7;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
-            tableLayoutPanel1.Size = new Size(429, 248);
+            tableLayoutPanel1.RowCount = 8;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.Size = new Size(429, 256);
             tableLayoutPanel1.TabIndex = 6;
+            // 
+            // cameraFramesTb
+            // 
+            cameraFramesTb.Dock = DockStyle.Fill;
+            cameraFramesTb.Font = new Font("Segoe UI", 7.8F);
+            cameraFramesTb.Location = new Point(217, 227);
+            cameraFramesTb.Name = "cameraFramesTb";
+            cameraFramesTb.Size = new Size(209, 25);
+            cameraFramesTb.TabIndex = 46;
+            // 
+            // label61
+            // 
+            label61.AutoSize = true;
+            label61.Dock = DockStyle.Right;
+            label61.Font = new Font("Segoe UI", 7.8F);
+            label61.Location = new Point(33, 224);
+            label61.Name = "label61";
+            label61.Size = new Size(178, 32);
+            label61.TabIndex = 45;
+            label61.Text = "Кол-во вызовов sendImage:";
+            label61.TextAlign = ContentAlignment.MiddleRight;
             // 
             // generalTimeTb
             // 
             generalTimeTb.Dock = DockStyle.Fill;
             generalTimeTb.Font = new Font("Segoe UI", 7.8F);
-            generalTimeTb.Location = new Point(217, 213);
+            generalTimeTb.Location = new Point(217, 195);
             generalTimeTb.Name = "generalTimeTb";
             generalTimeTb.Size = new Size(209, 25);
             generalTimeTb.TabIndex = 44;
@@ -935,7 +961,7 @@
             // 
             ngCapsCountTb.Dock = DockStyle.Fill;
             ngCapsCountTb.Font = new Font("Segoe UI", 7.8F);
-            ngCapsCountTb.Location = new Point(217, 108);
+            ngCapsCountTb.Location = new Point(217, 99);
             ngCapsCountTb.Name = "ngCapsCountTb";
             ngCapsCountTb.Size = new Size(209, 25);
             ngCapsCountTb.TabIndex = 43;
@@ -947,7 +973,7 @@
             label35.Font = new Font("Segoe UI", 7.8F);
             label35.Location = new Point(160, 0);
             label35.Name = "label35";
-            label35.Size = new Size(51, 35);
+            label35.Size = new Size(51, 32);
             label35.TabIndex = 0;
             label35.Text = "Рецепт:";
             label35.TextAlign = ContentAlignment.MiddleCenter;
@@ -969,9 +995,9 @@
             label36.AutoSize = true;
             label36.Dock = DockStyle.Right;
             label36.Font = new Font("Segoe UI", 7.8F);
-            label36.Location = new Point(61, 35);
+            label36.Location = new Point(61, 32);
             label36.Name = "label36";
-            label36.Size = new Size(150, 35);
+            label36.Size = new Size(150, 32);
             label36.TabIndex = 1;
             label36.Text = "Общее кол-во крышек:";
             label36.TextAlign = ContentAlignment.MiddleRight;
@@ -981,9 +1007,9 @@
             label37.AutoSize = true;
             label37.Dock = DockStyle.Right;
             label37.Font = new Font("Segoe UI", 7.8F);
-            label37.Location = new Point(135, 70);
+            label37.Location = new Point(135, 64);
             label37.Name = "label37";
-            label37.Size = new Size(76, 35);
+            label37.Size = new Size(76, 32);
             label37.TabIndex = 2;
             label37.Text = "Кол-во ОК:";
             label37.TextAlign = ContentAlignment.MiddleRight;
@@ -993,9 +1019,9 @@
             label38.AutoSize = true;
             label38.Dock = DockStyle.Right;
             label38.Font = new Font("Segoe UI", 7.8F);
-            label38.Location = new Point(107, 105);
+            label38.Location = new Point(107, 96);
             label38.Name = "label38";
-            label38.Size = new Size(104, 35);
+            label38.Size = new Size(104, 32);
             label38.TabIndex = 3;
             label38.Text = "Количество NG:";
             label38.TextAlign = ContentAlignment.MiddleRight;
@@ -1005,9 +1031,9 @@
             label39.AutoSize = true;
             label39.Dock = DockStyle.Right;
             label39.Font = new Font("Segoe UI", 7.8F);
-            label39.Location = new Point(109, 140);
+            label39.Location = new Point(109, 128);
             label39.Name = "label39";
-            label39.Size = new Size(102, 35);
+            label39.Size = new Size(102, 32);
             label39.TabIndex = 4;
             label39.Text = "Процент ОК, %:";
             label39.TextAlign = ContentAlignment.MiddleRight;
@@ -1017,9 +1043,9 @@
             label41.AutoSize = true;
             label41.Dock = DockStyle.Right;
             label41.Font = new Font("Segoe UI", 7.8F);
-            label41.Location = new Point(108, 175);
+            label41.Location = new Point(108, 160);
             label41.Name = "label41";
-            label41.Size = new Size(103, 35);
+            label41.Size = new Size(103, 32);
             label41.TabIndex = 5;
             label41.Text = "Процент NG, %:";
             label41.TextAlign = ContentAlignment.MiddleRight;
@@ -1029,9 +1055,9 @@
             label42.AutoSize = true;
             label42.Dock = DockStyle.Right;
             label42.Font = new Font("Segoe UI", 7.8F);
-            label42.Location = new Point(115, 210);
+            label42.Location = new Point(115, 192);
             label42.Name = "label42";
-            label42.Size = new Size(96, 38);
+            label42.Size = new Size(96, 32);
             label42.TabIndex = 6;
             label42.Text = "Общее время:";
             label42.TextAlign = ContentAlignment.MiddleRight;
@@ -1040,7 +1066,7 @@
             // 
             generalCapsCountTb.Dock = DockStyle.Fill;
             generalCapsCountTb.Font = new Font("Segoe UI", 7.8F);
-            generalCapsCountTb.Location = new Point(217, 38);
+            generalCapsCountTb.Location = new Point(217, 35);
             generalCapsCountTb.Name = "generalCapsCountTb";
             generalCapsCountTb.Size = new Size(209, 25);
             generalCapsCountTb.TabIndex = 39;
@@ -1049,7 +1075,7 @@
             // 
             okCapsCountTb.Dock = DockStyle.Fill;
             okCapsCountTb.Font = new Font("Segoe UI", 7.8F);
-            okCapsCountTb.Location = new Point(217, 73);
+            okCapsCountTb.Location = new Point(217, 67);
             okCapsCountTb.Name = "okCapsCountTb";
             okCapsCountTb.Size = new Size(209, 25);
             okCapsCountTb.TabIndex = 40;
@@ -1058,7 +1084,7 @@
             // 
             percentOkCapsTb.Dock = DockStyle.Fill;
             percentOkCapsTb.Font = new Font("Segoe UI", 7.8F);
-            percentOkCapsTb.Location = new Point(217, 143);
+            percentOkCapsTb.Location = new Point(217, 131);
             percentOkCapsTb.Name = "percentOkCapsTb";
             percentOkCapsTb.Size = new Size(209, 25);
             percentOkCapsTb.TabIndex = 41;
@@ -1067,7 +1093,7 @@
             // 
             percentNgCapsTb.Dock = DockStyle.Fill;
             percentNgCapsTb.Font = new Font("Segoe UI", 7.8F);
-            percentNgCapsTb.Location = new Point(217, 178);
+            percentNgCapsTb.Location = new Point(217, 163);
             percentNgCapsTb.Name = "percentNgCapsTb";
             percentNgCapsTb.Size = new Size(209, 25);
             percentNgCapsTb.TabIndex = 42;
@@ -1730,16 +1756,15 @@
             groupBox8.Controls.Add(testingPb);
             groupBox8.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox8.ForeColor = Color.FromArgb(4, 85, 191);
-            groupBox8.Location = new Point(298, 17);
+            groupBox8.Location = new Point(292, 17);
             groupBox8.Name = "groupBox8";
-            groupBox8.Size = new Size(286, 725);
+            groupBox8.Size = new Size(286, 730);
             groupBox8.TabIndex = 18;
             groupBox8.TabStop = false;
             groupBox8.Text = "Тестирование";
             // 
             // testingResultPb
             // 
-            testingResultPb.BorderStyle = BorderStyle.Fixed3D;
             testingResultPb.Location = new Point(6, 318);
             testingResultPb.Name = "testingResultPb";
             testingResultPb.Size = new Size(274, 245);
@@ -1749,7 +1774,7 @@
             // 
             // testDefectParamBt
             // 
-            testDefectParamBt.BackColor = Color.FromArgb(66, 133, 244);
+            testDefectParamBt.BackColor = Color.FromArgb(4, 85, 191);
             testDefectParamBt.FlatAppearance.BorderSize = 0;
             testDefectParamBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             testDefectParamBt.ForeColor = Color.White;
@@ -1830,7 +1855,6 @@
             // 
             // testingPb
             // 
-            testingPb.BorderStyle = BorderStyle.Fixed3D;
             testingPb.Location = new Point(6, 48);
             testingPb.Name = "testingPb";
             testingPb.Size = new Size(274, 245);
@@ -1847,9 +1871,9 @@
             groupBox7.Controls.Add(groupBox5);
             groupBox7.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox7.ForeColor = Color.FromArgb(4, 85, 191);
-            groupBox7.Location = new Point(16, 17);
+            groupBox7.Location = new Point(10, 17);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(276, 725);
+            groupBox7.Size = new Size(276, 730);
             groupBox7.TabIndex = 17;
             groupBox7.TabStop = false;
             groupBox7.Text = "Параметры";
@@ -3283,5 +3307,7 @@
         private Button loadImageForTestDefectFromCameraBt;
         private Label label60;
         private NumericUpDown coefCapRadiusInclusionUpD;
+        private Label label61;
+        private TextBox cameraFramesTb;
     }
 }
