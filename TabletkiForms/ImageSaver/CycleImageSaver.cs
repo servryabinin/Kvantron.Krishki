@@ -66,6 +66,7 @@ public static class CycleImageSaver
 
         Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "OK"));
         Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "NG"));
+        Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "Duplicate"));
     }
 
     private static void CreateNewCycleFolder(DateTime time)
@@ -76,6 +77,7 @@ public static class CycleImageSaver
         Directory.CreateDirectory(CurrentCycleFolder);
         Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "OK"));
         Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "NG"));
+        Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "Duplicate"));
     }
 
     public static void Save(Mat image, bool isNG, bool allowOk, bool allowNg, float generalCount)
@@ -114,7 +116,7 @@ public static class CycleImageSaver
             }
 
             // Генерируем имя нового файла
-            string fileName = $"{(isNG ? "NG" : "OK")}_{DateTime.Now:yyyyMMdd_HHmmss_fff}_{generalCount}.jpg";
+            string fileName = $"{(isNG ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}_{generalCount}.jpg";
             string path = Path.Combine(subfolderPath, fileName);
 
             // Сохраняем изображение в JPEG с качеством 90%
@@ -124,4 +126,44 @@ public static class CycleImageSaver
         catch { /* Игнорируем ошибки сохранения */ }
     }
 
+    public static void SaveDuplicate(Mat image, float generalCount)
+    {
+        try
+        {
+            if (image == null || image.Empty()) return;
+
+            EnsureCycleFolder();
+
+            string dupFolder = Path.Combine(CurrentCycleFolder, "Duplicate");
+
+            // Создаём подкаталог, если его нет
+            if (!Directory.Exists(dupFolder))
+                Directory.CreateDirectory(dupFolder);
+
+            // Получаем список файлов, сортируем по дате создания
+            var files = new DirectoryInfo(dupFolder)
+                            .GetFiles("*.png")
+                            .OrderBy(f => f.CreationTime)
+                            .ToList();
+
+            // Если больше 30000 файлов, удаляем самые старые
+            while (files.Count >= 30000)
+            {
+                try
+                {
+                    files[0].Delete();
+                    files.RemoveAt(0);
+                }
+                catch { break; } // На всякий случай, если файл нельзя удалить
+            }
+
+            string fileName =
+                $"Duplicate_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}_{generalCount}.jpg";
+
+            string path = Path.Combine(dupFolder, fileName);
+
+            Cv2.ImWrite(path, image, new ImageEncodingParam(ImwriteFlags.JpegQuality, 90));
+        }
+        catch { }
+    }
 }

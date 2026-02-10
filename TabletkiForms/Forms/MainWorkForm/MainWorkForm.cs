@@ -7,6 +7,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using KrishkiForms.Authorization;
@@ -242,6 +243,9 @@ namespace KrishkiForms
         private ulong _lastFrameHash = 0;
         private bool _hasLastHash = false;
         private long _skippedDuplicateFrames = 0;
+        private byte[][]? _lastRows;
+        private bool _hasLastRows = false;
+        private Mat? _lastFrameForDuplicate;
 
         //Режим вывода изображения: Все, хорошие, плохие
         private enum OutputMode
@@ -3020,8 +3024,6 @@ namespace KrishkiForms
 
                 if (_hasLastHash && currentHash == _lastFrameHash)
                 {
-                    long skipped = Interlocked.Increment(ref _skippedDuplicateFrames);
-                    Debug.WriteLine($"[HASH] Duplicate frame skipped. Total skipped: {skipped}");
                     return true; // ДУБЛЬ
                 }
 
@@ -3059,6 +3061,91 @@ namespace KrishkiForms
             }
 
             return hash;
+        }
+
+        private bool IsDuplicateFrameByRows(Mat frame)
+        {
+            try
+            {
+                using var gray = new Mat();
+                Cv2.CvtColor(frame, gray, ColorConversionCodes.BGR2GRAY);
+
+                int width = gray.Cols;
+                int height = gray.Rows;
+
+                int[] rowsY =
+                {
+                    height / 2 - 10,
+                    height / 2,
+                    height / 2 + 10
+                };
+
+                var currentRows = new byte[rowsY.Length][];
+
+                for (int i = 0; i < rowsY.Length; i++)
+                {
+                    int y = rowsY[i];
+                    if (y < 0 || y >= height)
+                        return false;
+
+                    currentRows[i] = new byte[width];
+                    Marshal.Copy(gray.Ptr(y), currentRows[i], 0, width);
+                }
+
+                // ===== сравнение =====
+                if (_hasLastRows)
+                {
+                    bool isDuplicate = true;
+
+                    for (int i = 0; i < currentRows.Length; i++)
+                    {
+                        if (!currentRows[i].SequenceEqual(_lastRows![i]))
+                        {
+                            isDuplicate = false;
+                            break;
+                        }
+                    }
+
+                    if (isDuplicate)
+                    {
+                        if (_lastFrameForDuplicate != null)
+                        {
+                            Mat first = _lastFrameForDuplicate.Clone();
+                            Mat second = frame.Clone();
+
+                            Task.Run(() =>
+                            {
+                                try
+                                {
+                                    CycleImageSaver.SaveDuplicate(first, generalCapsCount);
+                                    CycleImageSaver.SaveDuplicate(second, generalCapsCount);
+                                }
+                                finally
+                                {
+                                    first.Dispose();
+                                    second.Dispose();
+                                }
+                            });
+                        }
+
+                        return true; // ДУБЛЬ
+                    }
+                }
+
+                // ===== НЕ дубль → обновляем эталон =====
+                _lastRows = currentRows;
+                _hasLastRows = true;
+
+                _lastFrameForDuplicate?.Dispose();
+                _lastFrameForDuplicate = frame.Clone();
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка сравнения изображения по строкам");
+                return false;
+            }
         }
         #endregion
 
@@ -3112,7 +3199,10 @@ namespace KrishkiForms
                         {
                             Stopwatch stopwatch = Stopwatch.StartNew();
 
-                            if (IsDuplicateFrameByHash(frameToProcess))
+                            /*if (IsDuplicateFrameByHash(frameToProcess))
+                                continue;*/
+
+                            if (IsDuplicateFrameByRows(frameToProcess))
                                 continue;
 
                             try
