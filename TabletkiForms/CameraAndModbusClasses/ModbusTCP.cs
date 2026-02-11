@@ -91,7 +91,7 @@ namespace KrishkiForms.CameraAndModbusClasses
                         return false;
                 }
 
-                ReadSingleRegister(connectTestRegister);
+                ReadRegister(connectTestRegister);
                 return true;
             }
             catch
@@ -133,96 +133,35 @@ namespace KrishkiForms.CameraAndModbusClasses
         }
 
 
-        public void WriteSingleRegisterForBreaker(int register, int state)
-        {
-            try
-            {
-                byte[] reg = BitConverter.GetBytes((ushort)register);
-
-                byte[] data = new byte[]
-                {
-                    0x00, 0x1C,
-                    0x00, 0x00,
-                    0x00, 0x06,
-                    0x01,
-                    0x06,
-                    reg[1], reg[0],
-                    (byte)((state >> 8) & 0xFF), (byte)(state & 0xFF)
-                };
-
-                stream.Write(data, 0, data.Length);
-                stream.Read(new byte[256], 0, 256);
-            }
-            catch
-            {
-                connected = false;
-                throw;
-            }
-        }
-
-        public void WriteSingleRegisterForDelayBreakerAndCameraOffset(int register, int state)
-        {
-            try
-            {
-                ushort transactionId = (ushort)new Random().Next(1, 65535);
-                byte[] trans = BitConverter.GetBytes(transactionId);
-                byte[] reg = BitConverter.GetBytes((ushort)register);
-                byte[] val = BitConverter.GetBytes((ushort)state);
-
-                byte[] data = new byte[]
-                {
-                    trans[1], trans[0],
-                    0x00, 0x00,
-                    0x00, 0x06,
-                    0x01,
-                    0x06,
-                    reg[1], reg[0],
-                    val[1], val[0]
-                };
-
-                stream.WriteTimeout = 1000;
-                stream.ReadTimeout = 1000;
-                stream.Write(data, 0, data.Length);
-
-                var response = new byte[256];
-                int bytesRead = stream.Read(response, 0, response.Length);
-            }
-            catch
-            {
-                connected = false;
-                throw;
-            }
-        }
-
-        public void WriteSingleCoil(int coilAddress, bool state)
+        public void WriteRegister(int register, ushort value)
         {
             try
             {
                 if (!connected || stream == null)
                     throw new InvalidOperationException("Modbus client is not connected.");
 
-                byte[] coil = BitConverter.GetBytes((ushort)coilAddress);
-                ushort coilValue = (ushort)(state ? 0xFF00 : 0x0000);
-                byte[] valueBytes = BitConverter.GetBytes(coilValue);
+                ushort transactionId = (ushort)Interlocked.Increment(ref transactionNumber);
+
+                byte[] trans = BitConverter.GetBytes(transactionId);
+                byte[] reg = BitConverter.GetBytes((ushort)register);
+                byte[] val = BitConverter.GetBytes(value);
 
                 byte[] request = new byte[]
                 {
-                    0x00, 0x02,
-                    0x00, 0x00,
-                    0x00, 0x06,
-                    0x01,
-                    0x05,
-                    coil[1], coil[0],
-                    valueBytes[1], valueBytes[0]
+                    trans[1], trans[0],   // Transaction ID
+                    0x00, 0x00,           // Protocol ID
+                    0x00, 0x06,           // Length
+                    0x01,                 // Unit ID
+                    0x06,                 // Function code (Write Single Register)
+                    reg[1], reg[0],
+                    val[1], val[0]
                 };
 
                 stream.Write(request, 0, request.Length);
 
-                byte[] response = new byte[8];
+                byte[] response = new byte[12];
                 int bytesRead = stream.Read(response, 0, response.Length);
 
-                if (bytesRead != 8 || response[7] != 0x05)
-                    throw new Exception("Invalid Modbus coil write response");
             }
             catch
             {
@@ -231,22 +170,27 @@ namespace KrishkiForms.CameraAndModbusClasses
             }
         }
 
-        public int ReadSingleRegister(int register)
+        public ushort ReadRegister(int register)
         {
             try
             {
-                ushort transactionId = (ushort)Interlocked.Increment(ref transactionNumber);
-                byte[] transactionBytes = BitConverter.GetBytes(transactionId);
+                if (!connected || stream == null)
+                    throw new InvalidOperationException("Modbus client is not connected.");
 
+                ushort transactionId = (ushort)Interlocked.Increment(ref transactionNumber);
+
+                byte[] trans = BitConverter.GetBytes(transactionId);
                 byte[] reg = BitConverter.GetBytes((ushort)register);
-                byte[] request = new byte[] {
-                    transactionBytes[1], transactionBytes[0],
-                    0x00, 0x00,
-                    0x00, 0x06,
-                    0x01,
-                    0x03,
+
+                byte[] request = new byte[]
+                {
+                    trans[1], trans[0],   // Transaction ID
+                    0x00, 0x00,           // Protocol ID
+                    0x00, 0x06,           // Length
+                    0x01,                 // Unit ID
+                    0x03,                 // Function code (Read Holding Register)
                     reg[1], reg[0],
-                    0x00, 0x01
+                    0x00, 0x01            // Read 1 register
                 };
 
                 stream.Write(request, 0, request.Length);
@@ -254,8 +198,8 @@ namespace KrishkiForms.CameraAndModbusClasses
                 byte[] response = new byte[11];
                 int bytesRead = stream.Read(response, 0, response.Length);
 
-                ushort value = (ushort)(response[9] << 8 | response[10]);
 
+                ushort value = (ushort)(response[9] << 8 | response[10]);
                 return value;
             }
             catch

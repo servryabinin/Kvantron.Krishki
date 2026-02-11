@@ -39,7 +39,6 @@ namespace KrishkiForms
         private Color disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
         private bool capsAreWhite = false;
         private bool manualDisconnect = false;
-        private int _cameraFrameCounter = 0;
 
         // Оборудование
         private DioModule module = null;
@@ -47,7 +46,7 @@ namespace KrishkiForms
         private ModbusTCP modbusClient;
         private int breakingTimeRegister = 16466;
         private int cameraOffsetRegister = 16402;
-        private int breakerOffsetRegister = 16399;
+        private int breakerOffsetRegister = 16404;
         private int breakerAllowRegister = 16401;
         private int startRecognizeProcessing = 16400;
         private int startCountingImagesAfterReceivngImages = 16700;
@@ -359,8 +358,6 @@ namespace KrishkiForms
             }
         }
 
-
-
         private void InitializeApplication()
         {
             InitializeCoreSystems();
@@ -645,11 +642,11 @@ namespace KrishkiForms
                 if (modbusClient != null && modbusClient.Connected)
                 {
                     // Сбрасываем breakerAllowRegister
-                    modbusClient.WriteSingleRegisterForBreaker(breakerAllowRegister, 0);
+                    modbusClient.WriteRegister(breakerAllowRegister, 0);
 
                     // Сбрасываем startRecognizeProcessing
                     if (!isImageLoaded)
-                        modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 0);
+                        modbusClient.WriteRegister(startRecognizeProcessing, 0);
                 }
             }
             catch (Exception ex)
@@ -706,7 +703,9 @@ namespace KrishkiForms
             {
                 if (cameraConnected)
                 {
+                    cam.SendImage -= GetImage;
                     cam.Close();
+
                     cameraConnected = false;
                     connectCameraButton.Text = "Подключиться к камере";
                     connectCameraButton.BackColor = disconnectedColor;
@@ -722,6 +721,7 @@ namespace KrishkiForms
                 {
                     if (cam.Open())
                     {
+                        cam.SendImage -= GetImage;
                         cam.SendImage += GetImage;
                         cameraConnected = true;
                         connectCameraButton.Text = "Отключиться от камеры";
@@ -965,11 +965,6 @@ namespace KrishkiForms
 
                 isStreamCam = true;
 
-                /*if (modbusClient != null || !modbusClient.Connected)
-                {
-                    modbusClient.WriteSingleRegisterForBreaker(startCountingImagesAfterReceivngImages, 1);
-                }*/
-
                 ApplyRecognitionParameters();
 
                 if (AuthManager.Instance.CurrentRole == Role.Operator)
@@ -1009,11 +1004,6 @@ namespace KrishkiForms
             isRoiProduce = false;
             isROISelected = false;
             isStreamCam = false;
-
-            /*if (modbusClient != null || !modbusClient.Connected)
-            {
-                modbusClient.WriteSingleRegisterForBreaker(startCountingImagesAfterReceivngImages, 0);
-            }*/
 
             originPb.Image?.Dispose();
             originPb.Image = null;
@@ -1272,9 +1262,6 @@ namespace KrishkiForms
                 ModbusClient_ConnectionStatusChanged(false); // тоже блокируем элементы при ошибке
             }
         }
-
-
-
         #endregion
 
         #region Настройка параметров обнаржуения дефектов
@@ -2183,7 +2170,7 @@ namespace KrishkiForms
                 {
                     try
                     {
-                        modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 0);
+                        modbusClient.WriteRegister(startRecognizeProcessing, 0);
                     }
                     catch (Exception ex)
                     {
@@ -2250,7 +2237,7 @@ namespace KrishkiForms
                     if (!isImageLoaded)
                     {
                         // Отправляем сигнал на ПР
-                        modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, 1);
+                        modbusClient.WriteRegister(startRecognizeProcessing, 1);
                   
                     }
                 }
@@ -2378,8 +2365,8 @@ namespace KrishkiForms
                 {
                     try
                     {
-                        modbusClient.WriteSingleRegisterForBreaker(startRecognizeProcessing, RecognizeProcessingAndBreakerAllowFinish);
-                        modbusClient.WriteSingleRegisterForBreaker(breakerAllowRegister, RecognizeProcessingAndBreakerAllowFinish);
+                        modbusClient.WriteRegister(startRecognizeProcessing, (ushort)RecognizeProcessingAndBreakerAllowFinish);
+                        modbusClient.WriteRegister(breakerAllowRegister, (ushort)RecognizeProcessingAndBreakerAllowFinish);
                     }
                     catch (Exception ex)
                     {
@@ -2873,16 +2860,10 @@ namespace KrishkiForms
         {
             try
             {
-                //long camCount = Interlocked.Increment(ref _cameraFrameCounter);
-                _cameraFrameCounter = _cameraFrameCounter + 1;
-                BeginInvoke(() =>
-                {
-                    cameraFramesTb.Text = _cameraFrameCounter.ToString();
-                });
                 if (isStreamCam)
                 {
 
-#if OLD_FRAME_PROCESSING
+            #if OLD_FRAME_PROCESSING
             try
             {
                 lock (frameLock)
@@ -2900,7 +2881,7 @@ namespace KrishkiForms
             {
                 ErrorLogger.Log(ex, "Error in OLD_FRAME_PROCESSING block");
             }
-#else
+            #else
                     try
                     {
                         if (isProcessing)
@@ -3560,7 +3541,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegisterForBreaker(PLCData.QualityRegisterModbus, (int)qualityStatus);
+                    modbusClient.WriteRegister(PLCData.QualityRegisterModbus, (ushort)qualityStatus);
                 }
                 else
                 {
@@ -3584,7 +3565,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(breakingTimeRegister, breakingTime);
+                    modbusClient.WriteRegister(breakingTimeRegister, (ushort)breakingTime);
                 }
             }
             catch (TaskCanceledException)
@@ -3603,7 +3584,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(cameraOffsetRegister, cameraOffset);
+                    modbusClient.WriteRegister(cameraOffsetRegister, (ushort)cameraOffset);
                 }
             }
             catch (TaskCanceledException)
@@ -3622,7 +3603,7 @@ namespace KrishkiForms
             {
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    modbusClient.WriteSingleRegisterForDelayBreakerAndCameraOffset(breakerOffsetRegister, breakerOffset);
+                    modbusClient.WriteRegister(breakerOffsetRegister, (ushort)breakerOffset);
                 }
             }
             catch (TaskCanceledException)
@@ -3645,7 +3626,7 @@ namespace KrishkiForms
                         ? (int)BreakerAllowTrue
                         : (int)BreakerAllowFalse;
 
-                    modbusClient.WriteSingleRegisterForBreaker(breakerAllowRegister, valueToSend);
+                    modbusClient.WriteRegister(breakerAllowRegister, (ushort)valueToSend);
                 }
                 else
                 {
