@@ -407,6 +407,8 @@ namespace KrishkiForms
                 prStatus.ForeColor = Color.Red;
                 connectPrButton.Text = "Подключиться к ПР";
                 connectPrButton.BackColor = disconnectedColor;
+                breakingAllowCb.Enabled = false;
+                applyPrBreakerParamButton.Enabled = false;
             }
         }
 
@@ -1479,6 +1481,7 @@ namespace KrishkiForms
             else
             {
                 inpaintCB.Enabled = true;
+                inpaintCB.Checked = true;
             }
 
             // ---------- Чекбоксы UI (ВАЖЕН ПОРЯДОК) ----------
