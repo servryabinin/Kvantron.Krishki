@@ -2168,6 +2168,22 @@ namespace KrishkiForms
                 recognizeButton.Text = "Остановка...";
                 recognizeButton.Enabled = false;
 
+                currentFrameNumber = 0;
+
+                try
+                {
+                    if (processingTask != null)
+                        await processingTask;
+                }
+                catch (OperationCanceledException)
+                {
+                    // Норма, ничего не делаем
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync во время остановки обработки");
+                }
+
                 // Если есть подключение, отправляем стоп-сигнал
                 if (modbusClient != null && modbusClient.Connected)
                 {
@@ -2184,22 +2200,6 @@ namespace KrishkiForms
                 {
                     // Централизованное обновление интерфейса при отсутствии соединения
                     ModbusClient_ConnectionStatusChanged(false);
-                }
-
-                currentFrameNumber = 0;
-
-                try
-                {
-                    if (processingTask != null)
-                        await processingTask;
-                }
-                catch (OperationCanceledException)
-                {
-                    // Норма, ничего не делаем
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync во время остановки обработки");
                 }
             }
             finally
