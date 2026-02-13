@@ -35,6 +35,26 @@
             label16 = new Label();
             label15 = new Label();
             camStatus = new Label();
+            groupBox2 = new GroupBox();
+            ovalityCoefNumUpD = new NumericUpDown();
+            label21 = new Label();
+            groupBox4 = new GroupBox();
+            obloyPixCountNumUpD = new NumericUpDown();
+            label47 = new Label();
+            groupBox3 = new GroupBox();
+            coefCapRadiusInclusionUpD = new NumericUpDown();
+            label60 = new Label();
+            maxSquareInclusionNumUpD = new NumericUpDown();
+            minSquareInclusionNumUpD = new NumericUpDown();
+            circleCoefNumUpD = new NumericUpDown();
+            label24 = new Label();
+            label22 = new Label();
+            label23 = new Label();
+            groupBox5 = new GroupBox();
+            whiteThresoldNumUpD = new NumericUpDown();
+            minSquareInpaintNumUpD = new NumericUpDown();
+            label28 = new Label();
+            label29 = new Label();
             tableLayoutPanel11 = new TableLayoutPanel();
             label9 = new Label();
             label10 = new Label();
@@ -147,29 +167,15 @@
             loadImageTestTb = new Button();
             testingPb = new PictureBox();
             groupBox7 = new GroupBox();
-            groupBox2 = new GroupBox();
-            ovalityCoefNumUpD = new NumericUpDown();
-            label21 = new Label();
+            panel4 = new Panel();
+            groupBox13 = new GroupBox();
+            label62 = new Label();
+            numericUpDown2 = new NumericUpDown();
+            countCorrugationsNumUpD = new NumericUpDown();
+            label61 = new Label();
             tableLayoutPanel3 = new TableLayoutPanel();
             loadDefectSettings = new Button();
             saveDefectSettings = new Button();
-            groupBox3 = new GroupBox();
-            coefCapRadiusInclusionUpD = new NumericUpDown();
-            label60 = new Label();
-            maxSquareInclusionNumUpD = new NumericUpDown();
-            minSquareInclusionNumUpD = new NumericUpDown();
-            circleCoefNumUpD = new NumericUpDown();
-            label24 = new Label();
-            label22 = new Label();
-            label23 = new Label();
-            groupBox4 = new GroupBox();
-            obloyPixCountNumUpD = new NumericUpDown();
-            label47 = new Label();
-            groupBox5 = new GroupBox();
-            whiteThresoldNumUpD = new NumericUpDown();
-            minSquareInpaintNumUpD = new NumericUpDown();
-            label28 = new Label();
-            label29 = new Label();
             tabPage1 = new TabPage();
             groupBox6 = new GroupBox();
             tabControl5 = new TabControl();
@@ -233,6 +239,18 @@
             pictureBox2 = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
+            groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).BeginInit();
+            groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)obloyPixCountNumUpD).BeginInit();
+            groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)coefCapRadiusInclusionUpD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)maxSquareInclusionNumUpD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)minSquareInclusionNumUpD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)circleCoefNumUpD).BeginInit();
+            groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)whiteThresoldNumUpD).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)minSquareInpaintNumUpD).BeginInit();
             tableLayoutPanel11.SuspendLayout();
             imagesGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)originPb).BeginInit();
@@ -264,19 +282,11 @@
             tableLayoutPanel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)testingPb).BeginInit();
             groupBox7.SuspendLayout();
-            groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).BeginInit();
+            panel4.SuspendLayout();
+            groupBox13.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)countCorrugationsNumUpD).BeginInit();
             tableLayoutPanel3.SuspendLayout();
-            groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)coefCapRadiusInclusionUpD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)maxSquareInclusionNumUpD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)minSquareInclusionNumUpD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)circleCoefNumUpD).BeginInit();
-            groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)obloyPixCountNumUpD).BeginInit();
-            groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)whiteThresoldNumUpD).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)minSquareInpaintNumUpD).BeginInit();
             tabPage1.SuspendLayout();
             groupBox6.SuspendLayout();
             tabControl5.SuspendLayout();
@@ -370,6 +380,260 @@
             camStatus.Size = new Size(120, 19);
             camStatus.TabIndex = 2;
             camStatus.Text = "Не подключена";
+            // 
+            // groupBox2
+            // 
+            groupBox2.BackColor = Color.White;
+            groupBox2.Controls.Add(ovalityCoefNumUpD);
+            groupBox2.Controls.Add(label21);
+            groupBox2.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox2.ForeColor = Color.Black;
+            groupBox2.Location = new Point(7, 5);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(257, 72);
+            groupBox2.TabIndex = 9;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Овальность";
+            // 
+            // ovalityCoefNumUpD
+            // 
+            ovalityCoefNumUpD.DecimalPlaces = 3;
+            ovalityCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            ovalityCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
+            ovalityCoefNumUpD.Location = new Point(8, 41);
+            ovalityCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            ovalityCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
+            ovalityCoefNumUpD.Name = "ovalityCoefNumUpD";
+            ovalityCoefNumUpD.Size = new Size(100, 25);
+            ovalityCoefNumUpD.TabIndex = 9;
+            ovalityCoefNumUpD.Value = new decimal(new int[] { 96, 0, 0, 131072 });
+            ovalityCoefNumUpD.ValueChanged += ovalityCoefNumUpD_ValueChanged;
+            // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Font = new Font("Segoe UI", 7.8F);
+            label21.ForeColor = SystemColors.ActiveCaptionText;
+            label21.Location = new Point(6, 21);
+            label21.Name = "label21";
+            label21.Size = new Size(164, 17);
+            label21.TabIndex = 7;
+            label21.Text = "Коэффициент овальности:";
+            // 
+            // groupBox4
+            // 
+            groupBox4.BackColor = Color.White;
+            groupBox4.Controls.Add(obloyPixCountNumUpD);
+            groupBox4.Controls.Add(label47);
+            groupBox4.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox4.ForeColor = Color.Black;
+            groupBox4.Location = new Point(7, 447);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(257, 84);
+            groupBox4.TabIndex = 13;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Облой";
+            // 
+            // obloyPixCountNumUpD
+            // 
+            obloyPixCountNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            obloyPixCountNumUpD.Location = new Point(9, 45);
+            obloyPixCountNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            obloyPixCountNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            obloyPixCountNumUpD.Name = "obloyPixCountNumUpD";
+            obloyPixCountNumUpD.Size = new Size(100, 25);
+            obloyPixCountNumUpD.TabIndex = 41;
+            obloyPixCountNumUpD.Value = new decimal(new int[] { 1000, 0, 0, 0 });
+            obloyPixCountNumUpD.ValueChanged += obloyPixCountNumUpD_ValueChanged;
+            // 
+            // label47
+            // 
+            label47.AutoSize = true;
+            label47.Font = new Font("Segoe UI", 7.8F);
+            label47.ForeColor = Color.Black;
+            label47.Location = new Point(8, 25);
+            label47.Name = "label47";
+            label47.Size = new Size(195, 17);
+            label47.TabIndex = 7;
+            label47.Text = "Минимальная площадь облоя:";
+            // 
+            // groupBox3
+            // 
+            groupBox3.BackColor = Color.White;
+            groupBox3.Controls.Add(coefCapRadiusInclusionUpD);
+            groupBox3.Controls.Add(label60);
+            groupBox3.Controls.Add(maxSquareInclusionNumUpD);
+            groupBox3.Controls.Add(minSquareInclusionNumUpD);
+            groupBox3.Controls.Add(circleCoefNumUpD);
+            groupBox3.Controls.Add(label24);
+            groupBox3.Controls.Add(label22);
+            groupBox3.Controls.Add(label23);
+            groupBox3.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            groupBox3.ForeColor = Color.Black;
+            groupBox3.Location = new Point(7, 83);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(257, 221);
+            groupBox3.TabIndex = 10;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Вкрапления";
+            // 
+            // coefCapRadiusInclusionUpD
+            // 
+            coefCapRadiusInclusionUpD.DecimalPlaces = 2;
+            coefCapRadiusInclusionUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            coefCapRadiusInclusionUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            coefCapRadiusInclusionUpD.Location = new Point(12, 93);
+            coefCapRadiusInclusionUpD.Maximum = new decimal(new int[] { 99, 0, 0, 131072 });
+            coefCapRadiusInclusionUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
+            coefCapRadiusInclusionUpD.Name = "coefCapRadiusInclusionUpD";
+            coefCapRadiusInclusionUpD.Size = new Size(100, 25);
+            coefCapRadiusInclusionUpD.TabIndex = 22;
+            coefCapRadiusInclusionUpD.Value = new decimal(new int[] { 70, 0, 0, 131072 });
+            coefCapRadiusInclusionUpD.ValueChanged += coefCapRadiusInclusionUpD_ValueChanged;
+            // 
+            // label60
+            // 
+            label60.AutoSize = true;
+            label60.Font = new Font("Segoe UI", 7.8F);
+            label60.ForeColor = Color.Black;
+            label60.Location = new Point(10, 72);
+            label60.Name = "label60";
+            label60.Size = new Size(211, 17);
+            label60.TabIndex = 21;
+            label60.Text = "Коэффициент от радиуса крышки:";
+            // 
+            // maxSquareInclusionNumUpD
+            // 
+            maxSquareInclusionNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            maxSquareInclusionNumUpD.Location = new Point(12, 188);
+            maxSquareInclusionNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            maxSquareInclusionNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            maxSquareInclusionNumUpD.Name = "maxSquareInclusionNumUpD";
+            maxSquareInclusionNumUpD.Size = new Size(100, 25);
+            maxSquareInclusionNumUpD.TabIndex = 20;
+            maxSquareInclusionNumUpD.Value = new decimal(new int[] { 500, 0, 0, 0 });
+            maxSquareInclusionNumUpD.ValueChanged += maxSquareInclusionNumUpD_ValueChanged;
+            // 
+            // minSquareInclusionNumUpD
+            // 
+            minSquareInclusionNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            minSquareInclusionNumUpD.Location = new Point(12, 141);
+            minSquareInclusionNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            minSquareInclusionNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            minSquareInclusionNumUpD.Name = "minSquareInclusionNumUpD";
+            minSquareInclusionNumUpD.Size = new Size(100, 25);
+            minSquareInclusionNumUpD.TabIndex = 19;
+            minSquareInclusionNumUpD.Value = new decimal(new int[] { 200, 0, 0, 0 });
+            minSquareInclusionNumUpD.ValueChanged += minSquareInclusionNumUpD_ValueChanged;
+            // 
+            // circleCoefNumUpD
+            // 
+            circleCoefNumUpD.DecimalPlaces = 2;
+            circleCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            circleCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            circleCoefNumUpD.Location = new Point(12, 42);
+            circleCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            circleCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
+            circleCoefNumUpD.Name = "circleCoefNumUpD";
+            circleCoefNumUpD.Size = new Size(100, 25);
+            circleCoefNumUpD.TabIndex = 18;
+            circleCoefNumUpD.Value = new decimal(new int[] { 8, 0, 0, 65536 });
+            circleCoefNumUpD.ValueChanged += circleCoefNumUpD_ValueChanged;
+            // 
+            // label24
+            // 
+            label24.AutoSize = true;
+            label24.Font = new Font("Segoe UI", 7.8F);
+            label24.ForeColor = Color.Black;
+            label24.Location = new Point(9, 22);
+            label24.Name = "label24";
+            label24.Size = new Size(235, 17);
+            label24.TabIndex = 11;
+            label24.Text = "Коэффициент округлости вкраплений:";
+            // 
+            // label22
+            // 
+            label22.AutoSize = true;
+            label22.Font = new Font("Segoe UI", 7.8F);
+            label22.ForeColor = Color.Black;
+            label22.Location = new Point(9, 168);
+            label22.Name = "label22";
+            label22.Size = new Size(232, 17);
+            label22.TabIndex = 16;
+            label22.Text = "Максимальная площадь вкрапления:";
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.Font = new Font("Segoe UI", 7.8F);
+            label23.ForeColor = Color.Black;
+            label23.Location = new Point(9, 121);
+            label23.Name = "label23";
+            label23.Size = new Size(227, 17);
+            label23.TabIndex = 14;
+            label23.Text = "Минимальная площадь вкрапления:";
+            // 
+            // groupBox5
+            // 
+            groupBox5.BackColor = Color.White;
+            groupBox5.Controls.Add(whiteThresoldNumUpD);
+            groupBox5.Controls.Add(minSquareInpaintNumUpD);
+            groupBox5.Controls.Add(label28);
+            groupBox5.Controls.Add(label29);
+            groupBox5.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox5.ForeColor = Color.Black;
+            groupBox5.Location = new Point(7, 310);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(257, 131);
+            groupBox5.TabIndex = 11;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Непрокрас";
+            // 
+            // whiteThresoldNumUpD
+            // 
+            whiteThresoldNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            whiteThresoldNumUpD.Location = new Point(9, 98);
+            whiteThresoldNumUpD.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            whiteThresoldNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            whiteThresoldNumUpD.Name = "whiteThresoldNumUpD";
+            whiteThresoldNumUpD.Size = new Size(100, 25);
+            whiteThresoldNumUpD.TabIndex = 41;
+            whiteThresoldNumUpD.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            whiteThresoldNumUpD.ValueChanged += whiteThresoldNumUpD_ValueChanged;
+            // 
+            // minSquareInpaintNumUpD
+            // 
+            minSquareInpaintNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            minSquareInpaintNumUpD.Location = new Point(9, 47);
+            minSquareInpaintNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            minSquareInpaintNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            minSquareInpaintNumUpD.Name = "minSquareInpaintNumUpD";
+            minSquareInpaintNumUpD.Size = new Size(100, 25);
+            minSquareInpaintNumUpD.TabIndex = 40;
+            minSquareInpaintNumUpD.Value = new decimal(new int[] { 500, 0, 0, 0 });
+            minSquareInpaintNumUpD.ValueChanged += minSquareInpaintNumUpD_ValueChanged;
+            // 
+            // label28
+            // 
+            label28.AutoSize = true;
+            label28.Font = new Font("Segoe UI", 7.8F);
+            label28.ForeColor = Color.Black;
+            label28.Location = new Point(6, 78);
+            label28.Name = "label28";
+            label28.Size = new Size(200, 17);
+            label28.TabIndex = 38;
+            label28.Text = "Близость к белому (от 1 до 255)";
+            // 
+            // label29
+            // 
+            label29.AutoSize = true;
+            label29.Font = new Font("Segoe UI", 7.8F);
+            label29.ForeColor = Color.Black;
+            label29.Location = new Point(6, 26);
+            label29.Name = "label29";
+            label29.Size = new Size(228, 17);
+            label29.TabIndex = 36;
+            label29.Text = "Минимальная площадь непрокраса:";
             // 
             // tableLayoutPanel11
             // 
@@ -1731,9 +1995,9 @@
             groupBox8.Controls.Add(testingPb);
             groupBox8.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox8.ForeColor = Color.FromArgb(4, 85, 191);
-            groupBox8.Location = new Point(292, 17);
+            groupBox8.Location = new Point(315, 17);
             groupBox8.Name = "groupBox8";
-            groupBox8.Size = new Size(286, 730);
+            groupBox8.Size = new Size(263, 730);
             groupBox8.TabIndex = 18;
             groupBox8.TabStop = false;
             groupBox8.Text = "Тестирование";
@@ -1742,7 +2006,7 @@
             // 
             testingResultPb.Location = new Point(6, 318);
             testingResultPb.Name = "testingResultPb";
-            testingResultPb.Size = new Size(274, 245);
+            testingResultPb.Size = new Size(251, 245);
             testingResultPb.SizeMode = PictureBoxSizeMode.Zoom;
             testingResultPb.TabIndex = 19;
             testingResultPb.TabStop = false;
@@ -1755,7 +2019,7 @@
             testDefectParamBt.ForeColor = Color.White;
             testDefectParamBt.Location = new Point(9, 649);
             testDefectParamBt.Name = "testDefectParamBt";
-            testDefectParamBt.Size = new Size(271, 72);
+            testDefectParamBt.Size = new Size(245, 72);
             testDefectParamBt.TabIndex = 14;
             testDefectParamBt.Text = "Протестировать";
             testDefectParamBt.UseVisualStyleBackColor = false;
@@ -1795,7 +2059,7 @@
             tableLayoutPanel8.RowCount = 1;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel8.Size = new Size(274, 75);
+            tableLayoutPanel8.Size = new Size(251, 75);
             tableLayoutPanel8.TabIndex = 16;
             // 
             // loadImageForTestDefectFromCameraBt
@@ -1805,9 +2069,9 @@
             loadImageForTestDefectFromCameraBt.FlatAppearance.BorderSize = 0;
             loadImageForTestDefectFromCameraBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             loadImageForTestDefectFromCameraBt.ForeColor = Color.White;
-            loadImageForTestDefectFromCameraBt.Location = new Point(140, 3);
+            loadImageForTestDefectFromCameraBt.Location = new Point(128, 3);
             loadImageForTestDefectFromCameraBt.Name = "loadImageForTestDefectFromCameraBt";
-            loadImageForTestDefectFromCameraBt.Size = new Size(131, 69);
+            loadImageForTestDefectFromCameraBt.Size = new Size(120, 69);
             loadImageForTestDefectFromCameraBt.TabIndex = 13;
             loadImageForTestDefectFromCameraBt.Text = "Загрузить изображение с камеры";
             loadImageForTestDefectFromCameraBt.UseVisualStyleBackColor = false;
@@ -1822,7 +2086,7 @@
             loadImageTestTb.ForeColor = Color.White;
             loadImageTestTb.Location = new Point(3, 3);
             loadImageTestTb.Name = "loadImageTestTb";
-            loadImageTestTb.Size = new Size(131, 69);
+            loadImageTestTb.Size = new Size(119, 69);
             loadImageTestTb.TabIndex = 12;
             loadImageTestTb.Text = "Загрузить изображение с папки";
             loadImageTestTb.UseVisualStyleBackColor = false;
@@ -1832,65 +2096,101 @@
             // 
             testingPb.Location = new Point(6, 48);
             testingPb.Name = "testingPb";
-            testingPb.Size = new Size(274, 245);
+            testingPb.Size = new Size(251, 245);
             testingPb.SizeMode = PictureBoxSizeMode.Zoom;
             testingPb.TabIndex = 0;
             testingPb.TabStop = false;
             // 
             // groupBox7
             // 
-            groupBox7.Controls.Add(groupBox2);
+            groupBox7.Controls.Add(panel4);
             groupBox7.Controls.Add(tableLayoutPanel3);
-            groupBox7.Controls.Add(groupBox3);
-            groupBox7.Controls.Add(groupBox4);
-            groupBox7.Controls.Add(groupBox5);
             groupBox7.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox7.ForeColor = Color.FromArgb(4, 85, 191);
             groupBox7.Location = new Point(10, 17);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(276, 730);
+            groupBox7.Size = new Size(299, 730);
             groupBox7.TabIndex = 17;
             groupBox7.TabStop = false;
             groupBox7.Text = "Параметры";
             // 
-            // groupBox2
+            // panel4
             // 
-            groupBox2.BackColor = Color.White;
-            groupBox2.Controls.Add(ovalityCoefNumUpD);
-            groupBox2.Controls.Add(label21);
-            groupBox2.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox2.ForeColor = Color.Black;
-            groupBox2.Location = new Point(6, 31);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(257, 94);
-            groupBox2.TabIndex = 9;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Овальность";
+            panel4.AutoScroll = true;
+            panel4.BorderStyle = BorderStyle.FixedSingle;
+            panel4.Controls.Add(groupBox13);
+            panel4.Controls.Add(groupBox4);
+            panel4.Controls.Add(groupBox2);
+            panel4.Controls.Add(groupBox3);
+            panel4.Controls.Add(groupBox5);
+            panel4.Dock = DockStyle.Top;
+            panel4.Location = new Point(3, 21);
+            panel4.Margin = new Padding(3, 3, 3, 10);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(293, 624);
+            panel4.TabIndex = 16;
             // 
-            // ovalityCoefNumUpD
+            // groupBox13
             // 
-            ovalityCoefNumUpD.DecimalPlaces = 3;
-            ovalityCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            ovalityCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
-            ovalityCoefNumUpD.Location = new Point(8, 46);
-            ovalityCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
-            ovalityCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
-            ovalityCoefNumUpD.Name = "ovalityCoefNumUpD";
-            ovalityCoefNumUpD.Size = new Size(100, 25);
-            ovalityCoefNumUpD.TabIndex = 9;
-            ovalityCoefNumUpD.Value = new decimal(new int[] { 96, 0, 0, 131072 });
-            ovalityCoefNumUpD.ValueChanged += ovalityCoefNumUpD_ValueChanged;
+            groupBox13.BackColor = Color.White;
+            groupBox13.Controls.Add(label62);
+            groupBox13.Controls.Add(numericUpDown2);
+            groupBox13.Controls.Add(countCorrugationsNumUpD);
+            groupBox13.Controls.Add(label61);
+            groupBox13.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox13.ForeColor = Color.Black;
+            groupBox13.Location = new Point(7, 536);
+            groupBox13.Name = "groupBox13";
+            groupBox13.Size = new Size(257, 120);
+            groupBox13.TabIndex = 14;
+            groupBox13.TabStop = false;
+            groupBox13.Text = "Недолив";
             // 
-            // label21
+            // label62
             // 
-            label21.AutoSize = true;
-            label21.Font = new Font("Segoe UI", 7.8F);
-            label21.ForeColor = SystemColors.ActiveCaptionText;
-            label21.Location = new Point(6, 26);
-            label21.Name = "label21";
-            label21.Size = new Size(164, 17);
-            label21.TabIndex = 7;
-            label21.Text = "Коэффициент овальности:";
+            label62.AutoSize = true;
+            label62.Font = new Font("Segoe UI", 7.8F);
+            label62.ForeColor = Color.Black;
+            label62.Location = new Point(9, 68);
+            label62.Name = "label62";
+            label62.Size = new Size(230, 17);
+            label62.TabIndex = 44;
+            label62.Text = "Часть радиуса для обрезки коронки:";
+            // 
+            // numericUpDown2
+            // 
+            numericUpDown2.DecimalPlaces = 2;
+            numericUpDown2.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            numericUpDown2.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            numericUpDown2.Location = new Point(10, 88);
+            numericUpDown2.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown2.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
+            numericUpDown2.Name = "numericUpDown2";
+            numericUpDown2.Size = new Size(100, 25);
+            numericUpDown2.TabIndex = 43;
+            numericUpDown2.Value = new decimal(new int[] { 8, 0, 0, 65536 });
+            // 
+            // countCorrugationsNumUpD
+            // 
+            countCorrugationsNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            countCorrugationsNumUpD.Location = new Point(9, 40);
+            countCorrugationsNumUpD.Maximum = new decimal(new int[] { 15, 0, 0, 0 });
+            countCorrugationsNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            countCorrugationsNumUpD.Name = "countCorrugationsNumUpD";
+            countCorrugationsNumUpD.Size = new Size(100, 25);
+            countCorrugationsNumUpD.TabIndex = 41;
+            countCorrugationsNumUpD.Value = new decimal(new int[] { 15, 0, 0, 0 });
+            // 
+            // label61
+            // 
+            label61.AutoSize = true;
+            label61.Font = new Font("Segoe UI", 7.8F);
+            label61.ForeColor = Color.Black;
+            label61.Location = new Point(8, 20);
+            label61.Name = "label61";
+            label61.Size = new Size(199, 17);
+            label61.TabIndex = 7;
+            label61.Text = "Количество зубцов на коронке:";
             // 
             // tableLayoutPanel3
             // 
@@ -1899,12 +2199,12 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.Controls.Add(loadDefectSettings, 0, 0);
             tableLayoutPanel3.Controls.Add(saveDefectSettings, 1, 0);
-            tableLayoutPanel3.Location = new Point(7, 646);
+            tableLayoutPanel3.Location = new Point(7, 649);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel3.Size = new Size(256, 78);
+            tableLayoutPanel3.Size = new Size(256, 75);
             tableLayoutPanel3.TabIndex = 15;
             // 
             // loadDefectSettings
@@ -1916,7 +2216,7 @@
             loadDefectSettings.ForeColor = Color.White;
             loadDefectSettings.Location = new Point(3, 3);
             loadDefectSettings.Name = "loadDefectSettings";
-            loadDefectSettings.Size = new Size(122, 72);
+            loadDefectSettings.Size = new Size(122, 69);
             loadDefectSettings.TabIndex = 12;
             loadDefectSettings.Text = "Загрузить настройки";
             loadDefectSettings.UseVisualStyleBackColor = false;
@@ -1931,226 +2231,11 @@
             saveDefectSettings.ForeColor = Color.White;
             saveDefectSettings.Location = new Point(131, 3);
             saveDefectSettings.Name = "saveDefectSettings";
-            saveDefectSettings.Size = new Size(122, 72);
+            saveDefectSettings.Size = new Size(122, 69);
             saveDefectSettings.TabIndex = 14;
             saveDefectSettings.Text = "Сохранить";
             saveDefectSettings.UseVisualStyleBackColor = false;
             saveDefectSettings.Click += saveDefectSettings_Click;
-            // 
-            // groupBox3
-            // 
-            groupBox3.BackColor = Color.White;
-            groupBox3.Controls.Add(coefCapRadiusInclusionUpD);
-            groupBox3.Controls.Add(label60);
-            groupBox3.Controls.Add(maxSquareInclusionNumUpD);
-            groupBox3.Controls.Add(minSquareInclusionNumUpD);
-            groupBox3.Controls.Add(circleCoefNumUpD);
-            groupBox3.Controls.Add(label24);
-            groupBox3.Controls.Add(label22);
-            groupBox3.Controls.Add(label23);
-            groupBox3.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            groupBox3.ForeColor = Color.Black;
-            groupBox3.Location = new Point(6, 140);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(257, 238);
-            groupBox3.TabIndex = 10;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "Вкрапления";
-            // 
-            // coefCapRadiusInclusionUpD
-            // 
-            coefCapRadiusInclusionUpD.DecimalPlaces = 2;
-            coefCapRadiusInclusionUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            coefCapRadiusInclusionUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            coefCapRadiusInclusionUpD.Location = new Point(12, 107);
-            coefCapRadiusInclusionUpD.Maximum = new decimal(new int[] { 99, 0, 0, 131072 });
-            coefCapRadiusInclusionUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
-            coefCapRadiusInclusionUpD.Name = "coefCapRadiusInclusionUpD";
-            coefCapRadiusInclusionUpD.Size = new Size(100, 25);
-            coefCapRadiusInclusionUpD.TabIndex = 22;
-            coefCapRadiusInclusionUpD.Value = new decimal(new int[] { 70, 0, 0, 131072 });
-            coefCapRadiusInclusionUpD.ValueChanged += coefCapRadiusInclusionUpD_ValueChanged;
-            // 
-            // label60
-            // 
-            label60.AutoSize = true;
-            label60.Font = new Font("Segoe UI", 7.8F);
-            label60.ForeColor = Color.Black;
-            label60.Location = new Point(10, 86);
-            label60.Name = "label60";
-            label60.Size = new Size(211, 17);
-            label60.TabIndex = 21;
-            label60.Text = "Коэффициент от радиуса крышки:";
-            // 
-            // maxSquareInclusionNumUpD
-            // 
-            maxSquareInclusionNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            maxSquareInclusionNumUpD.Location = new Point(12, 202);
-            maxSquareInclusionNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
-            maxSquareInclusionNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
-            maxSquareInclusionNumUpD.Name = "maxSquareInclusionNumUpD";
-            maxSquareInclusionNumUpD.Size = new Size(100, 25);
-            maxSquareInclusionNumUpD.TabIndex = 20;
-            maxSquareInclusionNumUpD.Value = new decimal(new int[] { 500, 0, 0, 0 });
-            maxSquareInclusionNumUpD.ValueChanged += maxSquareInclusionNumUpD_ValueChanged;
-            // 
-            // minSquareInclusionNumUpD
-            // 
-            minSquareInclusionNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            minSquareInclusionNumUpD.Location = new Point(12, 155);
-            minSquareInclusionNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
-            minSquareInclusionNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
-            minSquareInclusionNumUpD.Name = "minSquareInclusionNumUpD";
-            minSquareInclusionNumUpD.Size = new Size(100, 25);
-            minSquareInclusionNumUpD.TabIndex = 19;
-            minSquareInclusionNumUpD.Value = new decimal(new int[] { 200, 0, 0, 0 });
-            minSquareInclusionNumUpD.ValueChanged += minSquareInclusionNumUpD_ValueChanged;
-            // 
-            // circleCoefNumUpD
-            // 
-            circleCoefNumUpD.DecimalPlaces = 2;
-            circleCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            circleCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            circleCoefNumUpD.Location = new Point(12, 56);
-            circleCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
-            circleCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
-            circleCoefNumUpD.Name = "circleCoefNumUpD";
-            circleCoefNumUpD.Size = new Size(100, 25);
-            circleCoefNumUpD.TabIndex = 18;
-            circleCoefNumUpD.Value = new decimal(new int[] { 8, 0, 0, 65536 });
-            circleCoefNumUpD.ValueChanged += circleCoefNumUpD_ValueChanged;
-            // 
-            // label24
-            // 
-            label24.AutoSize = true;
-            label24.Font = new Font("Segoe UI", 7.8F);
-            label24.ForeColor = Color.Black;
-            label24.Location = new Point(9, 36);
-            label24.Name = "label24";
-            label24.Size = new Size(235, 17);
-            label24.TabIndex = 11;
-            label24.Text = "Коэффициент округлости вкраплений:";
-            // 
-            // label22
-            // 
-            label22.AutoSize = true;
-            label22.Font = new Font("Segoe UI", 7.8F);
-            label22.ForeColor = Color.Black;
-            label22.Location = new Point(9, 182);
-            label22.Name = "label22";
-            label22.Size = new Size(232, 17);
-            label22.TabIndex = 16;
-            label22.Text = "Максимальная площадь вкрапления:";
-            // 
-            // label23
-            // 
-            label23.AutoSize = true;
-            label23.Font = new Font("Segoe UI", 7.8F);
-            label23.ForeColor = Color.Black;
-            label23.Location = new Point(9, 135);
-            label23.Name = "label23";
-            label23.Size = new Size(227, 17);
-            label23.TabIndex = 14;
-            label23.Text = "Минимальная площадь вкрапления:";
-            // 
-            // groupBox4
-            // 
-            groupBox4.BackColor = Color.White;
-            groupBox4.Controls.Add(obloyPixCountNumUpD);
-            groupBox4.Controls.Add(label47);
-            groupBox4.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox4.ForeColor = Color.Black;
-            groupBox4.Location = new Point(7, 524);
-            groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(256, 117);
-            groupBox4.TabIndex = 13;
-            groupBox4.TabStop = false;
-            groupBox4.Text = "Облой";
-            // 
-            // obloyPixCountNumUpD
-            // 
-            obloyPixCountNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            obloyPixCountNumUpD.Location = new Point(9, 52);
-            obloyPixCountNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
-            obloyPixCountNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
-            obloyPixCountNumUpD.Name = "obloyPixCountNumUpD";
-            obloyPixCountNumUpD.Size = new Size(100, 25);
-            obloyPixCountNumUpD.TabIndex = 41;
-            obloyPixCountNumUpD.Value = new decimal(new int[] { 1000, 0, 0, 0 });
-            obloyPixCountNumUpD.ValueChanged += obloyPixCountNumUpD_ValueChanged;
-            // 
-            // label47
-            // 
-            label47.AutoSize = true;
-            label47.Font = new Font("Segoe UI", 7.8F);
-            label47.ForeColor = Color.Black;
-            label47.Location = new Point(8, 32);
-            label47.Name = "label47";
-            label47.Size = new Size(195, 17);
-            label47.TabIndex = 7;
-            label47.Text = "Минимальная площадь облоя:";
-            // 
-            // groupBox5
-            // 
-            groupBox5.BackColor = Color.White;
-            groupBox5.Controls.Add(whiteThresoldNumUpD);
-            groupBox5.Controls.Add(minSquareInpaintNumUpD);
-            groupBox5.Controls.Add(label28);
-            groupBox5.Controls.Add(label29);
-            groupBox5.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox5.ForeColor = Color.Black;
-            groupBox5.Location = new Point(7, 384);
-            groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(257, 134);
-            groupBox5.TabIndex = 11;
-            groupBox5.TabStop = false;
-            groupBox5.Text = "Непрокрас";
-            // 
-            // whiteThresoldNumUpD
-            // 
-            whiteThresoldNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            whiteThresoldNumUpD.Location = new Point(9, 98);
-            whiteThresoldNumUpD.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
-            whiteThresoldNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            whiteThresoldNumUpD.Name = "whiteThresoldNumUpD";
-            whiteThresoldNumUpD.Size = new Size(100, 25);
-            whiteThresoldNumUpD.TabIndex = 41;
-            whiteThresoldNumUpD.Value = new decimal(new int[] { 10, 0, 0, 0 });
-            whiteThresoldNumUpD.ValueChanged += whiteThresoldNumUpD_ValueChanged;
-            // 
-            // minSquareInpaintNumUpD
-            // 
-            minSquareInpaintNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            minSquareInpaintNumUpD.Location = new Point(9, 47);
-            minSquareInpaintNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
-            minSquareInpaintNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
-            minSquareInpaintNumUpD.Name = "minSquareInpaintNumUpD";
-            minSquareInpaintNumUpD.Size = new Size(100, 25);
-            minSquareInpaintNumUpD.TabIndex = 40;
-            minSquareInpaintNumUpD.Value = new decimal(new int[] { 500, 0, 0, 0 });
-            minSquareInpaintNumUpD.ValueChanged += minSquareInpaintNumUpD_ValueChanged;
-            // 
-            // label28
-            // 
-            label28.AutoSize = true;
-            label28.Font = new Font("Segoe UI", 7.8F);
-            label28.ForeColor = Color.Black;
-            label28.Location = new Point(6, 78);
-            label28.Name = "label28";
-            label28.Size = new Size(200, 17);
-            label28.TabIndex = 38;
-            label28.Text = "Близость к белому (от 1 до 255)";
-            // 
-            // label29
-            // 
-            label29.AutoSize = true;
-            label29.Font = new Font("Segoe UI", 7.8F);
-            label29.ForeColor = Color.Black;
-            label29.Location = new Point(6, 26);
-            label29.Name = "label29";
-            label29.Size = new Size(228, 17);
-            label29.TabIndex = 36;
-            label29.Text = "Минимальная площадь непрокраса:";
             // 
             // tabPage1
             // 
@@ -2989,6 +3074,22 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).EndInit();
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)obloyPixCountNumUpD).EndInit();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)coefCapRadiusInclusionUpD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)maxSquareInclusionNumUpD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)minSquareInclusionNumUpD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)circleCoefNumUpD).EndInit();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)whiteThresoldNumUpD).EndInit();
+            ((System.ComponentModel.ISupportInitialize)minSquareInpaintNumUpD).EndInit();
             tableLayoutPanel11.ResumeLayout(false);
             tableLayoutPanel11.PerformLayout();
             imagesGroup.ResumeLayout(false);
@@ -3027,23 +3128,12 @@
             tableLayoutPanel8.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)testingPb).EndInit();
             groupBox7.ResumeLayout(false);
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).EndInit();
+            panel4.ResumeLayout(false);
+            groupBox13.ResumeLayout(false);
+            groupBox13.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)countCorrugationsNumUpD).EndInit();
             tableLayoutPanel3.ResumeLayout(false);
-            groupBox3.ResumeLayout(false);
-            groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)coefCapRadiusInclusionUpD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)maxSquareInclusionNumUpD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)minSquareInclusionNumUpD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)circleCoefNumUpD).EndInit();
-            groupBox4.ResumeLayout(false);
-            groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)obloyPixCountNumUpD).EndInit();
-            groupBox5.ResumeLayout(false);
-            groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)whiteThresoldNumUpD).EndInit();
-            ((System.ComponentModel.ISupportInitialize)minSquareInpaintNumUpD).EndInit();
             tabPage1.ResumeLayout(false);
             groupBox6.ResumeLayout(false);
             tabControl5.ResumeLayout(false);
@@ -3157,7 +3247,6 @@
         private GroupBox groupBox7;
         private GroupBox groupBox2;
         private NumericUpDown ovalityCoefNumUpD;
-        private Label label21;
         private TableLayoutPanel tableLayoutPanel3;
         private Button loadDefectSettings;
         private Button saveDefectSettings;
@@ -3282,5 +3371,12 @@
         private Button loadImageForTestDefectFromCameraBt;
         private Label label60;
         private NumericUpDown coefCapRadiusInclusionUpD;
+        private Label label21;
+        private Panel panel4;
+        private GroupBox groupBox13;
+        private NumericUpDown countCorrugationsNumUpD;
+        private Label label61;
+        private Label label62;
+        private NumericUpDown numericUpDown2;
     }
 }
