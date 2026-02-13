@@ -27,6 +27,17 @@ namespace KrishkiForms.FrameProcessing
             _buffer.Add(mat, token);
         }
 
+        /// <summary>
+        /// Очистка всех кадров, не уничтожая сам буфер
+        /// </summary>
+        public void Clear()
+        {
+            while (_buffer.TryTake(out Mat mat))
+            {
+                mat.Dispose();
+            }
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_isDisposed)

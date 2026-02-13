@@ -305,7 +305,7 @@ namespace KrishkiForms
 
             if (isConnected)
             {
-
+                // === подключено ===
                 if (cameraOffsetTb != null)
                 {
                     cameraOffsetTb.Text = CameraOffset.ToString();
@@ -334,27 +334,93 @@ namespace KrishkiForms
 
                 prConnected = true;
                 breakingAllowCb.Enabled = true;
+                breakingAllowCb.Checked = false;
                 applyPrBreakerParamButton.Enabled = true;
+
+
+                // И сбросить анализ
+                if (modbusClient != null && modbusClient.Connected)
+                {
+                    try
+                    {
+                        modbusClient.WriteRegister(startRecognizeProcessing, (ushort)RecognizeProcessingAndBreakerAllowFinish);
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "Ошибка при сбросе регистра после переподключения");
+                    }
+                }
             }
             else
             {
+                // === отключено ===
                 if (manualDisconnect)
                 {
                     prStatus.Text = "Откл. вручную";
-                    prStatus.ForeColor = Color.Red;
                 }
                 else
                 {
                     prStatus.Text = "Не подключено";
-                    prStatus.ForeColor = Color.Red;
                 }
 
+                prStatus.ForeColor = Color.Red;
                 connectPrButton.Text = "Подключиться к ПР";
                 connectPrButton.BackColor = disconnectedColor;
 
                 prConnected = false;
                 breakingAllowCb.Enabled = false;
                 applyPrBreakerParamButton.Enabled = false;
+
+                //Если потеря связи с ПЛК — останавливаем обработку
+                if (isProcessing && !manualDisconnect)
+                {
+                    isProcessing = false;
+
+                    cts?.Cancel();
+
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            if (processingTask != null)
+                                await processingTask;
+                        }
+                        catch
+                        {
+                        }
+
+#if OLD_FRAME_PROCESSING
+                        lock (frameLock)
+                        {
+                            latestFrame?.Dispose();
+                            latestFrame = null;
+                            newFrameAvailable = false;
+                        }
+#else
+
+                        _imageQueue.Clear();
+#endif
+
+                        recognizeButton.Text = "Начать анализ";
+                        recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
+                        recognizeButton.Enabled = true;
+
+                        if (!isImageLoaded)
+                            startStreamButton.Enabled = true;
+                        if (isImageLoaded)
+                            loadImageButton.Enabled = true;
+
+                        BeginInvoke(() =>
+                        {
+                            MessageBox.Show(
+                                "Потеряно соединение с ПР205. Обработка кадров остановлена. При переподключении сдув будет отключен.",
+                                "Ошибка соединения",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning
+                            );
+                        });
+                    });
+                }
             }
         }
 
@@ -2187,19 +2253,17 @@ namespace KrishkiForms
                 // Если есть подключение, отправляем стоп-сигнал
                 if (modbusClient != null && modbusClient.Connected)
                 {
-                    try
+                    if (!isImageLoaded)
                     {
-                        modbusClient.WriteRegister(startRecognizeProcessing, 0);
+                        try
+                        {
+                            modbusClient.WriteRegister(startRecognizeProcessing, 0);
+                        }
+                        catch (Exception ex)
+                        {
+                            ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync при отправке стоп-сигнала в ПР");
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync при отправке стоп-сигнала в ПР");
-                    }
-                }
-                else
-                {
-                    // Централизованное обновление интерфейса при отсутствии соединения
-                    ModbusClient_ConnectionStatusChanged(false);
                 }
             }
             finally
@@ -2233,7 +2297,12 @@ namespace KrishkiForms
 
                 if (modbusClient == null || !modbusClient.Connected)
                 {
-                    ModbusClient_ConnectionStatusChanged(false);
+                    MessageBox.Show(
+                        "ПР205 не подключено, отбраковка не будет происходить.",
+                        "Предупреждение",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
                 }
                 else
                 {
