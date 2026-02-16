@@ -105,11 +105,12 @@ namespace KrishkiForms
         private int inclusionCount = 0;
         private int paintDefectCount = 0;
         private int obloyDefectCount = 0;
-        private int underfillCount = 0;
+        private int underFillDefectCount = 0;
         private float percentOvalityCaps = 0;
         private float percentInclusionCaps = 0;
         private float percentInpaintCaps = 0;
         private float percentObloyCaps = 0;
+        private float percentUnderfillCaps = 0;
         private float generalCapsCount = 0;
         private float okCapsCount = 0;
         private float ngCapsCount = 0;
@@ -131,6 +132,10 @@ namespace KrishkiForms
         private double SCALE = 0.5;
         private const int MIN_HARMONIC_INDEX = 12;
         private const int MAX_HARMONIC_INDEX = 30;
+        private double[] _sinTable;
+        private double[] _cosTable;
+        private readonly object _trigTablesLock = new object();
+        private const int UNDERFILL_RECT_WIDTH = 1024;
 
         // LUT и цветовые параметры
         private byte[] HUE_LUT = new byte[128 * 128 * 128];
@@ -171,6 +176,8 @@ namespace KrishkiForms
         private double maxAreaInclusion = 500.0;
         private double coefCapRadiusInclusion = 0.7;
         private double minAreaObloy = 1000.0;
+        private double corrugationsCountForUnderFill = 10;
+        private double coefCapRadiusUnderFill = 0.8;
 
         // Контуры и геометрия
         private Point[] largestContourOvality;
@@ -203,6 +210,9 @@ namespace KrishkiForms
         private Mat _frameToDisplay;
         private Mat _frameToSave;
         private Mat _imageOriginReceptParam;
+        private Mat _lastColorCorrectedImage;
+        private Mat _lastColorCorrectedGray;
+        private readonly object _colorCorrectedLock = new object(); // Для потокобезопасности
 
         //Изображение для тестирования параметров
         private Mat _imageForTest;
@@ -224,7 +234,7 @@ namespace KrishkiForms
         private string fullPathForObloyDefect = "";
         private FileSystemWatcher _recipesWatcher;
         private string folderParamDefect = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка параметров дефектов";
-        private string folderParamCamera= AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки камеры";
+        private string folderParamCamera = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки камеры";
         private string folderParamPr205 = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки ПР205";
 
         // Логирование
@@ -442,6 +452,7 @@ namespace KrishkiForms
             LoadDefectAndCameraParam();
             InitializeRecepts();
             InitializeMorphologicalElements();
+            InitializeTrigTables();
             Form1_Load();
 
             recognizeButton.Enabled = false;
@@ -593,6 +604,22 @@ namespace KrishkiForms
                 new Size(3, 3),
                 new Point(1, 1)
             );
+        }
+
+        private void InitializeTrigTables()
+        {
+            lock (_trigTablesLock)
+            {
+                _sinTable = new double[UNDERFILL_RECT_WIDTH];
+                _cosTable = new double[UNDERFILL_RECT_WIDTH];
+
+                double dTheta = 2 * Math.PI / UNDERFILL_RECT_WIDTH;
+                for (int i = 0; i < UNDERFILL_RECT_WIDTH; i++)
+                {
+                    _sinTable[i] = Math.Sin(i * dTheta);
+                    _cosTable[i] = Math.Cos(i * dTheta);
+                }
+            }
         }
 
         private void InitializePaths()
@@ -2041,6 +2068,274 @@ namespace KrishkiForms
                 return false;
             }
         }
+
+        private bool CheckForUnderFillDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
+        {
+            try
+            {
+                token.ThrowIfCancellationRequested();
+
+                if (capContour == null || capContour.Length < 5)
+                {
+                    ErrorLogger.Log(new Exception("Контур для проверки недолива пустой или содержит недостаточно точек"),
+                        "CheckForUnderFillDefects - проверка наличия контура");
+                    return false;
+                }
+
+                Mat colorCorrectedImage;
+                Mat colorCorrectedGray;
+
+                lock (_colorCorrectedLock)
+                {
+                    if (_lastColorCorrectedImage == null || _lastColorCorrectedImage.Empty() ||
+                        _lastColorCorrectedGray == null || _lastColorCorrectedGray.Empty())
+                    {
+                        ErrorLogger.Log(new Exception("Изображения после цветокоррекции не найдены"),
+                            "CheckForUnderFillDefects - отсутствуют цветокорректированные изображения");
+                        return false;
+                    }
+
+                    colorCorrectedImage = _lastColorCorrectedImage.Clone();
+                    colorCorrectedGray = _lastColorCorrectedGray.Clone();
+                }
+
+                using (colorCorrectedImage)
+                using (colorCorrectedGray)
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    RotatedRect outerEllipse = Cv2.FitEllipse(capContour);
+
+                    Size2f outerSize = outerEllipse.Size;
+                    Size2f innerSize = new Size2f(
+                        (float)(outerSize.Width * coefCapRadiusUnderFill),
+                        (float)(outerSize.Height * coefCapRadiusUnderFill)
+                    );
+
+                    RotatedRect innerEllipse = new RotatedRect(
+                        outerEllipse.Center,
+                        innerSize,
+                        outerEllipse.Angle
+                    );
+
+                    token.ThrowIfCancellationRequested();
+
+                    // rectWidth - используем константу
+                    int rectHeight = (int)(Math.Max(outerSize.Width, outerSize.Height) * 0.15);
+
+                    Mat crownMask = new Mat(colorCorrectedImage.Size(), MatType.CV_8UC1, Scalar.All(0));
+
+                    try
+                    {
+                        Cv2.Ellipse(crownMask, outerEllipse, Scalar.White, -1);
+                        Cv2.Ellipse(crownMask, innerEllipse, Scalar.Black, -1);
+
+                        token.ThrowIfCancellationRequested();
+
+                        Mat maskedImage = new Mat();
+                        Cv2.BitwiseAnd(colorCorrectedImage, colorCorrectedImage, maskedImage, crownMask);
+
+                        token.ThrowIfCancellationRequested();
+
+                        Mat grayMasked = new Mat();
+                        Cv2.BitwiseAnd(colorCorrectedGray, colorCorrectedGray, grayMasked, crownMask);
+
+                        token.ThrowIfCancellationRequested();
+
+                        Mat rectifiedCrown = new Mat(rectHeight, UNDERFILL_RECT_WIDTH, MatType.CV_8UC1);
+
+                        // ИСПОЛЬЗУЕМ КЭШИРОВАННЫЕ ТАБЛИЦЫ!
+                        double[] sinTable, cosTable;
+                        lock (_trigTablesLock)
+                        {
+                            sinTable = _sinTable;
+                            cosTable = _cosTable;
+                        }
+
+                        float outerRadius = (float)(Math.Max(outerSize.Width, outerSize.Height) / 2);
+                        float innerRadius = (float)(Math.Max(innerSize.Width, innerSize.Height) / 2);
+                        float meanRadius = (outerRadius + innerRadius) / 2;
+
+                        Point center = new Point((int)outerEllipse.Center.X, (int)outerEllipse.Center.Y);
+
+                        GetStripeImg(grayMasked, rectifiedCrown, sinTable, cosTable,
+                                    center, (int)meanRadius,
+                                    grayMasked.Width, grayMasked.Height,
+                                    UNDERFILL_RECT_WIDTH, rectHeight);
+
+                        token.ThrowIfCancellationRequested();
+
+                        float[] rowStatistics = new float[UNDERFILL_RECT_WIDTH];
+                        GetWStatistics(rectifiedCrown, rowStatistics, UNDERFILL_RECT_WIDTH, rectHeight);
+
+                        token.ThrowIfCancellationRequested();
+
+                        bool hasUnderfill = AnalyzeUnderfillFFT(rowStatistics, UNDERFILL_RECT_WIDTH, corrugationsCountForUnderFill);
+
+                        token.ThrowIfCancellationRequested();
+
+                        try
+                        {
+                            Scalar color = hasUnderfill ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
+                            Cv2.Ellipse(drawFrame, innerEllipse, color, 2);
+                        }
+                        catch (Exception drawEx)
+                        {
+                            ErrorLogger.Log(drawEx, "CheckForUnderFillDefects - ошибка при рисовании эллипса");
+                        }
+
+                        return hasUnderfill;
+                    }
+                    finally
+                    {
+                        crownMask?.Dispose();
+                        // maskedImage и grayMasked уже в using
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "CheckForUnderFillDefects - ошибка при определении недолива");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Анализ Фурье для определения недолива
+        /// </summary>
+        private bool AnalyzeUnderfillFFT(float[] signal, int length, double expectedHarmonic)
+        {
+            try
+            {
+                if (signal == null || signal.Length < length)
+                    return false;
+
+                // Копируем сигнал для анализа
+                float[] data = new float[length];
+                Array.Copy(signal, data, length);
+
+                // Центрируем сигнал (вычитаем среднее)
+                double mean = 0;
+                for (int i = 0; i < length; i++)
+                    mean += data[i];
+                mean /= length;
+
+                for (int i = 0; i < length; i++)
+                    data[i] -= (float)mean;
+
+                // Преобразуем в комплексные числа для FFT
+                System.Numerics.Complex[] complexData = new System.Numerics.Complex[length];
+                for (int i = 0; i < length; i++)
+                    complexData[i] = new System.Numerics.Complex(data[i], 0);
+
+                // Выполняем FFT
+                MathNet.Numerics.IntegralTransforms.Fourier.Forward(complexData);
+
+                // Анализируем гармоники в окрестности ожидаемой
+                int minHarmonic = (int)Math.Max(1, expectedHarmonic - 2);
+                int maxHarmonic = (int)Math.Min(length / 2, expectedHarmonic + 2);
+
+                double maxMagnitude = 0;
+                int maxIndex = minHarmonic;
+
+                for (int i = minHarmonic; i <= maxHarmonic; i++)
+                {
+                    double magnitude = complexData[i].Magnitude;
+                    if (magnitude > maxMagnitude)
+                    {
+                        maxMagnitude = magnitude;
+                        maxIndex = i;
+                    }
+                }
+
+                // Критерий: если максимальная гармоника близка к ожидаемой
+                bool result = Math.Abs(maxIndex - expectedHarmonic) <= 1;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "AnalyzeUnderfillFFT - ошибка при Фурье-анализе");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Получение усредненной яркости по строкам развертки
+        /// </summary>
+        private static void GetWStatistics(Mat src, float[] dst, int w, int h)
+        {
+            Array.Clear(dst, 0, dst.Length);
+
+            unsafe
+            {
+                byte* srcPtr = (byte*)src.DataPointer;
+                fixed (float* dstPtr = dst)
+                {
+                    for (int j = 0; j < h; j++)
+                    {
+                        byte* rowPtr = srcPtr + j * w;
+                        for (int i = 0; i < w; i++)
+                            dstPtr[i] += rowPtr[i];
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Получение развертки изображения
+        /// </summary>
+        private static void GetStripeImg(Mat src, Mat dst, double[] sinTable, double[] cosTable,
+                                         Point center, int radius, int w, int h, int width, int height)
+        {
+            const int INNER_OFFSET = 7; // Можно сделать параметром
+
+            int hr = radius - height;
+
+            for (int j = 0; j < height; j++)
+            {
+                int r = hr + j + INNER_OFFSET;
+                for (int i = 0; i < width; i++)
+                {
+                    double x = sinTable[i] * r + center.X;
+                    double y = cosTable[i] * r + center.Y;
+
+                    // Билинейная интерполяция
+                    dst.Set<byte>(j, i, Bilinear8Bit(src, x, y, w, h));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Билинейная интерполяция для 8-битных изображений
+        /// </summary>
+        private static byte Bilinear8Bit(Mat img, double x, double y, int w, int h)
+        {
+            int u = (int)x;
+            int v = (int)y;
+
+            if (u < 0 || v < 0 || u >= w - 1 || v >= h - 1)
+                return 0;
+
+            double dx = x - u;
+            double dy = y - v;
+
+            byte p1 = img.At<byte>(v, u);
+            byte p2 = img.At<byte>(v, u + 1);
+            byte p3 = img.At<byte>(v + 1, u);
+            byte p4 = img.At<byte>(v + 1, u + 1);
+
+            double interpolated = (1 - dx) * (1 - dy) * p1 +
+                                  dx * (1 - dy) * p2 +
+                                  (1 - dx) * dy * p3 +
+                                  dx * dy * p4;
+
+            return (byte)Math.Round(interpolated);
+        }
         #endregion
 
         #region Вспомогательные методы обработки
@@ -2108,6 +2403,21 @@ namespace KrishkiForms
             Mat processed = image.Clone();
             processed = SimulateCameraSaturation(processed, saturation);
             NonlinearBackgroundDecolorization(processed, capsColor);
+
+            // ===== СОХРАНЯЕМ РЕЗУЛЬТАТ ЦВЕТОКОРРЕКЦИИ В ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+            lock (_colorCorrectedLock)
+            {
+                // Освобождаем предыдущие изображения
+                _lastColorCorrectedImage?.Dispose();
+                _lastColorCorrectedGray?.Dispose();
+
+                // Сохраняем цветокорректированное изображение
+                _lastColorCorrectedImage = processed.Clone();
+
+                // Создаем и сохраняем grayscale версию
+                _lastColorCorrectedGray = new Mat();
+                Cv2.CvtColor(_lastColorCorrectedImage, _lastColorCorrectedGray, ColorConversionCodes.BGR2GRAY);
+            }
 
             Mat[] channels;
             Cv2.Split(processed, out channels);
@@ -2310,7 +2620,7 @@ namespace KrishkiForms
                     {
                         // Отправляем сигнал на ПР
                         modbusClient.WriteRegister(startRecognizeProcessing, 1);
-                  
+
                     }
                 }
 
@@ -2783,7 +3093,6 @@ namespace KrishkiForms
             }
         }
 
-
         private void ovalityCoefNumUpD_ValueChanged(object sender, EventArgs e)
         {
             ovalityThreshold = (double)ovalityCoefNumUpD.Value;
@@ -2822,6 +3131,16 @@ namespace KrishkiForms
         private void obloyPixCountNumUpD_ValueChanged(object sender, EventArgs e)
         {
             minAreaObloy = (double)obloyPixCountNumUpD.Value;
+        }
+
+        private void countCorrugationsNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            corrugationsCountForUnderFill = (double)countCorrugationsNumUpD.Value;
+        }
+
+        private void coefCapRadiusMaskUnderFillNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            coefCapRadiusUnderFill = (double)coefCapRadiusMaskUnderFillNumUpD.Value;
         }
 
         private void SaveSettings()
@@ -2935,7 +3254,7 @@ namespace KrishkiForms
                 if (isStreamCam)
                 {
 
-            #if OLD_FRAME_PROCESSING
+#if OLD_FRAME_PROCESSING
             try
             {
                 lock (frameLock)
@@ -2953,7 +3272,7 @@ namespace KrishkiForms
             {
                 ErrorLogger.Log(ex, "Error in OLD_FRAME_PROCESSING block");
             }
-            #else
+#else
                     try
                     {
                         if (isProcessing)
@@ -3215,16 +3534,16 @@ namespace KrishkiForms
                         // ===== Получение кадра =====
                         if (isStreamCam)
                         {
-                    #if OLD_FRAME_PROCESSING
+#if OLD_FRAME_PROCESSING
                     lock (frameLock)
                     {
                         if (!newFrameAvailable) continue;
                         frameToProcess = latestFrame.Clone();
                         newFrameAvailable = false;
                     }
-                    #else
+#else
                             frameToProcess = _imageQueue.Get(token);
-                    #endif
+#endif
                         }
                         else if (isProcessingFromFolder)
                         {
@@ -3301,6 +3620,12 @@ namespace KrishkiForms
                                     gray.CopyTo(_grayForObloyDefects);
                                 }
 
+                                if (underFillCb.Checked)
+                                {
+                                    frameToProcess.CopyTo(_imageForUnderfill);
+                                    gray.CopyTo(_grayForUnderfill);
+                                }
+
                                 // === Запуск проверок ===
                                 using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
                                 {
@@ -3312,6 +3637,7 @@ namespace KrishkiForms
                                         var inclusionsTask = Task.FromResult(false);
                                         var paintTask = Task.FromResult(false);
                                         var obloyTask = Task.FromResult(false);
+                                        var underFillTask = Task.FromResult(false);
 
                                         if (ovalityCB.Checked)
                                             ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, _frameToDisplay, timeoutCts.Token, RunCheckOvality, capContour);
@@ -3325,13 +3651,18 @@ namespace KrishkiForms
                                         if (obloyCB.Checked)
                                             obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, _frameToDisplay, timeoutCts.Token, RunCheckForObloyDefects, capContour);
 
+                                        if (underFillCb.Checked)
+                                            underFillTask = RunCheckWithTimeout(_grayForUnderfill, _imageForUnderfill, _frameToDisplay, timeoutCts.Token, RunCheckForUnderFillDefects, capContour);
+
+
                                         await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask);
 
                                         bool anyDefect =
                                             (ovalityCB.Checked && ovalityTask.Result) ||
                                             (inclusionCB.Checked && inclusionsTask.Result) ||
                                             (inpaintCB.Checked && paintTask.Result) ||
-                                            (obloyCB.Checked && obloyTask.Result);
+                                            (obloyCB.Checked && obloyTask.Result) ||
+                                            (underFillCb.Checked && underFillTask.Result);
 
                                         // === счётчики ===
                                         if (anyDefect)
@@ -3380,11 +3711,14 @@ namespace KrishkiForms
                                             ? PLCData.QualityStatus.Bad
                                             : PLCData.QualityStatus.Good;
 
-                                        _ = Task.Run(() =>
+                                        if (!isProcessingFromFolder)
                                         {
-                                            try { SendQualityStatus(st); }
-                                            catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка при отправке статуса качества в ПЛК"); }
-                                        });
+                                            _ = Task.Run(() =>
+                                            {
+                                                try { SendQualityStatus(st); }
+                                                catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка при отправке статуса качества в ПЛК"); }
+                                            });
+                                        }
 
                                         bool show =
                                             _outputMode == OutputMode.All ||
@@ -3596,6 +3930,37 @@ namespace KrishkiForms
                 UpdateTextBox(percentObloyCapsTb, percentObloyCaps);
 
                 return hasObloyDefects;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка в RunCheckForObloyDefects");
+                return false;
+            }
+        }
+
+        private bool RunCheckForUnderFillDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
+        {
+            try
+            {
+                token.ThrowIfCancellationRequested();
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                bool hasUnderFillDefects = CheckForUnderFillDefects(gray, image, drawFrame, token, capContour);
+
+                if (hasUnderFillDefects)
+                {
+                    underFillDefectCount++;
+                    percentUnderfillCaps = generalCapsCount > 0 ? underFillDefectCount / generalCapsCount * 100 : 0;
+                    UpdateTextBox(underFillDef, underFillDefectCount);
+                    UpdateTextBox(percentUnderFillCapsTb, percentUnderfillCaps);
+                }
+
+                stopwatch.Stop();
+                percentUnderfillCaps = generalCapsCount > 0 ? underFillDefectCount / generalCapsCount * 100 : 0;
+                UpdateTextBox(underFillTime, stopwatch.ElapsedMilliseconds, 0);
+                UpdateTextBox(percentUnderFillCapsTb, percentUnderfillCaps);
+
+                return hasUnderFillDefects;
             }
             catch (Exception ex)
             {
@@ -3829,7 +4194,7 @@ namespace KrishkiForms
         #endregion
 
         #region Методы обработки сигналов и FFT
-
+/*
         public int GetDefectFeatureFromRectifiedImage(Mat img0, Mat imgHSV, int radius, Point center, int rectW, int rectH, double threshold)
         {
             Stopwatch timer = new Stopwatch();
@@ -4001,7 +4366,7 @@ namespace KrishkiForms
             // 6. Проверка критерия дефекта
             double ratio = max_value / sub_max_value;
             return ratio > threshold ? 1 : 0;
-        }
+        }*/
 
         #endregion
 
@@ -4164,7 +4529,7 @@ namespace KrishkiForms
 
         #region Дополнительные методы проверки (для полноты)
 
-        private bool CheckUnderfill(Mat gray, Mat imgColor)
+        /*private bool CheckUnderfill(Mat gray, Mat imgColor)
         {
             // Размытие
             Mat smoothImage = new Mat();
@@ -4194,7 +4559,7 @@ namespace KrishkiForms
             int decision = GetDefectFeatureFromRectifiedImage(imgColor, imgHSV, radius, center, 1024, (int)(radius * 0.08), TRESHOLD);
 
             return decision == 0;
-        }
+        }*/
 
         private void Form1_Load()
         {
