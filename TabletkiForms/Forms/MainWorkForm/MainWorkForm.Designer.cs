@@ -66,6 +66,11 @@
             panel3 = new Panel();
             loadImageButton = new Button();
             tableLayoutPanel2 = new TableLayoutPanel();
+            percentUnderFillCapsTb = new TextBox();
+            underFillTime = new TextBox();
+            underFillDef = new TextBox();
+            Недолив = new Label();
+            underFillCb = new CheckBox();
             inpaintTime = new TextBox();
             obloyTime = new TextBox();
             inclusionTime = new TextBox();
@@ -766,11 +771,16 @@
             // 
             tableLayoutPanel2.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetPartial;
             tableLayoutPanel2.ColumnCount = 5;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 13.349515F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 22.5728149F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.212122F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.212122F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.212122F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 13.40868F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 22.6728745F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.3061485F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.3061485F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.3061485F));
+            tableLayoutPanel2.Controls.Add(percentUnderFillCapsTb, 4, 5);
+            tableLayoutPanel2.Controls.Add(underFillTime, 3, 5);
+            tableLayoutPanel2.Controls.Add(underFillDef, 2, 5);
+            tableLayoutPanel2.Controls.Add(Недолив, 1, 5);
+            tableLayoutPanel2.Controls.Add(underFillCb, 0, 5);
             tableLayoutPanel2.Controls.Add(inpaintTime, 3, 3);
             tableLayoutPanel2.Controls.Add(obloyTime, 3, 4);
             tableLayoutPanel2.Controls.Add(inclusionTime, 3, 2);
@@ -798,14 +808,80 @@
             tableLayoutPanel2.Controls.Add(percentObloyCapsTb, 4, 4);
             tableLayoutPanel2.Location = new Point(3, 467);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 5;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel2.RowCount = 6;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666666F));
             tableLayoutPanel2.Size = new Size(415, 302);
             tableLayoutPanel2.TabIndex = 8;
+            // 
+            // percentUnderFillCapsTb
+            // 
+            percentUnderFillCapsTb.Anchor = AnchorStyles.None;
+            percentUnderFillCapsTb.BorderStyle = BorderStyle.None;
+            percentUnderFillCapsTb.Font = new Font("Segoe UI", 7.8F);
+            percentUnderFillCapsTb.Location = new Point(329, 264);
+            percentUnderFillCapsTb.Name = "percentUnderFillCapsTb";
+            percentUnderFillCapsTb.Size = new Size(79, 18);
+            percentUnderFillCapsTb.TabIndex = 44;
+            percentUnderFillCapsTb.Text = "0";
+            percentUnderFillCapsTb.TextAlign = HorizontalAlignment.Center;
+            // 
+            // underFillTime
+            // 
+            underFillTime.Anchor = AnchorStyles.None;
+            underFillTime.BackColor = Color.White;
+            underFillTime.BorderStyle = BorderStyle.None;
+            underFillTime.Font = new Font("Segoe UI", 7.8F);
+            underFillTime.Location = new Point(247, 264);
+            underFillTime.Name = "underFillTime";
+            underFillTime.Size = new Size(67, 18);
+            underFillTime.TabIndex = 43;
+            underFillTime.Text = "0";
+            underFillTime.TextAlign = HorizontalAlignment.Center;
+            // 
+            // underFillDef
+            // 
+            underFillDef.Anchor = AnchorStyles.None;
+            underFillDef.BackColor = Color.White;
+            underFillDef.BorderStyle = BorderStyle.None;
+            underFillDef.Font = new Font("Segoe UI", 7.8F);
+            underFillDef.Location = new Point(159, 264);
+            underFillDef.Name = "underFillDef";
+            underFillDef.Size = new Size(69, 18);
+            underFillDef.TabIndex = 42;
+            underFillDef.Text = "0";
+            underFillDef.TextAlign = HorizontalAlignment.Center;
+            // 
+            // Недолив
+            // 
+            Недолив.AutoSize = true;
+            Недолив.Dock = DockStyle.Fill;
+            Недолив.Font = new Font("Segoe UI", 7.8F);
+            Недолив.Location = new Point(62, 248);
+            Недолив.Name = "Недолив";
+            Недолив.Size = new Size(84, 51);
+            Недолив.TabIndex = 41;
+            Недолив.Text = "Недолив";
+            Недолив.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // underFillCb
+            // 
+            underFillCb.Anchor = AnchorStyles.None;
+            underFillCb.AutoSize = true;
+            underFillCb.BackColor = Color.White;
+            underFillCb.Checked = true;
+            underFillCb.CheckState = CheckState.Checked;
+            underFillCb.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            underFillCb.ForeColor = Color.White;
+            underFillCb.Location = new Point(20, 265);
+            underFillCb.Name = "underFillCb";
+            underFillCb.Size = new Size(18, 17);
+            underFillCb.TabIndex = 40;
+            underFillCb.UseVisualStyleBackColor = false;
             // 
             // inpaintTime
             // 
@@ -813,7 +889,7 @@
             inpaintTime.BackColor = Color.White;
             inpaintTime.BorderStyle = BorderStyle.None;
             inpaintTime.Font = new Font("Segoe UI", 7.8F);
-            inpaintTime.Location = new Point(247, 199);
+            inpaintTime.Location = new Point(247, 164);
             inpaintTime.Name = "inpaintTime";
             inpaintTime.Size = new Size(67, 18);
             inpaintTime.TabIndex = 12;
@@ -826,7 +902,7 @@
             obloyTime.BackColor = Color.White;
             obloyTime.BorderStyle = BorderStyle.None;
             obloyTime.Font = new Font("Segoe UI", 7.8F);
-            obloyTime.Location = new Point(247, 260);
+            obloyTime.Location = new Point(247, 213);
             obloyTime.Name = "obloyTime";
             obloyTime.Size = new Size(67, 18);
             obloyTime.TabIndex = 10;
@@ -839,7 +915,7 @@
             inclusionTime.BackColor = Color.White;
             inclusionTime.BorderStyle = BorderStyle.None;
             inclusionTime.Font = new Font("Segoe UI", 7.8F);
-            inclusionTime.Location = new Point(247, 140);
+            inclusionTime.Location = new Point(247, 115);
             inclusionTime.Name = "inclusionTime";
             inclusionTime.Size = new Size(68, 18);
             inclusionTime.TabIndex = 11;
@@ -852,7 +928,7 @@
             timeOvality.BackColor = Color.White;
             timeOvality.BorderStyle = BorderStyle.None;
             timeOvality.Font = new Font("Segoe UI", 7.8F);
-            timeOvality.Location = new Point(246, 81);
+            timeOvality.Location = new Point(246, 66);
             timeOvality.Name = "timeOvality";
             timeOvality.Size = new Size(69, 18);
             timeOvality.TabIndex = 9;
@@ -866,7 +942,7 @@
             label45.Font = new Font("Segoe UI", 7.8F);
             label45.Location = new Point(6, 3);
             label45.Name = "label45";
-            label45.Size = new Size(47, 56);
+            label45.Size = new Size(47, 46);
             label45.TabIndex = 0;
             label45.Text = "✔";
             label45.TextAlign = ContentAlignment.MiddleCenter;
@@ -877,7 +953,7 @@
             ovalityDef.BackColor = Color.White;
             ovalityDef.BorderStyle = BorderStyle.None;
             ovalityDef.Font = new Font("Segoe UI", 7.8F);
-            ovalityDef.Location = new Point(159, 81);
+            ovalityDef.Location = new Point(159, 66);
             ovalityDef.Name = "ovalityDef";
             ovalityDef.Size = new Size(69, 18);
             ovalityDef.TabIndex = 8;
@@ -890,7 +966,7 @@
             inclusionDef.BackColor = Color.White;
             inclusionDef.BorderStyle = BorderStyle.None;
             inclusionDef.Font = new Font("Segoe UI", 7.8F);
-            inclusionDef.Location = new Point(160, 140);
+            inclusionDef.Location = new Point(160, 115);
             inclusionDef.Name = "inclusionDef";
             inclusionDef.Size = new Size(68, 18);
             inclusionDef.TabIndex = 10;
@@ -903,7 +979,7 @@
             obloyDef.BackColor = Color.White;
             obloyDef.BorderStyle = BorderStyle.None;
             obloyDef.Font = new Font("Segoe UI", 7.8F);
-            obloyDef.Location = new Point(159, 260);
+            obloyDef.Location = new Point(159, 213);
             obloyDef.Name = "obloyDef";
             obloyDef.Size = new Size(69, 18);
             obloyDef.TabIndex = 9;
@@ -916,7 +992,7 @@
             InpaintDef.BackColor = Color.White;
             InpaintDef.BorderStyle = BorderStyle.None;
             InpaintDef.Font = new Font("Segoe UI", 7.8F);
-            InpaintDef.Location = new Point(160, 199);
+            InpaintDef.Location = new Point(160, 164);
             InpaintDef.Name = "InpaintDef";
             InpaintDef.Size = new Size(67, 18);
             InpaintDef.TabIndex = 11;
@@ -930,7 +1006,7 @@
             label46.Font = new Font("Segoe UI", 7.8F);
             label46.Location = new Point(62, 3);
             label46.Name = "label46";
-            label46.Size = new Size(84, 56);
+            label46.Size = new Size(84, 46);
             label46.TabIndex = 1;
             label46.Text = "Название дефекта";
             label46.TextAlign = ContentAlignment.MiddleCenter;
@@ -942,7 +1018,7 @@
             label52.Font = new Font("Segoe UI", 7.8F);
             label52.Location = new Point(155, 3);
             label52.Name = "label52";
-            label52.Size = new Size(78, 56);
+            label52.Size = new Size(78, 46);
             label52.TabIndex = 2;
             label52.Text = "Количество";
             label52.TextAlign = ContentAlignment.MiddleCenter;
@@ -956,7 +1032,7 @@
             obloyCB.CheckState = CheckState.Checked;
             obloyCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             obloyCB.ForeColor = Color.White;
-            obloyCB.Location = new Point(20, 260);
+            obloyCB.Location = new Point(20, 213);
             obloyCB.Name = "obloyCB";
             obloyCB.Size = new Size(18, 17);
             obloyCB.TabIndex = 9;
@@ -969,7 +1045,7 @@
             label53.Font = new Font("Segoe UI", 7.8F);
             label53.Location = new Point(242, 3);
             label53.Name = "label53";
-            label53.Size = new Size(78, 56);
+            label53.Size = new Size(78, 46);
             label53.TabIndex = 3;
             label53.Text = "Время";
             label53.TextAlign = ContentAlignment.MiddleCenter;
@@ -981,7 +1057,7 @@
             label54.Font = new Font("Segoe UI", 7.8F);
             label54.Location = new Point(329, 3);
             label54.Name = "label54";
-            label54.Size = new Size(80, 56);
+            label54.Size = new Size(80, 46);
             label54.TabIndex = 4;
             label54.Text = "Процент, %";
             label54.TextAlign = ContentAlignment.MiddleCenter;
@@ -991,9 +1067,9 @@
             label55.AutoSize = true;
             label55.Dock = DockStyle.Fill;
             label55.Font = new Font("Segoe UI", 7.8F);
-            label55.Location = new Point(62, 62);
+            label55.Location = new Point(62, 52);
             label55.Name = "label55";
-            label55.Size = new Size(84, 56);
+            label55.Size = new Size(84, 46);
             label55.TabIndex = 5;
             label55.Text = "Овальность";
             label55.TextAlign = ContentAlignment.MiddleCenter;
@@ -1003,9 +1079,9 @@
             label56.AutoSize = true;
             label56.Dock = DockStyle.Fill;
             label56.Font = new Font("Segoe UI", 7.8F);
-            label56.Location = new Point(62, 121);
+            label56.Location = new Point(62, 101);
             label56.Name = "label56";
-            label56.Size = new Size(84, 56);
+            label56.Size = new Size(84, 46);
             label56.TabIndex = 6;
             label56.Text = "Вкрапления";
             label56.TextAlign = ContentAlignment.MiddleCenter;
@@ -1015,9 +1091,9 @@
             label57.AutoSize = true;
             label57.Dock = DockStyle.Fill;
             label57.Font = new Font("Segoe UI", 7.8F);
-            label57.Location = new Point(62, 180);
+            label57.Location = new Point(62, 150);
             label57.Name = "label57";
-            label57.Size = new Size(84, 56);
+            label57.Size = new Size(84, 46);
             label57.TabIndex = 7;
             label57.Text = "Непрокрас";
             label57.TextAlign = ContentAlignment.MiddleCenter;
@@ -1027,9 +1103,9 @@
             label58.AutoSize = true;
             label58.Dock = DockStyle.Fill;
             label58.Font = new Font("Segoe UI", 7.8F);
-            label58.Location = new Point(62, 239);
+            label58.Location = new Point(62, 199);
             label58.Name = "label58";
-            label58.Size = new Size(84, 60);
+            label58.Size = new Size(84, 46);
             label58.TabIndex = 8;
             label58.Text = "Облой";
             label58.TextAlign = ContentAlignment.MiddleCenter;
@@ -1043,7 +1119,7 @@
             ovalityCB.CheckState = CheckState.Checked;
             ovalityCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             ovalityCB.ForeColor = Color.White;
-            ovalityCB.Location = new Point(20, 81);
+            ovalityCB.Location = new Point(20, 66);
             ovalityCB.Name = "ovalityCB";
             ovalityCB.Size = new Size(18, 17);
             ovalityCB.TabIndex = 9;
@@ -1058,7 +1134,7 @@
             inclusionCB.CheckState = CheckState.Checked;
             inclusionCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             inclusionCB.ForeColor = Color.White;
-            inclusionCB.Location = new Point(20, 140);
+            inclusionCB.Location = new Point(20, 115);
             inclusionCB.Name = "inclusionCB";
             inclusionCB.Size = new Size(18, 17);
             inclusionCB.TabIndex = 13;
@@ -1073,7 +1149,7 @@
             inpaintCB.CheckState = CheckState.Checked;
             inpaintCB.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             inpaintCB.ForeColor = Color.White;
-            inpaintCB.Location = new Point(20, 199);
+            inpaintCB.Location = new Point(20, 164);
             inpaintCB.Name = "inpaintCB";
             inpaintCB.Size = new Size(18, 17);
             inpaintCB.TabIndex = 35;
@@ -1084,7 +1160,7 @@
             percentOvalityCapsTb.Anchor = AnchorStyles.None;
             percentOvalityCapsTb.BorderStyle = BorderStyle.None;
             percentOvalityCapsTb.Font = new Font("Segoe UI", 7.8F);
-            percentOvalityCapsTb.Location = new Point(329, 81);
+            percentOvalityCapsTb.Location = new Point(329, 66);
             percentOvalityCapsTb.Name = "percentOvalityCapsTb";
             percentOvalityCapsTb.Size = new Size(79, 18);
             percentOvalityCapsTb.TabIndex = 36;
@@ -1096,7 +1172,7 @@
             percentInclusionCapsTb.Anchor = AnchorStyles.None;
             percentInclusionCapsTb.BorderStyle = BorderStyle.None;
             percentInclusionCapsTb.Font = new Font("Segoe UI", 7.8F);
-            percentInclusionCapsTb.Location = new Point(329, 140);
+            percentInclusionCapsTb.Location = new Point(329, 115);
             percentInclusionCapsTb.Name = "percentInclusionCapsTb";
             percentInclusionCapsTb.Size = new Size(79, 18);
             percentInclusionCapsTb.TabIndex = 37;
@@ -1108,7 +1184,7 @@
             percentInpaintCapsTb.Anchor = AnchorStyles.None;
             percentInpaintCapsTb.BorderStyle = BorderStyle.None;
             percentInpaintCapsTb.Font = new Font("Segoe UI", 7.8F);
-            percentInpaintCapsTb.Location = new Point(329, 199);
+            percentInpaintCapsTb.Location = new Point(329, 164);
             percentInpaintCapsTb.Name = "percentInpaintCapsTb";
             percentInpaintCapsTb.Size = new Size(79, 18);
             percentInpaintCapsTb.TabIndex = 38;
@@ -1120,7 +1196,7 @@
             percentObloyCapsTb.Anchor = AnchorStyles.None;
             percentObloyCapsTb.BorderStyle = BorderStyle.None;
             percentObloyCapsTb.Font = new Font("Segoe UI", 7.8F);
-            percentObloyCapsTb.Location = new Point(329, 260);
+            percentObloyCapsTb.Location = new Point(329, 213);
             percentObloyCapsTb.Name = "percentObloyCapsTb";
             percentObloyCapsTb.Size = new Size(79, 18);
             percentObloyCapsTb.TabIndex = 39;
@@ -3378,5 +3454,10 @@
         private Label label61;
         private Label label62;
         private NumericUpDown numericUpDown2;
+        private TextBox percentUnderFillCapsTb;
+        private TextBox underFillTime;
+        private TextBox underFillDef;
+        private Label Недолив;
+        private CheckBox underFillCb;
     }
 }
