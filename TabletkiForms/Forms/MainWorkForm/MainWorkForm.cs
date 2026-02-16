@@ -1,15 +1,5 @@
 ﻿//#define OLD_FRAME_PROCESSING
 
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Globalization;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 using KrishkiForms.Authorization;
 using KrishkiForms.CameraAndModbusClasses;
 using KrishkiForms.Forms;
@@ -22,6 +12,17 @@ using MathNet.Numerics.IntegralTransforms;
 using Newtonsoft.Json;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
+using OpenCvSharp.Flann;
+using System.Collections.Concurrent;
+using System.Collections.Immutable;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Globalization;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 using Timer = System.Windows.Forms.Timer;
@@ -716,6 +717,12 @@ namespace KrishkiForms
             if (!string.IsNullOrEmpty(Properties.Settings.Default.MinAreaObloy))
                 obloyPixCountNumUpD.Text = Properties.Settings.Default.MinAreaObloy;
 
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.СorrugationsCountForUnderFill))
+                countCorrugationsNumUpD.Text = Properties.Settings.Default.СorrugationsCountForUnderFill;
+
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.СoefCapRadiusUnderFill))
+                coefCapRadiusMaskUnderFillNumUpD.Text = Properties.Settings.Default.СoefCapRadiusUnderFill;
+
             // ===== Параметры камеры (Width, Height, Exposure, Saturation) =====
             if (!string.IsNullOrEmpty(Properties.Settings.Default.WidthFrame))
                 frameWidthNumUpD.Text = Properties.Settings.Default.WidthFrame;
@@ -1377,7 +1384,9 @@ namespace KrishkiForms
                     CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text,
                     MinAreaInpaintDefect = minSquareInpaintNumUpD.Text,
                     MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text,
-                    MinAreaObloy = obloyPixCountNumUpD.Text
+                    MinAreaObloy = obloyPixCountNumUpD.Text,
+                    CorrugationsCountForUnderFill = countCorrugationsNumUpD.Text,
+                    CoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text
                 };
 
                 string json = System.Text.Json.JsonSerializer.Serialize(settings,
@@ -1406,6 +1415,9 @@ namespace KrishkiForms
                 Properties.Settings.Default.MinAreaInpaintDefect = minSquareInpaintNumUpD.Text;
                 Properties.Settings.Default.MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text;
                 Properties.Settings.Default.MinAreaObloy = obloyPixCountNumUpD.Text;
+                Properties.Settings.Default.СorrugationsCountForUnderFill = countCorrugationsNumUpD.Text;
+                Properties.Settings.Default.СoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text;
+
 
                 Properties.Settings.Default.Save();
             }
@@ -1445,6 +1457,8 @@ namespace KrishkiForms
                         minSquareInpaintNumUpD.Text = settings.GetValueOrDefault("MinAreaInpaintDefect", "500");
                         whiteThresoldNumUpD.Text = settings.GetValueOrDefault("MinInpaintWhiteThreshold", "150");
                         obloyPixCountNumUpD.Text = settings.GetValueOrDefault("MinAreaObloy", "1000");
+                        countCorrugationsNumUpD.Text = settings.GetValueOrDefault("CorrugationsCountForUnderFill", "10");
+                        coefCapRadiusMaskUnderFillNumUpD.Text = settings.GetValueOrDefault("CoefCapRadiusUnderFill", "0,85");
                     }
                 }
             }
@@ -1461,49 +1475,55 @@ namespace KrishkiForms
             {
                 if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality) || ovality <= 0 || ovality > 1)
                 {
-                    ErrorLogger.Log(new Exception("Параметр 'OvalityThreshold' некорректен"), "ValidateDefectSettings");
+                    ErrorLogger.Log(new Exception("Параметр 'Коэффициент овальности' некорректен"), "ValidateDefectSettings");
                     return false;
                 }
 
                 if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion) || inclusion <= 0 || inclusion > 1)
                 {
-                    ErrorLogger.Log(new Exception("Параметр 'InclusionThreshold' некорректен"), "ValidateDefectSettings");
+                    ErrorLogger.Log(new Exception("Параметр 'Коэффициент округлости вкраплений' некорректен"), "ValidateDefectSettings");
                     return false;
                 }
 
                 if (!double.TryParse(coefCapRadiusInclusionUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double coefCapRadius) || coefCapRadius <= 0 || coefCapRadius > 1)
                 {
-                    ErrorLogger.Log(new Exception("Параметр 'coefCapRadius' некорректен"), "ValidateDefectSettings");
+                    ErrorLogger.Log(new Exception("Параметр 'Коэффициент от радиуса крышки' некорректен"), "ValidateDefectSettings");
                     return false;
                 }
 
                 if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInclusion) || minInclusion < 0)
                 {
-                    ErrorLogger.Log(new Exception("Параметр 'MinAreaInclusion' некорректен"), "ValidateDefectSettings");
+                    ErrorLogger.Log(new Exception("Параметр 'Минимальная площадь вкрапления' некорректен"), "ValidateDefectSettings");
                     return false;
                 }
 
                 if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double maxInclusion) || maxInclusion <= minInclusion)
                 {
-                    ErrorLogger.Log(new Exception("Параметр 'MaxAreaInclusion' должен быть больше MinAreaInclusion"), "ValidateDefectSettings");
+                    ErrorLogger.Log(new Exception("Параметр 'Максимальная площадь вкрапления' должен быть больше MinAreaInclusion"), "ValidateDefectSettings");
                     return false;
                 }
 
                 if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInpaint) || minInpaint <= 0)
                 {
-                    ErrorLogger.Log(new Exception("Параметр 'MinAreaInpaintDefect' некорректен"), "ValidateDefectSettings");
+                    ErrorLogger.Log(new Exception("Параметр 'Минимальная площадь непрокраса' некорректен"), "ValidateDefectSettings");
                     return false;
                 }
 
                 if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double whiteThreshold) || whiteThreshold <= 0)
                 {
-                    ErrorLogger.Log(new Exception("Параметр 'MinInpaintWhiteThreshold' некорректен"), "ValidateDefectSettings");
+                    ErrorLogger.Log(new Exception("Параметр 'Близость к белому' некорректен"), "ValidateDefectSettings");
                     return false;
                 }
 
                 if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double obloy) || obloy <= 0)
                 {
-                    ErrorLogger.Log(new Exception("Параметр 'MinAreaObloy' некорректен"), "ValidateDefectSettings");
+                    ErrorLogger.Log(new Exception("Параметр 'Минимальная площадь облоя' некорректен"), "ValidateDefectSettings");
+                    return false;
+                }
+
+                if (!double.TryParse(countCorrugationsNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double corrugationsCount) || corrugationsCount <= 0)
+                {
+                    ErrorLogger.Log(new Exception("Параметр 'Количество зубцов на коронке' некорректен"), "ValidateDefectSettings");
                     return false;
                 }
 
@@ -2082,28 +2102,24 @@ namespace KrishkiForms
                     return false;
                 }
 
-                Mat colorCorrectedImage;
-                Mat colorCorrectedGray;
+                // ===== ПРИМЕНЯЕМ ЦВЕТОКОРРЕКЦИЮ ПРЯМО ЗДЕСЬ =====
+                // Создаем копию исходного изображения для цветокоррекции
+                Mat colorCorrectedImage = image.Clone();
+                Mat colorCorrectedGray = null;
 
-                lock (_colorCorrectedLock)
+                try
                 {
-                    if (_lastColorCorrectedImage == null || _lastColorCorrectedImage.Empty() ||
-                        _lastColorCorrectedGray == null || _lastColorCorrectedGray.Empty())
-                    {
-                        ErrorLogger.Log(new Exception("Изображения после цветокоррекции не найдены"),
-                            "CheckForUnderFillDefects - отсутствуют цветокорректированные изображения");
-                        return false;
-                    }
+                    // Применяем цветокоррекцию с нужными параметрами
+                    // Параметры: img, nWhite=capsColor, isColored=true, isYellowCap=true, isGreenColor=false
+                    NonlinearBackgroundDecolorization(colorCorrectedImage, capsColor, true, true, false);
 
-                    colorCorrectedImage = _lastColorCorrectedImage.Clone();
-                    colorCorrectedGray = _lastColorCorrectedGray.Clone();
-                }
+                    // Создаем grayscale версию
+                    colorCorrectedGray = new Mat();
+                    Cv2.CvtColor(colorCorrectedImage, colorCorrectedGray, ColorConversionCodes.BGR2GRAY);
 
-                using (colorCorrectedImage)
-                using (colorCorrectedGray)
-                {
                     token.ThrowIfCancellationRequested();
 
+                    // === ЭТАП А: Нахождение коронки ===
                     RotatedRect outerEllipse = Cv2.FitEllipse(capContour);
 
                     Size2f outerSize = outerEllipse.Size;
@@ -2120,9 +2136,10 @@ namespace KrishkiForms
 
                     token.ThrowIfCancellationRequested();
 
-                    // rectWidth - используем константу
+                    // Параметры развертки
                     int rectHeight = (int)(Math.Max(outerSize.Width, outerSize.Height) * 0.15);
 
+                    // === ЭТАП Б: Выделение коронки и разворот ===
                     Mat crownMask = new Mat(colorCorrectedImage.Size(), MatType.CV_8UC1, Scalar.All(0));
 
                     try
@@ -2132,25 +2149,17 @@ namespace KrishkiForms
 
                         token.ThrowIfCancellationRequested();
 
-                        Mat maskedImage = new Mat();
-                        Cv2.BitwiseAnd(colorCorrectedImage, colorCorrectedImage, maskedImage, crownMask);
+                        // Выделяем область коронки на цветном и grayscale изображениях
+                        Mat maskedColor = new Mat();
+                        Cv2.BitwiseAnd(colorCorrectedImage, colorCorrectedImage, maskedColor, crownMask);
+
+                        Mat maskedGray = new Mat();
+                        Cv2.BitwiseAnd(colorCorrectedGray, colorCorrectedGray, maskedGray, crownMask);
 
                         token.ThrowIfCancellationRequested();
 
-                        Mat grayMasked = new Mat();
-                        Cv2.BitwiseAnd(colorCorrectedGray, colorCorrectedGray, grayMasked, crownMask);
-
-                        token.ThrowIfCancellationRequested();
-
+                        // Разворачиваем коронку в прямоугольник
                         Mat rectifiedCrown = new Mat(rectHeight, UNDERFILL_RECT_WIDTH, MatType.CV_8UC1);
-
-                        // ИСПОЛЬЗУЕМ КЭШИРОВАННЫЕ ТАБЛИЦЫ!
-                        double[] sinTable, cosTable;
-                        lock (_trigTablesLock)
-                        {
-                            sinTable = _sinTable;
-                            cosTable = _cosTable;
-                        }
 
                         float outerRadius = (float)(Math.Max(outerSize.Width, outerSize.Height) / 2);
                         float innerRadius = (float)(Math.Max(innerSize.Width, innerSize.Height) / 2);
@@ -2158,13 +2167,15 @@ namespace KrishkiForms
 
                         Point center = new Point((int)outerEllipse.Center.X, (int)outerEllipse.Center.Y);
 
-                        GetStripeImg(grayMasked, rectifiedCrown, sinTable, cosTable,
+                        // Используем кэшированные тригонометрические таблицы
+                        GetStripeImg(maskedGray, rectifiedCrown, _sinTable, _cosTable,
                                     center, (int)meanRadius,
-                                    grayMasked.Width, grayMasked.Height,
+                                    maskedGray.Width, maskedGray.Height,
                                     UNDERFILL_RECT_WIDTH, rectHeight);
 
                         token.ThrowIfCancellationRequested();
 
+                        // === ЭТАП В: Анализ через Фурье ===
                         float[] rowStatistics = new float[UNDERFILL_RECT_WIDTH];
                         GetWStatistics(rectifiedCrown, rowStatistics, UNDERFILL_RECT_WIDTH, rectHeight);
 
@@ -2172,8 +2183,7 @@ namespace KrishkiForms
 
                         bool hasUnderfill = AnalyzeUnderfillFFT(rowStatistics, UNDERFILL_RECT_WIDTH, corrugationsCountForUnderFill);
 
-                        token.ThrowIfCancellationRequested();
-
+                        // Отрисовка результата
                         try
                         {
                             Scalar color = hasUnderfill ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
@@ -2189,8 +2199,14 @@ namespace KrishkiForms
                     finally
                     {
                         crownMask?.Dispose();
-                        // maskedImage и grayMasked уже в using
+                        // maskedColor и maskedGray будут автоматически освобождены в using, который добавим ниже
                     }
+                }
+                finally
+                {
+                    // Освобождаем созданные ресурсы
+                    colorCorrectedImage?.Dispose();
+                    colorCorrectedGray?.Dispose();
                 }
             }
             catch (OperationCanceledException)
@@ -2252,8 +2268,16 @@ namespace KrishkiForms
                     }
                 }
 
-                // Критерий: если максимальная гармоника близка к ожидаемой
-                bool result = Math.Abs(maxIndex - expectedHarmonic) <= 1;
+                bool result;
+
+                if (maxIndex >= expectedHarmonic - 1 && maxIndex <= expectedHarmonic + 1)
+                {
+                    result = false;
+                }
+                else
+                {
+                    result = true;
+                }
 
                 return result;
             }
@@ -2402,22 +2426,7 @@ namespace KrishkiForms
             // ===== Цветокоррекция =====
             Mat processed = image.Clone();
             processed = SimulateCameraSaturation(processed, saturation);
-            NonlinearBackgroundDecolorization(processed, capsColor);
-
-            // ===== СОХРАНЯЕМ РЕЗУЛЬТАТ ЦВЕТОКОРРЕКЦИИ В ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
-            lock (_colorCorrectedLock)
-            {
-                // Освобождаем предыдущие изображения
-                _lastColorCorrectedImage?.Dispose();
-                _lastColorCorrectedGray?.Dispose();
-
-                // Сохраняем цветокорректированное изображение
-                _lastColorCorrectedImage = processed.Clone();
-
-                // Создаем и сохраняем grayscale версию
-                _lastColorCorrectedGray = new Mat();
-                Cv2.CvtColor(_lastColorCorrectedImage, _lastColorCorrectedGray, ColorConversionCodes.BGR2GRAY);
-            }
+            NonlinearBackgroundDecolorization(processed, capsColor, isColored, isYellowCap, isGreenColor);
 
             Mat[] channels;
             Cv2.Split(processed, out channels);
@@ -3085,6 +3094,20 @@ namespace KrishkiForms
                 {
                     minAreaObloy = 1000;
                     obloyPixCountNumUpD.Text = minAreaObloy.ToString(CultureInfo.InvariantCulture);
+                }
+
+                if (!double.TryParse(countCorrugationsNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out corrugationsCountForUnderFill))
+                {
+                    corrugationsCountForUnderFill = 10;
+                    countCorrugationsNumUpD.Text = corrugationsCountForUnderFill.ToString(CultureInfo.InvariantCulture);
+                }
+
+                if (!double.TryParse(coefCapRadiusMaskUnderFillNumUpD.Text.Replace(',', '.'),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out coefCapRadiusUnderFill))
+                {
+                    coefCapRadiusUnderFill = 0.85;
+                    coefCapRadiusMaskUnderFillNumUpD.Text = coefCapRadiusUnderFill.ToString(CultureInfo.InvariantCulture);
                 }
             }
             catch (Exception ex)
@@ -4372,7 +4395,7 @@ namespace KrishkiForms
 
         #region Методы цветовой обработки
 
-        public static void NonlinearBackgroundDecolorization(Mat img, byte nWhite)
+        public static void NonlinearBackgroundDecolorization(Mat img, byte nWhite, bool isColored, bool isYellowCap, bool isGreenColor)
         {
             if (img.Empty() || img.Type() != MatType.CV_8UC3)
                 throw new ArgumentException("Ожидается 3-канальное 8-битное изображение.");
@@ -4794,7 +4817,7 @@ namespace KrishkiForms
 
             // ---------------- 2. CapsColor ----------------------
             Mat capsImg = satImg.Clone();
-            NonlinearBackgroundDecolorization(capsImg, (byte)capcolorUpDown.Value);
+            NonlinearBackgroundDecolorization(capsImg, (byte)capcolorUpDown.Value, isColored, isYellowCap, isGreenColor);
             capscolorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
 
             // ---------------- 3. Window filtering ----------------

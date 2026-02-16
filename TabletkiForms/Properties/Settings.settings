@@ -74,5 +74,11 @@
     <Setting Name="CoefCapRadiusInclusion" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="СorrugationsCountForUnderFill" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="СoefCapRadiusUnderFill" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
