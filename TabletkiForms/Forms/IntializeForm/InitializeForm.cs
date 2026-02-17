@@ -97,7 +97,7 @@ namespace KrishkiForms
                         cameraConectLabel.ForeColor = Color.LimeGreen;
                     }));
                 }
-
+                //1
                 else
                 {
                     Camera = null;
