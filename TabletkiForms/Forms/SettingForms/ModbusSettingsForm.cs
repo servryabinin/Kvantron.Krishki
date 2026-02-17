@@ -1,24 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using KrishkiForms.CameraAndModbusClasses;
+using KrishkiForms.Services.Abstractions;
 
 namespace KrishkiForms
 {
     public partial class ModbusSettingsForm : Form
     {
+        private readonly IModbusService _modbusService;
+
         public string ModbusIP { get; private set; }
         public int ModbusPort { get; private set; }
 
-        public ModbusSettingsForm(string currentIP, int currentPort)
+        public ModbusSettingsForm(IModbusService modbusService, string currentIP, int currentPort)
         {
             InitializeComponent();
+            _modbusService = modbusService ?? throw new ArgumentNullException(nameof(modbusService));
+
             ipTextBox.Text = currentIP;
             portNumericUpDown.Value = currentPort;
         }
@@ -29,8 +27,8 @@ namespace KrishkiForms
             {
                 ModbusIP = ipTextBox.Text;
                 ModbusPort = (int)portNumericUpDown.Value;
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
             else
             {
@@ -41,8 +39,8 @@ namespace KrishkiForms
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private bool IsValidIP(string ip)
@@ -63,7 +61,7 @@ namespace KrishkiForms
             return true;
         }
 
-        private void testConnectionButton_Click(object sender, EventArgs e)
+        private async void testConnectionButton_Click(object sender, EventArgs e)
         {
             if (!IsValidIP(ipTextBox.Text))
             {
@@ -75,51 +73,32 @@ namespace KrishkiForms
             testConnectionButton.Enabled = false;
             testConnectionButton.Text = "Тестирование...";
 
-            Task.Run(() =>
+            try
             {
-                ModbusTCP testClient = null;
-                try
-                {
-                    testClient = new ModbusTCP(ipTextBox.Text, (int)portNumericUpDown.Value);
-                    bool connected = testClient.Connect();
+                bool connected = await _modbusService.ConnectAsync(ipTextBox.Text, (int)portNumericUpDown.Value);
 
-                    this.Invoke(new Action(() =>
-                    {
-                        if (connected)
-                        {
-                            MessageBox.Show("Подключение успешно!", "Тест подключения",
-                                          MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Не удалось подключиться к устройству", "Ошибка",
-                                          MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }));
-
-                    if (connected)
-                        testClient.Disconnect();
-                }
-                catch (Exception ex)
+                if (connected)
                 {
-                    this.Invoke(new Action(() =>
-                    {
-                        MessageBox.Show($"Ошибка подключения: {ex.Message}", "Ошибка",
-                                      MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }));
+                    MessageBox.Show("Подключение успешно!", "Тест подключения",
+                                  MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await _modbusService.DisconnectAsync();
                 }
-                finally
+                else
                 {
-                    // Вручную освобождаем ресурсы если нужно
-                    testClient?.Disconnect();
-
-                    this.Invoke(new Action(() =>
-                    {
-                        testConnectionButton.Enabled = true;
-                        testConnectionButton.Text = "Тест подключения";
-                    }));
+                    MessageBox.Show("Не удалось подключиться к устройству", "Ошибка",
+                                  MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка подключения: {ex.Message}", "Ошибка",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                testConnectionButton.Enabled = true;
+                testConnectionButton.Text = "Тест подключения";
+            }
         }
     }
 }

@@ -1,129 +1,60 @@
-﻿using MvCamCtrl.NET;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Windows.Forms;
-using KrishkiForms.CameraAndModbusClasses;
+using KrishkiForms.Models;
+using KrishkiForms.Services.Abstractions;
 
 namespace KrishkiForms
 {
     public partial class CameraSettingsForm : Form
     {
-        private List<MyCamera.MV_CC_DEVICE_INFO> availableDevices = new();
-        private HikCamera currentCamera; // текущая активная камера
-        public HikCamera SelectedCamera { get; private set; }
-        private string currentCameraSN;  // серийный номер текущей подключенной камеры
-        public string SelectedCameraSN { get; private set; } // выбранный серийник для сохранения
-        public string SelectedCameraIp { get; private set; }
+        private readonly ICameraService _cameraService;
+        private List<CameraInfo> _availableCameras;
+        private string _currentSerialNumber;
 
-
-        public CameraSettingsForm(string currentSN, HikCamera camera)
+        public CameraSettingsForm(ICameraService cameraService, string currentSerialNumber)
         {
             InitializeComponent();
-            currentCameraSN = currentSN;
-            currentCamera = camera;
+            _cameraService = cameraService ?? throw new ArgumentNullException(nameof(cameraService));
+            _currentSerialNumber = currentSerialNumber;
 
-            LoadCameras();
+            _ = LoadCamerasAsync(); // асинхронная загрузка
         }
 
-        // --- загрузка списка доступных камер ---
-        private void LoadCameras()
+        private async System.Threading.Tasks.Task LoadCamerasAsync()
         {
-            camerasDataGridView.Rows.Clear();
-            availableDevices.Clear();
-
             try
             {
-                MyCamera.MV_CC_DEVICE_INFO_LIST deviceList = new MyCamera.MV_CC_DEVICE_INFO_LIST();
-                int nRet = MyCamera.MV_CC_EnumDevices_NET(MyCamera.MV_GIGE_DEVICE | MyCamera.MV_USB_DEVICE, ref deviceList);
-                if (nRet != MyCamera.MV_OK)
+                camerasDataGridView.Rows.Clear();
+
+                _availableCameras = await _cameraService.GetAvailableCamerasAsync();
+
+                if (_availableCameras == null || _availableCameras.Count == 0)
                 {
-                    MessageBox.Show("Ошибка при поиске камер", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Камеры не найдены.", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-                for (int i = 0; i < deviceList.nDeviceNum; i++)
+
+                foreach (var cam in _availableCameras)
                 {
-                    var devicePtr = deviceList.pDeviceInfo[i];
-                    var device = (MyCamera.MV_CC_DEVICE_INFO)Marshal.PtrToStructure(devicePtr, typeof(MyCamera.MV_CC_DEVICE_INFO));
-
-                    string modelName = "";
-                    string serialNumber = "";
-                    string ipAddress = "";
-                    string connType = "";
-
-                    if (device.nTLayerType == MyCamera.MV_GIGE_DEVICE)
-                    {
-                        var gigeInfo = (MyCamera.MV_GIGE_DEVICE_INFO)MyCamera.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MyCamera.MV_GIGE_DEVICE_INFO));
-                        modelName = new string(gigeInfo.chModelName).TrimEnd('\0');
-                        serialNumber = new string(gigeInfo.chSerialNumber).TrimEnd('\0');
-
-                        // <-- исправлённое получение IP (как ты предложил)
-                        uint ip = gigeInfo.nCurrentIp;
-                        ipAddress = $"{(ip >> 24) & 0xFF}.{(ip >> 16) & 0xFF}.{(ip >> 8) & 0xFF}.{ip & 0xFF}";
-
-                        connType = "GigE";
-                    }
-                    else if (device.nTLayerType == MyCamera.MV_USB_DEVICE)
-                    {
-                        var usbInfo = (MyCamera.MV_USB3_DEVICE_INFO)MyCamera.ByteToStruct(device.SpecialInfo.stUsb3VInfo, typeof(MyCamera.MV_USB3_DEVICE_INFO));
-                        modelName = new string(usbInfo.chModelName).TrimEnd('\0');
-                        serialNumber = new string(usbInfo.chSerialNumber).TrimEnd('\0');
-                        ipAddress = "USB";
-                        connType = "USB3";
-                    }
-
-                    // проверим доступность подключения / состояние
                     string availability;
-
-                    if (!string.IsNullOrEmpty(currentCameraSN) &&
-                        string.Equals(serialNumber, currentCameraSN, StringComparison.OrdinalIgnoreCase) &&
-                        currentCamera != null && currentCamera.Connected)
-                    {
+                    if (cam.IsCurrent)
                         availability = "Мы подключены";
-                    }
                     else
-                    {
-                        // попытка открыть устройство в тестовом экземпляре (быстро проверить доступность)
-                        bool canConnect = false;
-                        try
-                        {
-                            var testCam = new HikCamera(serialNumber);
-                            canConnect = testCam.Open();
-                            if (canConnect)
-                            {
-                                testCam.Close();
-                                availability = "✔";
-                            }
-                            else
-                            {
-                                availability = "✖";
-                            }
-                        }
-                        catch
-                        {
-                            availability = "✖";
-                        }
-                    }
+                        availability = cam.IsAvailable ? "✔" : "✖";
 
                     int rowIndex = camerasDataGridView.Rows.Add(
-                        serialNumber == currentCameraSN, // чекбокс выбран, если это текущая камера
-                        modelName,
-                        serialNumber,
-                        ipAddress,
-                        connType,
+                        cam.IsCurrent,
+                        cam.Model,
+                        cam.SerialNumber,
+                        cam.IpAddress,
+                        cam.ConnectionType,
                         availability
                     );
 
-                    // сохраняем серийник в Tag для быстрого доступа
-                    camerasDataGridView.Rows[rowIndex].Tag = serialNumber;
-
-                    availableDevices.Add(device);
-                }
-
-                if (deviceList.nDeviceNum == 0)
-                {
-                    MessageBox.Show("Камеры не найдены.", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    camerasDataGridView.Rows[rowIndex].Tag = cam.SerialNumber;
                 }
             }
             catch (Exception ex)
@@ -132,102 +63,74 @@ namespace KrishkiForms
             }
         }
 
-        // --- логика клика по чекбоксу ---
-        private void camerasDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private async void camerasDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex != camerasDataGridView.Columns["ConnectColumn"].Index)
                 return;
 
             var row = camerasDataGridView.Rows[e.RowIndex];
-
-            // Так как CellContentClick вызывается ДО изменения значения,
-            // используем EditedFormattedValue чтобы получить новое состояние.
             bool newChecked = Convert.ToBoolean(row.Cells["ConnectColumn"].EditedFormattedValue ?? false);
             string serial = row.Cells["SerialNumberColumn"].Value?.ToString() ?? "";
-            string availability = row.Cells["AvailabilityColumn"].Value?.ToString() ?? "✖";
 
-            if (availability == "✖" && newChecked)
+            var selectedCam = _availableCameras?.FirstOrDefault(c => c.SerialNumber == serial);
+            if (selectedCam == null)
+                return;
+
+            if (!selectedCam.IsAvailable && newChecked)
             {
                 MessageBox.Show("К этой камере нельзя подключиться.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                // явно откатим состояние
                 row.Cells["ConnectColumn"].Value = false;
                 return;
             }
 
             if (newChecked)
             {
-                // если уже подключены к другой — отключаемся
-                if (currentCamera != null && currentCamera.Connected && !string.Equals(currentCamera.SerialNumber, serial, StringComparison.OrdinalIgnoreCase))
+                bool success = await _cameraService.ConnectAsync(serial);
+                if (success)
                 {
-                    try
-                    {
-                        currentCamera.Close();
-                        UpdateRowStatus(currentCamera.SerialNumber, "✔", false);
-                    }
-                    catch { }
-                }
-
-                // подключаем новую
-                var newCam = new HikCamera(serial);
-                if (newCam.Open())
-                {
-                    // закрываем старую (если осталась)
-                    try
-                    {
-                        if (currentCamera != null && currentCamera.Connected && !string.Equals(currentCamera.SerialNumber, serial, StringComparison.OrdinalIgnoreCase))
-                            currentCamera.Close();
-                    }
-                    catch { }
-
-                    currentCamera = newCam;
-                    currentCameraSN = serial;
-                    SelectedCameraSN = serial;
-                    UpdateRowStatus(serial, "Мы подключены", true);
+                    await ReloadCamerasAsync();
                 }
                 else
                 {
                     MessageBox.Show("Не удалось подключиться к выбранной камере.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     row.Cells["ConnectColumn"].Value = false;
-                    UpdateRowStatus(serial, "✖", false);
                 }
             }
             else
             {
-                // снимаем подключение
-                if (currentCamera != null && currentCamera.Connected && string.Equals(currentCamera.SerialNumber, serial, StringComparison.OrdinalIgnoreCase))
+                if (_cameraService.IsConnected && _cameraService.CurrentSerialNumber == serial)
                 {
-                    try
-                    {
-                        currentCamera.Close();
-                    }
-                    catch { }
-
-                    currentCamera = null;
-                    currentCameraSN = null;
-                    SelectedCameraSN = null;
-                    UpdateRowStatus(serial, "✔", false);
+                    await _cameraService.DisconnectAsync();
+                    await ReloadCamerasAsync();
+                }
+                else
+                {
+                    row.Cells["ConnectColumn"].Value = false;
                 }
             }
         }
 
-        // --- обновление состояния строки ---
-        private void UpdateRowStatus(string serial, string newStatus, bool connected)
+        private async System.Threading.Tasks.Task ReloadCamerasAsync()
         {
-            foreach (DataGridViewRow row in camerasDataGridView.Rows)
+            _availableCameras = await _cameraService.GetAvailableCamerasAsync();
+            camerasDataGridView.Rows.Clear();
+            foreach (var cam in _availableCameras)
             {
-                string rowSN = row.Cells["SerialNumberColumn"].Value?.ToString() ?? "";
-                if (string.Equals(rowSN, serial, StringComparison.OrdinalIgnoreCase))
-                {
-                    row.Cells["AvailabilityColumn"].Value = newStatus;
-                    row.Cells["ConnectColumn"].Value = connected;
-                }
+                string availability;
+                if (cam.IsCurrent)
+                    availability = "Мы подключены";
                 else
-                {
-                    // снимаем чекбоксы с других строк
-                    row.Cells["ConnectColumn"].Value = false;
-                    if (row.Cells["AvailabilityColumn"].Value?.ToString() == "Мы подключены")
-                        row.Cells["AvailabilityColumn"].Value = "✔";
-                }
+                    availability = cam.IsAvailable ? "✔" : "✖";
+
+                int rowIndex = camerasDataGridView.Rows.Add(
+                    cam.IsCurrent,
+                    cam.Model,
+                    cam.SerialNumber,
+                    cam.IpAddress,
+                    cam.ConnectionType,
+                    availability
+                );
+                camerasDataGridView.Rows[rowIndex].Tag = cam.SerialNumber;
             }
             camerasDataGridView.Refresh();
         }
@@ -248,21 +151,9 @@ namespace KrishkiForms
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            // Если камера не выбрана, устанавливаем SelectedCamera в null
-            if (string.IsNullOrEmpty(SelectedCameraSN) || currentCamera == null)
-            {
-                SelectedCamera = null;
-            }
-            else
-            {
-                // Передаём текущую камеру наружу
-                SelectedCamera = currentCamera;
-            }
-
             DialogResult = DialogResult.OK;
             Close();
         }
-
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
@@ -270,14 +161,15 @@ namespace KrishkiForms
             Close();
         }
 
-        private void refreshButton_Click(object sender, EventArgs e)
+        private async void refreshButton_Click(object sender, EventArgs e)
         {
-            LoadCameras();
+            await ReloadCamerasAsync();
         }
 
         private void manualSNTextBox_TextChanged(object sender, EventArgs e)
         {
-            SelectedCameraSN = manualSNTextBox.Text.Trim();
+            // Можно оставить для ручного ввода, но тогда нужно реализовать подключение по введённому SN
+            // Пока оставляем как есть
         }
 
         private void camerasDataGridView_SelectionChanged(object sender, EventArgs e)
@@ -286,13 +178,7 @@ namespace KrishkiForms
             {
                 string sn = camerasDataGridView.SelectedRows[0].Cells["SerialNumberColumn"].Value?.ToString() ?? "";
                 manualSNTextBox.Text = sn;
-                SelectedCameraSN = sn;
             }
-        }
-
-        private void CameraSettingsForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-           
         }
     }
 }

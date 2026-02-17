@@ -6,6 +6,8 @@ using KrishkiForms.Forms;
 using KrishkiForms.FrameProcessing;
 using KrishkiForms.Hardware;
 using KrishkiForms.Logger;
+using KrishkiForms.Services.Camera;
+using KrishkiForms.Services.Modbus;
 using Kvantron.Hardware.SmartDio;
 using Kvantron.UI.Controls.Utils;
 using MathNet.Numerics.IntegralTransforms;

@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Numerics;
 using System.Web.Helpers;
 using KrishkiForms.CameraAndModbusClasses;
+using KrishkiForms.Services.Camera;
+using KrishkiForms.Services.Modbus;
 using Kvantron.Hardware.SmartDio;
 using MathNet.Numerics.IntegralTransforms;
 using OpenCvSharp;

@@ -5,14 +5,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Timer = System.Threading.Timer;
 
-namespace KrishkiForms.CameraAndModbusClasses
+namespace KrishkiForms.Services.Modbus
 {
     public class ModbusTCP
     {
         private TcpClient tcpClient;
         private NetworkStream stream;
-        private string ipAddress = "127.0.0.1";
-        private int port = 502;
+        public string IpAddress { get; private set; }
+        public int Port { get; private set; }
         private int connectTimeout = 1000;
         private bool connected = false;
         private int transactionNumber = 0;
@@ -29,8 +29,8 @@ namespace KrishkiForms.CameraAndModbusClasses
 
         public ModbusTCP(string ip, int port)
         {
-            ipAddress = ip;
-            this.port = port;
+            IpAddress = ip;
+            Port = port;
         }
 
         public void EnableAutoReconnect()
@@ -49,7 +49,7 @@ namespace KrishkiForms.CameraAndModbusClasses
             try
             {
                 tcpClient = new TcpClient();
-                IAsyncResult asyncResult = tcpClient.BeginConnect(ipAddress, port, null, null);
+                IAsyncResult asyncResult = tcpClient.BeginConnect(IpAddress, Port, null, null);
                 if (!asyncResult.AsyncWaitHandle.WaitOne(connectTimeout))
                     throw new Exception("connection timed out");
                 tcpClient.EndConnect(asyncResult);

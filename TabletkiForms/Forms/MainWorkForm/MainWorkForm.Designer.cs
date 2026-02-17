@@ -1759,7 +1759,7 @@
             morphCb.Font = new Font("Segoe UI", 7.8F);
             morphCb.FormattingEnabled = true;
             morphCb.Items.AddRange(new object[] { "1", "2", "3" });
-            morphCb.Location = new Point(366, 160);
+            morphCb.Location = new Point(366, 161);
             morphCb.Name = "morphCb";
             morphCb.Size = new Size(81, 20);
             morphCb.TabIndex = 7;
@@ -1782,7 +1782,7 @@
             windowCb.Font = new Font("Segoe UI", 7.8F);
             windowCb.FormattingEnabled = true;
             windowCb.Items.AddRange(new object[] { "3", "5", "7", "9", "11", "13", "15" });
-            windowCb.Location = new Point(276, 160);
+            windowCb.Location = new Point(276, 161);
             windowCb.Name = "windowCb";
             windowCb.Size = new Size(81, 20);
             windowCb.TabIndex = 6;

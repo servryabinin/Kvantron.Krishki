@@ -200,7 +200,6 @@
             Name = "CameraSettingsForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Настройка подключения к камере";
-            FormClosing += CameraSettingsForm_FormClosing;
             ((System.ComponentModel.ISupportInitialize)camerasDataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();

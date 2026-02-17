@@ -4,7 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace KrishkiForms.CameraAndModbusClasses
+namespace KrishkiForms.Services.Camera
 {
     public delegate void Image(Mat mat);
 
@@ -220,7 +220,7 @@ namespace KrishkiForms.CameraAndModbusClasses
                         MyCamera.MV_GIGE_DEVICE_INFO gigeInfo = (MyCamera.MV_GIGE_DEVICE_INFO)MyCamera.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MyCamera.MV_GIGE_DEVICE_INFO));
                         deviceSerial = new string(gigeInfo.chSerialNumber).TrimEnd('\0');
                         uint ip = gigeInfo.nCurrentIp;
-                        IpAdress = $"{(ip >> 24) & 0xFF}.{(ip >> 16) & 0xFF}.{(ip >> 8) & 0xFF}.{ip & 0xFF}";
+                        IpAdress = $"{ip >> 24 & 0xFF}.{ip >> 16 & 0xFF}.{ip >> 8 & 0xFF}.{ip & 0xFF}";
                     }
                     else if (device.nTLayerType == MyCamera.MV_USB_DEVICE)
                     {
@@ -228,7 +228,7 @@ namespace KrishkiForms.CameraAndModbusClasses
                         deviceSerial = new string(usbInfo.chSerialNumber).TrimEnd('\0');
                     }
 
-                    if (!string.IsNullOrEmpty(this.SerialNumber) && !string.Equals(deviceSerial, this.SerialNumber, StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(SerialNumber) && !string.Equals(deviceSerial, SerialNumber, StringComparison.OrdinalIgnoreCase))
                         continue;
 
                     m_MyCamera = new MyCamera();
