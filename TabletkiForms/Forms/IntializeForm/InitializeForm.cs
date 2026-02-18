@@ -88,7 +88,7 @@ namespace KrishkiForms
                     CameraConnected = true;
 
                     // СОХРАНЯЕМ IP КАМЕРЫ
-                    Properties.Settings.Default.IpAdressCamera = Camera.IpAdress;
+                    Properties.Settings.Default.Settings_IpAdressCamera = Camera.IpAdress;
                     Properties.Settings.Default.Save();
 
                     this.Invoke(new Action(() =>
@@ -137,8 +137,8 @@ namespace KrishkiForms
                 }));
 
                 // Используем значения из Settings
-                string ip = Properties.Settings.Default.IpAdressPr;
-                string portString = Properties.Settings.Default.PortPr;
+                string ip = Properties.Settings.Default.Settings_IpAdressPr;
+                string portString = Properties.Settings.Default.Settings_PortPr;
                 int port = 502; // значение по умолчанию
                 if (!int.TryParse(portString, out port))
                 {
@@ -289,7 +289,7 @@ namespace KrishkiForms
                         Camera = f.SelectedCamera;
                         CameraConnected = true;
 
-                        Properties.Settings.Default.IpAdressCamera = Camera.IpAdress;
+                        Properties.Settings.Default.Settings_IpAdressCamera = Camera.IpAdress;
                         Properties.Settings.Default.Save();
 
                         cameraConectLabel.Text = "[ОК] Камера подключена";
@@ -312,9 +312,9 @@ namespace KrishkiForms
 
         private void paramPrConnect_Click(object sender, EventArgs e)
         {
-            string currentIP = Properties.Settings.Default.IpAdressPr;
+            string currentIP = Properties.Settings.Default.Settings_IpAdressPr;
             int currentPort = 502; 
-            if (!int.TryParse(Properties.Settings.Default.PortPr, out currentPort))
+            if (!int.TryParse(Properties.Settings.Default.Settings_PortPr, out currentPort))
             {
                 currentPort = 502;
             }
@@ -323,8 +323,8 @@ namespace KrishkiForms
             {
                 if (modbusSettingsForm.ShowDialog() == DialogResult.OK)
                 {
-                    Properties.Settings.Default.IpAdressPr = modbusSettingsForm.ModbusIP;
-                    Properties.Settings.Default.PortPr = modbusSettingsForm.ModbusPort.ToString();
+                    Properties.Settings.Default.Settings_IpAdressPr = modbusSettingsForm.ModbusIP;
+                    Properties.Settings.Default.Settings_PortPr = modbusSettingsForm.ModbusPort.ToString();
                     Properties.Settings.Default.Save();
 
                     // Переподключаемся к Modbus с новыми настройками
