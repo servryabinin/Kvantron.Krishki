@@ -447,7 +447,6 @@ namespace KrishkiForms
 
         private void InitializeCoreSystems()
         {
-            InitializeHueLUT();
             InitializeImageMatrices();
             InitializePaths();
             LoadDefectAndCameraParam();
@@ -1156,28 +1155,6 @@ namespace KrishkiForms
 
         #endregion
 
-        #region Кнопки ROI
-
-        private void drawRoi_Click(object sender, EventArgs e)
-        {
-            isDrawing = true;
-            isRoiProduce = true;
-            isConfirmVisible = false;
-            originPb.MouseDown += OriginPictureBox_MouseDown;
-            originPb.MouseMove += OriginPictureBox_MouseMove;
-            originPb.MouseUp += OriginPictureBox_MouseUp;
-            originPb.Paint += OriginPictureBox_Paint;
-            originPb.MouseClick += OriginPictureBox_MouseClick;
-        }
-
-        private void redrawRoi_Click(object sender, EventArgs e)
-        {
-            isROISelected = false;
-            croppedImage = null;
-        }
-
-        #endregion
-
         #region Кнопки настроек
 
         #region Настройки камеры
@@ -1313,7 +1290,6 @@ namespace KrishkiForms
                 return false;
             }
         }
-
 
         private async void ApplyPr_Click(object sender, EventArgs e)
         {
@@ -2655,34 +2631,6 @@ namespace KrishkiForms
             }
         }
 
-
-
-        private void SetUiDuringRecognition(bool isLocked)
-        {
-            try
-            {
-                applySettingsButton.Enabled = !isLocked;
-                loadSettingsButton.Enabled = !isLocked;
-                saveSettingsButton.Enabled = !isLocked;
-                loadDefectSettings.Enabled = !isLocked;
-                saveDefectSettings.Enabled = !isLocked;
-                applyPrBreakerParamButton.Enabled = !isLocked;
-                loadPrSettings.Enabled = !isLocked;
-                savePrSettings.Enabled = !isLocked;
-                receptCapsCmB.Enabled = !isLocked;
-
-                if (!isImageLoaded)
-                {
-                    startStreamButton.Enabled = !isLocked;
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка в SetUiDuringRecognition");
-            }
-        }
-
-
         private void ApplyCameraSettings()
         {
             try
@@ -2813,228 +2761,7 @@ namespace KrishkiForms
 
         #endregion
 
-        #region Методы работы с ROI
-
-        private void OriginPictureBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (isDrawing && e.Button == MouseButtons.Left)
-            {
-                startPoint = e.Location;
-                selectedROI = new Rectangle(startPoint, new System.Drawing.Size(0, 0));
-            }
-        }
-
-        private void OriginPictureBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isDrawing && e.Button == MouseButtons.Left)
-            {
-                int x = Math.Min(startPoint.X, e.X);
-                int y = Math.Min(startPoint.Y, e.Y);
-                int width = Math.Abs(startPoint.X - e.X);
-                int height = Math.Abs(startPoint.Y - e.Y);
-
-                selectedROI = new Rectangle(x, y, width, height);
-                originPb.Invalidate();
-            }
-        }
-
-        private void OriginPictureBox_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (isDrawing && e.Button == MouseButtons.Left)
-            {
-                isDrawing = false;
-                originPb.MouseDown -= OriginPictureBox_MouseDown;
-                originPb.MouseMove -= OriginPictureBox_MouseMove;
-                originPb.MouseUp -= OriginPictureBox_MouseUp;
-
-                if (selectedROI.Width > 0 && selectedROI.Height > 0)
-                {
-                    isConfirmVisible = true;
-
-                    int btnSize = 20;
-                    int btnOffset = 5;
-                    int btnSpacing = 5;
-
-                    int buttonY = selectedROI.Bottom + btnOffset;
-                    int buttonX = selectedROI.Right - (btnSize * 2 + btnSpacing);
-
-                    checkRect = new Rectangle(buttonX, buttonY, btnSize, btnSize);
-                    crossRect = new Rectangle(buttonX + btnSize + btnSpacing, buttonY, btnSize, btnSize);
-
-                    originPb.Invalidate();
-                }
-            }
-        }
-
-        private void OriginPictureBox_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (isConfirmVisible)
-            {
-                if (checkRect.Contains(e.Location))
-                {
-                    ApplyROI();
-                }
-                else if (crossRect.Contains(e.Location))
-                {
-                    ResetROI();
-                }
-            }
-        }
-
-        private void ApplyROI()
-        {
-            if (selectedROI.Width > 0 && selectedROI.Height > 0)
-            {
-                int imgWidth = img1.Width;
-                int imgHeight = img1.Height;
-                int pbWidth = originPb.Width;
-                int pbHeight = originPb.Height;
-
-                float scaleX, scaleY;
-                int offsetX = 0, offsetY = 0;
-
-                if (originPb.SizeMode == PictureBoxSizeMode.Zoom)
-                {
-                    float ratioX = (float)pbWidth / imgWidth;
-                    float ratioY = (float)pbHeight / imgHeight;
-                    float ratio = Math.Min(ratioX, ratioY);
-
-                    scaleX = ratio;
-                    scaleY = ratio;
-
-                    offsetX = (int)((pbWidth - (imgWidth * scaleX)) / 2);
-                    offsetY = (int)((pbHeight - (imgHeight * scaleY)) / 2);
-                }
-                else
-                {
-                    scaleX = (float)imgWidth / pbWidth;
-                    scaleY = (float)imgHeight / pbHeight;
-                }
-
-                int roiX = (int)((selectedROI.X - offsetX) / scaleX);
-                int roiY = (int)((selectedROI.Y - offsetY) / scaleY);
-                int roiWidth = (int)(selectedROI.Width / scaleX);
-                int roiHeight = (int)(selectedROI.Height / scaleY);
-
-                roiX = Math.Max(0, roiX);
-                roiY = Math.Max(0, roiY);
-                roiWidth = Math.Min(imgWidth - roiX, roiWidth);
-                roiHeight = Math.Min(imgHeight - roiY, roiHeight);
-
-                roi = new OpenCvSharp.Rect(roiX, roiY, roiWidth, roiHeight);
-
-                if (roi.Width > 0 && roi.Height > 0 && roi.X + roi.Width <= imgWidth && roi.Y + roi.Height <= imgHeight)
-                {
-                    img1 = new Mat(img1, roi);
-                }
-
-                isROISelected = true;
-                isConfirmVisible = false;
-                selectedROI = Rectangle.Empty;
-                originPb.Image = MatToBitmap(img1);
-                originPb.Invalidate();
-            }
-        }
-
-        private void ResetROI()
-        {
-            selectedROI = Rectangle.Empty;
-            isConfirmVisible = false;
-            originPb.Invalidate();
-        }
-
-        private void OriginPictureBox_Paint(object sender, PaintEventArgs e)
-        {
-            if (selectedROI != Rectangle.Empty)
-            {
-                using (Pen pen = new Pen(Color.Red, 2))
-                {
-                    e.Graphics.DrawRectangle(pen, selectedROI);
-                }
-
-                if (isConfirmVisible)
-                {
-                    using (SolidBrush brush = new SolidBrush(Color.White))
-                    {
-                        e.Graphics.FillRectangle(brush, checkRect);
-                        e.Graphics.FillRectangle(brush, crossRect);
-                    }
-
-                    using (Pen penYes = new Pen(Color.Green, 2))
-                    using (Pen penNot = new Pen(Color.Red, 2))
-                    {
-                        e.Graphics.DrawLine(penYes, checkRect.Left + 3, checkRect.Top + checkRect.Height / 2,
-                                            checkRect.Left + checkRect.Width / 3, checkRect.Bottom - 3);
-                        e.Graphics.DrawLine(penYes, checkRect.Left + checkRect.Width / 3, checkRect.Bottom - 3,
-                                            checkRect.Right - 3, checkRect.Top + 3);
-
-                        e.Graphics.DrawLine(penNot, crossRect.Left + 3, crossRect.Top + 3, crossRect.Right - 3, crossRect.Bottom - 3);
-                        e.Graphics.DrawLine(penNot, crossRect.Right - 3, crossRect.Top + 3, crossRect.Left + 3, crossRect.Bottom - 3);
-                    }
-                }
-            }
-        }
-
-        #endregion
-
         #region Вспомогательные методы
-
-        private void InitializeHueLUT()
-        {
-            Parallel.For(0, 256, b =>
-            {
-                for (int g = 0; g < 256; g++)
-                {
-                    for (int r = 0; r < 256; r++)
-                    {
-                        int index = ((b >> 1) << 14) + ((g >> 1) << 7) + (r >> 1);
-                        HUE_LUT[index] = CalculateHueFromBGR((byte)(b >> 1), (byte)(g >> 1), (byte)(r >> 1));
-                    }
-                }
-            });
-        }
-
-        private byte CalculateHueFromBGR(byte blue, byte green, byte red)
-        {
-            float b = blue / 128.0f;
-            float g = green / 128.0f;
-            float r = red / 128.0f;
-
-            float max = Math.Max(r, Math.Max(g, b));
-            float min = Math.Min(r, Math.Min(g, b));
-            float delta = max - min;
-
-            float hue = 0.0f;
-
-            if (delta == 0.0f)
-            {
-                hue = 0.0f;
-            }
-            else
-            {
-                if (max == r)
-                {
-                    hue = (g - b) / delta;
-                }
-                else if (max == g)
-                {
-                    hue = 2.0f + (b - r) / delta;
-                }
-                else if (max == b)
-                {
-                    hue = 4.0f + (r - g) / delta;
-                }
-
-                hue *= 60.0f;
-
-                if (hue < 0.0f)
-                {
-                    hue += 360.0f;
-                }
-            }
-
-            return (byte)(0.5f * hue);
-        }
 
         private void ApplyRecognitionParameters()
         {
@@ -4003,11 +3730,6 @@ namespace KrishkiForms
                 {
                     modbusClient.WriteRegister(PLCData.QualityRegisterModbus, (ushort)qualityStatus);
                 }
-                else
-                {
-                    // Централизованное обновление UI при разрыве соединения
-                    ModbusClient_ConnectionStatusChanged(false);
-                }
             }
             catch (TaskCanceledException)
             {
@@ -4088,11 +3810,6 @@ namespace KrishkiForms
 
                     modbusClient.WriteRegister(breakerAllowRegister, (ushort)valueToSend);
                 }
-                else
-                {
-                    // Централизованное обновление UI при разрыве соединения
-                    ModbusClient_ConnectionStatusChanged(false);
-                }
             }
             catch (Exception ex)
             {
@@ -4100,8 +3817,6 @@ namespace KrishkiForms
                 ModbusClient_ConnectionStatusChanged(false);
             }
         }
-
-
 
         #endregion
 
@@ -4216,183 +3931,6 @@ namespace KrishkiForms
 
         #endregion
 
-        #region Методы обработки сигналов и FFT
-/*
-        public int GetDefectFeatureFromRectifiedImage(Mat img0, Mat imgHSV, int radius, Point center, int rectW, int rectH, double threshold)
-        {
-            Stopwatch timer = new Stopwatch();
-            string timeReport = "";
-
-            // Извлекаем канал Saturation из HSV-изображения
-            timer.Restart();
-            Mat[] hsvChannels = Cv2.Split(imgHSV);
-            Mat imgSaturation = hsvChannels[1];
-            timer.Stop();
-            timeReport += $"Извлечение Saturation-канала: {timer.Elapsed.TotalMilliseconds:F2} мс\n";
-
-            // Масштабируем изображение
-            timer.Restart();
-            Mat imgScaled = new Mat();
-            Cv2.Resize(imgSaturation, imgScaled, new Size(), SCALE, SCALE, InterpolationFlags.Linear);
-            timer.Stop();
-            timeReport += $"Масштабирование: {timer.Elapsed.TotalMilliseconds:F2} мс\n";
-
-            // --- ПОИСК КОНТУРА И ЭЛЛИПСА ---
-            timer.Restart();
-            Mat gray = new Mat();
-            Cv2.CvtColor(img0, gray, ColorConversionCodes.BGR2GRAY);
-            timer.Stop();
-            timeReport += $"Определение центра и радиуса через эллипс: {timer.Elapsed.TotalMilliseconds:F2} мс\n";
-
-            // --- СОЗДАНИЕ РАЗВЁРНУТОГО ИЗОБРАЖЕНИЯ ---
-            timer.Restart();
-            Mat imgRect = new Mat(rectH, rectW, MatType.CV_8UC1);
-            double[] sinTable = new double[rectW];
-            double[] cosTable = new double[rectW];
-
-            InitTrigTables(sinTable, cosTable, rectW);
-            GetStripeImg(img0, imgRect, sinTable, cosTable, center, radius, img0.Width, img0.Height, rectW, rectH);
-            timer.Stop();
-            timeReport += $"Развёртка изображения: {timer.Elapsed.TotalMilliseconds:F2} мс\n";
-
-            // --- СТАТИСТИКА ПО СТРОКАМ ---
-            timer.Restart();
-            float[] dstStat = new float[rectW];
-            GetWStatistics(imgRect, dstStat, rectW, rectH);
-            timer.Stop();
-            timeReport += $"Статистика по строкам: {timer.Elapsed.TotalMilliseconds:F2} мс\n";
-
-            // --- ФУРЬЕ-ПРЕОБРАЗОВАНИЕ ---
-            timer.Restart();
-            int decision = MyCFFT(dstStat, rectW, threshold);
-            timer.Stop();
-            timeReport += $"Фурье-преобразование: {timer.Elapsed.TotalMilliseconds:F2} мс\n";
-
-            return decision;
-        }
-
-        private static void InitTrigTables(double[] sinTable, double[] cosTable, int width)
-        {
-            double dTheta = 2 * Math.PI / width;
-            for (int i = 0; i < width; i++)
-            {
-                sinTable[i] = Math.Sin(i * dTheta);
-                cosTable[i] = Math.Cos(i * dTheta);
-            }
-        }
-
-        private static void GetStripeImg(Mat src, Mat dst, double[] sinTable, double[] cosTable, Point center, int radius, int w, int h, int width, int height)
-        {
-            const int INNER_OFFSET = 7;
-
-            int hr = radius - height;
-            int[] jc = Enumerable.Range(0, height).Select(j => hr + j + INNER_OFFSET).ToArray();
-
-            for (int j = 0; j < height; j++)
-            {
-                for (int i = 0; i < width; i++)
-                {
-                    double x = sinTable[i] * jc[j] + center.X;
-                    double y = cosTable[i] * jc[j] + center.Y;
-                    dst.At<byte>(j, i) = Bilinear8Bit(src, x, y, w, h);
-                }
-            }
-        }
-
-        private static byte Bilinear8Bit(Mat img, double x, double y, int w, int h)
-        {
-            int u = (int)x;
-            int v = (int)y;
-            if (u < 0 || v < 0 || u >= w - 1 || v >= h - 1)
-                return 0;
-
-            double dx = x - u;
-            double dy = y - v;
-
-            byte p1 = img.At<byte>(v, u);
-            byte p2 = img.At<byte>(v, u + 1);
-            byte p3 = img.At<byte>(v + 1, u);
-            byte p4 = img.At<byte>(v + 1, u + 1);
-
-            double interpolated = (1 - dx) * (1 - dy) * p1 +
-                                  dx * (1 - dy) * p2 +
-                                  (1 - dx) * dy * p3 +
-                                  dx * dy * p4;
-
-            return (byte)Math.Round(interpolated);
-        }
-
-        private static void GetWStatistics(Mat src, float[] dst, int w, int h)
-        {
-            Array.Clear(dst, 0, dst.Length);
-            unsafe
-            {
-                byte* srcPtr = (byte*)src.DataPointer;
-                fixed (float* dstPtr = dst)
-                {
-                    for (int j = 0; j < h; j++)
-                    {
-                        byte* rowPtr = srcPtr + j * w;
-                        for (int i = 0; i < w; i++)
-                            dstPtr[i] += rowPtr[i];
-                    }
-                }
-            }
-        }
-
-        public int MyCFFT(float[] v, int n, double threshold)
-        {
-            if (n <= 0 || v == null || v.Length < n)
-                throw new ArgumentException("Некорректные входные данные");
-
-            // 1. Центрируем сигнал (вычитаем среднее)
-            double mean = 0;
-            for (int i = 0; i < n; i++)
-                mean += v[i];
-            mean /= n;
-            for (int i = 0; i < n; i++)
-                v[i] -= (float)mean;
-
-            // 2. Преобразуем сигнал в массив комплексных чисел
-            Complex[] spectrum = new Complex[n];
-            for (int i = 0; i < n; i++)
-                spectrum[i] = new Complex(v[i], 0);
-
-            // 3. Выполняем быстрое преобразование Фурье (FFT)
-            Fourier.Forward(spectrum, FourierOptions.NoScaling);
-
-            // 4. Вычисляем модули спектра в нужном диапазоне
-            double[] magnitudes = new double[n];
-            for (int i = MIN_HARMONIC_INDEX; i < MAX_HARMONIC_INDEX; i++)
-                magnitudes[i] = spectrum[i].Magnitude;
-
-            // 5. Поиск максимальной и второй по величине гармоники
-            double max_value = magnitudes[MIN_HARMONIC_INDEX];
-            int max_index = MIN_HARMONIC_INDEX;
-
-            for (int i = MIN_HARMONIC_INDEX + 1; i < MAX_HARMONIC_INDEX; i++)
-            {
-                if (magnitudes[i] > max_value)
-                {
-                    max_value = magnitudes[i];
-                    max_index = i;
-                }
-            }
-
-            double sub_max_value = 0;
-            for (int i = MIN_HARMONIC_INDEX; i < MAX_HARMONIC_INDEX; i++)
-            {
-                if (i != max_index && magnitudes[i] > sub_max_value)
-                    sub_max_value = magnitudes[i];
-            }
-
-            // 6. Проверка критерия дефекта
-            double ratio = max_value / sub_max_value;
-            return ratio > threshold ? 1 : 0;
-        }*/
-
-        #endregion
-
         #region Методы цветовой обработки
 
         public static void NonlinearBackgroundDecolorization(Mat img, byte nWhite, bool isColored, bool isYellowCap, bool isGreenColor)
@@ -4461,128 +3999,9 @@ namespace KrishkiForms
             }
         }
 
-        private unsafe void GetHueChannel(Mat img, int[] arrIndex, byte[] hueLUT)
-        {
-            int totalPixels = img.Cols * img.Rows;
-            byte* imgData = (byte*)img.Data.ToPointer();
-
-            for (int i = 0; i < totalPixels; i++)
-            {
-                int pixelOffset = i * 3;
-
-                byte b = imgData[pixelOffset + arrIndex[2]];
-                byte g = imgData[pixelOffset + arrIndex[0]];
-                byte r = imgData[pixelOffset + arrIndex[1]];
-
-                // Вычисляем индекс в LUT таблице
-                int lutIndex = ((b >> 1) << 14) + ((g >> 1) << 7) + (r >> 1);
-
-                // Записываем Hue значение в первый канал (синий)
-                imgData[pixelOffset] = hueLUT[lutIndex];
-            }
-        }
-
-        private void GetArrIndex(int[] arr, int[] arrIndex)
-        {
-            // Инициализация индексов по умолчанию (BGR)
-            arrIndex[0] = 0; // B
-            arrIndex[1] = 1; // G
-            arrIndex[2] = 2; // R
-
-            if (arr[1] < arr[0])
-            {
-                Swap(ref arr[0], ref arr[1]);
-                Swap(ref arrIndex[0], ref arrIndex[1]);
-            }
-
-            if (arr[2] < arr[1])
-            {
-                Swap(ref arr[1], ref arr[2]);
-                Swap(ref arrIndex[1], ref arrIndex[2]);
-                if (arr[1] < arr[0])
-                {
-                    Swap(ref arr[1], ref arr[0]);
-                    Swap(ref arrIndex[1], ref arrIndex[0]);
-                }
-            }
-        }
-
-        private void Swap<T>(ref T a, ref T b)
-        {
-            T temp = a;
-            a = b;
-            b = temp;
-        }
-
-        private unsafe void Fast_RGB_pseudo_color(Mat img, int sparse, byte[] hueLut)
-        {
-            int[] arr = new int[3];
-            int[] arrIndex = new int[3];
-
-            // Подсчёт интенсивности в каждом канале
-            byte* imgData = (byte*)img.Data.ToPointer();
-            int count = 0;
-
-            for (int j = 0; j < img.Rows; j += sparse)
-            {
-                int rowOffset = j * img.Cols * 3;
-                for (int i = 0; i < img.Cols * 3; i += 3 * sparse)
-                {
-                    int pixelOffset = rowOffset + i;
-                    arr[0] += imgData[pixelOffset];     // B
-                    arr[1] += imgData[pixelOffset + 1]; // G
-                    arr[2] += imgData[pixelOffset + 2]; // R
-                    count++;
-                }
-            }
-
-            // Вычисляем среднюю интенсивность
-            arr[0] /= count;
-            arr[1] /= count;
-            arr[2] /= count;
-
-            // Получаем порядок каналов
-            GetArrIndex(arr, arrIndex);
-
-            // Вычисляем Hue канал
-            GetHueChannel(img, arrIndex, hueLut);
-        }
-
         #endregion
 
         #region Дополнительные методы проверки (для полноты)
-
-        /*private bool CheckUnderfill(Mat gray, Mat imgColor)
-        {
-            // Размытие
-            Mat smoothImage = new Mat();
-            Cv2.BoxFilter(imgColor, smoothImage, -1, new Size(4, 4), new Point(-1, -1), true, BorderTypes.Default);
-
-            // Преобразование в HSV
-            Mat imgHSV = new Mat();
-            Cv2.CvtColor(smoothImage, imgHSV, ColorConversionCodes.BGR2HSV);
-
-            Point[] capContour = GetCapContour(gray, imgColor);
-
-            if (capContour == null || capContour.Length < 5)
-            {
-                return true;
-            }
-
-            // Находим эллипс по контуру
-            RotatedRect ellipse = Cv2.FitEllipse(capContour);
-            Point center = new Point((int)ellipse.Center.X, (int)ellipse.Center.Y);
-            int radius = (int)(Math.Max(ellipse.Size.Width, ellipse.Size.Height) / 2);
-
-            // Рисуем найденный круг
-            Cv2.Circle(imgColor, center, radius, new Scalar(0, 255, 0), 2);
-            Cv2.Circle(imgColor, center, 5, new Scalar(0, 0, 255), -1);
-
-            // Получаем признак недолива
-            int decision = GetDefectFeatureFromRectifiedImage(imgColor, imgHSV, radius, center, 1024, (int)(radius * 0.08), TRESHOLD);
-
-            return decision == 0;
-        }*/
 
         private void Form1_Load()
         {
@@ -5291,8 +4710,6 @@ namespace KrishkiForms
             loadSettingsButton.Enabled = admin;
             saveSettingsButton.Enabled = admin;
         }
-
-
         #endregion
     }
 }
