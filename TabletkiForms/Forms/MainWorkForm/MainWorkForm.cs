@@ -117,12 +117,6 @@ namespace KrishkiForms
         private static bool _isColored = true;
         private static bool _isYellowCap = false;
         private static int _saturation = 0;
-
-        //Для работы с файлами рецептов крышек
-        private Dictionary<string, CapRecipe> _recipes = new();
-        private string _recipesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Рецепты");
-        private bool _isApplyingRecipe = false;
-
         // Морфологические элементы
         private Mat element1;
         private Mat element2;
@@ -131,6 +125,11 @@ namespace KrishkiForms
         private int morph_size = 7;
         private int morph_size_2 = 7;
         private const float OUTIER_THRESHOLD = 1.15f;
+
+        //Для работы с файлами рецептов крышек
+        private Dictionary<string, CapRecipe> _recipes = new();
+        private string _recipesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Рецепты");
+        private bool _isApplyingRecipe = false;
 
         // Параметры дефектов
         private double _ovalityThreshold = 0.7;
