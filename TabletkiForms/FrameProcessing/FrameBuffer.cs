@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KrishkiForms.FrameProcessing
+namespace CapDefectDetector.FrameProcessing
 {
     /// <summary>
     /// Кадровый буфер с FIFO-дисциплиной доступа к кадрам.

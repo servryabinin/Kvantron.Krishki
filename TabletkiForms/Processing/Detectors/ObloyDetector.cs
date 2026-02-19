@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
-using KrishkiForms.Logger;
+using CapDefectDetector.Logger;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 
-namespace KrishkiForms.Processing.Detectors
+namespace CapDefectDetector.Processing.Detectors
 {
     internal class ObloyDefectDetector
     {

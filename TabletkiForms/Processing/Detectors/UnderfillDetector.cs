@@ -1,12 +1,12 @@
-﻿using KrishkiForms.Logger;
-using KrishkiForms.Processing;
-using KrishkiForms.Processing.Utils;
+﻿using CapDefectDetector.Logger;
+using CapDefectDetector.Processing;
+using CapDefectDetector.Processing.Utils;
 using OpenCvSharp;
 using System;
 using System.Threading;
 using Point = OpenCvSharp.Point;
 
-namespace KrishkiForms.Processing.Detectors
+namespace CapDefectDetector.Processing.Detectors
 {
     internal class UnderfillDetector : ICapDetector
     {

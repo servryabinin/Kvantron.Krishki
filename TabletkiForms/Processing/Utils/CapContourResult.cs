@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 
-namespace KrishkiForms.Processing.Utils
+namespace CapDefectDetector.Processing.Utils
 {
     public class CapContourResult
     {

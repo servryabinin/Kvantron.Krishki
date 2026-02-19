@@ -1,4 +1,4 @@
-﻿namespace KrishkiForms
+﻿namespace CapDefectDetector
 {
     partial class MainWorkForm
     {
@@ -360,7 +360,7 @@
             label16.ForeColor = Color.Black;
             label16.Location = new Point(17, 28);
             label16.Name = "label16";
-            label16.Size = new Size(74, 13);
+            label16.Size = new Size(75, 13);
             label16.TabIndex = 1;
             label16.Text = "Видеопоток:";
             // 

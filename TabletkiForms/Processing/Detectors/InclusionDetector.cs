@@ -1,12 +1,12 @@
-﻿using KrishkiForms.Logger;
-using KrishkiForms.Processing;
+﻿using CapDefectDetector.Logger;
+using CapDefectDetector.Processing;
 using OpenCvSharp;
 using System;
 using System.Threading;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 
-namespace KrishkiForms.Processing.Detectors
+namespace CapDefectDetector.Processing.Detectors
 {
     internal class InclusionDetector : ICapDetector
     {

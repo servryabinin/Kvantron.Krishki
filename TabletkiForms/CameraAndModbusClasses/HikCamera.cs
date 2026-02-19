@@ -4,7 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace KrishkiForms.CameraAndModbusClasses
+namespace CapDefectDetector.CameraAndModbusClasses
 {
     public delegate void Image(Mat mat);
 

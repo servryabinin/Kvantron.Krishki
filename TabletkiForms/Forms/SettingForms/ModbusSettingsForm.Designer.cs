@@ -1,4 +1,4 @@
-﻿namespace KrishkiForms
+﻿namespace CapDefectDetector
 {
     partial class ModbusSettingsForm
     {

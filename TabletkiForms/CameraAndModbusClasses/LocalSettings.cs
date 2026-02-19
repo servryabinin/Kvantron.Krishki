@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace KrishkiForms.CameraAndModbusClasses
+namespace CapDefectDetector.CameraAndModbusClasses
 {
 	public class LocalSettings
 	{

@@ -1,4 +1,4 @@
-﻿namespace KrishkiForms.Forms
+﻿namespace CapDefectDetector.Forms
 {
     partial class ProfileForm
     {

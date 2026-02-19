@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 
-namespace KrishkiForms.Processing.Detectors
+namespace CapDefectDetector.Processing.Detectors
 {
     public interface ICapDetector
     {

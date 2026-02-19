@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using KrishkiForms.CameraAndModbusClasses;
+using CapDefectDetector.CameraAndModbusClasses;
 
-namespace KrishkiForms
+namespace CapDefectDetector
 {
     public partial class ModbusSettingsForm : Form
     {

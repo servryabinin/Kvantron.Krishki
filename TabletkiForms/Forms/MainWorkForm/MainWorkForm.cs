@@ -1,11 +1,11 @@
 ﻿//#define OLD_FRAME_PROCESSING
 
-using KrishkiForms.Authorization;
-using KrishkiForms.CameraAndModbusClasses;
-using KrishkiForms.Forms;
-using KrishkiForms.FrameProcessing;
-using KrishkiForms.Hardware;
-using KrishkiForms.Logger;
+using CapDefectDetector.Authorization;
+using CapDefectDetector.CameraAndModbusClasses;
+using CapDefectDetector.Forms;
+using CapDefectDetector.FrameProcessing;
+using CapDefectDetector.Hardware;
+using CapDefectDetector.Logger;
 using Kvantron.Hardware.SmartDio;
 using Kvantron.UI.Controls.Utils;
 using MathNet.Numerics.IntegralTransforms;
@@ -27,7 +27,7 @@ using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 using Timer = System.Windows.Forms.Timer;
 
-namespace KrishkiForms
+namespace CapDefectDetector
 {
     public partial class MainWorkForm : Form
     {

@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
-namespace KrishkiForms.Authorization
+namespace CapDefectDetector.Authorization
 {
     public class AuthManager
     {

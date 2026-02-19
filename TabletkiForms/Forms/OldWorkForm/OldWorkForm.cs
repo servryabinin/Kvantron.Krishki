@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using System.Web.Helpers;
-using KrishkiForms.CameraAndModbusClasses;
+using CapDefectDetector.CameraAndModbusClasses;
 using Kvantron.Hardware.SmartDio;
 using MathNet.Numerics.IntegralTransforms;
 using OpenCvSharp;
@@ -11,7 +11,7 @@ using OpenCvSharp.Extensions;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 
-namespace KrishkiForms
+namespace CapDefectDetector
 {
     public partial class OldWorkForm : Form
     {

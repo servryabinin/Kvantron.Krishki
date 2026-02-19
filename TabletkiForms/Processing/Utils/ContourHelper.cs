@@ -7,7 +7,7 @@ using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 
-namespace KrishkiForms.Processing.Utils
+namespace CapDefectDetector.Processing.Utils
 {
 
     public static class ContourHelper

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using KrishkiForms.CameraAndModbusClasses;
+using CapDefectDetector.CameraAndModbusClasses;
 
-namespace KrishkiForms
+namespace CapDefectDetector
 {
     public partial class CameraSettingsForm : Form
     {

@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using KrishkiForms.Authorization;
+using CapDefectDetector.Authorization;
 
-namespace KrishkiForms.Forms
+namespace CapDefectDetector.Forms
 {
     public partial class ProfileForm : Form
     {

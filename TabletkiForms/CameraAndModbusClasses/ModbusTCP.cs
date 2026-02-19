@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Timer = System.Threading.Timer;
 
-namespace KrishkiForms.CameraAndModbusClasses
+namespace CapDefectDetector.CameraAndModbusClasses
 {
     public class ModbusTCP
     {

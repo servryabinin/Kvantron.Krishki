@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KrishkiForms.Processing
+namespace CapDefectDetector.Processing
 {
     public class ProcessingResult
     {
