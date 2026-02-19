@@ -1,15 +1,26 @@
-﻿using OpenCvSharp;
+﻿using KrishkiForms.Logger;
+using KrishkiForms.Processing;
+using OpenCvSharp;
 using System;
 using System.Threading;
-using KrishkiForms.Processing;
-using Point = OpenCvSharp.Point; // для ProcessingParameters
+using Point = OpenCvSharp.Point;
 
 namespace KrishkiForms.Processing.Detectors
 {
     internal class OvalityDetector : ICapDetector
     {
+        private readonly double _ovalityThreshold;
+
+        public OvalityDetector(ProcessingParameters param)
+        {
+            _ovalityThreshold = param.OvalityThreshold;
+        }
+
         /// <summary>
-        /// Проверка овальности крышки по контуру
+        /// Проверка овальности крышки по контуру через аппроксимацию эллипсом. 
+        /// Если отношение меньшей оси к большей меньше заданного порога, крышка считается дефектной. 
+        /// Результат отрисовывается на кадре, если он предоставлен. 
+        /// В случае ошибок при расчёте или отрисовке, они логируются, а метод возвращает false.
         /// </summary>
         /// <param name="gray">Грейскейл изображение</param>
         /// <param name="image">Исходное изображение</param>
@@ -30,54 +41,49 @@ namespace KrishkiForms.Processing.Detectors
             {
                 token.ThrowIfCancellationRequested();
 
-                // Контур пустой или слишком маленький — дефект не определяем
                 if (contour == null || contour.Length < 5)
+                {
+                    ErrorLogger.Log(new Exception("Контур для проверки овальности пустой или содержит недостаточно точек"),
+                        "OvalityDetector.Detect - проверка наличия контура");
                     return false;
+                }
 
                 token.ThrowIfCancellationRequested();
 
-                // Подгоняем эллипс под контур
                 RotatedRect ellipse = Cv2.FitEllipse(contour);
 
-                double major = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
-                double minor = Math.Min(ellipse.Size.Width, ellipse.Size.Height);
-
-                double ratio = minor / major;
+                double majorAxis = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
+                double minorAxis = Math.Min(ellipse.Size.Width, ellipse.Size.Height);
+                double axisRatio = minorAxis / majorAxis;
 
                 token.ThrowIfCancellationRequested();
 
-                // Проверка на дефект по порогу из параметров рецепта
-                bool defect = ratio < param.OvalityThreshold;
-
-                // Цвет для отрисовки
-                Scalar color = defect ? Scalar.Red : Scalar.Green;
+                bool isOval = axisRatio < _ovalityThreshold;
 
                 if (drawFrame != null && !drawFrame.Empty())
                 {
                     try
                     {
+                        Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
                         Cv2.Ellipse(drawFrame, ellipse, color, 2);
-                        Cv2.PutText(drawFrame, $"Ratio:{ratio:F5}",
-                            new Point(10, 30),
-                            HersheyFonts.HersheySimplex,
-                            1,
-                            color,
-                            2);
+                        Cv2.PutText(drawFrame, $"Ratio: {axisRatio:F5}", new Point(10, 30),
+                                    HersheyFonts.HersheySimplex, 1, color, 2);
                     }
-                    catch
+                    catch (Exception drawEx)
                     {
-                        // Игнорируем ошибки рисования
+                        ErrorLogger.Log(drawEx, "OvalityDetector.Detect - ошибка при рисовании эллипса или текста");
                     }
                 }
 
-                return defect;
+                return isOval;
             }
             catch (OperationCanceledException)
             {
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                ErrorLogger.Log(ex, "OvalityDetector.Detect - ошибка при расчёте овальности крышки");
                 return false;
             }
         }

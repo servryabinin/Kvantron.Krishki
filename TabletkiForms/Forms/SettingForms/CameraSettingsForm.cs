@@ -39,8 +39,15 @@ namespace KrishkiForms
                 int nRet = MyCamera.MV_CC_EnumDevices_NET(MyCamera.MV_GIGE_DEVICE | MyCamera.MV_USB_DEVICE, ref deviceList);
                 if (nRet != MyCamera.MV_OK)
                 {
-                    MessageBox.Show("Ошибка при поиске камер", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(Environment.CurrentDirectory);
+                    MessageBox.Show(
+                        $"Ошибка при поиске камер\nКод: 0x{nRet:X8}",
+                        "Ошибка",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+
                     return;
+                    
                 }
                 for (int i = 0; i < deviceList.nDeviceNum; i++)
                 {

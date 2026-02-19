@@ -1,26 +1,31 @@
 ﻿using System;
 using System.Threading;
 using KrishkiForms.Logger;
-using KrishkiForms.Processing;
 using OpenCvSharp;
-
 using Point = OpenCvSharp.Point;
-using Size = OpenCvSharp.Size; // для ProcessingParameters
 
 namespace KrishkiForms.Processing.Detectors
 {
-    internal class ObloyDefectDetector : ICapDetector
+    internal class ObloyDefectDetector
     {
         private Mat _capRadiusMask;
-        private readonly Mat _blurChannel1;
-        private readonly Mat _blurChannel2;
-        private readonly Mat elementMask;
-        private const double CAP_FLASH_OFFSET = 2.0;
+        private const double CAP_FLASH_OFFSET = 5.0;
 
         private readonly double _minAreaObloy;
+        private readonly Mat _maskElement;
+
+        public ObloyDefectDetector(ProcessingParameters param)
+        {
+            _minAreaObloy = param.MinAreaObloy;
+            _maskElement = param.ElementMask;
+        }
 
         /// <summary>
-        /// Проверка на наличие включений на крышке
+        /// Проверка облоев на крышке. 
+        /// Метод использует маску, основанную на контуре крышки, для выделения области проверки. 
+        /// Затем применяется морфологическая операция эрозии для удаления шумов, и выполняется поиск контуров в полученной маске. 
+        /// Если количество ненулевых пикселей в маске превышает заданный порог, считается, что облой найден, и контуры дефекта отрисовываются на результирующем изображении. 
+        /// В случае ошибок при обработке или если контур крышки некорректный, ошибки логируются, и метод возвращает false.
         /// </summary>
         /// <param name="gray">Грейскейл изображение</param>
         /// <param name="image">Исходное изображение</param>
@@ -29,59 +34,47 @@ namespace KrishkiForms.Processing.Detectors
         /// <param name="param">Параметры рецепта</param>
         /// <param name="token">Токен отмены</param>
         /// <returns>true если дефект найден</returns>
-        public ObloyDefectDetector(Mat blurChannel1, Mat blurChannel2, Mat elementMask, double minAreaObloy)
-        {
-            _blurChannel1 = blurChannel1 ?? throw new ArgumentNullException(nameof(blurChannel1));
-            _blurChannel2 = blurChannel2 ?? throw new ArgumentNullException(nameof(blurChannel2));
-            this.elementMask = elementMask ?? throw new ArgumentNullException(nameof(elementMask));
-            _minAreaObloy = minAreaObloy;
-        }
-
-        public bool Detect(Mat gray, Mat image, Mat drawFrame, Point[] capContour, ProcessingParameters param, CancellationToken token)
+        public bool Detect(Mat gray, Mat image, Mat drawFrame, Point[] capContour, Mat blurChannel1, Mat blurChannel2, ProcessingParameters param, CancellationToken token)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
 
-                if (capContour == null || capContour.Length < 5)
-                {
+                if (capContour == null || capContour.Length < 5) 
+                { 
                     ErrorLogger.Log(new Exception("Контур крышки пустой или содержит слишком мало точек"),
-                        "ObloyDefectDetector - проверка контура");
-                    return false;
+                        "CheckForObloyDefects - проверка контура"); 
+                    return false; 
                 }
 
-                if (_blurChannel1 == null || _blurChannel2 == null)
-                {
-                    ErrorLogger.Log(new Exception("Каналы blurChannel1 или blurChannel2 не инициализированы"),
-                        "ObloyDefectDetector - проверка инициализации каналов");
-                    return false;
+                if (blurChannel1 == null || blurChannel2 == null) 
+                { 
+                    ErrorLogger.Log(new Exception("Каналы blurChannel_1 или blurChannel_2 не инициализированы"),
+                        "CheckForObloyDefects - проверка инициализации каналов"); 
+                    return false; 
                 }
 
-                // Вычисляем центр крышки
-                Point capCenter;
-                try
-                {
-                    double sumX = 0, sumY = 0;
-                    foreach (var pt in capContour)
-                    {
-                        sumX += pt.X;
-                        sumY += pt.Y;
-                    }
-                    capCenter = new Point((int)(sumX / capContour.Length), (int)(sumY / capContour.Length));
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "ObloyDefectDetector - ошибка при вычислении центра крышки");
-                    return false;
+                if (_maskElement == null) 
+                { 
+                    ErrorLogger.Log(new Exception("ElementMask NULL"), 
+                        "CheckForObloyDefects - проверка ElementMask"); 
+                    return false; 
                 }
 
-                // Радиус крышки
+                double sumX = 0, sumY = 0;
+                foreach (var pt in capContour) 
+                { 
+                    sumX += pt.X; 
+                    sumY += pt.Y; 
+                }
+                var capCenter = new Point((int)(sumX / capContour.Length), (int)(sumY / capContour.Length));
+
                 double radius = 0;
-                foreach (var pt in capContour)
-                {
-                    double dx = pt.X - capCenter.X;
-                    double dy = pt.Y - capCenter.Y;
-                    radius += Math.Sqrt(dx * dx + dy * dy);
+                foreach (var pt in capContour) 
+                { 
+                    double dx = pt.X - capCenter.X; 
+                    double dy = pt.Y - capCenter.Y; 
+                    radius += Math.Sqrt(dx * dx + dy * dy); 
                 }
                 radius /= capContour.Length;
 
@@ -99,18 +92,18 @@ namespace KrishkiForms.Processing.Detectors
                 }
                 catch (Exception ex)
                 {
-                    ErrorLogger.Log(ex, "ObloyDefectDetector - ошибка при создании маски крышки");
+                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при создании маски крышки");
                     return false;
                 }
 
                 try
                 {
-                    Cv2.BitwiseAnd(_capRadiusMask, _blurChannel2, _blurChannel2);
-                    Cv2.MorphologyEx(_blurChannel2, _blurChannel1, MorphTypes.Erode, elementMask);
+                    Cv2.BitwiseAnd(_capRadiusMask, blurChannel2, blurChannel2);
+                    Cv2.MorphologyEx(blurChannel2, blurChannel1, MorphTypes.Erode, _maskElement);
                 }
                 catch (Exception ex)
                 {
-                    ErrorLogger.Log(ex, "ObloyDefectDetector - ошибка при применении морфологии");
+                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при применении морфологии");
                     return false;
                 }
 
@@ -118,56 +111,62 @@ namespace KrishkiForms.Processing.Detectors
                 HierarchyIndex[] hierarchyObloy;
                 try
                 {
-                    Cv2.FindContours(_blurChannel1, out obloyContours, out hierarchyObloy,
+                    Cv2.FindContours(blurChannel1, out obloyContours, out hierarchyObloy,
                                      RetrievalModes.External, ContourApproximationModes.ApproxNone);
                 }
                 catch (Exception ex)
                 {
-                    ErrorLogger.Log(ex, "ObloyDefectDetector - ошибка при поиске контуров");
+                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при поиске контуров");
                     return false;
                 }
 
                 int pixCount;
                 try
                 {
-                    pixCount = Cv2.CountNonZero(_blurChannel1);
+                    pixCount = Cv2.CountNonZero(blurChannel1);
                 }
                 catch (Exception ex)
                 {
-                    ErrorLogger.Log(ex, "ObloyDefectDetector - ошибка при подсчете ненулевых пикселей");
+                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при подсчете ненулевых пикселей");
                     return false;
                 }
 
-                if (pixCount > _minAreaObloy && drawFrame != null && !drawFrame.Empty())
+                bool obloyFound = false;
+
+                if (pixCount > _minAreaObloy)
                 {
+                    obloyFound = true;
                     try
                     {
                         Cv2.DrawContours(drawFrame, obloyContours, -1, new Scalar(0, 0, 255), 2);
                     }
                     catch (Exception ex)
                     {
-                        ErrorLogger.Log(ex, "ObloyDefectDetector - ошибка при рисовании контуров дефектов");
+                        ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при рисовании контуров дефектов");
                     }
                 }
 
-                return pixCount > _minAreaObloy;
+                return obloyFound;
             }
-            catch (OperationCanceledException)
-            {
-                return false;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "ObloyDefectDetector - непредвиденная ошибка");
-                return false;
-            }
+            catch (OperationCanceledException) { return false; }
+            catch (Exception ex) { ErrorLogger.Log(ex, "CheckForObloyDefects - непредвиденная ошибка"); return false; }
         }
 
+        /// <summary>
+        /// Создаёт кольцевую бинарную маску коронки крышки.
+        /// Маска представляет собой область между внутренним и внешним радиусами,
+        /// используемую для поиска дефектов на кромке (например, облоя).
+        /// </summary>
+        /// <param name="mask">Выходная бинарная маска, в которую записывается результат.</param>
+        /// <param name="center">Центр коронки на изображении.</param>
+        /// <param name="innerRadius">Внутренний радиус кольца.</param>
+        /// <param name="outerRadius">Внешний радиус кольца.</param>
         private void GetIdealCapMask(Mat mask, Point center, float innerRadius, float outerRadius)
         {
             mask.SetTo(0);
-            using Mat outer = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);
-            using Mat inner = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);
+
+            using var outer = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);
+            using var inner = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);
 
             Cv2.Circle(outer, center, (int)outerRadius, Scalar.White, -1);
             Cv2.Circle(inner, center, (int)innerRadius, Scalar.White, -1);
