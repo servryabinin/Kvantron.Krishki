@@ -376,7 +376,9 @@ namespace CapDefectDetector
         {
             InitializeImageMatrices();
             InitializePaths();
-            LoadDefectAndCameraParam();
+            LoadCameraParam();
+            LoadDefectParam();
+            LoadPrParam();
             InitializeRecepts();
             InitializeMorphologicalElements();
             InitializeTrigTables();
@@ -591,24 +593,10 @@ namespace CapDefectDetector
                 receptCapsCmB.Items.Add(recipeName);
         }
 
-        private void LoadDefectAndCameraParam()
+        private void LoadPrParam()
         {
             // ===== Параметры ПР =====
             int.TryParse(Properties.Settings.Default.Settings_BreakingTime, out _breakingTimeValue);
-            int.TryParse(Properties.Settings.Default.Settings_BreakerOffset, out _breakerOffsetValue);
-            int.TryParse(Properties.Settings.Default.Settings_CameraOffset, out _cameraOffsetValue);
-
-            if (cameraOffsetTb != null)
-            {
-                cameraOffsetTb.Text = _cameraOffsetValue.ToString();
-                SendCameraOffset(_cameraOffsetValue);
-            }
-
-            if (breakerOffsetTb != null)
-            {
-                breakerOffsetTb.Text = _breakerOffsetValue.ToString();
-                SendBreakerOffset(_breakerOffsetValue);
-            }
 
             if (breakingTimeTb != null)
             {
@@ -616,37 +604,99 @@ namespace CapDefectDetector
                 SendBreakingTime(_breakingTimeValue);
             }
 
-            // ===== Параметры дефектов (автоподгрузка при запуске) =====
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_OvalityThreshold))
-                ovalityCoefNumUpD.Text = Properties.Settings.Default.Settings_OvalityThreshold;
+            int.TryParse(Properties.Settings.Default.Settings_BreakerOffset, out _breakerOffsetValue);
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_InclusionThreshold))
-                circleCoefNumUpD.Text = Properties.Settings.Default.Settings_InclusionThreshold;
+            if (breakerOffsetTb != null)
+            {
+                breakerOffsetTb.Text = _breakerOffsetValue.ToString();
+                SendBreakerOffset(_breakerOffsetValue);
+            }
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_MinAreaInclusion))
-                minSquareInclusionNumUpD.Text = Properties.Settings.Default.Settings_MinAreaInclusion;
+            int.TryParse(Properties.Settings.Default.Settings_CameraOffset, out _cameraOffsetValue);
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_MaxAreaInclusion))
-                maxSquareInclusionNumUpD.Text = Properties.Settings.Default.Settings_MaxAreaInclusion;
+            if (cameraOffsetTb != null)
+            {
+                cameraOffsetTb.Text = _cameraOffsetValue.ToString();
+                SendCameraOffset(_cameraOffsetValue);
+            }
+        }
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_CoefCapRadiusInclusion))
-                coefCapRadiusInclusionUpD.Text = Properties.Settings.Default.Settings_CoefCapRadiusInclusion;
+        private void LoadDefectParam()
+        {
+            // ===== Параметры ПР =====
+            double.TryParse(Properties.Settings.Default.Settings_OvalityThreshold, out _ovalityThreshold);
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_MinAreaInpaintDefect))
-                minSquareInpaintNumUpD.Text = Properties.Settings.Default.Settings_MinAreaInpaintDefect;
+            if (ovalityCoefNumUpD != null)
+            {
+                ovalityCoefNumUpD.Text = _ovalityThreshold.ToString();
+            }
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_MinInpaintWhiteThreshold))
-                whiteThresoldNumUpD.Text = Properties.Settings.Default.Settings_MinInpaintWhiteThreshold;
+            double.TryParse(Properties.Settings.Default.Settings_InclusionThreshold, out _inclusionThreshold);
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_MinAreaObloy))
-                obloyPixCountNumUpD.Text = Properties.Settings.Default.Settings_MinAreaObloy;
+            if (circleCoefNumUpD != null)
+            {
+                circleCoefNumUpD.Text = _inclusionThreshold.ToString();
+            }
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_СorrugationsCountForUnderFill))
-                countCorrugationsNumUpD.Text = Properties.Settings.Default.Settings_СorrugationsCountForUnderFill;
+            double.TryParse(Properties.Settings.Default.Settings_MinAreaInclusion, out _minAreaInclusion);
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_СoefCapRadiusUnderFill))
-                coefCapRadiusMaskUnderFillNumUpD.Text = Properties.Settings.Default.Settings_СoefCapRadiusUnderFill;
+            if (minSquareInclusionNumUpD != null)
+            {
+                minSquareInclusionNumUpD.Text = _minAreaInclusion.ToString();
+            }
 
+            double.TryParse(Properties.Settings.Default.Settings_MaxAreaInclusion, out _maxAreaInclusion);
+
+            if (maxSquareInclusionNumUpD != null)
+            {
+                maxSquareInclusionNumUpD.Text = _maxAreaInclusion.ToString();
+            }
+
+            double.TryParse(Properties.Settings.Default.Settings_CoefCapRadiusInclusion, out _coefCapRadiusInclusion);
+
+            if (coefCapRadiusInclusionUpD != null)
+            {
+                coefCapRadiusInclusionUpD.Text = _coefCapRadiusInclusion.ToString();
+            }
+
+            double.TryParse(Properties.Settings.Default.Settings_MinAreaInpaintDefect, out _minAreaInpaintDefect);
+
+            if (minSquareInpaintNumUpD != null)
+            {
+                minSquareInpaintNumUpD.Text = _minAreaInpaintDefect.ToString();
+            }
+
+            double.TryParse(Properties.Settings.Default.Settings_MinInpaintWhiteThreshold, out _minInpaintWhiteThreshold);
+
+            if (whiteThresoldNumUpD != null)
+            {
+                whiteThresoldNumUpD.Text = _minInpaintWhiteThreshold.ToString();
+            }
+
+            double.TryParse(Properties.Settings.Default.Settings_MinAreaObloy, out _minAreaObloy);
+
+            if (obloyPixCountNumUpD != null)
+            {
+                obloyPixCountNumUpD.Text = _minAreaObloy.ToString();
+            }
+
+            double.TryParse(Properties.Settings.Default.Settings_СorrugationsCountForUnderFill, out _corrugationsCountForUnderFill);
+
+            if (countCorrugationsNumUpD != null)
+            {
+                countCorrugationsNumUpD.Text = _corrugationsCountForUnderFill.ToString();
+            }
+
+            double.TryParse(Properties.Settings.Default.Settings_СoefCapRadiusUnderFill, out _coefCapRadiusUnderFill);
+
+            if (coefCapRadiusMaskUnderFillNumUpD != null)
+            {
+                coefCapRadiusMaskUnderFillNumUpD.Text = _coefCapRadiusUnderFill.ToString();
+            }
+        }
+
+        private void LoadCameraParam()
+        {
             // ===== Параметры камеры (Width, Height, Exposure, Saturation) =====
             if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_WidthFrame))
                 frameWidthNumUpD.Text = Properties.Settings.Default.Settings_WidthFrame;
@@ -989,7 +1039,7 @@ namespace CapDefectDetector
 
                 _isStreamCam = true;
 
-                ApplyRecognitionParameters();
+                //ApplyRecognitionParameters();
 
                 if (AuthManager.Instance.CurrentRole == Role.Operator)
                 {
@@ -1114,6 +1164,9 @@ namespace CapDefectDetector
 
                 string json = System.Text.Json.JsonSerializer.Serialize(settings,
                     new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+
+                if (!Directory.Exists(_folderParamPr205))
+                    Directory.CreateDirectory(_folderParamPr205);
 
                 using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                 {
@@ -2504,8 +2557,6 @@ namespace CapDefectDetector
         {
             try
             {
-                ApplyRecognitionParameters();
-
                 if (_modbusClient == null || !_modbusClient.Connected)
                 {
                     MessageBox.Show(
@@ -2679,86 +2730,6 @@ namespace CapDefectDetector
 
         #region Вспомогательные методы
 
-        private void ApplyRecognitionParameters()
-        {
-            try
-            {
-                if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _ovalityThreshold))
-                {
-                    _ovalityThreshold = 0.7;
-                    ovalityCoefNumUpD.Text = _ovalityThreshold.ToString();
-                }
-
-                if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _inclusionThreshold))
-                {
-                    _inclusionThreshold = 0.5;
-                    circleCoefNumUpD.Text = _inclusionThreshold.ToString(CultureInfo.InvariantCulture);
-                }
-
-                if (!double.TryParse(coefCapRadiusInclusionUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _coefCapRadiusInclusion))
-                {
-                    _coefCapRadiusInclusion = 0.7;
-                    coefCapRadiusInclusionUpD.Text = _coefCapRadiusInclusion.ToString(CultureInfo.InvariantCulture);
-                }
-
-                if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _minAreaInclusion))
-                {
-                    _minAreaInclusion = 50;
-                    minSquareInclusionNumUpD.Text = _minAreaInclusion.ToString(CultureInfo.InvariantCulture);
-                }
-
-                if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _maxAreaInclusion))
-                {
-                    _maxAreaInclusion = 500.0;
-                    maxSquareInclusionNumUpD.Text = _maxAreaInclusion.ToString(CultureInfo.InvariantCulture);
-                }
-
-                if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _minAreaInpaintDefect))
-                {
-                    _minAreaInpaintDefect = 500;
-                    minSquareInpaintNumUpD.Text = _minAreaInpaintDefect.ToString(CultureInfo.InvariantCulture);
-                }
-
-                if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _minInpaintWhiteThreshold))
-                {
-                    _minInpaintWhiteThreshold = 150.0;
-                    whiteThresoldNumUpD.Text = _minInpaintWhiteThreshold.ToString(CultureInfo.InvariantCulture);
-                }
-
-                if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _minAreaObloy))
-                {
-                    _minAreaObloy = 1000;
-                    obloyPixCountNumUpD.Text = _minAreaObloy.ToString(CultureInfo.InvariantCulture);
-                }
-
-                if (!double.TryParse(countCorrugationsNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _corrugationsCountForUnderFill))
-                {
-                    _corrugationsCountForUnderFill = 10;
-                    countCorrugationsNumUpD.Text = _corrugationsCountForUnderFill.ToString(CultureInfo.InvariantCulture);
-                }
-
-                if (!double.TryParse(coefCapRadiusMaskUnderFillNumUpD.Text.Replace(',', '.'),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out _coefCapRadiusUnderFill))
-                {
-                    _coefCapRadiusUnderFill = 0.85;
-                    coefCapRadiusMaskUnderFillNumUpD.Text = _coefCapRadiusUnderFill.ToString(CultureInfo.InvariantCulture);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка в ApplyRecognitionParameters");
-            }
-        }
-
         private void ovalityCoefNumUpD_ValueChanged(object sender, EventArgs e)
         {
             _ovalityThreshold = (double)ovalityCoefNumUpD.Value;
@@ -2834,6 +2805,9 @@ namespace CapDefectDetector
 
                 string json = System.Text.Json.JsonSerializer.Serialize(settings,
                     new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+
+                if (!Directory.Exists(_folderParamCamera))
+                    Directory.CreateDirectory(_folderParamCamera);
 
                 using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                 {
@@ -3966,7 +3940,7 @@ namespace CapDefectDetector
         {
             try
             {
-                ApplyRecognitionParameters();
+                //ApplyRecognitionParameters();
 
                 if (_imageForTest == null || _imageForTest.Empty())
                 {
