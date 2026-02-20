@@ -1134,12 +1134,153 @@ namespace CapDefectDetector
 
         private void saveSettingsButton_Click(object sender, EventArgs e)
         {
-            SaveSettings();
+            if (!ValidateCameraSettings())
+                return;
+
+            try
+            {
+                var settings = new
+                {
+                    Width = frameWidthNumUpD.Text,
+                    Height = frameHeightNumUpD.Text,
+                    Exposure = frameExposureNumUpD.Text,
+                    Saturation = frameSaturationNumUpD.Text
+                };
+
+                string json =
+                    System.Text.Json.JsonSerializer.Serialize(
+                        settings,
+                        new System.Text.Json.JsonSerializerOptions
+                        {
+                            WriteIndented = true
+                        });
+
+
+                if (!Directory.Exists(_folderParamCamera))
+                    Directory.CreateDirectory(_folderParamCamera);
+
+
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                    saveFileDialog.Title = "Сохранить настройки камеры";
+                    saveFileDialog.FileName = "camera_settings.json";
+                    saveFileDialog.InitialDirectory = _folderParamCamera;
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        File.WriteAllText(saveFileDialog.FileName, json);
+                        Properties.Settings.Default.Settings_WidthFrame = frameWidthNumUpD.Text;
+                        Properties.Settings.Default.Settings_HeightFrame = frameHeightNumUpD.Text;
+                        Properties.Settings.Default.Settings_ExposureFrame = frameExposureNumUpD.Text;
+                        Properties.Settings.Default.Settings_SaturationFrame = frameSaturationNumUpD.Text;
+                        Properties.Settings.Default.Save();
+
+                        MessageBox.Show("Настройки камеры успешно сохранены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "SaveCameraSettings");
+
+                MessageBox.Show("Ошибка при сохранении настроек камеры:\n" + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool ValidateCameraSettings()
+        {
+            try
+            {
+
+                if (!int.TryParse(frameWidthNumUpD.Text, out int width) || width <= 0)
+                {
+                    string msg = "'Ширина' кадра должна быть положительным числом.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateCameraSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    frameWidthNumUpD.Focus();
+                    return false;
+                }
+
+                if (!int.TryParse(frameHeightNumUpD.Text, out int height) || height <= 0)
+                {
+                    string msg = "'Высота' кадра должна быть положительным числом.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateCameraSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    frameHeightNumUpD.Focus();
+                    return false;
+                }
+
+                if (!int.TryParse(frameExposureNumUpD.Text, out int exposure) || exposure < 0)
+                {
+                    string msg = "'Экспозиция' должна быть положительным числом.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateCameraSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    frameExposureNumUpD.Focus();
+                    return false;
+                }
+
+                if (!int.TryParse(frameSaturationNumUpD.Text, out int saturation)
+                    || saturation < 0 || saturation > 255)
+                {
+                    string msg = "'Сатурация' должна быть числом от 0 до 255.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateCameraSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    frameSaturationNumUpD.Focus();
+                    return false;
+                }
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "ValidateCameraSettings");
+                MessageBox.Show("Ошибка при проверке настроек камеры:\n" + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
         }
 
         private void loadSettingsButton_Click(object sender, EventArgs e)
         {
-            LoadSettings();
+            try
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                    openFileDialog.Title = "Загрузить настройки";
+                    openFileDialog.InitialDirectory = _folderParamCamera;
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string json = File.ReadAllText(openFileDialog.FileName);
+                        var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+                        if (settings != null)
+                        {
+                            frameWidthNumUpD.Text = settings.ContainsKey("Width") ? settings["Width"] : "496";
+                            frameHeightNumUpD.Text = settings.ContainsKey("Height") ? settings["Height"] : "532";
+                            frameExposureNumUpD.Text = settings.ContainsKey("Exposure") ? settings["Exposure"] : "450";
+                            frameSaturationNumUpD.Text = settings.ContainsKey("Saturation") ? settings["Saturation"] : "128";
+
+                            MessageBox.Show("Настройки успешно загружены.", "Успех",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Не удалось прочитать настройки из файла.",
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при загрузке настроек: " + ex.Message,
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrorLogger.Log(ex, "Ошибка при загрузке настроек камеры в LoadSettings");
+            }
         }
 
         #endregion
@@ -1196,6 +1337,67 @@ namespace CapDefectDetector
             }
         }
 
+        private bool ValidatePrSettings()
+        {
+            try
+            {
+                if (!System.Net.IPAddress.TryParse(prIpTextBox.Text, out _))
+                {
+                    string msg = "''Ip адрес сдува' имеет неправльный формат'.\nПример: 192.168.0.10";
+                    ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    prIpTextBox.Focus();
+                    return false;
+                }
+
+                if (!int.TryParse(pr205PortTb.Text, out int port) || port < 1 || port > 65535)
+                {
+                    string msg = "'Порт ПР205' должен быть числом от 1 до 65535.";
+                    ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    pr205PortTb.Focus();
+                    return false;
+                }
+
+                if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0 || delay > 65535 )
+                {
+                    string msg = "'Время сдува, мс' должно быть числом от 0 до 65535.";
+                    ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    breakingTimeTb.Focus();
+                    return false;
+                }
+
+                if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset) || cameraOffset < 0 || cameraOffset > 65535)
+                {
+                    string msg = "'Расстояние от датчика до камеры, шаги' должно быть числом от 0 до 65535.";
+                    ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    cameraOffsetTb.Focus();
+                    return false;
+                }
+
+                if (!int.TryParse(breakerOffsetTb.Text, out int breakerOffset) || breakerOffset < 0 || breakerOffset > 65535)
+                {
+                    string msg = "'Расстояние от датчика до сдува, шаги' должно быть числом от 0 до 65535.";
+                    ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    breakerOffsetTb.Focus();
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "ValidatePrSettings — непредвиденная ошибка");
+
+                MessageBox.Show("Непредвиденная ошибка при проверке настроек:\n" + ex.Message,"Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+        }
+
         private void loadPrSettings_Click(object sender, EventArgs e)
         {
             try
@@ -1232,34 +1434,6 @@ namespace CapDefectDetector
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Ошибка при загрузке настроек ПР205 (loadPrSettings_Click)");
-            }
-        }
-
-        private bool ValidatePrSettings()
-        {
-            try
-            {
-                if (!System.Net.IPAddress.TryParse(prIpTextBox.Text, out _))
-                    throw new Exception("Неверный формат IP адреса");
-
-                if (!int.TryParse(pr205PortTb.Text, out int port) || port < 1 || port > 65535)
-                    throw new Exception("Порт должен быть числом от 1 до 65535");
-
-                if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0)
-                    throw new Exception("Задержка должна быть положительным числом");
-
-                if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset) || cameraOffset < 0)
-                    throw new Exception("Расстояние от датчика до камеры должно быть положительным числом");
-
-                if (!int.TryParse(breakerOffsetTb.Text, out int breakerOffset) || breakerOffset < 0)
-                    throw new Exception("Расстояние от датчика до отбраковщика должно быть положительным числом");
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка валидации настроек ПР205 (ValidatePrSettings)");
-                return false;
             }
         }
 
@@ -1372,6 +1546,112 @@ namespace CapDefectDetector
             }
         }
 
+        private bool ValidateDefectSettings()
+        {
+            try
+            {
+                if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality)
+                    || ovality <= 0 || ovality > 1)
+                {
+                    string msg = "Параметр 'Коэффициент овальности' должен быть числом от 0 до 1.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ovalityCoefNumUpD.Focus();
+                    return false;
+                }
+
+                if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion)
+                    || inclusion <= 0 || inclusion > 1)
+                {
+                    string msg = "Параметр 'Коэффициент округлости вкраплений' должен быть числом от 0 до 1.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    circleCoefNumUpD.Focus();
+                    return false;
+                }
+
+                if (!double.TryParse(coefCapRadiusInclusionUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double coefCapRadius)
+                    || coefCapRadius <= 0 || coefCapRadius > 1)
+                {
+                    string msg = "Параметр 'Коэффициент от радиуса крышки' должен быть числом от 0 до 1.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    coefCapRadiusInclusionUpD.Focus();
+                    return false;
+                }
+
+                if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInclusion)
+                    || minInclusion < 0)
+                {
+                    string msg = "Параметр 'Минимальная площадь вкрапления' должен быть ≥ 0.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    minSquareInclusionNumUpD.Focus();
+                    return false;
+                }
+
+                if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double maxInclusion)
+                    || maxInclusion <= minInclusion)
+                {
+                    string msg = "Параметр 'Максимальная площадь вкрапления' должен быть больше минимальной.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    maxSquareInclusionNumUpD.Focus();
+                    return false;
+                }
+
+                if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInpaint)
+                    || minInpaint <= 0)
+                {
+                    string msg = "Параметр 'Минимальная площадь непрокраса' должен быть > 0.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    minSquareInpaintNumUpD.Focus();
+                    return false;
+                }
+
+                if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double whiteThreshold)
+                    || whiteThreshold <= 0)
+                {
+                    string msg = "Параметр 'Близость к белому' должен быть > 0.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    whiteThresoldNumUpD.Focus();
+                    return false;
+                }
+
+                if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double obloy)
+                    || obloy <= 0)
+                {
+                    string msg = "Параметр 'Минимальная площадь облоя' должен быть > 0.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    obloyPixCountNumUpD.Focus();
+                    return false;
+                }
+
+                if (!double.TryParse(countCorrugationsNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double corrugationsCount)
+                    || corrugationsCount <= 0)
+                {
+                    string msg = "Параметр 'Количество зубцов на коронке' должен быть > 0.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    countCorrugationsNumUpD.Focus();
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "ValidateDefectSettings - непредвиденная ошибка");
+
+                MessageBox.Show("Произошла непредвиденная ошибка при проверке настроек:\n" + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+        }
+
         private void loadDefectSettings_Click(object sender, EventArgs e)
         {
             try
@@ -1412,75 +1692,6 @@ namespace CapDefectDetector
                 ErrorLogger.Log(ex, "Ошибка при загрузке настроек дефектов");
             }
         }
-
-
-        private bool ValidateDefectSettings()
-        {
-            try
-            {
-                if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality) || ovality <= 0 || ovality > 1)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Коэффициент овальности' некорректен"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                if (!double.TryParse(circleCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double inclusion) || inclusion <= 0 || inclusion > 1)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Коэффициент округлости вкраплений' некорректен"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                if (!double.TryParse(coefCapRadiusInclusionUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double coefCapRadius) || coefCapRadius <= 0 || coefCapRadius > 1)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Коэффициент от радиуса крышки' некорректен"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                if (!double.TryParse(minSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInclusion) || minInclusion < 0)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Минимальная площадь вкрапления' некорректен"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                if (!double.TryParse(maxSquareInclusionNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double maxInclusion) || maxInclusion <= minInclusion)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Максимальная площадь вкрапления' должен быть больше MinAreaInclusion"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                if (!double.TryParse(minSquareInpaintNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double minInpaint) || minInpaint <= 0)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Минимальная площадь непрокраса' некорректен"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                if (!double.TryParse(whiteThresoldNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double whiteThreshold) || whiteThreshold <= 0)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Близость к белому' некорректен"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                if (!double.TryParse(obloyPixCountNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double obloy) || obloy <= 0)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Минимальная площадь облоя' некорректен"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                if (!double.TryParse(countCorrugationsNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double corrugationsCount) || corrugationsCount <= 0)
-                {
-                    ErrorLogger.Log(new Exception("Параметр 'Количество зубцов на коронке' некорректен"), "ValidateDefectSettings");
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "ValidateDefectSettings - непредвиденная ошибка");
-                return false;
-            }
-        }
-
         #endregion
 
         #endregion
@@ -2780,67 +2991,6 @@ namespace CapDefectDetector
             _coefCapRadiusUnderFill = (double)coefCapRadiusMaskUnderFillNumUpD.Value;
         }
 
-        private void SaveSettings()
-        {
-            try
-            {
-                // Простая валидация
-                if (string.IsNullOrWhiteSpace(frameWidthNumUpD.Text) ||
-                    string.IsNullOrWhiteSpace(frameHeightNumUpD.Text) ||
-                    string.IsNullOrWhiteSpace(frameExposureNumUpD.Text) ||
-                    string.IsNullOrWhiteSpace(frameSaturationNumUpD.Text))
-                {
-                    MessageBox.Show("Пожалуйста, заполните все поля перед сохранением.", "Ошибка",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                var settings = new
-                {
-                    Width = frameWidthNumUpD.Text,
-                    Height = frameHeightNumUpD.Text,
-                    Exposure = frameExposureNumUpD.Text,
-                    Saturation = frameSaturationNumUpD.Text
-                };
-
-                string json = System.Text.Json.JsonSerializer.Serialize(settings,
-                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
-
-                if (!Directory.Exists(_folderParamCamera))
-                    Directory.CreateDirectory(_folderParamCamera);
-
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-                {
-                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    saveFileDialog.Title = "Сохранить настройки";
-                    saveFileDialog.FileName = "settings.json";
-                    saveFileDialog.InitialDirectory = _folderParamCamera;
-
-                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(saveFileDialog.FileName, json);
-
-                        // ✅ Сохраняем также в Settings
-                        Properties.Settings.Default.Settings_WidthFrame = frameWidthNumUpD.Text;
-                        Properties.Settings.Default.Settings_HeightFrame = frameHeightNumUpD.Text;
-                        Properties.Settings.Default.Settings_ExposureFrame = frameExposureNumUpD.Text;
-                        Properties.Settings.Default.Settings_SaturationFrame = frameSaturationNumUpD.Text;
-                        Properties.Settings.Default.Save();
-
-                        MessageBox.Show("Настройки успешно сохранены.", "Успех",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при сохранении настроек: " + ex.Message,
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ErrorLogger.Log(ex, "Ошибка при сохранении настроек камеры в SaveSettings");
-            }
-        }
-
-
         private void LoadSettings()
         {
             try
@@ -2881,8 +3031,6 @@ namespace CapDefectDetector
                 ErrorLogger.Log(ex, "Ошибка при загрузке настроек камеры в LoadSettings");
             }
         }
-
-
         #endregion
 
         #region Методы получения данных от оборудования

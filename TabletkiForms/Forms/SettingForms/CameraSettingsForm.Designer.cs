@@ -50,8 +50,7 @@
             camerasDataGridView.Columns.AddRange(new DataGridViewColumn[] { ConnectColumn, ModelColumn, SerialNumberColumn, IPAddressColumn, ConnectionTypeColumn, AvailabilityColumn });
             camerasDataGridView.EnableHeadersVisualStyles = false;
             camerasDataGridView.GridColor = Color.FromArgb(200, 200, 200);
-            camerasDataGridView.Location = new Point(14, 36);
-            camerasDataGridView.Margin = new Padding(3, 4, 3, 4);
+            camerasDataGridView.Location = new Point(12, 27);
             camerasDataGridView.MultiSelect = false;
             camerasDataGridView.Name = "camerasDataGridView";
             camerasDataGridView.RowHeadersVisible = false;
@@ -60,7 +59,7 @@
             camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
             camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
             camerasDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            camerasDataGridView.Size = new Size(815, 267);
+            camerasDataGridView.Size = new Size(713, 200);
             camerasDataGridView.TabIndex = 0;
             camerasDataGridView.CellContentClick += camerasDataGridView_CellContentClick;
             camerasDataGridView.CellFormatting += camerasDataGridView_CellFormatting;
@@ -118,9 +117,9 @@
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             label1.ForeColor = Color.Black;
-            label1.Location = new Point(14, 12);
+            label1.Location = new Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new Size(177, 23);
+            label1.Size = new Size(150, 19);
             label1.TabIndex = 1;
             label1.Text = "Доступные камеры:";
             // 
@@ -129,11 +128,10 @@
             manualSNTextBox.BackColor = Color.White;
             manualSNTextBox.BorderStyle = BorderStyle.FixedSingle;
             manualSNTextBox.Font = new Font("Segoe UI", 9F);
-            manualSNTextBox.Location = new Point(14, 340);
-            manualSNTextBox.Margin = new Padding(3, 4, 3, 4);
+            manualSNTextBox.Location = new Point(12, 255);
             manualSNTextBox.Name = "manualSNTextBox";
             manualSNTextBox.PlaceholderText = "Введите серийный номер камеры";
-            manualSNTextBox.Size = new Size(815, 27);
+            manualSNTextBox.Size = new Size(713, 23);
             manualSNTextBox.TabIndex = 2;
             manualSNTextBox.TextChanged += manualSNTextBox_TextChanged;
             // 
@@ -142,9 +140,9 @@
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             label2.ForeColor = Color.Black;
-            label2.Location = new Point(14, 309);
+            label2.Location = new Point(12, 232);
             label2.Name = "label2";
-            label2.Size = new Size(349, 23);
+            label2.Size = new Size(292, 19);
             label2.TabIndex = 3;
             label2.Text = "Или введите серийный номер вручную:";
             // 
@@ -155,10 +153,9 @@
             okButton.FlatStyle = FlatStyle.Flat;
             okButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             okButton.ForeColor = Color.White;
-            okButton.Location = new Point(734, 385);
-            okButton.Margin = new Padding(3, 4, 3, 4);
+            okButton.Location = new Point(642, 289);
             okButton.Name = "okButton";
-            okButton.Size = new Size(95, 37);
+            okButton.Size = new Size(83, 28);
             okButton.TabIndex = 4;
             okButton.Text = "OK";
             okButton.UseVisualStyleBackColor = false;
@@ -171,10 +168,9 @@
             refreshButton.FlatStyle = FlatStyle.Flat;
             refreshButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             refreshButton.ForeColor = Color.White;
-            refreshButton.Location = new Point(14, 385);
-            refreshButton.Margin = new Padding(3, 4, 3, 4);
+            refreshButton.Location = new Point(12, 289);
             refreshButton.Name = "refreshButton";
-            refreshButton.Size = new Size(95, 37);
+            refreshButton.Size = new Size(83, 28);
             refreshButton.TabIndex = 6;
             refreshButton.Text = "Обновить";
             refreshButton.UseVisualStyleBackColor = false;
@@ -182,10 +178,10 @@
             // 
             // CameraSettingsForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             BackColor = Color.White;
-            ClientSize = new Size(839, 432);
+            ClientSize = new Size(734, 324);
             Controls.Add(refreshButton);
             Controls.Add(okButton);
             Controls.Add(label2);
@@ -194,7 +190,6 @@
             Controls.Add(camerasDataGridView);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Margin = new Padding(3, 4, 3, 4);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "CameraSettingsForm";
