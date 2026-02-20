@@ -17,7 +17,7 @@ namespace CapDefectDetector.Processing.Utils
         {
             Mat processed = image.Clone();
             processed = SimulateCameraSaturation(processed, param.Saturation);
-            NonlinearBackgroundDecolorization(processed, param.CapsColor, param.IsColored, param.IsYellowCap, param.IsGreenColor, param.green_threshold);
+            NonlinearBackgroundDecolorization(processed, param.CapsColor, param.IsColored, param.IsYellowCap, param.IsGreenColor, param.GreenThreshold);
 
             Mat[] channels;
             Cv2.Split(processed, out channels);

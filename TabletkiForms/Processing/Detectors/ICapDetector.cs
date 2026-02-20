@@ -12,12 +12,14 @@ namespace CapDefectDetector.Processing.Detectors
     {
 
         /// <summary>
-        /// Проверка овальности крышки по контуру
+        /// Метод проверки крышек на дефект
         /// </summary>
         /// <param name="gray">Грейскейл изображение</param>
         /// <param name="image">Исходное изображение</param>
         /// <param name="drawFrame">Кадр для отрисовки результата</param>
-        /// <param name="contour">Контур крышки</param>
+        /// <param name="capContour">Контур крышки</param>
+        /// <param name="blurChannel1">Один из каналов изображения крышек hsv</param>
+        /// <param name="blurChannel2">Один из каналов изображения крышек hsv</param>
         /// <param name="param">Параметры рецепта</param>
         /// <param name="token">Токен отмены</param>
         /// <returns>true если дефект найден</returns>
@@ -27,9 +29,13 @@ namespace CapDefectDetector.Processing.Detectors
 
             Mat image,
 
-            Mat draw,
+            Mat drawFrame,
 
-            Point[] contour,
+            Point[] capContour,
+
+            Mat blurChannel1, 
+
+            Mat blurChannel2,
 
             ProcessingParameters param,
 

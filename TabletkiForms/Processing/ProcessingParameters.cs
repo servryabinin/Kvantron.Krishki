@@ -25,7 +25,7 @@ namespace CapDefectDetector.Processing
 
         public float OutlierThreshold = 1.15f;
 
-        public byte green_threshold = 40;
+        public byte GreenThreshold = 40;
 
         // morphology elements
 
@@ -51,7 +51,7 @@ namespace CapDefectDetector.Processing
         public double CoefCapRadiusUnderFill = 0.8;
 
 
-        public void Build()
+        public void BuildMorphology()
         {
             Element1 = Cv2.GetStructuringElement(
                 MorphShapes.Rect,

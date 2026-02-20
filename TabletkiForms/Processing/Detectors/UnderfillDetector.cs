@@ -57,18 +57,26 @@ namespace CapDefectDetector.Processing.Detectors
         /// <param name="param">Параметры рецепта</param>
         /// <param name="token">Токен отмены</param>
         /// <returns>true если дефект найден</returns>
-        public bool Detect(Mat gray, Mat image, Mat draw, Point[] contour, ProcessingParameters param, CancellationToken token)
+        public bool Detect(
+            Mat gray, 
+            Mat image, 
+            Mat draw,
+            Point[] capContour,
+            Mat blurChannel1,
+            Mat blurChannel2,
+            ProcessingParameters param, 
+            CancellationToken token)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
 
-                if (contour == null || contour.Length < 5)
+                if (capContour == null || capContour.Length < 5)
                     return false;
 
                 // 1️⃣ Цветокоррекция
                 Mat corrected = image.Clone();
-                ContourHelper.NonlinearBackgroundDecolorization(corrected, param.CapsColor, true, true, false, param.green_threshold);
+                ContourHelper.NonlinearBackgroundDecolorization(corrected, param.CapsColor, true, true, false, param.GreenThreshold);
 
                 Mat correctedGray = new Mat();
                 Cv2.CvtColor(corrected, correctedGray, ColorConversionCodes.BGR2GRAY);
@@ -76,7 +84,7 @@ namespace CapDefectDetector.Processing.Detectors
                 token.ThrowIfCancellationRequested();
 
                 // 2️⃣ Этап: подгонка эллипса
-                RotatedRect outerEllipse = Cv2.FitEllipse(contour);
+                RotatedRect outerEllipse = Cv2.FitEllipse(capContour);
 
                 Size2f outerSize = outerEllipse.Size;
                 Size2f innerSize = new Size2f(

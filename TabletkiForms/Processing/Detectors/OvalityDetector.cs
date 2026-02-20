@@ -25,7 +25,9 @@ namespace CapDefectDetector.Processing.Detectors
         /// <param name="gray">Грейскейл изображение</param>
         /// <param name="image">Исходное изображение</param>
         /// <param name="drawFrame">Кадр для отрисовки результата</param>
-        /// <param name="contour">Контур крышки</param>
+        /// <param name="capContour">Контур крышки</param>
+        /// <param name="blurChannel1">Один из каналов изображения крышек hsv</param>
+        /// <param name="blurChannel2">Один из каналов изображения крышек hsv</param>
         /// <param name="param">Параметры рецепта</param>
         /// <param name="token">Токен отмены</param>
         /// <returns>true если дефект найден</returns>
@@ -33,7 +35,9 @@ namespace CapDefectDetector.Processing.Detectors
             Mat gray,
             Mat image,
             Mat drawFrame,
-            Point[] contour,
+            Point[] capContour,
+            Mat blurChannel1,
+            Mat blurChannel2,
             ProcessingParameters param,
             CancellationToken token)
         {
@@ -41,7 +45,7 @@ namespace CapDefectDetector.Processing.Detectors
             {
                 token.ThrowIfCancellationRequested();
 
-                if (contour == null || contour.Length < 5)
+                if (capContour == null || capContour.Length < 5)
                 {
                     ErrorLogger.Log(new Exception("Контур для проверки овальности пустой или содержит недостаточно точек"),
                         "OvalityDetector.Detect - проверка наличия контура");
@@ -50,7 +54,7 @@ namespace CapDefectDetector.Processing.Detectors
 
                 token.ThrowIfCancellationRequested();
 
-                RotatedRect ellipse = Cv2.FitEllipse(contour);
+                RotatedRect ellipse = Cv2.FitEllipse(capContour);
 
                 double majorAxis = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
                 double minorAxis = Math.Min(ellipse.Size.Width, ellipse.Size.Height);

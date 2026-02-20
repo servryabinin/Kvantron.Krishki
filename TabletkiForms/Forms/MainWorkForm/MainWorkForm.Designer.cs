@@ -360,7 +360,7 @@
             label16.ForeColor = Color.Black;
             label16.Location = new Point(17, 28);
             label16.Name = "label16";
-            label16.Size = new Size(75, 13);
+            label16.Size = new Size(74, 13);
             label16.TabIndex = 1;
             label16.Text = "Видеопоток:";
             // 
@@ -1759,7 +1759,7 @@
             morphCb.Font = new Font("Segoe UI", 7.8F);
             morphCb.FormattingEnabled = true;
             morphCb.Items.AddRange(new object[] { "1", "2", "3" });
-            morphCb.Location = new Point(366, 161);
+            morphCb.Location = new Point(366, 160);
             morphCb.Name = "morphCb";
             morphCb.Size = new Size(81, 20);
             morphCb.TabIndex = 7;
@@ -1782,7 +1782,7 @@
             windowCb.Font = new Font("Segoe UI", 7.8F);
             windowCb.FormattingEnabled = true;
             windowCb.Items.AddRange(new object[] { "3", "5", "7", "9", "11", "13", "15" });
-            windowCb.Location = new Point(276, 161);
+            windowCb.Location = new Point(276, 160);
             windowCb.Name = "windowCb";
             windowCb.Size = new Size(81, 20);
             windowCb.TabIndex = 6;
