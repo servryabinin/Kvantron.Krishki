@@ -1,28 +1,20 @@
 ﻿//#define OLD_FRAME_PROCESSING
 
+using System.Collections.Immutable;
+using System.Data;
+using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Text;
 using CapDefectDetector.Authorization;
 using CapDefectDetector.CameraAndModbusClasses;
 using CapDefectDetector.Forms;
 using CapDefectDetector.FrameProcessing;
 using CapDefectDetector.Hardware;
 using CapDefectDetector.Logger;
-using Kvantron.Hardware.SmartDio;
-using Kvantron.UI.Controls.Utils;
-using MathNet.Numerics.IntegralTransforms;
 using Newtonsoft.Json;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
-using OpenCvSharp.Flann;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Globalization;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 using Timer = System.Windows.Forms.Timer;
@@ -1359,7 +1351,7 @@ namespace CapDefectDetector
                     return false;
                 }
 
-                if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0 || delay > 65535 )
+                if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0 || delay > 65535)
                 {
                     string msg = "'Время сдува, мс' должно быть числом от 0 до 65535.";
                     ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
@@ -1392,7 +1384,7 @@ namespace CapDefectDetector
             {
                 ErrorLogger.Log(ex, "ValidatePrSettings — непредвиденная ошибка");
 
-                MessageBox.Show("Непредвиденная ошибка при проверке настроек:\n" + ex.Message,"Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Непредвиденная ошибка при проверке настроек:\n" + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return false;
             }
@@ -1522,23 +1514,25 @@ namespace CapDefectDetector
                     dlg.FileName = "defect_settings.json";
 
                     if (dlg.ShowDialog() == DialogResult.OK)
+                    {
                         File.WriteAllText(dlg.FileName, json);
+
+                        // Сохраняем в Settings
+                        Properties.Settings.Default.Settings_OvalityThreshold = ovalityCoefNumUpD.Text;
+                        Properties.Settings.Default.Settings_InclusionThreshold = circleCoefNumUpD.Text;
+                        Properties.Settings.Default.Settings_MinAreaInclusion = minSquareInclusionNumUpD.Text;
+                        Properties.Settings.Default.Settings_MaxAreaInclusion = maxSquareInclusionNumUpD.Text;
+                        Properties.Settings.Default.Settings_CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text;
+                        Properties.Settings.Default.Settings_MinAreaInpaintDefect = minSquareInpaintNumUpD.Text;
+                        Properties.Settings.Default.Settings_MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text;
+                        Properties.Settings.Default.Settings_MinAreaObloy = obloyPixCountNumUpD.Text;
+                        Properties.Settings.Default.Settings_СorrugationsCountForUnderFill = countCorrugationsNumUpD.Text;
+                        Properties.Settings.Default.Settings_СoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text;
+                        Properties.Settings.Default.Save();
+
+                        MessageBox.Show("Настройки параметров дефектов сохранены успешно!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
                 }
-
-                // Сохраняем в Settings
-                Properties.Settings.Default.Settings_OvalityThreshold = ovalityCoefNumUpD.Text;
-                Properties.Settings.Default.Settings_InclusionThreshold = circleCoefNumUpD.Text;
-                Properties.Settings.Default.Settings_MinAreaInclusion = minSquareInclusionNumUpD.Text;
-                Properties.Settings.Default.Settings_MaxAreaInclusion = maxSquareInclusionNumUpD.Text;
-                Properties.Settings.Default.Settings_CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text;
-                Properties.Settings.Default.Settings_MinAreaInpaintDefect = minSquareInpaintNumUpD.Text;
-                Properties.Settings.Default.Settings_MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text;
-                Properties.Settings.Default.Settings_MinAreaObloy = obloyPixCountNumUpD.Text;
-                Properties.Settings.Default.Settings_СorrugationsCountForUnderFill = countCorrugationsNumUpD.Text;
-                Properties.Settings.Default.Settings_СoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text;
-
-
-                Properties.Settings.Default.Save();
             }
             catch (Exception ex)
             {
@@ -1672,18 +1666,27 @@ namespace CapDefectDetector
                         var settings =
                             System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 
-                        if (settings == null) return;
+                        if (settings != null)
+                        {
+                            ovalityCoefNumUpD.Text = settings.GetValueOrDefault("OvalityThreshold", "0.7");
+                            circleCoefNumUpD.Text = settings.GetValueOrDefault("InclusionThreshold", "0.5");
+                            minSquareInclusionNumUpD.Text = settings.GetValueOrDefault("MinAreaInclusion", "50");
+                            maxSquareInclusionNumUpD.Text = settings.GetValueOrDefault("MaxAreaInclusion", "500");
+                            coefCapRadiusInclusionUpD.Text = settings.GetValueOrDefault("CoefCapRadiusInclusion", "0,7");
+                            minSquareInpaintNumUpD.Text = settings.GetValueOrDefault("MinAreaInpaintDefect", "500");
+                            whiteThresoldNumUpD.Text = settings.GetValueOrDefault("MinInpaintWhiteThreshold", "150");
+                            obloyPixCountNumUpD.Text = settings.GetValueOrDefault("MinAreaObloy", "1000");
+                            countCorrugationsNumUpD.Text = settings.GetValueOrDefault("CorrugationsCountForUnderFill", "10");
+                            coefCapRadiusMaskUnderFillNumUpD.Text = settings.GetValueOrDefault("CoefCapRadiusUnderFill", "0,85");
 
-                        ovalityCoefNumUpD.Text = settings.GetValueOrDefault("OvalityThreshold", "0.7");
-                        circleCoefNumUpD.Text = settings.GetValueOrDefault("InclusionThreshold", "0.5");
-                        minSquareInclusionNumUpD.Text = settings.GetValueOrDefault("MinAreaInclusion", "50");
-                        maxSquareInclusionNumUpD.Text = settings.GetValueOrDefault("MaxAreaInclusion", "500");
-                        coefCapRadiusInclusionUpD.Text = settings.GetValueOrDefault("CoefCapRadiusInclusion", "0,7");
-                        minSquareInpaintNumUpD.Text = settings.GetValueOrDefault("MinAreaInpaintDefect", "500");
-                        whiteThresoldNumUpD.Text = settings.GetValueOrDefault("MinInpaintWhiteThreshold", "150");
-                        obloyPixCountNumUpD.Text = settings.GetValueOrDefault("MinAreaObloy", "1000");
-                        countCorrugationsNumUpD.Text = settings.GetValueOrDefault("CorrugationsCountForUnderFill", "10");
-                        coefCapRadiusMaskUnderFillNumUpD.Text = settings.GetValueOrDefault("CoefCapRadiusUnderFill", "0,85");
+                            MessageBox.Show("Настройки успешно загружены.", "Успех",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Не удалось прочитать настройки из файла.",
+                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
             }
@@ -1693,7 +1696,6 @@ namespace CapDefectDetector
             }
         }
         #endregion
-
         #endregion
 
         #region Прочие обработчики
