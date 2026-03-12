@@ -44,10 +44,9 @@
             label1.AutoSize = true;
             label1.Dock = DockStyle.Fill;
             label1.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label1.Location = new Point(4, 0);
-            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(156, 38);
+            label1.Size = new Size(125, 30);
             label1.TabIndex = 0;
             label1.Text = "Профиль:";
             label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -57,10 +56,9 @@
             label2.AutoSize = true;
             label2.Dock = DockStyle.Fill;
             label2.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label2.Location = new Point(4, 38);
-            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Location = new Point(3, 30);
             label2.Name = "label2";
-            label2.Size = new Size(156, 36);
+            label2.Size = new Size(125, 29);
             label2.TabIndex = 1;
             label2.Text = "Пароль:";
             label2.TextAlign = ContentAlignment.MiddleLeft;
@@ -70,20 +68,20 @@
             profileCmB.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             profileCmB.FormattingEnabled = true;
             profileCmB.Items.AddRange(new object[] { "Администратор", "Оператор" });
-            profileCmB.Location = new Point(168, 2);
-            profileCmB.Margin = new Padding(4, 2, 4, 2);
+            profileCmB.Location = new Point(134, 2);
+            profileCmB.Margin = new Padding(3, 2, 3, 2);
             profileCmB.Name = "profileCmB";
-            profileCmB.Size = new Size(156, 25);
+            profileCmB.Size = new Size(126, 20);
             profileCmB.TabIndex = 2;
             // 
             // profilePasswordTb
             // 
             profilePasswordTb.Dock = DockStyle.Fill;
             profilePasswordTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            profilePasswordTb.Location = new Point(168, 40);
-            profilePasswordTb.Margin = new Padding(4, 2, 4, 2);
+            profilePasswordTb.Location = new Point(134, 32);
+            profilePasswordTb.Margin = new Padding(3, 2, 3, 2);
             profilePasswordTb.Name = "profilePasswordTb";
-            profilePasswordTb.Size = new Size(157, 25);
+            profilePasswordTb.Size = new Size(126, 21);
             profilePasswordTb.TabIndex = 3;
             // 
             // tableLayoutPanel1
@@ -97,14 +95,14 @@
             tableLayoutPanel1.Controls.Add(profilePasswordTb, 1, 1);
             tableLayoutPanel1.Controls.Add(label2, 0, 1);
             tableLayoutPanel1.Controls.Add(profileCmB, 1, 0);
-            tableLayoutPanel1.Location = new Point(12, 11);
-            tableLayoutPanel1.Margin = new Padding(4, 2, 4, 2);
+            tableLayoutPanel1.Location = new Point(10, 9);
+            tableLayoutPanel1.Margin = new Padding(3, 2, 3, 2);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 3;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 30.1470585F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 28.67647F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 40.4411774F));
-            tableLayoutPanel1.Size = new Size(329, 128);
+            tableLayoutPanel1.Size = new Size(263, 102);
             tableLayoutPanel1.TabIndex = 4;
             // 
             // okProfileBt
@@ -114,10 +112,10 @@
             okProfileBt.FlatAppearance.BorderSize = 0;
             okProfileBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             okProfileBt.ForeColor = Color.White;
-            okProfileBt.Location = new Point(4, 76);
-            okProfileBt.Margin = new Padding(4, 2, 4, 2);
+            okProfileBt.Location = new Point(3, 61);
+            okProfileBt.Margin = new Padding(3, 2, 3, 2);
             okProfileBt.Name = "okProfileBt";
-            okProfileBt.Size = new Size(156, 50);
+            okProfileBt.Size = new Size(125, 39);
             okProfileBt.TabIndex = 5;
             okProfileBt.Text = "Ок";
             okProfileBt.UseVisualStyleBackColor = false;
@@ -130,10 +128,10 @@
             cancelProfileFormBt.FlatAppearance.BorderSize = 0;
             cancelProfileFormBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             cancelProfileFormBt.ForeColor = Color.White;
-            cancelProfileFormBt.Location = new Point(168, 76);
-            cancelProfileFormBt.Margin = new Padding(4, 2, 4, 2);
+            cancelProfileFormBt.Location = new Point(134, 61);
+            cancelProfileFormBt.Margin = new Padding(3, 2, 3, 2);
             cancelProfileFormBt.Name = "cancelProfileFormBt";
-            cancelProfileFormBt.Size = new Size(157, 50);
+            cancelProfileFormBt.Size = new Size(126, 39);
             cancelProfileFormBt.TabIndex = 5;
             cancelProfileFormBt.Text = "Отмена";
             cancelProfileFormBt.UseVisualStyleBackColor = false;
@@ -141,13 +139,14 @@
             // 
             // ProfileForm
             // 
-            AutoScaleDimensions = new SizeF(120F, 120F);
+            AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             BackColor = Color.White;
-            ClientSize = new Size(355, 151);
+            ClientSize = new Size(284, 121);
             Controls.Add(tableLayoutPanel1);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Margin = new Padding(4, 2, 4, 2);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "ProfileForm";
             Text = "Смена профиля";
             tableLayoutPanel1.ResumeLayout(false);

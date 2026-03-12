@@ -4121,17 +4121,18 @@ namespace CapDefectDetector
                 Cv2.DrawContours(finalFrame, new[] { contour }, -1, new Scalar(0, 255, 0), 2);
 
                 // Независимые копии для каждого дефекта
-                Mat frameO = null, frameI = null, frameP = null, frameOb = null;
-                Mat grayO = null, grayI = null, grayP = null, grayOb = null;
+                Mat frameO = null, frameI = null, frameP = null, frameOb = null, frameUf = null;
+                Mat grayO = null, grayI = null, grayP = null, grayOb = null, grayUf = null;
 
                 if (ovalityCB.Checked) { frameO = frameBase.Clone(); grayO = grayBase.Clone(); }
                 if (inclusionCB.Checked) { frameI = frameBase.Clone(); grayI = grayBase.Clone(); }
                 if (inpaintCB.Checked) { frameP = frameBase.Clone(); grayP = grayBase.Clone(); }
                 if (obloyCB.Checked) { frameOb = frameBase.Clone(); grayOb = grayBase.Clone(); }
+                if (underFillCb.Checked) { frameUf = frameBase.Clone(); grayUf = grayBase.Clone(); }
 
                 // Запуск проверок
                 CancellationToken fake = CancellationToken.None;
-                bool oval = false, incl = false, paint = false, obloy = false;
+                bool oval = false, incl = false, paint = false, obloy = false, underFill = false;
 
                 try { if (ovalityCB.Checked) oval = CheckOvality(grayO, frameO, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки овальности"); }
@@ -4145,23 +4146,52 @@ namespace CapDefectDetector
                 try { if (obloyCB.Checked) obloy = CheckForObloyDefects(grayOb, frameOb, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки облоя"); }
 
-                // Отметка на финальном изображении
-                if (oval) Cv2.PutText(finalFrame, "OVALITY", new Point(20, 40), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
-                if (incl) Cv2.PutText(finalFrame, "INCLUSIONS", new Point(20, 80), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
-                if (paint) Cv2.PutText(finalFrame, "PAINT DEFECT", new Point(20, 120), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
-                if (obloy) Cv2.PutText(finalFrame, "OBLOY", new Point(20, 160), HersheyFonts.HersheySimplex, 1.0, new Scalar(0, 0, 255), 2);
+                try { if (underFillCb.Checked) obloy = CheckForUnderFillDefects(grayUf, frameUf, finalFrame, fake, contour); }
+                catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки недолива"); }
 
-                // Показ результата
-                using (var bmp = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(finalFrame))
+                using (Bitmap bmp = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(finalFrame))
                 {
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        Font font = new Font("Arial", 18, FontStyle.Bold);
+                        Brush brush = Brushes.Red;
+
+                        int margin = 10;
+                        int y = 10;
+
+                        void DrawRight(string text)
+                        {
+                            SizeF size = g.MeasureString(text, font);
+                            float x = bmp.Width - size.Width - margin;
+                            g.DrawString(text, font, brush, x, y);
+                            y += 40;
+                        }
+
+                        if (oval) DrawRight("ОВАЛЬНОСТЬ");
+                        if (incl) DrawRight("ВКРАПЛЕНИЕ");
+                        if (paint) DrawRight("НЕПРОКРАС");
+                        if (obloy) DrawRight("ОБЛОЙ");
+                        if (underFill) DrawRight("НЕДОЛИВ");
+                    }
+
                     testingResultPb.Image?.Dispose();
                     testingResultPb.Image = (Bitmap)bmp.Clone();
                 }
 
                 // Очистка
-                frameO?.Dispose(); frameI?.Dispose(); frameP?.Dispose(); frameOb?.Dispose();
-                grayO?.Dispose(); grayI?.Dispose(); grayP?.Dispose(); grayOb?.Dispose();
-                frameBase.Dispose(); grayBase.Dispose(); finalFrame.Dispose();
+                frameO?.Dispose(); 
+                frameI?.Dispose(); 
+                frameP?.Dispose(); 
+                frameOb?.Dispose();
+                frameUf?.Dispose();
+                grayO?.Dispose(); 
+                grayI?.Dispose(); 
+                grayP?.Dispose(); 
+                grayOb?.Dispose();
+                grayUf?.Dispose();
+                frameBase.Dispose(); 
+                grayBase.Dispose(); 
+                finalFrame.Dispose();
             }
             catch (Exception ex)
             {

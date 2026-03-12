@@ -28,7 +28,11 @@
             label2 = new Label();
             okButton = new Button();
             refreshButton = new Button();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel2 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)camerasDataGridView).BeginInit();
+            tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // camerasDataGridView
@@ -48,9 +52,10 @@
             camerasDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             camerasDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             camerasDataGridView.Columns.AddRange(new DataGridViewColumn[] { ConnectColumn, ModelColumn, SerialNumberColumn, IPAddressColumn, ConnectionTypeColumn, AvailabilityColumn });
+            camerasDataGridView.Dock = DockStyle.Fill;
             camerasDataGridView.EnableHeadersVisualStyles = false;
             camerasDataGridView.GridColor = Color.FromArgb(200, 200, 200);
-            camerasDataGridView.Location = new Point(12, 27);
+            camerasDataGridView.Location = new Point(3, 24);
             camerasDataGridView.MultiSelect = false;
             camerasDataGridView.Name = "camerasDataGridView";
             camerasDataGridView.RowHeadersVisible = false;
@@ -59,7 +64,7 @@
             camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
             camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
             camerasDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            camerasDataGridView.Size = new Size(713, 200);
+            camerasDataGridView.Size = new Size(814, 183);
             camerasDataGridView.TabIndex = 0;
             camerasDataGridView.CellContentClick += camerasDataGridView_CellContentClick;
             camerasDataGridView.CellFormatting += camerasDataGridView_CellFormatting;
@@ -115,11 +120,12 @@
             // label1
             // 
             label1.AutoSize = true;
+            label1.Dock = DockStyle.Left;
             label1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             label1.ForeColor = Color.Black;
-            label1.Location = new Point(12, 9);
+            label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(150, 19);
+            label1.Size = new Size(150, 21);
             label1.TabIndex = 1;
             label1.Text = "Доступные камеры:";
             // 
@@ -127,11 +133,12 @@
             // 
             manualSNTextBox.BackColor = Color.White;
             manualSNTextBox.BorderStyle = BorderStyle.FixedSingle;
+            manualSNTextBox.Dock = DockStyle.Fill;
             manualSNTextBox.Font = new Font("Segoe UI", 9F);
-            manualSNTextBox.Location = new Point(12, 255);
+            manualSNTextBox.Location = new Point(3, 234);
             manualSNTextBox.Name = "manualSNTextBox";
             manualSNTextBox.PlaceholderText = "Введите серийный номер камеры";
-            manualSNTextBox.Size = new Size(713, 23);
+            manualSNTextBox.Size = new Size(814, 23);
             manualSNTextBox.TabIndex = 2;
             manualSNTextBox.TextChanged += manualSNTextBox_TextChanged;
             // 
@@ -140,7 +147,7 @@
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             label2.ForeColor = Color.Black;
-            label2.Location = new Point(12, 232);
+            label2.Location = new Point(3, 210);
             label2.Name = "label2";
             label2.Size = new Size(292, 19);
             label2.TabIndex = 3;
@@ -148,14 +155,15 @@
             // 
             // okButton
             // 
+            okButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             okButton.BackColor = Color.FromArgb(0, 120, 215);
             okButton.FlatAppearance.BorderSize = 0;
             okButton.FlatStyle = FlatStyle.Flat;
             okButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             okButton.ForeColor = Color.White;
-            okButton.Location = new Point(642, 289);
+            okButton.Location = new Point(728, 3);
             okButton.Name = "okButton";
-            okButton.Size = new Size(83, 28);
+            okButton.Size = new Size(83, 27);
             okButton.TabIndex = 4;
             okButton.Text = "OK";
             okButton.UseVisualStyleBackColor = false;
@@ -168,26 +176,58 @@
             refreshButton.FlatStyle = FlatStyle.Flat;
             refreshButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             refreshButton.ForeColor = Color.White;
-            refreshButton.Location = new Point(12, 289);
+            refreshButton.Location = new Point(3, 3);
             refreshButton.Name = "refreshButton";
-            refreshButton.Size = new Size(83, 28);
+            refreshButton.Size = new Size(83, 27);
             refreshButton.TabIndex = 6;
             refreshButton.Text = "Обновить";
             refreshButton.UseVisualStyleBackColor = false;
             refreshButton.Click += refreshButton_Click;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 4);
+            tableLayoutPanel1.Controls.Add(label1, 0, 0);
+            tableLayoutPanel1.Controls.Add(camerasDataGridView, 0, 1);
+            tableLayoutPanel1.Controls.Add(label2, 0, 2);
+            tableLayoutPanel1.Controls.Add(manualSNTextBox, 0, 3);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 5;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 7F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 63F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 7F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 13F));
+            tableLayoutPanel1.Size = new Size(820, 300);
+            tableLayoutPanel1.TabIndex = 7;
+            // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 2;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Controls.Add(refreshButton, 0, 0);
+            tableLayoutPanel2.Controls.Add(okButton, 1, 0);
+            tableLayoutPanel2.Dock = DockStyle.Fill;
+            tableLayoutPanel2.Location = new Point(3, 264);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel2.Size = new Size(814, 33);
+            tableLayoutPanel2.TabIndex = 8;
             // 
             // CameraSettingsForm
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             BackColor = Color.White;
-            ClientSize = new Size(734, 324);
-            Controls.Add(refreshButton);
-            Controls.Add(okButton);
-            Controls.Add(label2);
-            Controls.Add(manualSNTextBox);
-            Controls.Add(label1);
-            Controls.Add(camerasDataGridView);
+            ClientSize = new Size(820, 300);
+            Controls.Add(tableLayoutPanel1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -197,8 +237,10 @@
             Text = "Настройка подключения к камере";
             FormClosing += CameraSettingsForm_FormClosing;
             ((System.ComponentModel.ISupportInitialize)camerasDataGridView).EndInit();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
         #endregion
         private DataGridView camerasDataGridView;
@@ -213,5 +255,7 @@
         private DataGridViewTextBoxColumn IPAddressColumn;
         private DataGridViewTextBoxColumn ConnectionTypeColumn;
         private DataGridViewTextBoxColumn AvailabilityColumn;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel2;
     }
 }
