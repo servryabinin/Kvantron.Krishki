@@ -376,9 +376,9 @@
             pictureBox1.BorderStyle = BorderStyle.Fixed3D;
             pictureBox1.Dock = DockStyle.Fill;
             pictureBox1.Image = Properties.Resources.лого;
-            pictureBox1.Location = new Point(316, 3);
+            pictureBox1.Location = new Point(381, 3);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(307, 128);
+            pictureBox1.Size = new Size(242, 128);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
@@ -733,7 +733,7 @@
             tableLayoutPanel11.RowCount = 2;
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel11.Size = new Size(187, 72);
+            tableLayoutPanel11.Size = new Size(229, 72);
             tableLayoutPanel11.TabIndex = 4;
             // 
             // label9
@@ -743,7 +743,7 @@
             label9.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label9.Location = new Point(3, 0);
             label9.Name = "label9";
-            label9.Size = new Size(62, 36);
+            label9.Size = new Size(77, 36);
             label9.TabIndex = 0;
             label9.Text = "Профиль:";
             label9.TextAlign = ContentAlignment.MiddleLeft;
@@ -755,7 +755,7 @@
             label10.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label10.Location = new Point(3, 36);
             label10.Name = "label10";
-            label10.Size = new Size(62, 36);
+            label10.Size = new Size(77, 36);
             label10.TabIndex = 1;
             label10.Text = "Время до выхода, с:";
             label10.TextAlign = ContentAlignment.MiddleLeft;
@@ -764,7 +764,7 @@
             // 
             profileStatusTb.Anchor = AnchorStyles.None;
             profileStatusTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            profileStatusTb.Location = new Point(71, 7);
+            profileStatusTb.Location = new Point(99, 7);
             profileStatusTb.Name = "profileStatusTb";
             profileStatusTb.Size = new Size(113, 21);
             profileStatusTb.TabIndex = 2;
@@ -773,7 +773,7 @@
             // 
             timeLeftTb.Anchor = AnchorStyles.None;
             timeLeftTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            timeLeftTb.Location = new Point(71, 43);
+            timeLeftTb.Location = new Point(99, 43);
             timeLeftTb.Name = "timeLeftTb";
             timeLeftTb.Size = new Size(113, 21);
             timeLeftTb.TabIndex = 3;
@@ -787,7 +787,7 @@
             changeProfileBt.ForeColor = Color.White;
             changeProfileBt.Location = new Point(3, 81);
             changeProfileBt.Name = "changeProfileBt";
-            changeProfileBt.Size = new Size(187, 34);
+            changeProfileBt.Size = new Size(229, 34);
             changeProfileBt.TabIndex = 5;
             changeProfileBt.Text = "Сменить профиль";
             changeProfileBt.UseVisualStyleBackColor = false;
@@ -1654,9 +1654,9 @@
             // tableLayoutPanel10
             // 
             tableLayoutPanel10.ColumnCount = 3;
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.6040611F));
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42.15938F));
-            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34.4473F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30.2884617F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40.14423F));
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.5673084F));
             tableLayoutPanel10.Controls.Add(openCurReceptFolderBt, 2, 1);
             tableLayoutPanel10.Controls.Add(label12, 0, 0);
             tableLayoutPanel10.Controls.Add(saveReceptBt, 2, 0);
@@ -1669,7 +1669,7 @@
             tableLayoutPanel10.RowCount = 2;
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel10.Size = new Size(389, 96);
+            tableLayoutPanel10.Size = new Size(416, 96);
             tableLayoutPanel10.TabIndex = 8;
             // 
             // openCurReceptFolderBt
@@ -1678,7 +1678,7 @@
             openCurReceptFolderBt.FlatAppearance.BorderSize = 0;
             openCurReceptFolderBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             openCurReceptFolderBt.ForeColor = Color.White;
-            openCurReceptFolderBt.Location = new Point(257, 51);
+            openCurReceptFolderBt.Location = new Point(296, 51);
             openCurReceptFolderBt.Name = "openCurReceptFolderBt";
             openCurReceptFolderBt.Size = new Size(109, 42);
             openCurReceptFolderBt.TabIndex = 8;
@@ -1694,7 +1694,7 @@
             label12.ForeColor = Color.Black;
             label12.Location = new Point(3, 0);
             label12.Name = "label12";
-            label12.Size = new Size(85, 48);
+            label12.Size = new Size(120, 48);
             label12.TabIndex = 3;
             label12.Text = "Имя рецепта:";
             label12.TextAlign = ContentAlignment.MiddleRight;
@@ -1705,7 +1705,7 @@
             saveReceptBt.FlatAppearance.BorderSize = 0;
             saveReceptBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             saveReceptBt.ForeColor = Color.White;
-            saveReceptBt.Location = new Point(257, 3);
+            saveReceptBt.Location = new Point(296, 3);
             saveReceptBt.Name = "saveReceptBt";
             saveReceptBt.Size = new Size(109, 42);
             saveReceptBt.TabIndex = 5;
@@ -1717,7 +1717,7 @@
             // 
             currentReceptFolderTb.Anchor = AnchorStyles.None;
             currentReceptFolderTb.Font = new Font("Segoe UI", 7.8F);
-            currentReceptFolderTb.Location = new Point(96, 61);
+            currentReceptFolderTb.Location = new Point(133, 61);
             currentReceptFolderTb.Name = "currentReceptFolderTb";
             currentReceptFolderTb.Size = new Size(152, 21);
             currentReceptFolderTb.TabIndex = 7;
@@ -1730,7 +1730,7 @@
             label8.ForeColor = Color.Black;
             label8.Location = new Point(3, 48);
             label8.Name = "label8";
-            label8.Size = new Size(85, 48);
+            label8.Size = new Size(120, 48);
             label8.TabIndex = 6;
             label8.Text = "Путь:";
             label8.TextAlign = ContentAlignment.MiddleRight;
@@ -1739,7 +1739,7 @@
             // 
             receptNameTb.Anchor = AnchorStyles.None;
             receptNameTb.Font = new Font("Segoe UI", 7.8F);
-            receptNameTb.Location = new Point(96, 13);
+            receptNameTb.Location = new Point(133, 13);
             receptNameTb.Name = "receptNameTb";
             receptNameTb.Size = new Size(152, 21);
             receptNameTb.TabIndex = 4;
@@ -1931,8 +1931,8 @@
             tableLayoutPanel25.Location = new Point(3, 3);
             tableLayoutPanel25.Name = "tableLayoutPanel25";
             tableLayoutPanel25.RowCount = 2;
-            tableLayoutPanel25.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel25.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel25.RowStyles.Add(new RowStyle(SizeType.Percent, 59.6899223F));
+            tableLayoutPanel25.RowStyles.Add(new RowStyle(SizeType.Percent, 40.3100777F));
             tableLayoutPanel25.Size = new Size(291, 129);
             tableLayoutPanel25.TabIndex = 11;
             // 
@@ -1943,9 +1943,9 @@
             findContourCreateReceptBt.FlatAppearance.BorderSize = 0;
             findContourCreateReceptBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             findContourCreateReceptBt.ForeColor = Color.White;
-            findContourCreateReceptBt.Location = new Point(3, 67);
+            findContourCreateReceptBt.Location = new Point(3, 80);
             findContourCreateReceptBt.Name = "findContourCreateReceptBt";
-            findContourCreateReceptBt.Size = new Size(285, 59);
+            findContourCreateReceptBt.Size = new Size(285, 46);
             findContourCreateReceptBt.TabIndex = 9;
             findContourCreateReceptBt.Text = "Найти контур";
             findContourCreateReceptBt.UseVisualStyleBackColor = false;
@@ -1963,7 +1963,7 @@
             tableLayoutPanel13.Name = "tableLayoutPanel13";
             tableLayoutPanel13.RowCount = 1;
             tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel13.Size = new Size(285, 58);
+            tableLayoutPanel13.Size = new Size(285, 71);
             tableLayoutPanel13.TabIndex = 11;
             // 
             // loadImageForCreateReceptFromCameraBt
@@ -1975,7 +1975,7 @@
             loadImageForCreateReceptFromCameraBt.ForeColor = Color.White;
             loadImageForCreateReceptFromCameraBt.Location = new Point(145, 3);
             loadImageForCreateReceptFromCameraBt.Name = "loadImageForCreateReceptFromCameraBt";
-            loadImageForCreateReceptFromCameraBt.Size = new Size(137, 52);
+            loadImageForCreateReceptFromCameraBt.Size = new Size(137, 65);
             loadImageForCreateReceptFromCameraBt.TabIndex = 12;
             loadImageForCreateReceptFromCameraBt.Text = "Загрузить изображение с камеры";
             loadImageForCreateReceptFromCameraBt.UseVisualStyleBackColor = false;
@@ -1990,7 +1990,7 @@
             loadImageForReceptParamBt.ForeColor = Color.White;
             loadImageForReceptParamBt.Location = new Point(3, 3);
             loadImageForReceptParamBt.Name = "loadImageForReceptParamBt";
-            loadImageForReceptParamBt.Size = new Size(136, 52);
+            loadImageForReceptParamBt.Size = new Size(136, 65);
             loadImageForReceptParamBt.TabIndex = 4;
             loadImageForReceptParamBt.Text = "Загрузить изображение из папки";
             loadImageForReceptParamBt.UseVisualStyleBackColor = false;
@@ -3361,7 +3361,7 @@
             groupBox9.ForeColor = Color.FromArgb(4, 85, 191);
             groupBox9.Location = new Point(3, 3);
             groupBox9.Name = "groupBox9";
-            groupBox9.Size = new Size(612, 111);
+            groupBox9.Size = new Size(612, 165);
             groupBox9.TabIndex = 19;
             groupBox9.TabStop = false;
             groupBox9.Text = "Настройки для сохранения";
@@ -3370,8 +3370,8 @@
             // 
             tableLayoutPanel37.ColumnCount = 3;
             tableLayoutPanel37.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.6491222F));
-            tableLayoutPanel37.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 27.25724F));
-            tableLayoutPanel37.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 43.10051F));
+            tableLayoutPanel37.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 32.3679733F));
+            tableLayoutPanel37.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 37.98978F));
             tableLayoutPanel37.Controls.Add(tableLayoutPanel39, 2, 2);
             tableLayoutPanel37.Controls.Add(tableLayoutPanel38, 1, 1);
             tableLayoutPanel37.Controls.Add(label18, 0, 0);
@@ -3386,7 +3386,7 @@
             tableLayoutPanel37.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel37.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel37.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel37.Size = new Size(587, 91);
+            tableLayoutPanel37.Size = new Size(587, 145);
             tableLayoutPanel37.TabIndex = 4;
             // 
             // tableLayoutPanel39
@@ -3397,12 +3397,12 @@
             tableLayoutPanel39.Controls.Add(openCurrentFolderBtn, 1, 0);
             tableLayoutPanel39.Controls.Add(chooseBaseFolderBtn, 0, 0);
             tableLayoutPanel39.Dock = DockStyle.Left;
-            tableLayoutPanel39.Location = new Point(336, 63);
+            tableLayoutPanel39.Location = new Point(366, 99);
             tableLayoutPanel39.Name = "tableLayoutPanel39";
             tableLayoutPanel39.RowCount = 1;
             tableLayoutPanel39.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel39.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel39.Size = new Size(95, 25);
+            tableLayoutPanel39.Size = new Size(95, 43);
             tableLayoutPanel39.TabIndex = 5;
             // 
             // openCurrentFolderBtn
@@ -3414,7 +3414,7 @@
             openCurrentFolderBtn.ForeColor = Color.White;
             openCurrentFolderBtn.Location = new Point(50, 3);
             openCurrentFolderBtn.Name = "openCurrentFolderBtn";
-            openCurrentFolderBtn.Size = new Size(42, 19);
+            openCurrentFolderBtn.Size = new Size(42, 37);
             openCurrentFolderBtn.TabIndex = 18;
             openCurrentFolderBtn.Text = "📂";
             openCurrentFolderBtn.UseVisualStyleBackColor = false;
@@ -3429,7 +3429,7 @@
             chooseBaseFolderBtn.ForeColor = Color.White;
             chooseBaseFolderBtn.Location = new Point(3, 3);
             chooseBaseFolderBtn.Name = "chooseBaseFolderBtn";
-            chooseBaseFolderBtn.Size = new Size(41, 19);
+            chooseBaseFolderBtn.Size = new Size(41, 37);
             chooseBaseFolderBtn.TabIndex = 17;
             chooseBaseFolderBtn.Text = "...";
             chooseBaseFolderBtn.UseVisualStyleBackColor = false;
@@ -3443,12 +3443,12 @@
             tableLayoutPanel38.Controls.Add(okCapsSaveCb, 0, 0);
             tableLayoutPanel38.Controls.Add(ngCapsSaveCb, 1, 0);
             tableLayoutPanel38.Dock = DockStyle.Fill;
-            tableLayoutPanel38.Location = new Point(177, 33);
+            tableLayoutPanel38.Location = new Point(177, 51);
             tableLayoutPanel38.Name = "tableLayoutPanel38";
             tableLayoutPanel38.RowCount = 1;
             tableLayoutPanel38.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel38.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel38.Size = new Size(153, 24);
+            tableLayoutPanel38.Size = new Size(183, 42);
             tableLayoutPanel38.TabIndex = 5;
             // 
             // okCapsSaveCb
@@ -3457,9 +3457,9 @@
             okCapsSaveCb.AutoSize = true;
             okCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             okCapsSaveCb.ForeColor = Color.Black;
-            okCapsSaveCb.Location = new Point(3, 3);
+            okCapsSaveCb.Location = new Point(8, 12);
             okCapsSaveCb.Name = "okCapsSaveCb";
-            okCapsSaveCb.Size = new Size(70, 17);
+            okCapsSaveCb.Size = new Size(75, 17);
             okCapsSaveCb.TabIndex = 13;
             okCapsSaveCb.Text = "Хорошие";
             okCapsSaveCb.UseVisualStyleBackColor = true;
@@ -3472,7 +3472,7 @@
             ngCapsSaveCb.CheckState = CheckState.Checked;
             ngCapsSaveCb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             ngCapsSaveCb.ForeColor = Color.Black;
-            ngCapsSaveCb.Location = new Point(82, 3);
+            ngCapsSaveCb.Location = new Point(104, 12);
             ngCapsSaveCb.Name = "ngCapsSaveCb";
             ngCapsSaveCb.Size = new Size(65, 17);
             ngCapsSaveCb.TabIndex = 14;
@@ -3481,31 +3481,31 @@
             // 
             // label18
             // 
+            label18.Anchor = AnchorStyles.Right;
             label18.AutoSize = true;
-            label18.Dock = DockStyle.Right;
             label18.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label18.ForeColor = Color.Black;
-            label18.Location = new Point(9, 0);
+            label18.Location = new Point(9, 17);
             label18.Name = "label18";
-            label18.Size = new Size(162, 30);
+            label18.Size = new Size(162, 13);
             label18.TabIndex = 10;
             label18.Text = "Цикл создания новой папки:";
             // 
             // currentFolderTb
             // 
-            currentFolderTb.Dock = DockStyle.Fill;
+            currentFolderTb.Anchor = AnchorStyles.Left;
             currentFolderTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             currentFolderTb.ForeColor = Color.Black;
-            currentFolderTb.Location = new Point(177, 63);
+            currentFolderTb.Location = new Point(177, 110);
             currentFolderTb.Name = "currentFolderTb";
             currentFolderTb.Size = new Size(153, 21);
             currentFolderTb.TabIndex = 16;
             // 
             // cycleUpDown
             // 
-            cycleUpDown.Dock = DockStyle.Fill;
+            cycleUpDown.Anchor = AnchorStyles.Left;
             cycleUpDown.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            cycleUpDown.Location = new Point(177, 3);
+            cycleUpDown.Location = new Point(177, 13);
             cycleUpDown.Maximum = new decimal(new int[] { 24, 0, 0, 0 });
             cycleUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             cycleUpDown.Name = "cycleUpDown";
@@ -3516,25 +3516,25 @@
             // 
             // label19
             // 
+            label19.Anchor = AnchorStyles.Right;
             label19.AutoSize = true;
-            label19.Dock = DockStyle.Right;
             label19.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label19.ForeColor = Color.Black;
-            label19.Location = new Point(73, 30);
+            label19.Location = new Point(73, 65);
             label19.Name = "label19";
-            label19.Size = new Size(98, 30);
+            label19.Size = new Size(98, 13);
             label19.TabIndex = 12;
             label19.Text = "Какие сохранять:";
             // 
             // label20
             // 
+            label20.Anchor = AnchorStyles.Right;
             label20.AutoSize = true;
-            label20.Dock = DockStyle.Right;
             label20.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label20.ForeColor = Color.Black;
-            label20.Location = new Point(137, 60);
+            label20.Location = new Point(137, 114);
             label20.Name = "label20";
-            label20.Size = new Size(34, 31);
+            label20.Size = new Size(34, 13);
             label20.TabIndex = 15;
             label20.Text = "Путь:";
             // 
@@ -3569,8 +3569,8 @@
             // tableLayoutPanel15
             // 
             tableLayoutPanel15.ColumnCount = 2;
-            tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60.3833847F));
+            tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 39.6166153F));
             tableLayoutPanel15.Controls.Add(panel1, 0, 0);
             tableLayoutPanel15.Controls.Add(pictureBox1, 1, 0);
             tableLayoutPanel15.Dock = DockStyle.Fill;
@@ -3589,7 +3589,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(3, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(307, 128);
+            panel1.Size = new Size(372, 128);
             panel1.TabIndex = 12;
             // 
             // tableLayoutPanel17
@@ -3605,7 +3605,7 @@
             tableLayoutPanel17.RowCount = 1;
             tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel17.Size = new Size(303, 124);
+            tableLayoutPanel17.Size = new Size(368, 124);
             tableLayoutPanel17.TabIndex = 0;
             // 
             // pictureBox2
@@ -3616,7 +3616,7 @@
             pictureBox2.InitialImage = null;
             pictureBox2.Location = new Point(3, 3);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(98, 118);
+            pictureBox2.Size = new Size(121, 118);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 6;
             pictureBox2.TabStop = false;
@@ -3629,12 +3629,12 @@
             tableLayoutPanel18.Controls.Add(changeProfileBt, 0, 1);
             tableLayoutPanel18.Controls.Add(tableLayoutPanel11, 0, 0);
             tableLayoutPanel18.Dock = DockStyle.Fill;
-            tableLayoutPanel18.Location = new Point(107, 3);
+            tableLayoutPanel18.Location = new Point(130, 3);
             tableLayoutPanel18.Name = "tableLayoutPanel18";
             tableLayoutPanel18.RowCount = 2;
             tableLayoutPanel18.RowStyles.Add(new RowStyle(SizeType.Percent, 66.94915F));
             tableLayoutPanel18.RowStyles.Add(new RowStyle(SizeType.Percent, 33.0508461F));
-            tableLayoutPanel18.Size = new Size(193, 118);
+            tableLayoutPanel18.Size = new Size(235, 118);
             tableLayoutPanel18.TabIndex = 7;
             // 
             // tableLayoutPanel16

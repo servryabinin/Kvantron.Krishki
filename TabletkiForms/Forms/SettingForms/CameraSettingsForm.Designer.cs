@@ -17,12 +17,6 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CameraSettingsForm));
             camerasDataGridView = new DataGridView();
-            ConnectColumn = new DataGridViewCheckBoxColumn();
-            ModelColumn = new DataGridViewTextBoxColumn();
-            SerialNumberColumn = new DataGridViewTextBoxColumn();
-            IPAddressColumn = new DataGridViewTextBoxColumn();
-            ConnectionTypeColumn = new DataGridViewTextBoxColumn();
-            AvailabilityColumn = new DataGridViewTextBoxColumn();
             label1 = new Label();
             manualSNTextBox = new TextBox();
             label2 = new Label();
@@ -30,6 +24,12 @@
             refreshButton = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
+            ConnectColumn = new DataGridViewCheckBoxColumn();
+            ModelColumn = new DataGridViewTextBoxColumn();
+            SerialNumberColumn = new DataGridViewTextBoxColumn();
+            IPAddressColumn = new DataGridViewTextBoxColumn();
+            ConnectionTypeColumn = new DataGridViewTextBoxColumn();
+            AvailabilityColumn = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)camerasDataGridView).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -64,58 +64,11 @@
             camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
             camerasDataGridView.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.White;
             camerasDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            camerasDataGridView.Size = new Size(814, 183);
+            camerasDataGridView.Size = new Size(792, 183);
             camerasDataGridView.TabIndex = 0;
             camerasDataGridView.CellContentClick += camerasDataGridView_CellContentClick;
             camerasDataGridView.CellFormatting += camerasDataGridView_CellFormatting;
             camerasDataGridView.SelectionChanged += camerasDataGridView_SelectionChanged;
-            // 
-            // ConnectColumn
-            // 
-            ConnectColumn.HeaderText = "Подключиться";
-            ConnectColumn.MinimumWidth = 6;
-            ConnectColumn.Name = "ConnectColumn";
-            ConnectColumn.Width = 125;
-            // 
-            // ModelColumn
-            // 
-            ModelColumn.HeaderText = "Модель";
-            ModelColumn.MinimumWidth = 6;
-            ModelColumn.Name = "ModelColumn";
-            ModelColumn.ReadOnly = true;
-            ModelColumn.Width = 150;
-            // 
-            // SerialNumberColumn
-            // 
-            SerialNumberColumn.HeaderText = "Серийный номер";
-            SerialNumberColumn.MinimumWidth = 6;
-            SerialNumberColumn.Name = "SerialNumberColumn";
-            SerialNumberColumn.ReadOnly = true;
-            SerialNumberColumn.Width = 150;
-            // 
-            // IPAddressColumn
-            // 
-            IPAddressColumn.HeaderText = "IP-адрес / Тип";
-            IPAddressColumn.MinimumWidth = 6;
-            IPAddressColumn.Name = "IPAddressColumn";
-            IPAddressColumn.ReadOnly = true;
-            IPAddressColumn.Width = 120;
-            // 
-            // ConnectionTypeColumn
-            // 
-            ConnectionTypeColumn.HeaderText = "Тип подключения";
-            ConnectionTypeColumn.MinimumWidth = 6;
-            ConnectionTypeColumn.Name = "ConnectionTypeColumn";
-            ConnectionTypeColumn.ReadOnly = true;
-            ConnectionTypeColumn.Width = 120;
-            // 
-            // AvailabilityColumn
-            // 
-            AvailabilityColumn.HeaderText = "Доступ к подключению";
-            AvailabilityColumn.MinimumWidth = 6;
-            AvailabilityColumn.Name = "AvailabilityColumn";
-            AvailabilityColumn.ReadOnly = true;
-            AvailabilityColumn.Width = 150;
             // 
             // label1
             // 
@@ -138,7 +91,7 @@
             manualSNTextBox.Location = new Point(3, 234);
             manualSNTextBox.Name = "manualSNTextBox";
             manualSNTextBox.PlaceholderText = "Введите серийный номер камеры";
-            manualSNTextBox.Size = new Size(814, 23);
+            manualSNTextBox.Size = new Size(792, 23);
             manualSNTextBox.TabIndex = 2;
             manualSNTextBox.TextChanged += manualSNTextBox_TextChanged;
             // 
@@ -161,7 +114,7 @@
             okButton.FlatStyle = FlatStyle.Flat;
             okButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             okButton.ForeColor = Color.White;
-            okButton.Location = new Point(728, 3);
+            okButton.Location = new Point(706, 3);
             okButton.Name = "okButton";
             okButton.Size = new Size(83, 27);
             okButton.TabIndex = 4;
@@ -202,7 +155,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 7F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 13F));
-            tableLayoutPanel1.Size = new Size(820, 300);
+            tableLayoutPanel1.Size = new Size(798, 300);
             tableLayoutPanel1.TabIndex = 7;
             // 
             // tableLayoutPanel2
@@ -218,15 +171,62 @@
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel2.Size = new Size(814, 33);
+            tableLayoutPanel2.Size = new Size(792, 33);
             tableLayoutPanel2.TabIndex = 8;
+            // 
+            // ConnectColumn
+            // 
+            ConnectColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ConnectColumn.HeaderText = "Подключиться";
+            ConnectColumn.MinimumWidth = 6;
+            ConnectColumn.Name = "ConnectColumn";
+            // 
+            // ModelColumn
+            // 
+            ModelColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ModelColumn.HeaderText = "Модель";
+            ModelColumn.MinimumWidth = 6;
+            ModelColumn.Name = "ModelColumn";
+            ModelColumn.ReadOnly = true;
+            // 
+            // SerialNumberColumn
+            // 
+            SerialNumberColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            SerialNumberColumn.HeaderText = "Серийный номер";
+            SerialNumberColumn.MinimumWidth = 6;
+            SerialNumberColumn.Name = "SerialNumberColumn";
+            SerialNumberColumn.ReadOnly = true;
+            // 
+            // IPAddressColumn
+            // 
+            IPAddressColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            IPAddressColumn.HeaderText = "IP-адрес / Тип";
+            IPAddressColumn.MinimumWidth = 6;
+            IPAddressColumn.Name = "IPAddressColumn";
+            IPAddressColumn.ReadOnly = true;
+            // 
+            // ConnectionTypeColumn
+            // 
+            ConnectionTypeColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ConnectionTypeColumn.HeaderText = "Тип подключения";
+            ConnectionTypeColumn.MinimumWidth = 6;
+            ConnectionTypeColumn.Name = "ConnectionTypeColumn";
+            ConnectionTypeColumn.ReadOnly = true;
+            // 
+            // AvailabilityColumn
+            // 
+            AvailabilityColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            AvailabilityColumn.HeaderText = "Доступ к подключению";
+            AvailabilityColumn.MinimumWidth = 6;
+            AvailabilityColumn.Name = "AvailabilityColumn";
+            AvailabilityColumn.ReadOnly = true;
             // 
             // CameraSettingsForm
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             BackColor = Color.White;
-            ClientSize = new Size(820, 300);
+            ClientSize = new Size(798, 300);
             Controls.Add(tableLayoutPanel1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -249,13 +249,13 @@
         private Label label2;
         private Button okButton;
         private Button refreshButton;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel2;
         private DataGridViewCheckBoxColumn ConnectColumn;
         private DataGridViewTextBoxColumn ModelColumn;
         private DataGridViewTextBoxColumn SerialNumberColumn;
         private DataGridViewTextBoxColumn IPAddressColumn;
         private DataGridViewTextBoxColumn ConnectionTypeColumn;
         private DataGridViewTextBoxColumn AvailabilityColumn;
-        private TableLayoutPanel tableLayoutPanel1;
-        private TableLayoutPanel tableLayoutPanel2;
     }
 }
