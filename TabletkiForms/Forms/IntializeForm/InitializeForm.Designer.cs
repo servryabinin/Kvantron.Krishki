@@ -56,12 +56,12 @@
             tableLayoutPanel4.Controls.Add(btnExit, 0, 0);
             tableLayoutPanel4.Controls.Add(btnRetry, 1, 0);
             tableLayoutPanel4.Controls.Add(btnContinue, 2, 0);
-            tableLayoutPanel4.Location = new Point(86, 307);
+            tableLayoutPanel4.Location = new Point(76, 276);
             tableLayoutPanel4.Margin = new Padding(3, 2, 3, 2);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 1;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel4.Size = new Size(278, 82);
+            tableLayoutPanel4.Size = new Size(278, 58);
             tableLayoutPanel4.TabIndex = 45;
             // 
             // btnExit
@@ -73,7 +73,7 @@
             btnExit.ForeColor = Color.White;
             btnExit.Location = new Point(3, 3);
             btnExit.Name = "btnExit";
-            btnExit.Size = new Size(86, 76);
+            btnExit.Size = new Size(86, 52);
             btnExit.TabIndex = 38;
             btnExit.Text = "✖";
             btnExit.UseVisualStyleBackColor = false;
@@ -88,7 +88,7 @@
             btnRetry.ForeColor = Color.Black;
             btnRetry.Location = new Point(95, 3);
             btnRetry.Name = "btnRetry";
-            btnRetry.Size = new Size(86, 76);
+            btnRetry.Size = new Size(86, 52);
             btnRetry.TabIndex = 39;
             btnRetry.Text = "↺";
             btnRetry.UseVisualStyleBackColor = false;
@@ -103,7 +103,7 @@
             btnContinue.ForeColor = Color.White;
             btnContinue.Location = new Point(187, 3);
             btnContinue.Name = "btnContinue";
-            btnContinue.Size = new Size(88, 76);
+            btnContinue.Size = new Size(88, 52);
             btnContinue.TabIndex = 37;
             btnContinue.Text = "➔";
             btnContinue.UseVisualStyleBackColor = false;
@@ -125,7 +125,7 @@
             tableLayoutPanel3.RowCount = 2;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel3.Size = new Size(444, 108);
+            tableLayoutPanel3.Size = new Size(424, 108);
             tableLayoutPanel3.TabIndex = 44;
             // 
             // cameraConectLabel
@@ -134,7 +134,7 @@
             cameraConectLabel.AutoSize = true;
             cameraConectLabel.Font = new Font("Segoe UI", 9F);
             cameraConectLabel.ForeColor = Color.FromArgb(4, 85, 191);
-            cameraConectLabel.Location = new Point(166, 19);
+            cameraConectLabel.Location = new Point(159, 19);
             cameraConectLabel.Name = "cameraConectLabel";
             cameraConectLabel.Size = new Size(140, 15);
             cameraConectLabel.TabIndex = 4;
@@ -147,7 +147,7 @@
             paramCameraConnect.FlatAppearance.BorderSize = 0;
             paramCameraConnect.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             paramCameraConnect.ForeColor = Color.Black;
-            paramCameraConnect.Location = new Point(94, 11);
+            paramCameraConnect.Location = new Point(87, 11);
             paramCameraConnect.Name = "paramCameraConnect";
             paramCameraConnect.Size = new Size(66, 31);
             paramCameraConnect.TabIndex = 40;
@@ -162,7 +162,7 @@
             paramPrConnect.FlatAppearance.BorderSize = 0;
             paramPrConnect.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             paramPrConnect.ForeColor = Color.Black;
-            paramPrConnect.Location = new Point(94, 65);
+            paramPrConnect.Location = new Point(87, 65);
             paramPrConnect.Name = "paramPrConnect";
             paramPrConnect.Size = new Size(66, 31);
             paramPrConnect.TabIndex = 41;
@@ -176,7 +176,7 @@
             prConnectLabel.AutoSize = true;
             prConnectLabel.Font = new Font("Segoe UI", 9F);
             prConnectLabel.ForeColor = Color.FromArgb(4, 85, 191);
-            prConnectLabel.Location = new Point(166, 73);
+            prConnectLabel.Location = new Point(159, 73);
             prConnectLabel.Name = "prConnectLabel";
             prConnectLabel.Size = new Size(131, 15);
             prConnectLabel.TabIndex = 5;
@@ -188,7 +188,7 @@
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point, 204);
             label1.ForeColor = Color.Black;
-            label1.Location = new Point(86, 98);
+            label1.Location = new Point(76, 98);
             label1.Name = "label1";
             label1.Size = new Size(277, 28);
             label1.TabIndex = 3;
@@ -207,7 +207,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(444, 86);
+            tableLayoutPanel1.Size = new Size(424, 86);
             tableLayoutPanel1.TabIndex = 42;
             // 
             // HeaderInitializeForm
@@ -239,7 +239,7 @@
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 112F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 8F));
-            tableLayoutPanel5.Size = new Size(450, 450);
+            tableLayoutPanel5.Size = new Size(430, 365);
             tableLayoutPanel5.TabIndex = 46;
             // 
             // InitializeForm
@@ -247,7 +247,7 @@
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             BackColor = Color.White;
-            ClientSize = new Size(450, 450);
+            ClientSize = new Size(430, 365);
             Controls.Add(tableLayoutPanel5);
             FormBorderStyle = FormBorderStyle.None;
             Name = "InitializeForm";
