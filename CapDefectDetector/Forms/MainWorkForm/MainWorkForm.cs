@@ -12,6 +12,7 @@ using CapDefectDetector.Forms;
 using CapDefectDetector.FrameProcessing;
 using CapDefectDetector.Hardware;
 using CapDefectDetector.Logger;
+using CapDefectDetector.StatisticProcessing;
 using Newtonsoft.Json;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
@@ -175,6 +176,9 @@ namespace CapDefectDetector
         private byte[][]? _lastRows;
         private bool _hasLastRows = false;
         private Mat? _lastFrameForDuplicate;
+
+        //Статистика
+        private StatisticsManager _statisticsManager;
 
         //Режим вывода изображения: Все, хорошие, плохие
         private enum OutputMode
@@ -362,6 +366,7 @@ namespace CapDefectDetector
             InitializeCycleSystem();
             InitializeUISelections();
             InitializeAuthorizationSystem();
+            InitializeStatistics();
         }
 
         private void InitializeCoreSystems()
@@ -757,6 +762,11 @@ namespace CapDefectDetector
                 if (recipe != null)
                     _recipes[name] = recipe;
             }
+        }
+
+        private void InitializeStatistics()
+        {
+            _statisticsManager = new StatisticsManager(statisticsDataGridView);
         }
 
         #endregion
@@ -3439,6 +3449,17 @@ namespace CapDefectDetector
                                             (obloyCB.Checked && obloyTask.Result) ||
                                             (underFillCb.Checked && underFillTask.Result);
 
+                                        // === сбор типов дефектов ===
+                                        List<string> defects = new();
+
+                                        if (ovalityCB.Checked && ovalityTask.Result) defects.Add("Овальность");
+                                        if (inclusionCB.Checked && inclusionsTask.Result) defects.Add("Вкрапление");
+                                        if (inpaintCB.Checked && paintTask.Result) defects.Add("Непрокрас");
+                                        if (obloyCB.Checked && obloyTask.Result) defects.Add("Облой");
+                                        if (underFillCb.Checked && underFillTask.Result) defects.Add("Недолив");
+
+                                        string defectText = defects.Count > 0 ? string.Join(", ", defects) : "-";
+
                                         // === счётчики ===
                                         if (anyDefect)
                                         {
@@ -3458,6 +3479,10 @@ namespace CapDefectDetector
                                             UpdateTextBox(percentNgCapsTb, _percentNgCaps);
                                         }
 
+                                        // === имя файла как в CycleImageSaver ===
+                                        string fileName =
+                                            $"{(anyDefect ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}_{_generalCapsCount}.jpg";
+
                                         // === Сохранение изображения ===
                                         Mat copy = frameToProcess.Clone();
                                         _ = Task.Run(() =>
@@ -3469,7 +3494,8 @@ namespace CapDefectDetector
                                                     isNG: anyDefect,
                                                     allowOk: okCapsSaveCb.Checked,
                                                     allowNg: ngCapsSaveCb.Checked,
-                                                    generalCount: _generalCapsCount
+                                                    generalCount: _generalCapsCount,
+                                                    fileName
                                                 );
                                             }
                                             catch (Exception ex)
@@ -3478,6 +3504,29 @@ namespace CapDefectDetector
                                             }
                                             finally { copy.Dispose(); }
                                         });
+
+                                        string folder = Path.Combine(CycleImageSaver.CurrentCycleFolder);
+
+                                        // === запись статистики ===
+                                        try
+                                        {
+                                            _statisticsManager.Add(
+                                                new CapStatistics
+                                                {
+                                                    Number = _generalCapsCount,
+                                                    IsNg = anyDefect,
+                                                    Defects = defectText,
+                                                    SaveFolder = folder,
+                                                    ImageName = fileName
+                                                },
+                                                okCapsSaveCb.Checked, // передаём состояние чекбокса для OK
+                                                ngCapsSaveCb.Checked  // передаём состояние чекбокса для NG
+                                            );
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            ErrorLogger.Log(ex, "Ошибка при добавлении записи в статистику");
+                                        }
 
                                         BeginInvoke(() => currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder);
 
@@ -4179,18 +4228,18 @@ namespace CapDefectDetector
                 }
 
                 // Очистка
-                frameO?.Dispose(); 
-                frameI?.Dispose(); 
-                frameP?.Dispose(); 
+                frameO?.Dispose();
+                frameI?.Dispose();
+                frameP?.Dispose();
                 frameOb?.Dispose();
                 frameUf?.Dispose();
-                grayO?.Dispose(); 
-                grayI?.Dispose(); 
-                grayP?.Dispose(); 
+                grayO?.Dispose();
+                grayI?.Dispose();
+                grayP?.Dispose();
                 grayOb?.Dispose();
                 grayUf?.Dispose();
-                frameBase.Dispose(); 
-                grayBase.Dispose(); 
+                frameBase.Dispose();
+                grayBase.Dispose();
                 finalFrame.Dispose();
             }
             catch (Exception ex)
@@ -4752,6 +4801,49 @@ namespace CapDefectDetector
             applySettingsButton.Enabled = admin;
             loadSettingsButton.Enabled = admin;
             saveSettingsButton.Enabled = admin;
+        }
+        #endregion
+
+        #region Статистика
+        private void statisticsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Проверяем, что кликнули на валидную строку и на столбец с именем файла
+            if (e.RowIndex < 0 || e.ColumnIndex != statisticsDataGridView.Columns["dg_nameCapImage"].Index)
+                return;
+
+            string fileName = statisticsDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value?.ToString();
+
+            if (string.IsNullOrEmpty(fileName) || fileName == "Сохранение отключено")
+                return;
+
+            // Получаем путь к папке из столбца SaveFolder
+            string folder = statisticsDataGridView.Rows[e.RowIndex].Cells["dg_saveFolder"].Value?.ToString();
+
+            if (string.IsNullOrEmpty(folder) || folder == "Сохранение отключено")
+                return;
+
+            // Воссоздаем полный путь
+            string fullPath = Path.Combine(CycleImageSaver.BaseFolder, folder, fileName);
+
+            if (!File.Exists(fullPath))
+            {
+                MessageBox.Show($"Файл не найден:\n{fullPath}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                // Открываем файл с помощью стандартного просмотрщика
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = fullPath,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось открыть файл:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         #endregion
     }

@@ -80,12 +80,11 @@ public static class CycleImageSaver
         Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "Duplicate"));
     }
 
-    public static void Save(Mat image, bool isNG, bool allowOk, bool allowNg, float generalCount)
+    public static void Save(Mat image, bool isNG, bool allowOk, bool allowNg, float generalCount, string fileName)
     {
         try
         {
             if (image == null || image.Empty()) return;
-
             if (!isNG && !allowOk) return;
             if (isNG && !allowNg) return;
 
@@ -115,15 +114,15 @@ public static class CycleImageSaver
                 catch { break; } // На всякий случай, если файл нельзя удалить
             }
 
-            // Генерируем имя нового файла
-            string fileName = $"{(isNG ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}_{generalCount}.jpg";
             string path = Path.Combine(subfolderPath, fileName);
 
             // Сохраняем изображение в JPEG с качеством 90%
             Cv2.ImWrite(path, image, new ImageEncodingParam(ImwriteFlags.JpegQuality, 90));
+        }
+        catch
+        {
 
         }
-        catch { /* Игнорируем ошибки сохранения */ }
     }
 
     public static void SaveDuplicate(Mat image, float generalCount)
