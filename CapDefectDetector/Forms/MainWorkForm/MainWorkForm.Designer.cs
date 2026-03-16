@@ -2741,7 +2741,7 @@
             tableLayoutPanel33.RowCount = 3;
             tableLayoutPanel33.RowStyles.Add(new RowStyle(SizeType.Percent, 36.33218F));
             tableLayoutPanel33.RowStyles.Add(new RowStyle(SizeType.Percent, 63.66782F));
-            tableLayoutPanel33.RowStyles.Add(new RowStyle(SizeType.Absolute, 73F));
+            tableLayoutPanel33.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
             tableLayoutPanel33.Size = new Size(600, 321);
             tableLayoutPanel33.TabIndex = 4;
             // 
@@ -2753,12 +2753,12 @@
             tableLayoutPanel34.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel34.Controls.Add(saveSettingsButton, 1, 0);
             tableLayoutPanel34.Controls.Add(loadSettingsButton, 0, 0);
-            tableLayoutPanel34.Location = new Point(150, 255);
+            tableLayoutPanel34.Location = new Point(150, 263);
             tableLayoutPanel34.Name = "tableLayoutPanel34";
             tableLayoutPanel34.RowCount = 1;
             tableLayoutPanel34.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel34.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel34.Size = new Size(299, 58);
+            tableLayoutPanel34.Size = new Size(299, 55);
             tableLayoutPanel34.TabIndex = 5;
             // 
             // saveSettingsButton
@@ -2770,7 +2770,7 @@
             saveSettingsButton.ForeColor = Color.White;
             saveSettingsButton.Location = new Point(152, 3);
             saveSettingsButton.Name = "saveSettingsButton";
-            saveSettingsButton.Size = new Size(144, 52);
+            saveSettingsButton.Size = new Size(144, 49);
             saveSettingsButton.TabIndex = 1;
             saveSettingsButton.Text = "Сохранить";
             saveSettingsButton.UseVisualStyleBackColor = false;
@@ -2785,7 +2785,7 @@
             loadSettingsButton.ForeColor = Color.White;
             loadSettingsButton.Location = new Point(3, 3);
             loadSettingsButton.Name = "loadSettingsButton";
-            loadSettingsButton.Size = new Size(143, 52);
+            loadSettingsButton.Size = new Size(143, 49);
             loadSettingsButton.TabIndex = 0;
             loadSettingsButton.Text = "Загрузить настройки";
             loadSettingsButton.UseVisualStyleBackColor = false;
@@ -2796,10 +2796,10 @@
             tabControl5.Controls.Add(tabPage6);
             tabControl5.Dock = DockStyle.Fill;
             tabControl5.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            tabControl5.Location = new Point(3, 93);
+            tabControl5.Location = new Point(3, 97);
             tabControl5.Name = "tabControl5";
             tabControl5.SelectedIndex = 0;
-            tabControl5.Size = new Size(594, 151);
+            tabControl5.Size = new Size(594, 160);
             tabControl5.TabIndex = 9;
             // 
             // tabPage6
@@ -2808,7 +2808,7 @@
             tabPage6.Location = new Point(4, 26);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(586, 121);
+            tabPage6.Size = new Size(586, 130);
             tabPage6.TabIndex = 0;
             tabPage6.Text = "Настройки кадра";
             tabPage6.UseVisualStyleBackColor = true;
@@ -2826,7 +2826,7 @@
             tableLayoutPanel36.RowCount = 1;
             tableLayoutPanel36.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel36.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel36.Size = new Size(580, 115);
+            tableLayoutPanel36.Size = new Size(580, 124);
             tableLayoutPanel36.TabIndex = 4;
             // 
             // applySettingsButton
@@ -2836,7 +2836,7 @@
             applySettingsButton.FlatAppearance.BorderSize = 0;
             applySettingsButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             applySettingsButton.ForeColor = Color.White;
-            applySettingsButton.Location = new Point(365, 34);
+            applySettingsButton.Location = new Point(365, 38);
             applySettingsButton.Name = "applySettingsButton";
             applySettingsButton.Size = new Size(151, 47);
             applySettingsButton.TabIndex = 2;
@@ -2865,14 +2865,14 @@
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel7.Size = new Size(296, 109);
+            tableLayoutPanel7.Size = new Size(296, 118);
             tableLayoutPanel7.TabIndex = 0;
             // 
             // frameSaturationNumUpD
             // 
             frameSaturationNumUpD.Dock = DockStyle.Fill;
             frameSaturationNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            frameSaturationNumUpD.Location = new Point(175, 84);
+            frameSaturationNumUpD.Location = new Point(175, 90);
             frameSaturationNumUpD.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             frameSaturationNumUpD.Name = "frameSaturationNumUpD";
             frameSaturationNumUpD.Size = new Size(118, 25);
@@ -2884,7 +2884,7 @@
             // 
             frameExposureNumUpD.Dock = DockStyle.Fill;
             frameExposureNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            frameExposureNumUpD.Location = new Point(175, 57);
+            frameExposureNumUpD.Location = new Point(175, 61);
             frameExposureNumUpD.Maximum = new decimal(new int[] { 9999555, 0, 0, 0 });
             frameExposureNumUpD.Minimum = new decimal(new int[] { 15, 0, 0, 0 });
             frameExposureNumUpD.Name = "frameExposureNumUpD";
@@ -2898,7 +2898,7 @@
             frameWidthNumUpD.Dock = DockStyle.Fill;
             frameWidthNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             frameWidthNumUpD.Increment = new decimal(new int[] { 4, 0, 0, 0 });
-            frameWidthNumUpD.Location = new Point(175, 30);
+            frameWidthNumUpD.Location = new Point(175, 32);
             frameWidthNumUpD.Maximum = new decimal(new int[] { 500, 0, 0, 0 });
             frameWidthNumUpD.Minimum = new decimal(new int[] { 32, 0, 0, 0 });
             frameWidthNumUpD.Name = "frameWidthNumUpD";
@@ -2929,7 +2929,7 @@
             label3.ForeColor = Color.Black;
             label3.Location = new Point(3, 0);
             label3.Name = "label3";
-            label3.Size = new Size(166, 27);
+            label3.Size = new Size(166, 29);
             label3.TabIndex = 0;
             label3.Text = "Высота:";
             label3.TextAlign = ContentAlignment.MiddleLeft;
@@ -2940,9 +2940,9 @@
             label6.Dock = DockStyle.Fill;
             label6.Font = new Font("Segoe UI", 7.8F);
             label6.ForeColor = Color.Black;
-            label6.Location = new Point(3, 81);
+            label6.Location = new Point(3, 87);
             label6.Name = "label6";
-            label6.Size = new Size(166, 28);
+            label6.Size = new Size(166, 31);
             label6.TabIndex = 6;
             label6.Text = "Сатурация:";
             label6.TextAlign = ContentAlignment.MiddleLeft;
@@ -2953,9 +2953,9 @@
             label4.Dock = DockStyle.Fill;
             label4.Font = new Font("Segoe UI", 7.8F);
             label4.ForeColor = Color.Black;
-            label4.Location = new Point(3, 27);
+            label4.Location = new Point(3, 29);
             label4.Name = "label4";
-            label4.Size = new Size(166, 27);
+            label4.Size = new Size(166, 29);
             label4.TabIndex = 2;
             label4.Text = "Ширина:";
             label4.TextAlign = ContentAlignment.MiddleLeft;
@@ -2966,9 +2966,9 @@
             label5.Dock = DockStyle.Fill;
             label5.Font = new Font("Segoe UI", 7.8F);
             label5.ForeColor = Color.Black;
-            label5.Location = new Point(3, 54);
+            label5.Location = new Point(3, 58);
             label5.Name = "label5";
-            label5.Size = new Size(166, 27);
+            label5.Size = new Size(166, 29);
             label5.TabIndex = 4;
             label5.Text = "Экспозиция:";
             label5.TextAlign = ContentAlignment.MiddleLeft;
@@ -2981,7 +2981,7 @@
             tabControl2.Location = new Point(3, 3);
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new Size(594, 84);
+            tabControl2.Size = new Size(594, 88);
             tabControl2.TabIndex = 8;
             // 
             // tabPage5
@@ -2990,7 +2990,7 @@
             tabPage5.Location = new Point(4, 26);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(586, 54);
+            tabPage5.Size = new Size(586, 58);
             tabPage5.TabIndex = 0;
             tabPage5.Text = "Сетевые настройки";
             tabPage5.UseVisualStyleBackColor = true;
@@ -3008,7 +3008,7 @@
             tableLayoutPanel35.RowCount = 1;
             tableLayoutPanel35.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel35.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel35.Size = new Size(580, 48);
+            tableLayoutPanel35.Size = new Size(580, 52);
             tableLayoutPanel35.TabIndex = 4;
             // 
             // connectCameraButton
@@ -3018,7 +3018,7 @@
             connectCameraButton.FlatAppearance.BorderSize = 0;
             connectCameraButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             connectCameraButton.ForeColor = Color.White;
-            connectCameraButton.Location = new Point(363, 3);
+            connectCameraButton.Location = new Point(363, 5);
             connectCameraButton.Name = "connectCameraButton";
             connectCameraButton.Size = new Size(151, 42);
             connectCameraButton.TabIndex = 6;
@@ -3039,7 +3039,7 @@
             tableLayoutPanel6.RowCount = 1;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel6.Size = new Size(292, 42);
+            tableLayoutPanel6.Size = new Size(292, 46);
             tableLayoutPanel6.TabIndex = 7;
             // 
             // label1
@@ -3050,7 +3050,7 @@
             label1.ForeColor = Color.Black;
             label1.Location = new Point(3, 0);
             label1.Name = "label1";
-            label1.Size = new Size(163, 42);
+            label1.Size = new Size(163, 46);
             label1.TabIndex = 4;
             label1.Text = "IP адрес камеры:";
             label1.TextAlign = ContentAlignment.MiddleLeft;
@@ -3061,7 +3061,7 @@
             cameraIpTextBox.BackColor = SystemColors.Window;
             cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
             cameraIpTextBox.Font = new Font("Segoe UI", 7.8F);
-            cameraIpTextBox.Location = new Point(172, 8);
+            cameraIpTextBox.Location = new Point(172, 10);
             cameraIpTextBox.Name = "cameraIpTextBox";
             cameraIpTextBox.Size = new Size(117, 25);
             cameraIpTextBox.TabIndex = 5;
@@ -3095,8 +3095,8 @@
             tableLayoutPanel29.Name = "tableLayoutPanel29";
             tableLayoutPanel29.RowCount = 3;
             tableLayoutPanel29.RowStyles.Add(new RowStyle(SizeType.Percent, 35F));
-            tableLayoutPanel29.RowStyles.Add(new RowStyle(SizeType.Percent, 45F));
-            tableLayoutPanel29.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel29.RowStyles.Add(new RowStyle(SizeType.Percent, 49.4680862F));
+            tableLayoutPanel29.RowStyles.Add(new RowStyle(SizeType.Percent, 15.6914892F));
             tableLayoutPanel29.Size = new Size(600, 376);
             tableLayoutPanel29.TabIndex = 4;
             // 
@@ -3108,7 +3108,7 @@
             tabControl4.Location = new Point(3, 134);
             tabControl4.Name = "tabControl4";
             tabControl4.SelectedIndex = 0;
-            tabControl4.Size = new Size(594, 163);
+            tabControl4.Size = new Size(594, 179);
             tabControl4.TabIndex = 34;
             // 
             // prBreakingSettings
@@ -3119,7 +3119,7 @@
             prBreakingSettings.Location = new Point(4, 26);
             prBreakingSettings.Name = "prBreakingSettings";
             prBreakingSettings.Padding = new Padding(3);
-            prBreakingSettings.Size = new Size(586, 133);
+            prBreakingSettings.Size = new Size(586, 149);
             prBreakingSettings.TabIndex = 0;
             prBreakingSettings.Text = "Настройки отбраковки";
             prBreakingSettings.UseVisualStyleBackColor = true;
@@ -3137,7 +3137,7 @@
             tableLayoutPanel32.RowCount = 1;
             tableLayoutPanel32.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel32.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel32.Size = new Size(580, 127);
+            tableLayoutPanel32.Size = new Size(580, 143);
             tableLayoutPanel32.TabIndex = 4;
             // 
             // tableLayoutPanel5
@@ -3161,7 +3161,7 @@
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.Size = new Size(289, 121);
+            tableLayoutPanel5.Size = new Size(289, 137);
             tableLayoutPanel5.TabIndex = 22;
             // 
             // breakingAllowCb
@@ -3172,7 +3172,7 @@
             breakingAllowCb.ForeColor = Color.Black;
             breakingAllowCb.Location = new Point(171, 3);
             breakingAllowCb.Name = "breakingAllowCb";
-            breakingAllowCb.Size = new Size(115, 24);
+            breakingAllowCb.Size = new Size(115, 28);
             breakingAllowCb.TabIndex = 17;
             breakingAllowCb.UseVisualStyleBackColor = true;
             breakingAllowCb.CheckedChanged += breakingAllowCb_CheckedChanged;
@@ -3183,7 +3183,7 @@
             breakerOffsetTb.BorderStyle = BorderStyle.FixedSingle;
             breakerOffsetTb.Dock = DockStyle.Fill;
             breakerOffsetTb.Font = new Font("Segoe UI", 7.8F);
-            breakerOffsetTb.Location = new Point(171, 93);
+            breakerOffsetTb.Location = new Point(171, 105);
             breakerOffsetTb.Name = "breakerOffsetTb";
             breakerOffsetTb.Size = new Size(115, 25);
             breakerOffsetTb.TabIndex = 21;
@@ -3196,7 +3196,7 @@
             cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
             cameraOffsetTb.Dock = DockStyle.Fill;
             cameraOffsetTb.Font = new Font("Segoe UI", 7.8F);
-            cameraOffsetTb.Location = new Point(171, 63);
+            cameraOffsetTb.Location = new Point(171, 71);
             cameraOffsetTb.Name = "cameraOffsetTb";
             cameraOffsetTb.Size = new Size(115, 25);
             cameraOffsetTb.TabIndex = 19;
@@ -3209,7 +3209,7 @@
             breakingTimeTb.BorderStyle = BorderStyle.FixedSingle;
             breakingTimeTb.Dock = DockStyle.Fill;
             breakingTimeTb.Font = new Font("Segoe UI", 7.8F);
-            breakingTimeTb.Location = new Point(171, 33);
+            breakingTimeTb.Location = new Point(171, 37);
             breakingTimeTb.Name = "breakingTimeTb";
             breakingTimeTb.Size = new Size(115, 25);
             breakingTimeTb.TabIndex = 16;
@@ -3224,7 +3224,7 @@
             label25.ForeColor = Color.Black;
             label25.Location = new Point(3, 0);
             label25.Name = "label25";
-            label25.Size = new Size(162, 30);
+            label25.Size = new Size(162, 34);
             label25.TabIndex = 15;
             label25.Text = "Включить сдув:";
             label25.TextAlign = ContentAlignment.MiddleLeft;
@@ -3235,9 +3235,9 @@
             label27.Dock = DockStyle.Fill;
             label27.Font = new Font("Segoe UI", 7.8F);
             label27.ForeColor = Color.Black;
-            label27.Location = new Point(3, 30);
+            label27.Location = new Point(3, 34);
             label27.Name = "label27";
-            label27.Size = new Size(162, 30);
+            label27.Size = new Size(162, 34);
             label27.TabIndex = 18;
             label27.Text = "Время сдува, мс";
             label27.TextAlign = ContentAlignment.MiddleLeft;
@@ -3248,11 +3248,11 @@
             label31.Dock = DockStyle.Fill;
             label31.Font = new Font("Segoe UI", 7.8F);
             label31.ForeColor = Color.Black;
-            label31.Location = new Point(3, 60);
+            label31.Location = new Point(3, 68);
             label31.Name = "label31";
-            label31.Size = new Size(162, 30);
+            label31.Size = new Size(162, 34);
             label31.TabIndex = 20;
-            label31.Text = "Расстояние от датчика до камеры, шаги:";
+            label31.Text = "Расстояние от датчика до\r\nкамеры, шаги:";
             label31.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label7
@@ -3260,9 +3260,9 @@
             label7.AutoSize = true;
             label7.Dock = DockStyle.Fill;
             label7.Font = new Font("Segoe UI", 7.8F);
-            label7.Location = new Point(3, 90);
+            label7.Location = new Point(3, 102);
             label7.Name = "label7";
-            label7.Size = new Size(162, 31);
+            label7.Size = new Size(162, 35);
             label7.TabIndex = 22;
             label7.Text = "Расстояние от датчика до сдува, шаги";
             label7.TextAlign = ContentAlignment.MiddleLeft;
@@ -3274,7 +3274,7 @@
             applyPrBreakerParamButton.FlatAppearance.BorderSize = 0;
             applyPrBreakerParamButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             applyPrBreakerParamButton.ForeColor = Color.White;
-            applyPrBreakerParamButton.Location = new Point(362, 39);
+            applyPrBreakerParamButton.Location = new Point(362, 47);
             applyPrBreakerParamButton.Name = "applyPrBreakerParamButton";
             applyPrBreakerParamButton.Size = new Size(151, 48);
             applyPrBreakerParamButton.TabIndex = 2;
@@ -3441,7 +3441,7 @@
             tableLayoutPanel30.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             tableLayoutPanel30.Controls.Add(savePrSettings, 1, 0);
             tableLayoutPanel30.Controls.Add(loadPrSettings, 0, 0);
-            tableLayoutPanel30.Location = new Point(152, 311);
+            tableLayoutPanel30.Location = new Point(152, 319);
             tableLayoutPanel30.Name = "tableLayoutPanel30";
             tableLayoutPanel30.RowCount = 1;
             tableLayoutPanel30.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
