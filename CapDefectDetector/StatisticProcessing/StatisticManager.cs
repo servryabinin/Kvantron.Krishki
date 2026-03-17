@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using CapDefectDetector.Logger;
 
 namespace CapDefectDetector.StatisticProcessing
 {
@@ -28,41 +29,48 @@ namespace CapDefectDetector.StatisticProcessing
                 return;
             }
 
-            // --- Обработка папки и имени файла ---
-            string folderToShow;
-            string fileNameToShow;
-
-            bool saveDisabled = (stat.IsNg && !ngCapsSaveEnabled) || (!stat.IsNg && !okCapsSaveEnabled);
-
-            if (saveDisabled)
+            try
             {
-                folderToShow = "Сохранение отключено";
-                fileNameToShow = "Сохранение отключено";
-            }
-            else
-            {
-                folderToShow = Path.Combine(
-                    new DirectoryInfo(stat.SaveFolder).Name,
-                    stat.IsNg ? "NG" : "OK"
+                // --- Обработка папки и имени файла ---
+                string folderToShow;
+                string fileNameToShow;
+
+                bool saveDisabled = (stat.IsNg && !ngCapsSaveEnabled) || (!stat.IsNg && !okCapsSaveEnabled);
+
+                if (saveDisabled)
+                {
+                    folderToShow = "Сохранение отключено";
+                    fileNameToShow = "Сохранение отключено";
+                }
+                else
+                {
+                    folderToShow = Path.Combine(
+                        new DirectoryInfo(stat.SaveFolder).Name,
+                        stat.IsNg ? "NG" : "OK"
+                    );
+                    fileNameToShow = stat.ImageName;
+                }
+
+                // --- Добавляем строку ВНИЗ ---
+                int rowIndex = _grid.Rows.Add(
+                    stat.Number,
+                    stat.IsNg ? "NG" : "OK",
+                    stat.Defects,
+                    folderToShow,
+                    fileNameToShow
                 );
-                fileNameToShow = stat.ImageName;
+
+                DataGridViewRow row = _grid.Rows[rowIndex];
+
+                // --- Цвет фона ---
+                /*row.DefaultCellStyle.BackColor = stat.IsNg
+                    ? Color.FromArgb(255, 220, 220)  // бледно красный
+                    : Color.FromArgb(220, 255, 220); // бледно зелёный*/
             }
-
-            // --- Вставляем строку сверху ---
-            _grid.Rows.Insert(0,
-                stat.Number,
-                stat.IsNg ? "NG" : "OK",
-                stat.Defects,
-                folderToShow,
-                fileNameToShow
-            );
-
-            DataGridViewRow row = _grid.Rows[0];
-
-            // --- Цвет фона ---
-            row.DefaultCellStyle.BackColor = stat.IsNg
-                ? Color.FromArgb(255, 220, 220)  // бледно красный
-                : Color.FromArgb(220, 255, 220); // бледно зелёный
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка при добавлении строки в DataGridView");
+            }
         }
     }
 }

@@ -99,7 +99,7 @@ public static class CycleImageSaver
 
             // Получаем список файлов, сортируем по дате создания
             var files = new DirectoryInfo(subfolderPath)
-                            .GetFiles("*.png")
+                            .GetFiles("*.jpg")
                             .OrderBy(f => f.CreationTime)
                             .ToList();
 
@@ -141,7 +141,7 @@ public static class CycleImageSaver
 
             // Получаем список файлов, сортируем по дате создания
             var files = new DirectoryInfo(dupFolder)
-                            .GetFiles("*.png")
+                            .GetFiles("*.jpg")
                             .OrderBy(f => f.CreationTime)
                             .ToList();
 
