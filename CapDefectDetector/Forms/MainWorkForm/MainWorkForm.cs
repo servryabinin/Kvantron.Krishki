@@ -12,6 +12,7 @@ using CapDefectDetector.Forms;
 using CapDefectDetector.FrameProcessing;
 using CapDefectDetector.Hardware;
 using CapDefectDetector.Logger;
+using CapDefectDetector.ResultStateAndProcessingSettings;
 using CapDefectDetector.StatisticProcessing;
 using Newtonsoft.Json;
 using OpenCvSharp;
@@ -66,6 +67,11 @@ namespace CapDefectDetector
         private Bitmap _originalImage = null;
 
         // Таймеры и многопоточность
+        private readonly object _stateLock = new object();
+        private ResultState _state = new ResultState();
+        private volatile ProcessingSettings _settings;
+        private System.Windows.Forms.Timer _uiTimer;
+
         private CancellationTokenSource _cts;
         private Task _processingTask;
 
@@ -84,6 +90,12 @@ namespace CapDefectDetector
         private int _paintDefectCount = 0;
         private int _obloyDefectCount = 0;
         private int _underFillDefectCount = 0;
+        //Время работы каждого дефекта
+        public float _timeOvality = 0;
+        public float _timeInclusion = 0;
+        public float _timeInpaint = 0;
+        public float _timeObloy = 0;
+        public float _timeUnderFill = 0;
         // Процент дефекта по каждому виду от общего числа
         private float _percentOvalityCaps = 0;
         private float _percentInclusionCaps = 0;
@@ -360,6 +372,7 @@ namespace CapDefectDetector
 
         private void InitializeApplication()
         {
+            InitializeSettingsBindings();
             InitializeCoreSystems();
             InitializePR205Status();
             InitializeCameraStatus();
@@ -384,6 +397,18 @@ namespace CapDefectDetector
 
             StartStop(false, true);
             LocalSettings.Instance.Save();
+        }
+
+        private void InitializeSettingsBindings()
+        {
+            ovalityCB.CheckedChanged += AnySettingChanged;
+            inclusionCB.CheckedChanged += AnySettingChanged;
+            inpaintCB.CheckedChanged += AnySettingChanged;
+            obloyCB.CheckedChanged += AnySettingChanged;
+            underFillCb.CheckedChanged += AnySettingChanged;
+
+            okCapsSaveCb.CheckedChanged += AnySettingChanged;
+            ngCapsSaveCb.CheckedChanged += AnySettingChanged;
         }
 
         private void InitializePR205Status()
@@ -2721,8 +2746,6 @@ namespace CapDefectDetector
                 recognizeButton.Text = "Остановка...";
                 recognizeButton.Enabled = false;
 
-                _currentFrameNumber = 0;
-
                 try
                 {
                     if (_processingTask != null)
@@ -2755,6 +2778,8 @@ namespace CapDefectDetector
             }
             finally
             {
+                _uiTimer?.Stop();
+
                 _isProcessing = false;
 
                 recognizeButton.Text = "Начать анализ";
@@ -2799,18 +2824,25 @@ namespace CapDefectDetector
                     }
                 }
 
+                _settings = ReadSettingsFromUi();
+
                 _cts = new CancellationTokenSource();
-                _processingTask = Task.Run(() => StartContinuousProcessing(_cts.Token));
+
+                _processingTask = Task.Run(() => ProcessingLoop(_cts.Token));
+
                 _isProcessing = true;
 
                 recognizeButton.Text = "Остановить анализ";
                 recognizeButton.BackColor = Color.FromArgb(229, 115, 115);
 
                 startStreamButton.Enabled = false;
+
                 if (_isImageLoaded)
                 {
                     loadImageButton.Enabled = false;
                 }
+
+                StartUiLoop();
             }
             catch (Exception ex)
             {
@@ -3075,6 +3107,7 @@ namespace CapDefectDetector
                 {
                     try
                     {
+                        _img1 = img.Clone();
                         _imageQueue.Put(img.Clone());
                     }
                     catch (Exception ex)
@@ -3087,7 +3120,6 @@ namespace CapDefectDetector
                 {
                     try
                     {
-                        _img1 = img;
                         UpdatePictureBox(originPb, img);
                         //CycleImageSaver.SaveDuplicate(img, 0);
                     }
@@ -3589,6 +3621,254 @@ namespace CapDefectDetector
             }
         }
 
+        private async Task ProcessingLoop(CancellationToken token)
+        {
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    Mat frameToProcess = null;
+
+                    try
+                    {
+                        // ===== Получение кадра =====
+                        if (_isStreamCam)
+                        {
+#if OLD_FRAME_PROCESSING
+                    lock (frameLock)
+                    {
+                        if (!newFrameAvailable)
+                            continue;
+
+                        frameToProcess = latestFrame.Clone();
+                        newFrameAvailable = false;
+                    }
+#else
+                            frameToProcess = _imageQueue.Get(token);
+#endif
+                        }
+                        else if (_isProcessingFromFolder)
+                        {
+                            await Task.Delay(100, token);
+
+                            if (_imageFiles.Count == 0)
+                                continue;
+
+                            try
+                            {
+                                frameToProcess = new Mat(_imageFiles[_currentImageIndex]);
+                                _currentImageIndex = (_currentImageIndex + 1) % _imageFiles.Count;
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorLogger.Log(ex, "Ошибка загрузки изображения");
+                                continue;
+                            }
+                        }
+
+                        if (frameToProcess == null || frameToProcess.Empty())
+                            continue;
+
+                        using (frameToProcess)
+                        using (Mat gray = new Mat())
+                        {
+                            try
+                            {
+                                var stopwatch = Stopwatch.StartNew();
+
+                                if (IsDuplicateFrameByRows(frameToProcess))
+                                    continue;
+
+                                Cv2.CvtColor(frameToProcess, gray, ColorConversionCodes.BGR2GRAY);
+                                Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(5, 5), 0);
+
+                                frameToProcess.CopyTo(_frameToDisplay);
+
+                                Point[] capContour = GetCapContour(gray, frameToProcess);
+
+                                bool anyDefect = false;
+                                List<string> defects = new();
+
+                                var settings = _settings;
+
+                                // === Подготовка изображений по категориям ===
+                                if (settings.Ovality)
+                                {
+                                    frameToProcess.CopyTo(_imageForOvality);
+                                    gray.CopyTo(_grayForOvality);
+                                }
+
+                                if (settings.Inclusion)
+                                {
+                                    frameToProcess.CopyTo(_imageForInclusions);
+                                    gray.CopyTo(_grayForInclusions);
+                                }
+
+                                if (settings.Inpaint)
+                                {
+                                    frameToProcess.CopyTo(_imageForPaintDefects);
+                                    gray.CopyTo(_grayForPaintDefects);
+                                }
+
+                                if (settings.Obloy)
+                                {
+                                    frameToProcess.CopyTo(_imageForObloyDefects);
+                                    gray.CopyTo(_grayForObloyDefects);
+                                }
+
+                                if (settings.UnderFill)
+                                {
+                                    frameToProcess.CopyTo(_imageForUnderfill);
+                                    gray.CopyTo(_grayForUnderfill);
+                                }
+
+                                using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(token))
+                                {
+                                    timeoutCts.CancelAfter(60);
+
+                                    var ovalityTask = Task.FromResult(false);
+                                    var inclusionsTask = Task.FromResult(false);
+                                    var paintTask = Task.FromResult(false);
+                                    var obloyTask = Task.FromResult(false);
+                                    var underFillTask = Task.FromResult(false);
+
+                                    if (settings.Ovality)
+                                        ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, _frameToDisplay, timeoutCts.Token, RunCheckOvality, capContour);
+
+                                    if (settings.Inclusion)
+                                        inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, _frameToDisplay, timeoutCts.Token, RunCheckForInclusions, capContour);
+
+                                    if (settings.Inpaint)
+                                        paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, _frameToDisplay, timeoutCts.Token, RunCheckForPaintDefects, capContour);
+
+                                    if (settings.Obloy)
+                                        obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, _frameToDisplay, timeoutCts.Token, RunCheckForObloyDefects, capContour);
+
+                                    if (settings.UnderFill)
+                                        underFillTask = RunCheckWithTimeout(_grayForUnderfill, _imageForUnderfill, _frameToDisplay, timeoutCts.Token, RunCheckForUnderFillDefects, capContour);
+
+                                    await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask, underFillTask);
+
+                                    if (settings.Ovality && ovalityTask.Result) { anyDefect = true; defects.Add("Овальность"); }
+                                    if (settings.Inclusion && inclusionsTask.Result) { anyDefect = true; defects.Add("Вкрапление"); }
+                                    if (settings.Inpaint && paintTask.Result) { anyDefect = true; defects.Add("Непрокрас"); }
+                                    if (settings.Obloy && obloyTask.Result) { anyDefect = true; defects.Add("Облой"); }
+                                    if (settings.UnderFill && underFillTask.Result) { anyDefect = true; defects.Add("Недолив"); }
+                                }
+
+                                string defectText = defects.Count > 0 ? string.Join(", ", defects) : "-";
+
+                                // === обновление состояния (НЕ UI) ===
+                                lock (_stateLock)
+                                {
+                                    _state.Frame?.Dispose();
+                                    _state.Frame = _frameToDisplay.Clone();
+
+                                    _generalCapsCount++;
+                                    if (anyDefect)
+                                    {
+                                        _ngCapsCount++;
+                                    }
+                                    else
+                                    {
+                                        _okCapsCount++;
+                                    }
+
+                                    _percentNgCaps = _generalCapsCount > 0 ? _ngCapsCount / _generalCapsCount * 100 : 0;
+                                    _percentOkCaps = _generalCapsCount > 0 ? _okCapsCount / _generalCapsCount * 100 : 0;
+
+                                    _state.GeneralCapsCount = _generalCapsCount;
+                                    _state.Ok = _okCapsCount;
+                                    _state.Ng = _ngCapsCount;
+                                    _state.PercentNG = _percentNgCaps;
+                                    _state.PercentOK = _percentOkCaps;
+
+                                    _state.OvalityDefectCount = _ovalityDefectCount;
+                                    _state.InclusionDefectCount = _inclusionDefectCount;
+                                    _state.PaintDefectCount = _paintDefectCount;
+                                    _state.ObloyDefectCount = _obloyDefectCount;
+                                    _state.UnderFillDefectCount = _underFillDefectCount;
+
+                                    _state.PercentOvality = _percentOvalityCaps;
+                                    _state.PercentPaint = _percentInpaintCaps;
+                                    _state.PercentInclusion = _percentInclusionCaps;
+                                    _state.PercentObloy = _percentObloyCaps;
+                                    _state.PercentUnderFill = _percentUnderfillCaps;
+
+                                    _state.TimeOvality = _timeOvality;
+                                    _state.TimeInclusion = _timeInclusion;
+                                    _state.TimePaint = _timeInpaint;
+                                    _state.TimeObloy = _timeObloy;
+                                    _state.TimeUnderFill = _timeUnderFill;
+
+                                    _state.Time = stopwatch.ElapsedMilliseconds;
+                                    _state.DefectText = defectText;
+                                    _state.IsNg = anyDefect;
+                                }
+
+                                // === сохранение (без UI) ===
+                                if (settings.SaveOk || settings.SaveNg)
+                                {
+                                    Mat copy = frameToProcess.Clone();
+
+                                    _ = Task.Run(() =>
+                                    {
+                                        try
+                                        {
+                                            CycleImageSaver.Save(
+                                                copy,
+                                                anyDefect,
+                                                settings.SaveOk,
+                                                settings.SaveNg,
+                                                _state.Ok + _state.Ng,
+                                                $"{(anyDefect ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}.jpg"
+                                            );
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            ErrorLogger.Log(ex, "Ошибка сохранения");
+                                        }
+                                        finally { copy.Dispose(); }
+                                    });
+                                }
+
+                                // === PLC ===
+                                if (!_isProcessingFromFolder)
+                                {
+                                    var st = anyDefect
+                                        ? PLCData.QualityStatus.Bad
+                                        : PLCData.QualityStatus.Good;
+
+                                    _ = Task.Run(() =>
+                                    {
+                                        try { SendQualityStatus(st); }
+                                        catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка PLC"); }
+                                    });
+                                }
+
+                                stopwatch.Stop();
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorLogger.Log(ex, "Ошибка обработки кадра");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "Ошибка цикла обработки");
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Фатальная ошибка ProcessingLoop");
+            }
+        }
+
         private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Func<Mat, Mat, Mat, CancellationToken, Point[], bool> checkFunc, Point[] capContour)
         {
             try
@@ -3619,22 +3899,27 @@ namespace CapDefectDetector
             try
             {
                 token.ThrowIfCancellationRequested();
-                Stopwatch stopwatch = Stopwatch.StartNew();
+                var stopwatch = Stopwatch.StartNew();
 
-                bool isOval = CheckOvality(gray, image, drawFrame, token, capContour);
+                bool isOval = false;
+                try
+                {
+                    isOval = CheckOvality(gray, image, drawFrame, token, capContour);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "Ошибка в CheckOvality");
+                }
 
                 if (isOval)
                 {
                     _ovalityDefectCount++;
-                    _percentOvalityCaps = _generalCapsCount > 0 ? _ovalityDefectCount / _generalCapsCount * 100 : 0;
-                    UpdateTextBox(ovalityDef, _ovalityDefectCount);
-                    UpdateTextBox(percentOvalityCapsTb, _percentOvalityCaps);
                 }
 
                 stopwatch.Stop();
+                _timeOvality = stopwatch.ElapsedMilliseconds;
+
                 _percentOvalityCaps = _generalCapsCount > 0 ? _ovalityDefectCount / _generalCapsCount * 100 : 0;
-                UpdateTextBox(timeOvality, stopwatch.ElapsedMilliseconds, 0);
-                UpdateTextBox(percentOvalityCapsTb, _percentOvalityCaps);
 
                 return isOval;
             }
@@ -3650,24 +3935,29 @@ namespace CapDefectDetector
             try
             {
                 token.ThrowIfCancellationRequested();
-                Stopwatch stopwatch = Stopwatch.StartNew();
+                var stopwatch = Stopwatch.StartNew();
 
-                bool hasInclusions = CheckForInclusions(gray, image, drawFrame, token, capContour);
+                bool isInclusion = false;
+                try
+                {
+                    isInclusion = CheckForInclusions(gray, image, drawFrame, token, capContour);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "Ошибка в CheckForInclusions");
+                }
 
-                if (hasInclusions)
+                if (isInclusion)
                 {
                     _inclusionDefectCount++;
-                    _percentInclusionCaps = _generalCapsCount > 0 ? _inclusionDefectCount / _generalCapsCount * 100 : 0;
-                    UpdateTextBox(inclusionDef, _inclusionDefectCount);
-                    UpdateTextBox(percentInclusionCapsTb, _percentInclusionCaps);
                 }
 
                 stopwatch.Stop();
-                _percentInclusionCaps = _generalCapsCount > 0 ? _inclusionDefectCount / _generalCapsCount * 100 : 0;
-                UpdateTextBox(inclusionTime, stopwatch.ElapsedMilliseconds, 0);
-                UpdateTextBox(percentInclusionCapsTb, _percentInclusionCaps);
+                _timeInclusion = stopwatch.ElapsedMilliseconds;
 
-                return hasInclusions;
+                _percentInclusionCaps = _generalCapsCount > 0 ? _inclusionDefectCount / _generalCapsCount * 100 : 0;
+
+                return isInclusion;
             }
             catch (Exception ex)
             {
@@ -3681,24 +3971,29 @@ namespace CapDefectDetector
             try
             {
                 token.ThrowIfCancellationRequested();
-                Stopwatch stopwatch = Stopwatch.StartNew();
+                var stopwatch = Stopwatch.StartNew();
 
-                bool hasPaintDefects = CheckForPaintDefects(gray, image, drawFrame, token, capContour);
+                bool isInpaint = false;
+                try
+                {
+                    isInpaint = CheckForPaintDefects(gray, image, drawFrame, token, capContour);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "Ошибка в CheckForPaintDefects");
+                }
 
-                if (hasPaintDefects)
+                if (isInpaint)
                 {
                     _paintDefectCount++;
-                    _percentInpaintCaps = _generalCapsCount > 0 ? _paintDefectCount / _generalCapsCount * 100 : 0;
-                    UpdateTextBox(InpaintDef, _paintDefectCount);
-                    UpdateTextBox(percentInpaintCapsTb, _percentInpaintCaps);
                 }
 
                 stopwatch.Stop();
-                _percentInpaintCaps = _generalCapsCount > 0 ? _paintDefectCount / _generalCapsCount * 100 : 0;
-                UpdateTextBox(inpaintTime, stopwatch.ElapsedMilliseconds, 0);
-                UpdateTextBox(percentInpaintCapsTb, _percentInpaintCaps);
+                _timeInpaint = stopwatch.ElapsedMilliseconds;
 
-                return hasPaintDefects;
+                _percentInpaintCaps = _generalCapsCount > 0 ? _paintDefectCount / _generalCapsCount * 100 : 0;
+
+                return isInpaint;
             }
             catch (Exception ex)
             {
@@ -3712,24 +4007,29 @@ namespace CapDefectDetector
             try
             {
                 token.ThrowIfCancellationRequested();
-                Stopwatch stopwatch = Stopwatch.StartNew();
+                var stopwatch = Stopwatch.StartNew();
 
-                bool hasObloyDefects = CheckForObloyDefects(gray, image, drawFrame, token, capContour);
+                bool isObloy = false;
+                try
+                {
+                    isObloy = CheckForObloyDefects(gray, image, drawFrame, token, capContour);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "Ошибка в CheckForObloyDefects");
+                }
 
-                if (hasObloyDefects)
+                if (isObloy)
                 {
                     _obloyDefectCount++;
-                    _percentObloyCaps = _generalCapsCount > 0 ? _obloyDefectCount / _generalCapsCount * 100 : 0;
-                    UpdateTextBox(obloyDef, _obloyDefectCount);
-                    UpdateTextBox(percentObloyCapsTb, _percentObloyCaps);
                 }
 
                 stopwatch.Stop();
-                _percentObloyCaps = _generalCapsCount > 0 ? _obloyDefectCount / _generalCapsCount * 100 : 0;
-                UpdateTextBox(obloyTime, stopwatch.ElapsedMilliseconds, 0);
-                UpdateTextBox(percentObloyCapsTb, _percentObloyCaps);
+                _timeObloy = stopwatch.ElapsedMilliseconds;
 
-                return hasObloyDefects;
+                _percentObloyCaps = _generalCapsCount > 0 ? _obloyDefectCount / _generalCapsCount * 100 : 0;
+
+                return isObloy;
             }
             catch (Exception ex)
             {
@@ -3743,32 +4043,36 @@ namespace CapDefectDetector
             try
             {
                 token.ThrowIfCancellationRequested();
-                Stopwatch stopwatch = Stopwatch.StartNew();
+                var stopwatch = Stopwatch.StartNew();
 
-                bool hasUnderFillDefects = CheckForUnderFillDefects(gray, image, drawFrame, token, capContour);
+                bool isUnderFill = false;
+                try
+                {
+                    isUnderFill = CheckForUnderFillDefects(gray, image, drawFrame, token, capContour);
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "Ошибка в CheckForUnderFillDefects");
+                }
 
-                if (hasUnderFillDefects)
+                if (isUnderFill)
                 {
                     _underFillDefectCount++;
-                    _percentUnderfillCaps = _generalCapsCount > 0 ? _underFillDefectCount / _generalCapsCount * 100 : 0;
-                    UpdateTextBox(underFillDef, _underFillDefectCount);
-                    UpdateTextBox(percentUnderFillCapsTb, _percentUnderfillCaps);
                 }
 
                 stopwatch.Stop();
-                _percentUnderfillCaps = _generalCapsCount > 0 ? _underFillDefectCount / _generalCapsCount * 100 : 0;
-                UpdateTextBox(underFillTime, stopwatch.ElapsedMilliseconds, 0);
-                UpdateTextBox(percentUnderFillCapsTb, _percentUnderfillCaps);
+                _timeUnderFill = stopwatch.ElapsedMilliseconds;
 
-                return hasUnderFillDefects;
+                _percentUnderfillCaps = _generalCapsCount > 0 ? _underFillDefectCount / _generalCapsCount * 100 : 0;
+
+                return isUnderFill;
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex, "Ошибка в RunCheckForObloyDefects");
+                ErrorLogger.Log(ex, "Ошибка в RunCheckForUnderFillDefects");
                 return false;
             }
         }
-
         #endregion
 
         #region Методы работы с Modbus
@@ -4819,6 +5123,128 @@ namespace CapDefectDetector
             catch (Exception ex)
             {
                 MessageBox.Show($"Не удалось открыть файл:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        #endregion
+
+        #region Многопоточность
+        private ProcessingSettings ReadSettingsFromUi()
+        {
+            return new ProcessingSettings
+            {
+                Ovality = ovalityCB.Checked,
+                Inclusion = inclusionCB.Checked,
+                Inpaint = inpaintCB.Checked,
+                Obloy = obloyCB.Checked,
+                UnderFill = underFillCb.Checked,
+                SaveOk = okCapsSaveCb.Checked,
+                SaveNg = ngCapsSaveCb.Checked
+            };
+        }
+
+        private void AnySettingChanged(object sender, EventArgs e)
+        {
+            _settings = ReadSettingsFromUi();
+        }
+
+        private void StartUiLoop()
+        {
+            _uiTimer = new System.Windows.Forms.Timer();
+            _uiTimer.Interval = 100;
+
+            _uiTimer.Tick += UiTimer_Tick;
+
+            _uiTimer.Start();
+        }
+
+        private void UiTimer_Tick(object sender, EventArgs e)
+        {
+            ResultState snapshot;
+
+            lock (_stateLock)
+            {
+                snapshot = new ResultState
+                {
+                    Frame = _state.Frame?.Clone(),
+
+                    GeneralCapsCount = _state.GeneralCapsCount,
+                    Ok = _state.Ok,
+                    Ng = _state.Ng,
+                    PercentOK = _state.PercentOK,
+                    PercentNG = _state.PercentNG,
+
+                    OvalityDefectCount = _state.OvalityDefectCount,
+                    InclusionDefectCount = _state.InclusionDefectCount,
+                    PaintDefectCount = _state.PaintDefectCount,
+                    ObloyDefectCount = _state.ObloyDefectCount,
+                    UnderFillDefectCount = _state.UnderFillDefectCount,
+
+                    PercentOvality = _state.PercentOvality,
+                    PercentInclusion = _state.PercentInclusion,
+                    PercentPaint = _state.PercentPaint,
+                    PercentObloy = _state.PercentObloy,
+                    PercentUnderFill = _state.PercentUnderFill,
+
+                    TimeOvality = _state.TimeOvality,
+                    TimeInclusion = _state.TimeInclusion,
+                    TimeUnderFill = _state.TimeUnderFill,
+                    TimeObloy = _state.TimeObloy,
+                    TimePaint = _state.TimePaint,
+
+                    Time = _state.Time,
+                    IsNg = _state.IsNg,
+
+                    DefectText = _state.DefectText,
+
+                };
+            }
+
+            try
+            {
+                generalCapsCountTb.Text = snapshot.GeneralCapsCount.ToString();
+                okCapsCountTb.Text = snapshot.Ok.ToString();
+                ngCapsCountTb.Text = snapshot.Ng.ToString();
+                percentOkCapsTb.Text = snapshot.PercentOK.ToString("F1");
+                percentNgCapsTb.Text = snapshot.PercentNG.ToString("F1");
+
+                ovalityDef.Text = snapshot.OvalityDefectCount.ToString();
+                inclusionDef.Text = snapshot.InclusionDefectCount.ToString();
+                inpaintDef.Text = snapshot.PaintDefectCount.ToString();
+                obloyDef.Text = snapshot.ObloyDefectCount.ToString();
+                underFillDef.Text = snapshot.UnderFillDefectCount.ToString();
+
+                percentOvalityCapsTb.Text = snapshot.PercentOvality.ToString("F1");
+                percentInclusionCapsTb.Text = snapshot.PercentInclusion.ToString("F1");
+                percentInpaintCapsTb.Text = snapshot.PercentPaint.ToString("F1");
+                percentObloyCapsTb.Text = snapshot.PercentObloy.ToString("F1");
+                percentUnderFillCapsTb.Text = snapshot.PercentUnderFill.ToString("F1");
+
+                ovalityTime.Text = snapshot.TimeOvality.ToString();
+                inclusionTime.Text = snapshot.TimeInclusion.ToString();
+                inpaintTime.Text = snapshot.TimePaint.ToString();
+                obloyTime.Text = snapshot.TimeObloy.ToString();
+                underFillTime.Text = snapshot.TimeUnderFill.ToString();
+
+                generalTimeTb.Text = snapshot.Time.ToString();
+
+                bool show =
+                    _outputMode == OutputMode.All ||
+                    (_outputMode == OutputMode.Good && !snapshot.IsNg) ||
+                    (_outputMode == OutputMode.Bad && snapshot.IsNg);
+
+                if (snapshot.Frame != null)
+                {
+                    if (show)
+                    {
+                        UpdatePictureBox(originPb, snapshot.Frame);
+                    }
+
+                    snapshot.Frame.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка обновления UI");
             }
         }
         #endregion

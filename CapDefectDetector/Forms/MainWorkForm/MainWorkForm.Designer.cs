@@ -81,12 +81,12 @@
             inpaintTime = new TextBox();
             obloyTime = new TextBox();
             inclusionTime = new TextBox();
-            timeOvality = new TextBox();
+            ovalityTime = new TextBox();
             label45 = new Label();
             ovalityDef = new TextBox();
             inclusionDef = new TextBox();
             obloyDef = new TextBox();
-            InpaintDef = new TextBox();
+            inpaintDef = new TextBox();
             label46 = new Label();
             label52 = new Label();
             obloyCB = new CheckBox();
@@ -975,12 +975,12 @@
             tableLayoutPanel2.Controls.Add(inpaintTime, 3, 3);
             tableLayoutPanel2.Controls.Add(obloyTime, 3, 4);
             tableLayoutPanel2.Controls.Add(inclusionTime, 3, 2);
-            tableLayoutPanel2.Controls.Add(timeOvality, 3, 1);
+            tableLayoutPanel2.Controls.Add(ovalityTime, 3, 1);
             tableLayoutPanel2.Controls.Add(label45, 0, 0);
             tableLayoutPanel2.Controls.Add(ovalityDef, 2, 1);
             tableLayoutPanel2.Controls.Add(inclusionDef, 2, 2);
             tableLayoutPanel2.Controls.Add(obloyDef, 2, 4);
-            tableLayoutPanel2.Controls.Add(InpaintDef, 2, 3);
+            tableLayoutPanel2.Controls.Add(inpaintDef, 2, 3);
             tableLayoutPanel2.Controls.Add(label46, 1, 0);
             tableLayoutPanel2.Controls.Add(label52, 2, 0);
             tableLayoutPanel2.Controls.Add(obloyCB, 0, 4);
@@ -1114,18 +1114,18 @@
             inclusionTime.Text = "0";
             inclusionTime.TextAlign = HorizontalAlignment.Center;
             // 
-            // timeOvality
+            // ovalityTime
             // 
-            timeOvality.Anchor = AnchorStyles.None;
-            timeOvality.BackColor = Color.White;
-            timeOvality.BorderStyle = BorderStyle.None;
-            timeOvality.Font = new Font("Segoe UI", 7.8F);
-            timeOvality.Location = new Point(283, 74);
-            timeOvality.Name = "timeOvality";
-            timeOvality.Size = new Size(69, 14);
-            timeOvality.TabIndex = 9;
-            timeOvality.Text = "0";
-            timeOvality.TextAlign = HorizontalAlignment.Center;
+            ovalityTime.Anchor = AnchorStyles.None;
+            ovalityTime.BackColor = Color.White;
+            ovalityTime.BorderStyle = BorderStyle.None;
+            ovalityTime.Font = new Font("Segoe UI", 7.8F);
+            ovalityTime.Location = new Point(283, 74);
+            ovalityTime.Name = "ovalityTime";
+            ovalityTime.Size = new Size(69, 14);
+            ovalityTime.TabIndex = 9;
+            ovalityTime.Text = "0";
+            ovalityTime.TextAlign = HorizontalAlignment.Center;
             // 
             // label45
             // 
@@ -1178,18 +1178,18 @@
             obloyDef.Text = "0";
             obloyDef.TextAlign = HorizontalAlignment.Center;
             // 
-            // InpaintDef
+            // inpaintDef
             // 
-            InpaintDef.Anchor = AnchorStyles.None;
-            InpaintDef.BackColor = Color.White;
-            InpaintDef.BorderStyle = BorderStyle.None;
-            InpaintDef.Font = new Font("Segoe UI", 7.8F);
-            InpaintDef.Location = new Point(185, 180);
-            InpaintDef.Name = "InpaintDef";
-            InpaintDef.Size = new Size(67, 14);
-            InpaintDef.TabIndex = 11;
-            InpaintDef.Text = "0";
-            InpaintDef.TextAlign = HorizontalAlignment.Center;
+            inpaintDef.Anchor = AnchorStyles.None;
+            inpaintDef.BackColor = Color.White;
+            inpaintDef.BorderStyle = BorderStyle.None;
+            inpaintDef.Font = new Font("Segoe UI", 7.8F);
+            inpaintDef.Location = new Point(185, 180);
+            inpaintDef.Name = "inpaintDef";
+            inpaintDef.Size = new Size(67, 14);
+            inpaintDef.TabIndex = 11;
+            inpaintDef.Text = "0";
+            inpaintDef.TextAlign = HorizontalAlignment.Center;
             // 
             // label46
             // 
@@ -4058,12 +4058,12 @@
         private TextBox inpaintTime;
         private TextBox obloyTime;
         private TextBox inclusionTime;
-        private TextBox timeOvality;
+        private TextBox ovalityTime;
         private Label label45;
         private TextBox ovalityDef;
         private TextBox inclusionDef;
         private TextBox obloyDef;
-        private TextBox InpaintDef;
+        private TextBox inpaintDef;
         private Label label46;
         private Label label52;
         private CheckBox obloyCB;
