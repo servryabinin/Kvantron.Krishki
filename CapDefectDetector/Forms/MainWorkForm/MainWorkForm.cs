@@ -3046,86 +3046,62 @@ namespace CapDefectDetector
         #endregion
 
         #region Методы получения данных от оборудования
-
         public void GetImage(Mat img)
         {
+            if (!_isStreamCam || img == null || img.Empty())
+                return;
+
             try
             {
-                if (_isStreamCam)
-                {
-
 #if OLD_FRAME_PROCESSING
-            try
+        try
+        {
+            lock (frameLock)
             {
-                lock (frameLock)
-                {
-                    latestFrame?.Dispose();
-                    latestFrame = img.Clone();
-                    newFrameAvailable = true;
-                    if (isProcessing == true)
-                    {
-                        currentFrameNumber++;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Error in OLD_FRAME_PROCESSING block");
-            }
-#else
-                    try
-                    {
-                        if (_isProcessing)
-                        {
-                            _imageQueue.Put(img.Clone());
-                            _currentFrameNumber++;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.Log(ex, "Ошибка в GetImage, в _imageQueue.Put");
-                    }
-#endif
+                latestFrame?.Dispose();
+                latestFrame = img.Clone();
+                newFrameAvailable = true;
 
-                    try
-                    {
-                        // вывод в PictureBox
-                        if (!_isProcessing)
-                        {
-                            if (!LocalSettings.Instance.UseVConcat)
-                            {
-                                _img1 = img.Clone();
-                                UpdatePictureBox(originPb, _img1);
-                            }
-                            else
-                            {
-                                if (!_isFirstImageCam1)
-                                {
-                                    _img1 = img.Clone();
-                                    UpdatePictureBox(originPb, _img1);
-                                    _isFirstImageCam1 = true;
-                                }
-                                else
-                                {
-                                    Cv2.VConcat(_img1, img.Clone(), _img1);
-                                    UpdatePictureBox(originPb, _img1);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.Log(ex, "Ошибка в GetImage, в выводе изображения в originPb");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка в GetImage, общая");
+                if (isProcessing)
+                    currentFrameNumber++;
             }
         }
-
-
+        catch (Exception ex)
+        {
+            ErrorLogger.Log(ex, "Error in OLD_FRAME_PROCESSING block");
+        }
+#else
+                if (_isProcessing)
+                {
+                    try
+                    {
+                        _imageQueue.Put(img.Clone());
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "Ошибка при добавлении кадра в очередь");
+                    }
+                }
+#endif
+                else
+                {
+                    try
+                    {
+                        _img1 = img;
+                        UpdatePictureBox(originPb, img);
+                        //CycleImageSaver.SaveDuplicate(img, 0);
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorLogger.Log(ex, "Ошибка при отображении кадра");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Общая ошибка в GetImage");
+            }
+        }
         #endregion
 
         #region Методы управления потоком обработки
