@@ -3456,8 +3456,8 @@ namespace CapDefectDetector
                                         }
 
                                         // === имя файла как в CycleImageSaver ===
-                                        string fileName =
-                                            $"{(anyDefect ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}_{_generalCapsCount}.jpg";
+                                        /*string fileName =
+                                            $"{(anyDefect ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}_{_generalCapsCount}.jpg";*/
 
                                         // === Сохранение изображения ===
                                         Mat copy = frameToProcess.Clone();
@@ -3470,8 +3470,8 @@ namespace CapDefectDetector
                                                     isNG: anyDefect,
                                                     allowOk: okCapsSaveCb.Checked,
                                                     allowNg: ngCapsSaveCb.Checked,
-                                                    generalCount: _generalCapsCount,
-                                                    fileName
+                                                    generalCount: _generalCapsCount
+                                                    //fileName
                                                 );
                                             }
                                             catch (Exception ex)
@@ -3484,7 +3484,7 @@ namespace CapDefectDetector
                                         string folder = Path.Combine(CycleImageSaver.CurrentCycleFolder);
 
                                         // === запись статистики ===
-                                        try
+                                       /* try
                                         {
                                             _statisticsManager.Add(
                                                 new CapStatistics
@@ -3502,7 +3502,7 @@ namespace CapDefectDetector
                                         catch (Exception ex)
                                         {
                                             ErrorLogger.Log(ex, "Ошибка при добавлении записи в статистику");
-                                        }
+                                        }*/
 
                                         BeginInvoke(() => currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder);
 

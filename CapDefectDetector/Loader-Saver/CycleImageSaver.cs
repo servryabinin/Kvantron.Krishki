@@ -80,7 +80,7 @@ public static class CycleImageSaver
         Directory.CreateDirectory(Path.Combine(CurrentCycleFolder, "Duplicate"));
     }
 
-    public static void Save(Mat image, bool isNG, bool allowOk, bool allowNg, float generalCount, string fileName)
+    public static void Save(Mat image, bool isNG, bool allowOk, bool allowNg, float generalCount/*, string fileName*/)
     {
         try
         {
@@ -114,6 +114,7 @@ public static class CycleImageSaver
                 catch { break; } // На всякий случай, если файл нельзя удалить
             }
 
+            string fileName =$"{(isNG ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}_{generalCount}.jpg";
             string path = Path.Combine(subfolderPath, fileName);
 
             // Сохраняем изображение в JPEG с качеством 90%
