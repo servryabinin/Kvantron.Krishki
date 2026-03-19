@@ -32,6 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWorkForm));
             pictureBox1 = new PictureBox();
             panel2 = new Panel();
+            tableLayoutPanel3 = new TableLayoutPanel();
+            loadDefectSettings = new Button();
+            saveDefectSettings = new Button();
             cameraStatusLabel = new Label();
             label16 = new Label();
             label15 = new Label();
@@ -176,9 +179,13 @@
             tableLayoutPanel22 = new TableLayoutPanel();
             groupBox7 = new GroupBox();
             tableLayoutPanel26 = new TableLayoutPanel();
-            tableLayoutPanel3 = new TableLayoutPanel();
-            loadDefectSettings = new Button();
-            saveDefectSettings = new Button();
+            groupBox14 = new GroupBox();
+            tableLayoutPanel46 = new TableLayoutPanel();
+            paramDefCmB = new ComboBox();
+            saveDefectSettingsNew = new Button();
+            label63 = new Label();
+            defectSettingsNameTb = new TextBox();
+            label64 = new Label();
             panel4 = new Panel();
             tableLayoutPanel40 = new TableLayoutPanel();
             groupBox13 = new GroupBox();
@@ -284,6 +291,7 @@
             tableLayoutPanel16 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
+            tableLayoutPanel3.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel41.SuspendLayout();
@@ -335,7 +343,8 @@
             tableLayoutPanel22.SuspendLayout();
             groupBox7.SuspendLayout();
             tableLayoutPanel26.SuspendLayout();
-            tableLayoutPanel3.SuspendLayout();
+            groupBox14.SuspendLayout();
+            tableLayoutPanel46.SuspendLayout();
             panel4.SuspendLayout();
             tableLayoutPanel40.SuspendLayout();
             groupBox13.SuspendLayout();
@@ -408,6 +417,7 @@
             // panel2
             // 
             panel2.BorderStyle = BorderStyle.Fixed3D;
+            panel2.Controls.Add(tableLayoutPanel3);
             panel2.Controls.Add(cameraStatusLabel);
             panel2.Controls.Add(label16);
             panel2.Controls.Add(label15);
@@ -417,6 +427,51 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(1095, 134);
             panel2.TabIndex = 9;
+            // 
+            // tableLayoutPanel3
+            // 
+            tableLayoutPanel3.ColumnCount = 2;
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel3.Controls.Add(loadDefectSettings, 0, 0);
+            tableLayoutPanel3.Controls.Add(saveDefectSettings, 1, 0);
+            tableLayoutPanel3.Location = new Point(713, 29);
+            tableLayoutPanel3.Name = "tableLayoutPanel3";
+            tableLayoutPanel3.RowCount = 1;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.Size = new Size(291, 68);
+            tableLayoutPanel3.TabIndex = 15;
+            // 
+            // loadDefectSettings
+            // 
+            loadDefectSettings.BackColor = Color.FromArgb(66, 133, 244);
+            loadDefectSettings.Dock = DockStyle.Fill;
+            loadDefectSettings.FlatAppearance.BorderSize = 0;
+            loadDefectSettings.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            loadDefectSettings.ForeColor = Color.White;
+            loadDefectSettings.Location = new Point(3, 3);
+            loadDefectSettings.Name = "loadDefectSettings";
+            loadDefectSettings.Size = new Size(139, 62);
+            loadDefectSettings.TabIndex = 12;
+            loadDefectSettings.Text = "Загрузить настройки";
+            loadDefectSettings.UseVisualStyleBackColor = false;
+            loadDefectSettings.Click += loadDefectSettings_Click;
+            // 
+            // saveDefectSettings
+            // 
+            saveDefectSettings.BackColor = Color.FromArgb(66, 133, 244);
+            saveDefectSettings.Dock = DockStyle.Fill;
+            saveDefectSettings.FlatAppearance.BorderSize = 0;
+            saveDefectSettings.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            saveDefectSettings.ForeColor = Color.White;
+            saveDefectSettings.Location = new Point(148, 3);
+            saveDefectSettings.Name = "saveDefectSettings";
+            saveDefectSettings.Size = new Size(140, 62);
+            saveDefectSettings.TabIndex = 14;
+            saveDefectSettings.Text = "Сохранить";
+            saveDefectSettings.UseVisualStyleBackColor = false;
+            saveDefectSettings.Click += saveDefectSettings_Click;
             // 
             // cameraStatusLabel
             // 
@@ -496,7 +551,7 @@
             groupBox2.ForeColor = Color.Black;
             groupBox2.Location = new Point(3, 3);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(283, 72);
+            groupBox2.Size = new Size(285, 71);
             groupBox2.TabIndex = 9;
             groupBox2.TabStop = false;
             groupBox2.Text = "Овальность";
@@ -514,7 +569,7 @@
             tableLayoutPanel41.RowCount = 2;
             tableLayoutPanel41.RowStyles.Add(new RowStyle(SizeType.Percent, 38.29787F));
             tableLayoutPanel41.RowStyles.Add(new RowStyle(SizeType.Percent, 61.70213F));
-            tableLayoutPanel41.Size = new Size(277, 52);
+            tableLayoutPanel41.Size = new Size(279, 51);
             tableLayoutPanel41.TabIndex = 4;
             // 
             // ovalityCoefNumUpD
@@ -523,7 +578,7 @@
             ovalityCoefNumUpD.DecimalPlaces = 3;
             ovalityCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             ovalityCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
-            ovalityCoefNumUpD.Location = new Point(3, 25);
+            ovalityCoefNumUpD.Location = new Point(3, 24);
             ovalityCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             ovalityCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
             ovalityCoefNumUpD.Name = "ovalityCoefNumUpD";
@@ -551,9 +606,9 @@
             groupBox4.Dock = DockStyle.Fill;
             groupBox4.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox4.ForeColor = Color.Black;
-            groupBox4.Location = new Point(3, 442);
+            groupBox4.Location = new Point(3, 434);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(283, 73);
+            groupBox4.Size = new Size(285, 72);
             groupBox4.TabIndex = 13;
             groupBox4.TabStop = false;
             groupBox4.Text = "Облой";
@@ -570,7 +625,7 @@
             tableLayoutPanel44.RowCount = 2;
             tableLayoutPanel44.RowStyles.Add(new RowStyle(SizeType.Percent, 35.4166679F));
             tableLayoutPanel44.RowStyles.Add(new RowStyle(SizeType.Percent, 64.5833359F));
-            tableLayoutPanel44.Size = new Size(277, 53);
+            tableLayoutPanel44.Size = new Size(279, 52);
             tableLayoutPanel44.TabIndex = 4;
             // 
             // obloyPixCountNumUpD
@@ -604,9 +659,9 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
             groupBox3.ForeColor = Color.Black;
-            groupBox3.Location = new Point(3, 81);
+            groupBox3.Location = new Point(3, 80);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(283, 221);
+            groupBox3.Size = new Size(285, 217);
             groupBox3.TabIndex = 10;
             groupBox3.TabStop = false;
             groupBox3.Text = "Вкрапления";
@@ -635,13 +690,13 @@
             tableLayoutPanel42.RowStyles.Add(new RowStyle(SizeType.Percent, 15.3846149F));
             tableLayoutPanel42.RowStyles.Add(new RowStyle(SizeType.Percent, 11.7948713F));
             tableLayoutPanel42.RowStyles.Add(new RowStyle(SizeType.Percent, 17.9487171F));
-            tableLayoutPanel42.Size = new Size(277, 201);
+            tableLayoutPanel42.Size = new Size(279, 197);
             tableLayoutPanel42.TabIndex = 4;
             // 
             // maxSquareInclusionNumUpD
             // 
             maxSquareInclusionNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            maxSquareInclusionNumUpD.Location = new Point(3, 168);
+            maxSquareInclusionNumUpD.Location = new Point(3, 162);
             maxSquareInclusionNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             maxSquareInclusionNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             maxSquareInclusionNumUpD.Name = "maxSquareInclusionNumUpD";
@@ -656,7 +711,7 @@
             coefCapRadiusInclusionUpD.DecimalPlaces = 2;
             coefCapRadiusInclusionUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             coefCapRadiusInclusionUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            coefCapRadiusInclusionUpD.Location = new Point(3, 71);
+            coefCapRadiusInclusionUpD.Location = new Point(3, 68);
             coefCapRadiusInclusionUpD.Maximum = new decimal(new int[] { 99, 0, 0, 131072 });
             coefCapRadiusInclusionUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
             coefCapRadiusInclusionUpD.Name = "coefCapRadiusInclusionUpD";
@@ -671,7 +726,7 @@
             label22.AutoSize = true;
             label22.Font = new Font("Segoe UI", 7.8F);
             label22.ForeColor = Color.Black;
-            label22.Location = new Point(3, 147);
+            label22.Location = new Point(3, 141);
             label22.Name = "label22";
             label22.Size = new Size(206, 13);
             label22.TabIndex = 16;
@@ -681,7 +736,7 @@
             // 
             minSquareInclusionNumUpD.Anchor = AnchorStyles.Left;
             minSquareInclusionNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            minSquareInclusionNumUpD.Location = new Point(3, 117);
+            minSquareInclusionNumUpD.Location = new Point(3, 112);
             minSquareInclusionNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             minSquareInclusionNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             minSquareInclusionNumUpD.Name = "minSquareInclusionNumUpD";
@@ -696,7 +751,7 @@
             label24.AutoSize = true;
             label24.Font = new Font("Segoe UI", 7.8F);
             label24.ForeColor = Color.Black;
-            label24.Location = new Point(3, 2);
+            label24.Location = new Point(3, 1);
             label24.Name = "label24";
             label24.Size = new Size(216, 13);
             label24.TabIndex = 11;
@@ -708,7 +763,7 @@
             label60.AutoSize = true;
             label60.Font = new Font("Segoe UI", 7.8F);
             label60.ForeColor = Color.Black;
-            label60.Location = new Point(3, 51);
+            label60.Location = new Point(3, 49);
             label60.Name = "label60";
             label60.Size = new Size(191, 13);
             label60.TabIndex = 21;
@@ -720,7 +775,7 @@
             label23.AutoSize = true;
             label23.Font = new Font("Segoe UI", 7.8F);
             label23.ForeColor = Color.Black;
-            label23.Location = new Point(3, 98);
+            label23.Location = new Point(3, 93);
             label23.Name = "label23";
             label23.Size = new Size(203, 13);
             label23.TabIndex = 14;
@@ -732,7 +787,7 @@
             circleCoefNumUpD.DecimalPlaces = 2;
             circleCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             circleCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            circleCoefNumUpD.Location = new Point(3, 22);
+            circleCoefNumUpD.Location = new Point(3, 20);
             circleCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             circleCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
             circleCoefNumUpD.Name = "circleCoefNumUpD";
@@ -748,9 +803,9 @@
             groupBox5.Dock = DockStyle.Fill;
             groupBox5.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox5.ForeColor = Color.Black;
-            groupBox5.Location = new Point(3, 308);
+            groupBox5.Location = new Point(3, 303);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(283, 128);
+            groupBox5.Size = new Size(285, 125);
             groupBox5.TabIndex = 11;
             groupBox5.TabStop = false;
             groupBox5.Text = "Непрокрас";
@@ -772,14 +827,14 @@
             tableLayoutPanel43.RowStyles.Add(new RowStyle(SizeType.Percent, 30.3921566F));
             tableLayoutPanel43.RowStyles.Add(new RowStyle(SizeType.Percent, 19.6078434F));
             tableLayoutPanel43.RowStyles.Add(new RowStyle(SizeType.Percent, 31.37255F));
-            tableLayoutPanel43.Size = new Size(277, 108);
+            tableLayoutPanel43.Size = new Size(279, 105);
             tableLayoutPanel43.TabIndex = 4;
             // 
             // whiteThresoldNumUpD
             // 
             whiteThresoldNumUpD.Anchor = AnchorStyles.Left;
             whiteThresoldNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            whiteThresoldNumUpD.Location = new Point(3, 80);
+            whiteThresoldNumUpD.Location = new Point(3, 77);
             whiteThresoldNumUpD.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             whiteThresoldNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             whiteThresoldNumUpD.Name = "whiteThresoldNumUpD";
@@ -806,7 +861,7 @@
             label28.AutoSize = true;
             label28.Font = new Font("Segoe UI", 7.8F);
             label28.ForeColor = Color.Black;
-            label28.Location = new Point(3, 56);
+            label28.Location = new Point(3, 53);
             label28.Name = "label28";
             label28.Size = new Size(172, 13);
             label28.TabIndex = 38;
@@ -816,7 +871,7 @@
             // 
             minSquareInpaintNumUpD.Anchor = AnchorStyles.Left;
             minSquareInpaintNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            minSquareInpaintNumUpD.Location = new Point(3, 25);
+            minSquareInpaintNumUpD.Location = new Point(3, 24);
             minSquareInpaintNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             minSquareInpaintNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             minSquareInpaintNumUpD.Name = "minSquareInpaintNumUpD";
@@ -845,44 +900,44 @@
             // 
             // label9
             // 
+            label9.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             label9.AutoSize = true;
-            label9.Dock = DockStyle.Fill;
             label9.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label9.Location = new Point(3, 0);
+            label9.Location = new Point(3, 11);
             label9.Name = "label9";
-            label9.Size = new Size(77, 36);
+            label9.Size = new Size(77, 13);
             label9.TabIndex = 0;
             label9.Text = "Профиль:";
             label9.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // label10
             // 
+            label10.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             label10.AutoSize = true;
-            label10.Dock = DockStyle.Fill;
             label10.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label10.Location = new Point(3, 36);
+            label10.Location = new Point(3, 41);
             label10.Name = "label10";
-            label10.Size = new Size(77, 36);
+            label10.Size = new Size(77, 26);
             label10.TabIndex = 1;
             label10.Text = "Время до выхода, с:";
             label10.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // profileStatusTb
             // 
-            profileStatusTb.Anchor = AnchorStyles.None;
+            profileStatusTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             profileStatusTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            profileStatusTb.Location = new Point(99, 7);
+            profileStatusTb.Location = new Point(86, 7);
             profileStatusTb.Name = "profileStatusTb";
-            profileStatusTb.Size = new Size(113, 21);
+            profileStatusTb.Size = new Size(140, 21);
             profileStatusTb.TabIndex = 2;
             // 
             // timeLeftTb
             // 
-            timeLeftTb.Anchor = AnchorStyles.None;
+            timeLeftTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             timeLeftTb.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            timeLeftTb.Location = new Point(99, 43);
+            timeLeftTb.Location = new Point(86, 43);
             timeLeftTb.Name = "timeLeftTb";
-            timeLeftTb.Size = new Size(113, 21);
+            timeLeftTb.Size = new Size(140, 21);
             timeLeftTb.TabIndex = 3;
             // 
             // changeProfileBt
@@ -2379,73 +2434,122 @@
             tableLayoutPanel26.AutoScroll = true;
             tableLayoutPanel26.ColumnCount = 1;
             tableLayoutPanel26.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel26.Controls.Add(tableLayoutPanel3, 0, 1);
+            tableLayoutPanel26.Controls.Add(groupBox14, 0, 1);
             tableLayoutPanel26.Controls.Add(panel4, 0, 0);
             tableLayoutPanel26.Dock = DockStyle.Fill;
             tableLayoutPanel26.Location = new Point(3, 17);
             tableLayoutPanel26.Name = "tableLayoutPanel26";
             tableLayoutPanel26.RowCount = 2;
-            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 90F));
-            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
+            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 88.19539F));
+            tableLayoutPanel26.RowStyles.Add(new RowStyle(SizeType.Percent, 11.8046131F));
             tableLayoutPanel26.Size = new Size(297, 737);
             tableLayoutPanel26.TabIndex = 5;
             // 
-            // tableLayoutPanel3
+            // groupBox14
             // 
-            tableLayoutPanel3.ColumnCount = 2;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel3.Controls.Add(loadDefectSettings, 0, 0);
-            tableLayoutPanel3.Controls.Add(saveDefectSettings, 1, 0);
-            tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(3, 666);
-            tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 1;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel3.Size = new Size(291, 68);
-            tableLayoutPanel3.TabIndex = 15;
+            groupBox14.Controls.Add(tableLayoutPanel46);
+            groupBox14.Dock = DockStyle.Fill;
+            groupBox14.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            groupBox14.ForeColor = Color.FromArgb(4, 85, 191);
+            groupBox14.Location = new Point(3, 653);
+            groupBox14.Name = "groupBox14";
+            groupBox14.Padding = new Padding(3, 0, 3, 0);
+            groupBox14.Size = new Size(291, 81);
+            groupBox14.TabIndex = 17;
+            groupBox14.TabStop = false;
+            groupBox14.Text = "Сохранение";
             // 
-            // loadDefectSettings
+            // tableLayoutPanel46
             // 
-            loadDefectSettings.BackColor = Color.FromArgb(66, 133, 244);
-            loadDefectSettings.Dock = DockStyle.Fill;
-            loadDefectSettings.FlatAppearance.BorderSize = 0;
-            loadDefectSettings.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            loadDefectSettings.ForeColor = Color.White;
-            loadDefectSettings.Location = new Point(3, 3);
-            loadDefectSettings.Name = "loadDefectSettings";
-            loadDefectSettings.Size = new Size(139, 62);
-            loadDefectSettings.TabIndex = 12;
-            loadDefectSettings.Text = "Загрузить настройки";
-            loadDefectSettings.UseVisualStyleBackColor = false;
-            loadDefectSettings.Click += loadDefectSettings_Click;
+            tableLayoutPanel46.ColumnCount = 3;
+            tableLayoutPanel46.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30.2884617F));
+            tableLayoutPanel46.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40.14423F));
+            tableLayoutPanel46.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.5673084F));
+            tableLayoutPanel46.Controls.Add(paramDefCmB, 1, 0);
+            tableLayoutPanel46.Controls.Add(saveDefectSettingsNew, 2, 1);
+            tableLayoutPanel46.Controls.Add(label63, 0, 0);
+            tableLayoutPanel46.Controls.Add(defectSettingsNameTb, 1, 1);
+            tableLayoutPanel46.Controls.Add(label64, 0, 1);
+            tableLayoutPanel46.Dock = DockStyle.Fill;
+            tableLayoutPanel46.Location = new Point(3, 14);
+            tableLayoutPanel46.Name = "tableLayoutPanel46";
+            tableLayoutPanel46.RowCount = 2;
+            tableLayoutPanel46.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel46.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tableLayoutPanel46.Size = new Size(285, 67);
+            tableLayoutPanel46.TabIndex = 17;
             // 
-            // saveDefectSettings
+            // paramDefCmB
             // 
-            saveDefectSettings.BackColor = Color.FromArgb(66, 133, 244);
-            saveDefectSettings.Dock = DockStyle.Fill;
-            saveDefectSettings.FlatAppearance.BorderSize = 0;
-            saveDefectSettings.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            saveDefectSettings.ForeColor = Color.White;
-            saveDefectSettings.Location = new Point(148, 3);
-            saveDefectSettings.Name = "saveDefectSettings";
-            saveDefectSettings.Size = new Size(140, 62);
-            saveDefectSettings.TabIndex = 14;
-            saveDefectSettings.Text = "Сохранить";
-            saveDefectSettings.UseVisualStyleBackColor = false;
-            saveDefectSettings.Click += saveDefectSettings_Click;
+            paramDefCmB.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            paramDefCmB.BackColor = Color.White;
+            paramDefCmB.Font = new Font("Segoe UI", 7.8F);
+            paramDefCmB.FormattingEnabled = true;
+            paramDefCmB.Location = new Point(89, 6);
+            paramDefCmB.Name = "paramDefCmB";
+            paramDefCmB.Size = new Size(108, 20);
+            paramDefCmB.TabIndex = 39;
+            paramDefCmB.SelectedIndexChanged += paramDefCmB_SelectedIndexChanged;
+            // 
+            // saveDefectSettingsNew
+            // 
+            saveDefectSettingsNew.BackColor = Color.FromArgb(66, 133, 244);
+            saveDefectSettingsNew.Dock = DockStyle.Fill;
+            saveDefectSettingsNew.FlatAppearance.BorderSize = 0;
+            saveDefectSettingsNew.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            saveDefectSettingsNew.ForeColor = Color.White;
+            saveDefectSettingsNew.Location = new Point(203, 36);
+            saveDefectSettingsNew.Name = "saveDefectSettingsNew";
+            saveDefectSettingsNew.Size = new Size(79, 28);
+            saveDefectSettingsNew.TabIndex = 8;
+            saveDefectSettingsNew.Text = "Сохранить";
+            saveDefectSettingsNew.UseVisualStyleBackColor = false;
+            saveDefectSettingsNew.Click += saveDefectSettingsNew_Click;
+            // 
+            // label63
+            // 
+            label63.AutoSize = true;
+            label63.Dock = DockStyle.Fill;
+            label63.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label63.ForeColor = Color.Black;
+            label63.Location = new Point(3, 0);
+            label63.Name = "label63";
+            label63.Size = new Size(80, 33);
+            label63.TabIndex = 3;
+            label63.Text = "Тек. настройки:";
+            label63.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // defectSettingsNameTb
+            // 
+            defectSettingsNameTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            defectSettingsNameTb.Font = new Font("Segoe UI", 7.8F);
+            defectSettingsNameTb.Location = new Point(89, 39);
+            defectSettingsNameTb.Name = "defectSettingsNameTb";
+            defectSettingsNameTb.Size = new Size(108, 21);
+            defectSettingsNameTb.TabIndex = 7;
+            // 
+            // label64
+            // 
+            label64.AutoSize = true;
+            label64.Dock = DockStyle.Fill;
+            label64.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label64.ForeColor = Color.Black;
+            label64.Location = new Point(3, 33);
+            label64.Name = "label64";
+            label64.Size = new Size(80, 34);
+            label64.TabIndex = 6;
+            label64.Text = "Название:";
+            label64.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel4
             // 
             panel4.AutoScroll = true;
-            panel4.BorderStyle = BorderStyle.FixedSingle;
             panel4.Controls.Add(tableLayoutPanel40);
             panel4.Dock = DockStyle.Fill;
             panel4.Location = new Point(3, 3);
             panel4.Margin = new Padding(3, 3, 3, 10);
             panel4.Name = "panel4";
-            panel4.Size = new Size(291, 650);
+            panel4.Size = new Size(291, 637);
             panel4.TabIndex = 16;
             // 
             // tableLayoutPanel40
@@ -2468,7 +2572,7 @@
             tableLayoutPanel40.RowStyles.Add(new RowStyle(SizeType.Percent, 20.833334F));
             tableLayoutPanel40.RowStyles.Add(new RowStyle(SizeType.Percent, 12.3456793F));
             tableLayoutPanel40.RowStyles.Add(new RowStyle(SizeType.Percent, 19.9074078F));
-            tableLayoutPanel40.Size = new Size(289, 648);
+            tableLayoutPanel40.Size = new Size(291, 637);
             tableLayoutPanel40.TabIndex = 4;
             // 
             // groupBox13
@@ -2478,9 +2582,9 @@
             groupBox13.Dock = DockStyle.Fill;
             groupBox13.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             groupBox13.ForeColor = Color.Black;
-            groupBox13.Location = new Point(3, 521);
+            groupBox13.Location = new Point(3, 512);
             groupBox13.Name = "groupBox13";
-            groupBox13.Size = new Size(283, 124);
+            groupBox13.Size = new Size(285, 122);
             groupBox13.TabIndex = 14;
             groupBox13.TabStop = false;
             groupBox13.Text = "Недолив";
@@ -2502,7 +2606,7 @@
             tableLayoutPanel45.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
             tableLayoutPanel45.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tableLayoutPanel45.RowStyles.Add(new RowStyle(SizeType.Percent, 30F));
-            tableLayoutPanel45.Size = new Size(277, 104);
+            tableLayoutPanel45.Size = new Size(279, 102);
             tableLayoutPanel45.TabIndex = 4;
             // 
             // coefCapRadiusMaskUnderFillNumUpD
@@ -2510,7 +2614,7 @@
             coefCapRadiusMaskUnderFillNumUpD.DecimalPlaces = 2;
             coefCapRadiusMaskUnderFillNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             coefCapRadiusMaskUnderFillNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            coefCapRadiusMaskUnderFillNumUpD.Location = new Point(3, 74);
+            coefCapRadiusMaskUnderFillNumUpD.Location = new Point(3, 73);
             coefCapRadiusMaskUnderFillNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             coefCapRadiusMaskUnderFillNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
             coefCapRadiusMaskUnderFillNumUpD.Name = "coefCapRadiusMaskUnderFillNumUpD";
@@ -2537,7 +2641,7 @@
             label62.AutoSize = true;
             label62.Font = new Font("Segoe UI", 7.8F);
             label62.ForeColor = Color.Black;
-            label62.Location = new Point(3, 54);
+            label62.Location = new Point(3, 53);
             label62.Name = "label62";
             label62.Size = new Size(203, 13);
             label62.TabIndex = 44;
@@ -3908,6 +4012,7 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            tableLayoutPanel3.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
             tableLayoutPanel41.ResumeLayout(false);
@@ -3969,7 +4074,9 @@
             tableLayoutPanel22.ResumeLayout(false);
             groupBox7.ResumeLayout(false);
             tableLayoutPanel26.ResumeLayout(false);
-            tableLayoutPanel3.ResumeLayout(false);
+            groupBox14.ResumeLayout(false);
+            tableLayoutPanel46.ResumeLayout(false);
+            tableLayoutPanel46.PerformLayout();
             panel4.ResumeLayout(false);
             tableLayoutPanel40.ResumeLayout(false);
             groupBox13.ResumeLayout(false);
@@ -4291,5 +4398,12 @@
         private DataGridViewTextBoxColumn dg_defectsTypes;
         private DataGridViewTextBoxColumn dg_saveFolder;
         private DataGridViewTextBoxColumn dg_nameCapImage;
+        private TableLayoutPanel tableLayoutPanel46;
+        private Button saveDefectSettingsNew;
+        private Label label63;
+        private TextBox defectSettingsNameTb;
+        private Label label64;
+        private ComboBox paramDefCmB;
+        private GroupBox groupBox14;
     }
 }

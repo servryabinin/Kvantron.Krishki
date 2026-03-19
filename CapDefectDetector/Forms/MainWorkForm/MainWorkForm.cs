@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using CapDefectDetector.Authorization;
 using CapDefectDetector.CameraAndModbusClasses;
+using CapDefectDetector.DTO;
 using CapDefectDetector.Forms;
 using CapDefectDetector.FrameProcessing;
 using CapDefectDetector.Hardware;
@@ -133,6 +134,7 @@ namespace CapDefectDetector
 
         //Для работы с файлами рецептов крышек
         private Dictionary<string, CapRecipe> _recipes = new();
+        private FileSystemWatcher _recipesWatcher;
         private string _recipesFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Рецепты");
         private bool _isApplyingRecipe = false;
 
@@ -172,8 +174,11 @@ namespace CapDefectDetector
         private Mat _imageForTestForDisplay;
 
         // Пути до настроек
-        private FileSystemWatcher _recipesWatcher;
-        private string _folderParamDefect = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка параметров дефектов";
+        private string _folderParamDefect = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Настройки\\Настройка параметров дефектов");
+        private Dictionary<string, DefectSettings> _defectSettings = new();
+        private bool _isApplyingDefectSettings = false;
+        private FileSystemWatcher _defectSettingsWatcher;
+
         private string _folderParamCamera = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки камеры";
         private string _folderParamPr205 = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки ПР205";
 
@@ -385,11 +390,13 @@ namespace CapDefectDetector
         private void InitializeCoreSystems()
         {
             InitializeImageMatrices();
-            InitializePaths();
+            InitializeRecipeFolderAndRecipeFileWatcher();
+            InitializeDefectSettingsFileWatcher();
             LoadCameraParam();
             LoadDefectParam();
             LoadPrParam();
             InitializeRecepts();
+            InitializeDefectSettings();
             InitializeMorphologicalElements();
             InitializeTrigTables();
 
@@ -484,6 +491,9 @@ namespace CapDefectDetector
 
         private void InitializeUISelections()
         {
+            if (outputImageCmB.Items.Count > 0)
+                outputImageCmB.SelectedIndex = 0;
+
             if (windowCb.Items.Count > 0)
                 windowCb.SelectedIndex = 0;
 
@@ -571,7 +581,49 @@ namespace CapDefectDetector
             }
         }
 
-        private void InitializePaths()
+        private void InitializeDefectSettingsFileWatcher()
+        {
+            if (!Directory.Exists(_folderParamDefect))
+                Directory.CreateDirectory(_folderParamDefect);
+
+            // Настройка FileSystemWatcher
+            _defectSettingsWatcher = new FileSystemWatcher
+            {
+                Path = _folderParamDefect,
+                Filter = "*.json",
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            };
+
+            _defectSettingsWatcher.Created += OnDefectSettingsFolderChanged;
+            _defectSettingsWatcher.Deleted += OnDefectSettingsFolderChanged;
+            _defectSettingsWatcher.Renamed += OnDefectSettingsFolderChanged;
+
+            _defectSettingsWatcher.EnableRaisingEvents = true;
+        }
+
+        private void OnDefectSettingsFolderChanged(object sender, FileSystemEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => ReloadDefectSettings()));
+            }
+            else
+            {
+                ReloadDefectSettings();
+            }
+        }
+
+        // Метод для обновления комбобокса
+        private void ReloadDefectSettings()
+        {
+            LoadDefectSettings();
+
+            paramDefCmB.Items.Clear();
+            foreach (var defectSettingName in _defectSettings.Keys)
+                paramDefCmB.Items.Add(defectSettingName);
+        }
+
+        private void InitializeRecipeFolderAndRecipeFileWatcher()
         {
             currentReceptFolderTb.Text = _recipesFolder;
 
@@ -769,6 +821,30 @@ namespace CapDefectDetector
             }
         }
 
+        private void InitializeDefectSettings()
+        {
+            LoadDefectSettings();
+
+            paramDefCmB.Items.Clear();
+            foreach (var defectSettings in _defectSettings.Keys)
+                paramDefCmB.Items.Add(defectSettings);
+
+            if (_defectSettings.Count > 0)
+            {
+                var lastDefectSettingsName = Properties.Settings.Default.Settings_LastDefectSettingsFileName;
+
+                if (!string.IsNullOrEmpty(lastDefectSettingsName) && paramDefCmB.Items.Contains(lastDefectSettingsName))
+                {
+                    paramDefCmB.SelectedItem = lastDefectSettingsName;
+                }
+                else
+                {
+                    // иначе выбираем первый
+                    paramDefCmB.SelectedIndex = 0;
+                }
+            }
+        }
+
         private void LoadRecipes()
         {
             _recipes.Clear();
@@ -786,6 +862,26 @@ namespace CapDefectDetector
                 CapRecipe recipe = JsonConvert.DeserializeObject<CapRecipe>(json);
                 if (recipe != null)
                     _recipes[name] = recipe;
+            }
+        }
+
+        private void LoadDefectSettings()
+        {
+            _defectSettings.Clear();
+
+            if (!Directory.Exists(_folderParamDefect))
+                Directory.CreateDirectory(_folderParamDefect);
+
+            string[] files = Directory.GetFiles(_folderParamDefect, "*.json");
+
+            foreach (var file in files)
+            {
+                string name = Path.GetFileNameWithoutExtension(file);
+                string json = File.ReadAllText(file);
+
+                DefectSettings defectSettings = JsonConvert.DeserializeObject<DefectSettings>(json);
+                if (defectSettings != null)
+                    _defectSettings[name] = defectSettings;
             }
         }
 
@@ -1575,10 +1671,126 @@ namespace CapDefectDetector
             }
         }
 
+        private void saveDefectSettingsNew_Click(object sender, EventArgs e)
+        {
+            if (!ValidateDefectSettings())
+            {
+                return;
+            }
+
+            // --- Папка ---
+            string folder = _folderParamDefect;
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string name = defectSettingsNameTb.Text.Trim();
+            string fileName = name + ".json";
+            string fullPath = Path.Combine(folder, fileName);
+
+            bool existedBefore = File.Exists(fullPath);
+
+            var defectSettings = new DefectSettings
+            {
+                Name = name,
+                OvalityThreshold = double.Parse(ovalityCoefNumUpD.Text),
+                InclusionThreshold = double.Parse(circleCoefNumUpD.Text),
+                MinAreaInclusion = double.Parse(minSquareInclusionNumUpD.Text),
+                MaxAreaInclusion = double.Parse(maxSquareInclusionNumUpD.Text),
+                CoefCapRadiusInclusion = double.Parse(coefCapRadiusInclusionUpD.Text),
+                MinAreaInpaintDefect = double.Parse(minSquareInpaintNumUpD.Text),
+                MinInpaintWhiteThreshold = double.Parse(whiteThresoldNumUpD.Text),
+                MinAreaObloy = double.Parse(obloyPixCountNumUpD.Text),
+                CorrugationsCountForUnderFill = double.Parse(countCorrugationsNumUpD.Text),
+                CoefCapRadiusUnderFill = double.Parse(coefCapRadiusMaskUnderFillNumUpD.Text)
+            };
+
+            // --- JSON с нормальной русской кодировкой ---
+            string json = System.Text.Json.JsonSerializer.Serialize(
+                defectSettings,
+                new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                }
+            );
+
+            File.WriteAllText(fullPath, json, Encoding.UTF8);
+
+            // Сохраняем в Settings
+            Properties.Settings.Default.Settings_OvalityThreshold = ovalityCoefNumUpD.Text;
+            Properties.Settings.Default.Settings_InclusionThreshold = circleCoefNumUpD.Text;
+            Properties.Settings.Default.Settings_MinAreaInclusion = minSquareInclusionNumUpD.Text;
+            Properties.Settings.Default.Settings_MaxAreaInclusion = maxSquareInclusionNumUpD.Text;
+            Properties.Settings.Default.Settings_CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text;
+            Properties.Settings.Default.Settings_MinAreaInpaintDefect = minSquareInpaintNumUpD.Text;
+            Properties.Settings.Default.Settings_MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text;
+            Properties.Settings.Default.Settings_MinAreaObloy = obloyPixCountNumUpD.Text;
+            Properties.Settings.Default.Settings_СorrugationsCountForUnderFill = countCorrugationsNumUpD.Text;
+            Properties.Settings.Default.Settings_СoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text;
+            Properties.Settings.Default.Save();
+
+            // --- Обновляем список рецептов ---
+            LoadDefectSettings();
+
+            paramDefCmB.Items.Clear();
+            foreach (var defectSettingsNamer in _defectSettings.Keys)
+                paramDefCmB.Items.Add(defectSettingsNamer);
+            paramDefCmB.SelectedItem = name;
+
+            // --- Сообщение ---
+            if (existedBefore)
+                MessageBox.Show($"Файл настроек \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show($"Файл настроек \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void paramDefCmB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string key = paramDefCmB.SelectedItem?.ToString();
+            if (key == null || !_defectSettings.ContainsKey(key))
+                return;
+
+            Properties.Settings.Default.Settings_LastDefectSettingsFileName = key;
+            Properties.Settings.Default.Save();
+
+            ApplyDefectSettings(_defectSettings[key]);
+        }
+
+        private void ApplyDefectSettings(DefectSettings r)
+        {
+            _isApplyingDefectSettings = true;
+
+            ovalityCoefNumUpD.Text = r.OvalityThreshold.ToString();
+
+            circleCoefNumUpD.Text = r.InclusionThreshold.ToString();
+            coefCapRadiusInclusionUpD.Text = r.CoefCapRadiusInclusion.ToString();
+            minSquareInclusionNumUpD.Text = r.MinAreaInclusion.ToString();
+            maxSquareInclusionNumUpD.Text = r.MaxAreaInclusion.ToString();
+
+            minSquareInpaintNumUpD.Text = r.MinAreaInpaintDefect.ToString();
+            whiteThresoldNumUpD.Text = r.MinInpaintWhiteThreshold.ToString();
+
+            obloyPixCountNumUpD.Text = r.MinAreaObloy.ToString();
+
+            countCorrugationsNumUpD.Text = r.CorrugationsCountForUnderFill.ToString();
+            coefCapRadiusMaskUnderFillNumUpD.Text = r.CoefCapRadiusUnderFill.ToString();
+
+            _isApplyingDefectSettings = false;
+        }
+
         private bool ValidateDefectSettings()
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(defectSettingsNameTb.Text))
+                {
+                    string msg = "Введите имя файла настроек.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    defectSettingsNameTb.Focus();
+                    return false;
+                }
+
                 if (!double.TryParse(ovalityCoefNumUpD.Text.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out double ovality)
                     || ovality <= 0 || ovality > 1)
                 {
@@ -1816,8 +2028,6 @@ namespace CapDefectDetector
 
             RebuildMorphology();
         }
-
-
 
         private void outputImageCmB_SelectedIndexChanged(object sender, EventArgs e)
         {
