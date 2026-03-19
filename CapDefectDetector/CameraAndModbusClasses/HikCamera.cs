@@ -367,24 +367,19 @@ namespace CapDefectDetector.CameraAndModbusClasses
 
                     if (nRet == MyCamera.MV_OK)
                     {
+                        // Создаем временный объект для доступа к памяти SDK
+                        using (Mat rawMat = new Mat(stImageOut.stFrameInfo.nHeight, stImageOut.stFrameInfo.nWidth, MatType.CV_8UC3, stImageOut.pBufAddr))
+                        {
+                            // КЛОНИРУЕМ данные. Теперь 'm' — это независимая копия в RAM.
+                            Mat m = rawMat.Clone();
+                            Cv2.CvtColor(m, m, ColorConversionCodes.BGRA2RGB);
 
-                        stInputFrameInfo.pData = stImageOut.pBufAddr;
-                        stInputFrameInfo.nDataLen = stImageOut.stFrameInfo.nFrameLen;
-                        nRet = m_MyCamera.MV_CC_InputOneFrame_NET(ref stInputFrameInfo);
+                            // Теперь можно СРАЗУ вернуть буфер камере, не дожидаясь Invoke
+                            m_MyCamera.MV_CC_FreeImageBuffer_NET(ref stImageOut);
 
-                        Mat m = new Mat(stImageOut.stFrameInfo.nHeight, stImageOut.stFrameInfo.nWidth, MatType.CV_8UC3, stInputFrameInfo.pData);
-
-                        Cv2.CvtColor(m, m, ColorConversionCodes.BGRA2RGB);
-                        SendImage?.Invoke(m);
-
-
-                        m_MyCamera.MV_CC_FreeImageBuffer_NET(ref stImageOut);
-
-                        GC.Collect();
-                    }
-                    else
-                    {
-                        Console.WriteLine("Get Image failed:{0:x8}", nRet);
+                            // Отправляем копию на обработку
+                            SendImage?.Invoke(m);
+                        }
                     }
                 }
             });

@@ -4218,7 +4218,7 @@ namespace CapDefectDetector
             {
                 if (pictureBox.InvokeRequired)
                 {
-                    pictureBox.Invoke(new Action(() =>
+                    pictureBox.BeginInvoke(new Action(() =>
                     {
                         try
                         {
@@ -4255,7 +4255,7 @@ namespace CapDefectDetector
         {
             if (textBox.InvokeRequired)
             {
-                textBox.Invoke(new Action(() =>
+                textBox.BeginInvoke(new Action(() =>
                 {
                     textBox.Text = value.ToString($"F{decimals}");
                 }));
@@ -4271,7 +4271,7 @@ namespace CapDefectDetector
         {
             if (textBox.InvokeRequired)
             {
-                textBox.Invoke(new Action(() =>
+                textBox.BeginInvoke(new Action(() =>
                 {
                     textBox.Text = value.ToString();
                 }));
