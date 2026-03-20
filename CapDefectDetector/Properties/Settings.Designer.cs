@@ -346,17 +346,5 @@ namespace CapDefectDetector.Properties {
                 this["Settings_LastDefectSettingsFileName"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Settings_ {
-            get {
-                return ((string)(this["Settings_"]));
-            }
-            set {
-                this["Settings_"] = value;
-            }
-        }
     }
 }

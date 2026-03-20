@@ -173,14 +173,21 @@ namespace CapDefectDetector
         private Mat _imageForTest;
         private Mat _imageForTestForDisplay;
 
-        // Пути до настроек
+        // Пути до настроек и прочие поля
         private string _folderParamDefect = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Настройки\\Настройка параметров дефектов");
         private Dictionary<string, DefectSettings> _defectSettings = new();
         private bool _isApplyingDefectSettings = false;
         private FileSystemWatcher _defectSettingsWatcher;
 
-        private string _folderParamCamera = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки камеры";
-        private string _folderParamPr205 = AppDomain.CurrentDomain.BaseDirectory + @"Настройки\Настройка аппаратуры\Настройки ПР205";
+        private string _folderParamPr205 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Настройки\\Настройка аппаратуры\\Настройки ПР205");
+        private Dictionary<string, PrSettings> _prSettings = new();
+        private bool _isApplyingPrSettings = false;
+        private FileSystemWatcher _prSettingsWatcher;
+
+        private string _folderParamCamera = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Настройки\\Настройка аппаратуры\\Настройки камеры");
+        private Dictionary<string, CameraSettings> _cameraSettings = new();
+        private bool _isApplyingCameraSettings = false;
+        private FileSystemWatcher _cameraSettingsWatcher;
 
         // Работа с изображениями из файла
         private ImmutableList<string> _imageFiles = [];
@@ -392,11 +399,15 @@ namespace CapDefectDetector
             InitializeImageMatrices();
             InitializeRecipeFolderAndRecipeFileWatcher();
             InitializeDefectSettingsFileWatcher();
+            InitializePrSettingsFileWatcher();
+            InitializeCameraSettingsFileWatcher();
             LoadCameraParam();
             LoadDefectParam();
-            LoadPrParam();
             InitializeRecepts();
             InitializeDefectSettings();
+            InitializePrSettings();
+            LoadPrParam();
+            InitializeCameraSettings();
             InitializeMorphologicalElements();
             InitializeTrigTables();
 
@@ -420,7 +431,7 @@ namespace CapDefectDetector
 
         private void InitializePR205Status()
         {
-            prIpTextBox.Text = Properties.Settings.Default.Settings_IpAdressPr;
+            pr205IpTb.Text = Properties.Settings.Default.Settings_IpAdressPr;
 
             int savedPort;
             if (int.TryParse(Properties.Settings.Default.Settings_PortPr, out savedPort))
@@ -623,6 +634,45 @@ namespace CapDefectDetector
                 paramDefCmB.Items.Add(defectSettingName);
         }
 
+        private void InitializePrSettingsFileWatcher()
+        {
+            if (!Directory.Exists(_folderParamPr205))
+                Directory.CreateDirectory(_folderParamPr205);
+            // Настройка FileSystemWatcher
+            _prSettingsWatcher = new FileSystemWatcher
+            {
+                Path = _folderParamPr205,
+                Filter = "*.json",
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            };
+            _prSettingsWatcher.Created += OnPrSettingsFolderChanged;
+            _prSettingsWatcher.Deleted += OnPrSettingsFolderChanged;
+            _prSettingsWatcher.Renamed += OnPrSettingsFolderChanged;
+            _prSettingsWatcher.EnableRaisingEvents = true;
+        }
+
+        private void OnPrSettingsFolderChanged(object sender, FileSystemEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => ReloadPrSettings()));
+            }
+            else
+            {
+                ReloadPrSettings();
+            }
+        }
+
+        // Метод для обновления комбобокса
+        private void ReloadPrSettings()
+        {
+            LoadPrSettings();
+
+            prSettingsCmB.Items.Clear();
+            foreach (var prSettingsName in _prSettings.Keys)
+                prSettingsCmB.Items.Add(prSettingsName);
+        }
+
         private void InitializeRecipeFolderAndRecipeFileWatcher()
         {
             currentReceptFolderTb.Text = _recipesFolder;
@@ -667,30 +717,63 @@ namespace CapDefectDetector
                 receptCapsCmB.Items.Add(recipeName);
         }
 
+        private void InitializeCameraSettingsFileWatcher()
+        {
+            if (!Directory.Exists(_folderParamCamera))
+                Directory.CreateDirectory(_folderParamCamera);
+            // Настройка FileSystemWatcher
+            _cameraSettingsWatcher = new FileSystemWatcher
+            {
+                Path = _folderParamCamera,
+                Filter = "*.json",
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            };
+            _cameraSettingsWatcher.Created += OnCameraSettingsFolderChanged;
+            _cameraSettingsWatcher.Deleted += OnCameraSettingsFolderChanged;
+            _cameraSettingsWatcher.Renamed += OnCameraSettingsFolderChanged;
+            _cameraSettingsWatcher.EnableRaisingEvents = true;
+        }
+
+        private void OnCameraSettingsFolderChanged(object sender, FileSystemEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => ReloadCameraSettings()));
+            }
+            else
+            {
+                ReloadCameraSettings();
+            }
+        }
+
+        // Метод для обновления комбобокса
+        private void ReloadCameraSettings()
+        {
+            LoadCameraSettings();
+
+            cameraSettingsCmB.Items.Clear();
+            foreach (var cameraSettingsName in _cameraSettings.Keys)
+                cameraSettingsCmB.Items.Add(cameraSettingsName);
+        }
+
         private void LoadPrParam()
         {
             // ===== Параметры ПР =====
-            int.TryParse(Properties.Settings.Default.Settings_BreakingTime, out _breakingTimeValue);
-
             if (breakingTimeTb != null)
             {
-                breakingTimeTb.Text = _breakingTimeValue.ToString();
+                _breakingTimeValue = int.Parse(breakingTimeTb.Text);
                 SendBreakingTime(_breakingTimeValue);
             }
 
-            int.TryParse(Properties.Settings.Default.Settings_BreakerOffset, out _breakerOffsetValue);
-
             if (breakerOffsetTb != null)
             {
-                breakerOffsetTb.Text = _breakerOffsetValue.ToString();
+                _breakerOffsetValue = int.Parse(breakerOffsetTb.Text);
                 SendBreakerOffset(_breakerOffsetValue);
             }
 
-            int.TryParse(Properties.Settings.Default.Settings_CameraOffset, out _cameraOffsetValue);
-
             if (cameraOffsetTb != null)
             {
-                cameraOffsetTb.Text = _cameraOffsetValue.ToString();
+                _cameraOffsetValue = int.Parse(cameraOffsetTb.Text);
                 SendCameraOffset(_cameraOffsetValue);
             }
         }
@@ -813,11 +896,16 @@ namespace CapDefectDetector
             foreach (var recipe in _recipes.Keys)
                 receptCapsCmB.Items.Add(recipe);
 
-            if (_recipes.Count > 0)
+            var lastRecipeName = Properties.Settings.Default.Settings_LastRecipeFileName;
+
+            if (!string.IsNullOrEmpty(lastRecipeName) && receptCapsCmB.Items.Contains(lastRecipeName))
             {
+                receptCapsCmB.SelectedItem = lastRecipeName;
+            }
+            else
+            {
+                // иначе выбираем первый
                 receptCapsCmB.SelectedIndex = 0;
-                var first = _recipes.Values.First();
-                ApplyRecipe(first);
             }
         }
 
@@ -841,6 +929,52 @@ namespace CapDefectDetector
                 {
                     // иначе выбираем первый
                     paramDefCmB.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void InitializePrSettings()
+        {
+            LoadPrSettings();
+
+            prSettingsCmB.Items.Clear();
+            foreach (var prSettings in _prSettings.Keys)
+                prSettingsCmB.Items.Add(prSettings);
+
+            if (_prSettings.Count > 0)
+            {
+                var lastPrSettingsName = Properties.Settings.Default.Settings_LastPrSettingsFileName;
+                if (!string.IsNullOrEmpty(lastPrSettingsName) && prSettingsCmB.Items.Contains(lastPrSettingsName))
+                {
+                    prSettingsCmB.SelectedItem = lastPrSettingsName;
+                }
+                else
+                {
+                    // иначе выбираем первый
+                    prSettingsCmB.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void InitializeCameraSettings()
+        {
+            LoadCameraSettings();
+
+            cameraSettingsCmB.Items.Clear();
+            foreach (var cameraSettings in _cameraSettings.Keys)
+                cameraSettingsCmB.Items.Add(cameraSettings);
+
+            if (_cameraSettings.Count > 0)
+            {
+                var lastCameraSettings = Properties.Settings.Default.Settings_LastCameraSettingsFileName;
+                if (!string.IsNullOrEmpty(lastCameraSettings) && cameraSettingsCmB.Items.Contains(lastCameraSettings))
+                {
+                    cameraSettingsCmB.SelectedItem = lastCameraSettings;
+                }
+                else
+                {
+                    // иначе выбираем первый
+                    cameraSettingsCmB.SelectedIndex = 0;
                 }
             }
         }
@@ -882,6 +1016,46 @@ namespace CapDefectDetector
                 DefectSettings defectSettings = JsonConvert.DeserializeObject<DefectSettings>(json);
                 if (defectSettings != null)
                     _defectSettings[name] = defectSettings;
+            }
+        }
+
+        private void LoadPrSettings()
+        {
+            _prSettings.Clear();
+
+            if (!Directory.Exists(_folderParamPr205))
+                Directory.CreateDirectory(_folderParamPr205);
+
+            string[] files = Directory.GetFiles(_folderParamPr205, "*.json");
+
+            foreach (var file in files)
+            {
+                string name = Path.GetFileNameWithoutExtension(file);
+                string json = File.ReadAllText(file);
+
+                PrSettings prSettings = JsonConvert.DeserializeObject<PrSettings>(json);
+                if (prSettings != null)
+                    _prSettings[name] = prSettings;
+            }
+        }
+
+        private void LoadCameraSettings()
+        {
+            _cameraSettings.Clear();
+
+            if (!Directory.Exists(_folderParamCamera))
+                Directory.CreateDirectory(_folderParamCamera);
+
+            string[] files = Directory.GetFiles(_folderParamCamera, "*.json");
+
+            foreach (var file in files)
+            {
+                string name = Path.GetFileNameWithoutExtension(file);
+                string json = File.ReadAllText(file);
+
+                CameraSettings cameraSettings = JsonConvert.DeserializeObject<CameraSettings>(json);
+                if (cameraSettings != null)
+                    _cameraSettings[name] = cameraSettings;
             }
         }
 
@@ -1001,7 +1175,7 @@ namespace CapDefectDetector
 
             try
             {
-                string ip = prIpTextBox.Text.Trim();
+                string ip = pr205IpTb.Text.Trim();
 
                 if (!int.TryParse(pr205PortTb.Text.Trim(), out int port))
                     throw new Exception("Неверный формат порта ПР205");
@@ -1183,6 +1357,12 @@ namespace CapDefectDetector
                 cameraStatusLabel.Text = "Запущен";
                 cameraStatusLabel.ForeColor = Color.Green;
                 recognizeButton.Enabled = true;
+
+                loadImageForReceptParamBt.Enabled = false;
+                openCurReceptFolderBt.Enabled = false;
+                loadImageTestBt.Enabled = false;
+                openCurrentFolderBtn.Enabled = false;
+                chooseBaseFolderBtn.Enabled = false;
             }
             catch (Exception ex)
             {
@@ -1217,6 +1397,12 @@ namespace CapDefectDetector
             cameraStatusLabel.Text = "Не запущен";
             cameraStatusLabel.ForeColor = Color.Black;
             recognizeButton.Enabled = false;
+
+            loadImageForReceptParamBt.Enabled = true;
+            openCurReceptFolderBt.Enabled = true;
+            loadImageTestBt.Enabled = true;
+            openCurrentFolderBtn.Enabled = true;
+            chooseBaseFolderBtn.Enabled = true;
 
         }
 
@@ -1253,6 +1439,91 @@ namespace CapDefectDetector
         private void applySettingsButton_Click(object sender, EventArgs e)
         {
             ApplyCameraSettings();
+        }
+
+        private void saveCameraSettingsNew_Click(object sender, EventArgs e)
+        {
+            if (!ValidateCameraSettings())
+            {
+                return;
+            }
+
+            // --- Папка ---
+            string folder = _folderParamCamera;
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string name = cameraSettingsNameTb.Text.Trim();
+            string fileName = name + ".json";
+            string fullPath = Path.Combine(folder, fileName);
+
+            bool existedBefore = File.Exists(fullPath);
+
+            var cameraSettings = new CameraSettings
+            {
+                Name = name,
+                Height = int.Parse(frameHeightNumUpD.Text),
+                Width = int.Parse(frameWidthNumUpD.Text),
+                Exposure = int.Parse(frameExposureNumUpD.Text),
+                Saturation = int.Parse(frameSaturationNumUpD.Text)
+            };
+
+            // --- JSON с нормальной русской кодировкой ---
+            string json = System.Text.Json.JsonSerializer.Serialize(
+                cameraSettings,
+                new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                }
+            );
+
+            File.WriteAllText(fullPath, json, Encoding.UTF8);
+
+            // Сохраняем в Settings
+            Properties.Settings.Default.Settings_WidthFrame = frameWidthNumUpD.Text;
+            Properties.Settings.Default.Settings_HeightFrame = frameHeightNumUpD.Text;
+            Properties.Settings.Default.Settings_ExposureFrame = frameExposureNumUpD.Text;
+            Properties.Settings.Default.Settings_SaturationFrame = frameSaturationNumUpD.Text;
+            Properties.Settings.Default.Save();
+
+            // --- Обновляем список настроек дефектов ---
+            LoadCameraSettings();
+
+            cameraSettingsCmB.Items.Clear();
+            foreach (var cameraSettingsNamer in _cameraSettings.Keys)
+                cameraSettingsCmB.Items.Add(cameraSettingsNamer);
+            cameraSettingsCmB.SelectedItem = name;
+
+            // --- Сообщение ---
+            if (existedBefore)
+                MessageBox.Show($"Файл настроек \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show($"Файл настроек \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void cameraSettingsCmB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string key = cameraSettingsCmB.SelectedItem?.ToString();
+            if (key == null || !_cameraSettings.ContainsKey(key))
+                return;
+
+            Properties.Settings.Default.Settings_LastCameraSettingsFileName = key;
+            Properties.Settings.Default.Save();
+
+            ApplyCameraSettings(_cameraSettings[key]);
+        }
+
+        private void ApplyCameraSettings(CameraSettings r)
+        {
+            _isApplyingCameraSettings = true;
+
+            frameHeightNumUpD.Text = r.Height.ToString();
+            frameWidthNumUpD.Text = r.Width.ToString();
+            frameExposureNumUpD.Text = r.Exposure.ToString();
+            frameSaturationNumUpD.Text = r.Saturation.ToString();
+
+            _isApplyingCameraSettings = false;
         }
 
         private void saveSettingsButton_Click(object sender, EventArgs e)
@@ -1315,6 +1586,14 @@ namespace CapDefectDetector
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(cameraSettingsNameTb.Text))
+                {
+                    string msg = "Введите имя файла настроек.";
+                    ErrorLogger.Log(new Exception(msg), "ValidateDefectSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    cameraSettingsNameTb.Focus();
+                    return false;
+                }
 
                 if (!int.TryParse(frameWidthNumUpD.Text, out int width) || width <= 0)
                 {
@@ -1409,6 +1688,94 @@ namespace CapDefectDetector
         #endregion
 
         #region Настройки ПР
+        private void savePr205SettingsNew_Click(object sender, EventArgs e)
+        {
+            if (!ValidatePrSettings())
+            {
+                return;
+            }
+
+            // --- Папка ---
+            string folder = _folderParamPr205;
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string name = prSettingsNameTb.Text.Trim();
+            string fileName = name + ".json";
+            string fullPath = Path.Combine(folder, fileName);
+
+            bool existedBefore = File.Exists(fullPath);
+
+            var prSettings = new PrSettings
+            {
+                Name = name,
+                IpAddress = pr205IpTb.Text,
+                Port = int.Parse(pr205PortTb.Text),
+                BreakingTime = int.Parse(breakingTimeTb.Text),
+                CameraOffset = int.Parse(cameraOffsetTb.Text),
+                BreakerOffset = int.Parse(breakerOffsetTb.Text)
+            };
+
+            // --- JSON с нормальной русской кодировкой ---
+            string json = System.Text.Json.JsonSerializer.Serialize(
+                prSettings,
+                new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                }
+            );
+
+            File.WriteAllText(fullPath, json, Encoding.UTF8);
+
+            // Сохраняем в Settings
+            Properties.Settings.Default.Settings_BreakingTime = breakingTimeTb.Text;
+            Properties.Settings.Default.Settings_CameraOffset = cameraOffsetTb.Text;
+            Properties.Settings.Default.Settings_BreakerOffset = breakerOffsetTb.Text;
+            Properties.Settings.Default.Settings_IpAdressPr = pr205IpTb.Text;
+            Properties.Settings.Default.Settings_PortPr = pr205PortTb.Text;
+            Properties.Settings.Default.Save();
+
+            // --- Обновляем список настроек дефектов ---
+            LoadPrSettings();
+
+            prSettingsCmB.Items.Clear();
+            foreach (var prSettingsNamer in _prSettings.Keys)
+                prSettingsCmB.Items.Add(prSettingsNamer);
+            prSettingsCmB.SelectedItem = name;
+
+            // --- Сообщение ---
+            if (existedBefore)
+                MessageBox.Show($"Файл настроек \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+                MessageBox.Show($"Файл настроек \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void prSettingsCmB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string key = prSettingsCmB.SelectedItem?.ToString();
+            if (key == null || !_prSettings.ContainsKey(key))
+                return;
+
+            Properties.Settings.Default.Settings_LastPrSettingsFileName = key;
+            Properties.Settings.Default.Save();
+
+            ApplyPrSettings(_prSettings[key]);
+        }
+
+        private void ApplyPrSettings(PrSettings r)
+        {
+            _isApplyingPrSettings = true;
+
+            pr205IpTb.Text = r.IpAddress;
+            pr205PortTb.Text = r.Port.ToString();
+            breakingTimeTb.Text = r.BreakingTime.ToString();
+            cameraOffsetTb.Text = r.CameraOffset.ToString();
+            breakerOffsetTb.Text = r.BreakerOffset.ToString();
+
+            _isApplyingPrSettings = false;
+        }
+
 
         private void savePrSettings_Click(object sender, EventArgs e)
         {
@@ -1419,7 +1786,7 @@ namespace CapDefectDetector
             {
                 var settings = new
                 {
-                    IPAddress = prIpTextBox.Text,
+                    IPAddress = pr205IpTb.Text,
                     Port = pr205PortTb.Text,
                     BreakingTime = breakingTimeTb.Text,
                     CameraOffset = cameraOffsetTb.Text,
@@ -1446,7 +1813,7 @@ namespace CapDefectDetector
                         Properties.Settings.Default.Settings_BreakingTime = breakingTimeTb.Text;
                         Properties.Settings.Default.Settings_CameraOffset = cameraOffsetTb.Text;
                         Properties.Settings.Default.Settings_BreakerOffset = breakerOffsetTb.Text;
-                        Properties.Settings.Default.Settings_IpAdressPr = prIpTextBox.Text;
+                        Properties.Settings.Default.Settings_IpAdressPr = pr205IpTb.Text;
                         Properties.Settings.Default.Settings_PortPr = pr205PortTb.Text;
                         Properties.Settings.Default.Save();
 
@@ -1464,12 +1831,21 @@ namespace CapDefectDetector
         {
             try
             {
-                if (!System.Net.IPAddress.TryParse(prIpTextBox.Text, out _))
+                if (string.IsNullOrWhiteSpace(prSettingsNameTb.Text))
+                {
+                    string msg = "Введите имя файла настроек.";
+                    ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
+                    MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    prSettingsNameTb.Focus();
+                    return false;
+                }
+
+                if (!System.Net.IPAddress.TryParse(pr205IpTb.Text, out _))
                 {
                     string msg = "''Ip адрес сдува' имеет неправльный формат'.\nПример: 192.168.0.10";
                     ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
                     MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    prIpTextBox.Focus();
+                    pr205IpTb.Focus();
                     return false;
                 }
 
@@ -1538,7 +1914,7 @@ namespace CapDefectDetector
 
                         if (settings != null)
                         {
-                            prIpTextBox.Text = settings.ContainsKey("IPAddress") ? settings["IPAddress"] : "10.10.69.38";
+                            pr205IpTb.Text = settings.ContainsKey("IPAddress") ? settings["IPAddress"] : "10.10.69.38";
                             pr205PortTb.Text = settings.ContainsKey("Port") ? settings["Port"] : "502";
                             breakingTimeTb.Text = settings.ContainsKey("BreakingTime") ? settings["BreakingTime"] : "55";
                             cameraOffsetTb.Text = settings.ContainsKey("CameraOffset") ? settings["CameraOffset"] : "300";
@@ -1729,7 +2105,7 @@ namespace CapDefectDetector
             Properties.Settings.Default.Settings_СoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text;
             Properties.Settings.Default.Save();
 
-            // --- Обновляем список рецептов ---
+            // --- Обновляем список настроек дефектов ---
             LoadDefectSettings();
 
             paramDefCmB.Items.Clear();
@@ -1962,6 +2338,9 @@ namespace CapDefectDetector
             string key = receptCapsCmB.SelectedItem?.ToString();
             if (key == null || !_recipes.ContainsKey(key))
                 return;
+
+            Properties.Settings.Default.Settings_LastRecipeFileName = key;
+            Properties.Settings.Default.Save();
 
             ApplyRecipe(_recipes[key]);
         }
@@ -5277,7 +5656,7 @@ namespace CapDefectDetector
             bool allowConnectButtons = admin && !_isStreamCam && !_isProcessing;
 
             pr205PortTb.Enabled = admin;
-            prIpTextBox.Enabled = admin;
+            pr205IpTb.Enabled = admin;
             connectPrButton.Enabled = allowConnectButtons;
 
             cameraIpTextBox.Enabled = admin;
@@ -5289,8 +5668,9 @@ namespace CapDefectDetector
             frameSaturationNumUpD.Enabled = admin;
 
             applySettingsButton.Enabled = admin;
-            loadSettingsButton.Enabled = admin;
-            saveSettingsButton.Enabled = admin;
+            cameraSettingsCmB.Enabled = admin;
+            cameraSettingsNameTb.Enabled = admin;
+            saveCameraSettingsNew.Enabled = admin;
         }
         #endregion
 
