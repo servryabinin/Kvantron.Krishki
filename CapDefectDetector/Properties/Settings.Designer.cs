@@ -12,7 +12,7 @@ namespace CapDefectDetector.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.13.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "18.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -344,6 +344,42 @@ namespace CapDefectDetector.Properties {
             }
             set {
                 this["Settings_LastDefectSettingsFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Settings_LastRecipeFileName {
+            get {
+                return ((string)(this["Settings_LastRecipeFileName"]));
+            }
+            set {
+                this["Settings_LastRecipeFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Settings_LastPrSettingsFileName {
+            get {
+                return ((string)(this["Settings_LastPrSettingsFileName"]));
+            }
+            set {
+                this["Settings_LastPrSettingsFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Settings_LastCameraSettingsFileName {
+            get {
+                return ((string)(this["Settings_LastCameraSettingsFileName"]));
+            }
+            set {
+                this["Settings_LastCameraSettingsFileName"] = value;
             }
         }
     }

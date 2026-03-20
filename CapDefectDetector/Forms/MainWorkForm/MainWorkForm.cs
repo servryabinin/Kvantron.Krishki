@@ -896,16 +896,19 @@ namespace CapDefectDetector
             foreach (var recipe in _recipes.Keys)
                 receptCapsCmB.Items.Add(recipe);
 
-            var lastRecipeName = Properties.Settings.Default.Settings_LastRecipeFileName;
+            if (_recipes.Count > 0)
+            {
+                var lastRecipeName = Properties.Settings.Default.Settings_LastRecipeFileName;
 
-            if (!string.IsNullOrEmpty(lastRecipeName) && receptCapsCmB.Items.Contains(lastRecipeName))
-            {
-                receptCapsCmB.SelectedItem = lastRecipeName;
-            }
-            else
-            {
-                // иначе выбираем первый
-                receptCapsCmB.SelectedIndex = 0;
+                if (!string.IsNullOrEmpty(lastRecipeName) && receptCapsCmB.Items.Contains(lastRecipeName))
+                {
+                    receptCapsCmB.SelectedItem = lastRecipeName;
+                }
+                else
+                {
+                    // иначе выбираем первый
+                    receptCapsCmB.SelectedIndex = 0;
+                }
             }
         }
 
@@ -1061,7 +1064,7 @@ namespace CapDefectDetector
 
         private void InitializeStatistics()
         {
-            _statisticsManager = new StatisticsManager(statisticsDataGridView);
+            //_statisticsManager = new StatisticsManager(statisticsDataGridView);
         }
 
         #endregion
@@ -1526,62 +1529,6 @@ namespace CapDefectDetector
             _isApplyingCameraSettings = false;
         }
 
-        private void saveSettingsButton_Click(object sender, EventArgs e)
-        {
-            if (!ValidateCameraSettings())
-                return;
-
-            try
-            {
-                var settings = new
-                {
-                    Width = frameWidthNumUpD.Text,
-                    Height = frameHeightNumUpD.Text,
-                    Exposure = frameExposureNumUpD.Text,
-                    Saturation = frameSaturationNumUpD.Text
-                };
-
-                string json =
-                    System.Text.Json.JsonSerializer.Serialize(
-                        settings,
-                        new System.Text.Json.JsonSerializerOptions
-                        {
-                            WriteIndented = true
-                        });
-
-
-                if (!Directory.Exists(_folderParamCamera))
-                    Directory.CreateDirectory(_folderParamCamera);
-
-
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-                {
-                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    saveFileDialog.Title = "Сохранить настройки камеры";
-                    saveFileDialog.FileName = "camera_settings.json";
-                    saveFileDialog.InitialDirectory = _folderParamCamera;
-
-                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(saveFileDialog.FileName, json);
-                        Properties.Settings.Default.Settings_WidthFrame = frameWidthNumUpD.Text;
-                        Properties.Settings.Default.Settings_HeightFrame = frameHeightNumUpD.Text;
-                        Properties.Settings.Default.Settings_ExposureFrame = frameExposureNumUpD.Text;
-                        Properties.Settings.Default.Settings_SaturationFrame = frameSaturationNumUpD.Text;
-                        Properties.Settings.Default.Save();
-
-                        MessageBox.Show("Настройки камеры успешно сохранены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "SaveCameraSettings");
-
-                MessageBox.Show("Ошибка при сохранении настроек камеры:\n" + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private bool ValidateCameraSettings()
         {
             try
@@ -1776,57 +1723,6 @@ namespace CapDefectDetector
             _isApplyingPrSettings = false;
         }
 
-
-        private void savePrSettings_Click(object sender, EventArgs e)
-        {
-            if (!ValidatePrSettings())
-                return;
-
-            try
-            {
-                var settings = new
-                {
-                    IPAddress = pr205IpTb.Text,
-                    Port = pr205PortTb.Text,
-                    BreakingTime = breakingTimeTb.Text,
-                    CameraOffset = cameraOffsetTb.Text,
-                    BreakerOffset = breakerOffsetTb.Text
-                };
-
-                string json = System.Text.Json.JsonSerializer.Serialize(settings,
-                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
-
-                if (!Directory.Exists(_folderParamPr205))
-                    Directory.CreateDirectory(_folderParamPr205);
-
-                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-                {
-                    saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    saveFileDialog.Title = "Сохранить настройки ПР205";
-                    saveFileDialog.FileName = "pr205_settings.json";
-                    saveFileDialog.InitialDirectory = _folderParamPr205;
-
-                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(saveFileDialog.FileName, json);
-
-                        Properties.Settings.Default.Settings_BreakingTime = breakingTimeTb.Text;
-                        Properties.Settings.Default.Settings_CameraOffset = cameraOffsetTb.Text;
-                        Properties.Settings.Default.Settings_BreakerOffset = breakerOffsetTb.Text;
-                        Properties.Settings.Default.Settings_IpAdressPr = pr205IpTb.Text;
-                        Properties.Settings.Default.Settings_PortPr = pr205PortTb.Text;
-                        Properties.Settings.Default.Save();
-
-                        MessageBox.Show("Настройки ПР205 успешно сохранены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка при сохранении настроек ПР205 (savePrSettings_Click)");
-            }
-        }
-
         private bool ValidatePrSettings()
         {
             try
@@ -1897,45 +1793,6 @@ namespace CapDefectDetector
             }
         }
 
-        private void loadPrSettings_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
-                {
-                    openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    openFileDialog.Title = "Загрузить настройки ПР205";
-                    openFileDialog.InitialDirectory = _folderParamPr205;
-
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        string json = File.ReadAllText(openFileDialog.FileName);
-                        var settings = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-
-                        if (settings != null)
-                        {
-                            pr205IpTb.Text = settings.ContainsKey("IPAddress") ? settings["IPAddress"] : "10.10.69.38";
-                            pr205PortTb.Text = settings.ContainsKey("Port") ? settings["Port"] : "502";
-                            breakingTimeTb.Text = settings.ContainsKey("BreakingTime") ? settings["BreakingTime"] : "55";
-                            cameraOffsetTb.Text = settings.ContainsKey("CameraOffset") ? settings["CameraOffset"] : "300";
-                            breakerOffsetTb.Text = settings.ContainsKey("BreakerOffset") ? settings["BreakerOffset"] : "2430";
-
-                            MessageBox.Show("Настройки ПР205 успешно загружены.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            ErrorLogger.Log(new Exception("Не удалось прочитать настройки из файла"),
-                                "loadPrSettings_Click");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка при загрузке настроек ПР205 (loadPrSettings_Click)");
-            }
-        }
-
         private async void ApplyPr_Click(object sender, EventArgs e)
         {
             if (_modbusClient == null || !_modbusClient.Connected)
@@ -1985,68 +1842,6 @@ namespace CapDefectDetector
         #endregion
 
         #region Настройка параметров обнаржуения дефектов
-
-        private void saveDefectSettings_Click(object sender, EventArgs e)
-        {
-            if (!ValidateDefectSettings())
-                return;
-
-            try
-            {
-                var settings = new
-                {
-                    OvalityThreshold = ovalityCoefNumUpD.Text,
-                    InclusionThreshold = circleCoefNumUpD.Text,
-                    MinAreaInclusion = minSquareInclusionNumUpD.Text,
-                    MaxAreaInclusion = maxSquareInclusionNumUpD.Text,
-                    CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text,
-                    MinAreaInpaintDefect = minSquareInpaintNumUpD.Text,
-                    MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text,
-                    MinAreaObloy = obloyPixCountNumUpD.Text,
-                    CorrugationsCountForUnderFill = countCorrugationsNumUpD.Text,
-                    CoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text
-                };
-
-                string json = System.Text.Json.JsonSerializer.Serialize(settings,
-                    new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
-
-                if (!Directory.Exists(_folderParamDefect))
-                    Directory.CreateDirectory(_folderParamDefect);
-
-                using (SaveFileDialog dlg = new SaveFileDialog())
-                {
-                    dlg.InitialDirectory = _folderParamDefect;
-                    dlg.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-                    dlg.Title = "Сохранить настройки дефектов";
-                    dlg.FileName = "defect_settings.json";
-
-                    if (dlg.ShowDialog() == DialogResult.OK)
-                    {
-                        File.WriteAllText(dlg.FileName, json);
-
-                        // Сохраняем в Settings
-                        Properties.Settings.Default.Settings_OvalityThreshold = ovalityCoefNumUpD.Text;
-                        Properties.Settings.Default.Settings_InclusionThreshold = circleCoefNumUpD.Text;
-                        Properties.Settings.Default.Settings_MinAreaInclusion = minSquareInclusionNumUpD.Text;
-                        Properties.Settings.Default.Settings_MaxAreaInclusion = maxSquareInclusionNumUpD.Text;
-                        Properties.Settings.Default.Settings_CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text;
-                        Properties.Settings.Default.Settings_MinAreaInpaintDefect = minSquareInpaintNumUpD.Text;
-                        Properties.Settings.Default.Settings_MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text;
-                        Properties.Settings.Default.Settings_MinAreaObloy = obloyPixCountNumUpD.Text;
-                        Properties.Settings.Default.Settings_СorrugationsCountForUnderFill = countCorrugationsNumUpD.Text;
-                        Properties.Settings.Default.Settings_СoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text;
-                        Properties.Settings.Default.Save();
-
-                        MessageBox.Show("Настройки параметров дефектов сохранены успешно!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка при сохранении настроек дефектов");
-            }
-        }
-
         private void saveDefectSettingsNew_Click(object sender, EventArgs e)
         {
             if (!ValidateDefectSettings())
@@ -2266,56 +2061,6 @@ namespace CapDefectDetector
                 MessageBox.Show("Произошла непредвиденная ошибка при проверке настроек:\n" + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return false;
-            }
-        }
-
-        private void loadDefectSettings_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!Directory.Exists(_folderParamDefect))
-                    Directory.CreateDirectory(_folderParamDefect);
-
-                using (OpenFileDialog dlg = new OpenFileDialog())
-                {
-                    dlg.InitialDirectory = _folderParamDefect;
-                    dlg.Title = "Загрузка параметров дефектов";
-                    dlg.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
-
-                    if (dlg.ShowDialog() == DialogResult.OK)
-                    {
-                        string json = File.ReadAllText(dlg.FileName);
-
-                        var settings =
-                            System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-
-                        if (settings != null)
-                        {
-                            ovalityCoefNumUpD.Text = settings.GetValueOrDefault("OvalityThreshold", "0.7");
-                            circleCoefNumUpD.Text = settings.GetValueOrDefault("InclusionThreshold", "0.5");
-                            minSquareInclusionNumUpD.Text = settings.GetValueOrDefault("MinAreaInclusion", "50");
-                            maxSquareInclusionNumUpD.Text = settings.GetValueOrDefault("MaxAreaInclusion", "500");
-                            coefCapRadiusInclusionUpD.Text = settings.GetValueOrDefault("CoefCapRadiusInclusion", "0,7");
-                            minSquareInpaintNumUpD.Text = settings.GetValueOrDefault("MinAreaInpaintDefect", "500");
-                            whiteThresoldNumUpD.Text = settings.GetValueOrDefault("MinInpaintWhiteThreshold", "150");
-                            obloyPixCountNumUpD.Text = settings.GetValueOrDefault("MinAreaObloy", "1000");
-                            countCorrugationsNumUpD.Text = settings.GetValueOrDefault("CorrugationsCountForUnderFill", "10");
-                            coefCapRadiusMaskUnderFillNumUpD.Text = settings.GetValueOrDefault("CoefCapRadiusUnderFill", "0,85");
-
-                            MessageBox.Show("Настройки успешно загружены.", "Успех",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Не удалось прочитать настройки из файла.",
-                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "Ошибка при загрузке настроек дефектов");
             }
         }
         #endregion
@@ -3709,6 +3454,7 @@ namespace CapDefectDetector
                 {
                     try
                     {
+                        _img1 = img.Clone();
                         UpdatePictureBox(originPb, img);
                         //CycleImageSaver.SaveDuplicate(img, 0);
                     }
@@ -4986,12 +4732,14 @@ namespace CapDefectDetector
         {
             if (_img1 == null || _img1.Empty())
             {
-                MessageBox.Show("Нет изображения от камеры");
+                MessageBox.Show("Нет изображения от камеры. Нажмите 'Получить изображение', чтобы загрузить изображения для тестирования параметров дефектов.");
                 return;
             }
 
             _imageForTest?.Dispose();
             _imageForTest = _img1.Clone();
+
+            _img1 = null;
 
             testingPb.Image?.Dispose();
             testingPb.Image = BitmapConverter.ToBitmap(_imageForTest);
@@ -5597,12 +5345,14 @@ namespace CapDefectDetector
         {
             if (_img1 == null || _img1.Empty())
             {
-                MessageBox.Show("Нет изображения от камеры");
+                MessageBox.Show("Нет изображения от камеры. Нажмите 'Получить изображение', чтобы загрузить изображения для создания рецепта.");
                 return;
             }
 
             _imageOriginReceptParam?.Dispose();
             _imageOriginReceptParam = _img1.Clone();
+
+            _img1=null;
 
             originReceptParamSmallPb.Image?.Dispose();
             originReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
@@ -5675,7 +5425,7 @@ namespace CapDefectDetector
         #endregion
 
         #region Статистика
-        private void statisticsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        /*private void statisticsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             // Проверяем, что кликнули на валидную строку и на столбец с именем файла
             if (e.RowIndex < 0 || e.ColumnIndex != statisticsDataGridView.Columns["dg_nameCapImage"].Index)
@@ -5714,7 +5464,7 @@ namespace CapDefectDetector
             {
                 MessageBox.Show($"Не удалось открыть файл:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
+        }*/
         #endregion
 
         #region Многопоточность
