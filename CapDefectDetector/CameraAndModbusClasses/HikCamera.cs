@@ -352,6 +352,7 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// <summary>
         /// Функция получения изображения
         /// </summary>
+        /// 
         private void ReceiveImageWorkThread()
         {
             int nRet = MyCamera.MV_OK;            
