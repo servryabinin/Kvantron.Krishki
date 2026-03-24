@@ -1364,7 +1364,7 @@ namespace CapDefectDetector
                 loadImageForReceptParamBt.Enabled = false;
                 openCurReceptFolderBt.Enabled = false;
                 loadImageTestBt.Enabled = false;
-                openCurrentFolderBtn.Enabled = false;
+                //openCurrentFolderBtn.Enabled = false;
                 chooseBaseFolderBtn.Enabled = false;
             }
             catch (Exception ex)
@@ -4094,6 +4094,7 @@ namespace CapDefectDetector
                                 string defectText = defects.Count > 0 ? string.Join(", ", defects) : "-";
 
                                 // === обновление состояния (НЕ UI) ===
+                                long t = stopwatch.ElapsedMilliseconds;
                                 lock (_stateLock)
                                 {
                                     _state.Frame?.Dispose();
@@ -4136,7 +4137,7 @@ namespace CapDefectDetector
                                     _state.TimeObloy = _timeObloy;
                                     _state.TimeUnderFill = _timeUnderFill;
 
-                                    _state.Time = stopwatch.ElapsedMilliseconds;
+                                    _state.Time = t;
                                     _state.DefectText = defectText;
                                     _state.IsNg = anyDefect;
                                 }

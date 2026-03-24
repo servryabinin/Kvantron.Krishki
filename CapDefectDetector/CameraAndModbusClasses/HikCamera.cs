@@ -257,6 +257,8 @@ namespace CapDefectDetector.CameraAndModbusClasses
                             m_MyCamera.MV_CC_SetIntValue_NET("GevSCPSPacketSize", (uint)nPacketSize);
                     }
 
+                    //m_MyCamera.MV_CC_SetImageNodeNum_NET(40);
+
                     Connected = true;
                     opened = true;
                     LastErrorCode = 0;
