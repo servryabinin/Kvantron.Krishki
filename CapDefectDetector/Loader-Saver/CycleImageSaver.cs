@@ -93,17 +93,17 @@ public static class CycleImageSaver
             string subfolder = isNG ? "NG" : "OK";
             string subfolderPath = Path.Combine(CurrentCycleFolder, subfolder);
 
-            // Создаём подкаталог, если его нет
             if (!Directory.Exists(subfolderPath))
                 Directory.CreateDirectory(subfolderPath);
 
-            // Получаем список файлов, сортируем по дате создания
+            // Учитываем и jpg, и bmp при подсчёте
             var files = new DirectoryInfo(subfolderPath)
-                            .GetFiles("*.jpg")
+                            .GetFiles()
+                            .Where(f => f.Extension.ToLower() == ".png")
                             .OrderBy(f => f.CreationTime)
                             .ToList();
 
-            // Если больше 30000 файлов, удаляем самые старые
+            // Удаляем старые файлы (парами лучше, но пока просто по одному)
             while (files.Count >= 30000)
             {
                 try
@@ -111,17 +111,20 @@ public static class CycleImageSaver
                     files[0].Delete();
                     files.RemoveAt(0);
                 }
-                catch { break; } // На всякий случай, если файл нельзя удалить
+                catch { break; }
             }
 
-            string path = Path.Combine(subfolderPath, fileName);
+            // Имя без расширения
+            string nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
 
-            // Сохраняем изображение в JPEG с качеством 90%
-            Cv2.ImWrite(path, image, new ImageEncodingParam(ImwriteFlags.JpegQuality, 90));
+            string pngPath = Path.Combine(subfolderPath, nameWithoutExt + ".png");
+
+            // PNG
+            Cv2.ImWrite(pngPath, image);
         }
         catch
         {
-
+            // лучше бы лог добавить
         }
     }
 

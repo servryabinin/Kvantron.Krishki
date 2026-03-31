@@ -1364,7 +1364,7 @@ namespace CapDefectDetector
                 loadImageForReceptParamBt.Enabled = false;
                 openCurReceptFolderBt.Enabled = false;
                 loadImageTestBt.Enabled = false;
-                //openCurrentFolderBtn.Enabled = false;
+                openCurrentFolderBtn.Enabled = false;
                 chooseBaseFolderBtn.Enabled = false;
             }
             catch (Exception ex)
@@ -4142,6 +4142,12 @@ namespace CapDefectDetector
                                     _state.IsNg = anyDefect;
                                 }
 
+                                string defectSuffix = defects.Count > 0
+                                    ? "_" + string.Join(", ", defects)
+                                    : "";
+
+                                string fileName = $"{(anyDefect ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}{defectSuffix}.png";
+
                                 // === сохранение (без UI) ===
                                 if (settings.SaveOk || settings.SaveNg)
                                 {
@@ -4157,7 +4163,7 @@ namespace CapDefectDetector
                                                 settings.SaveOk,
                                                 settings.SaveNg,
                                                 _state.Ok + _state.Ng,
-                                                $"{(anyDefect ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}.jpg"
+                                                fileName
                                             );
                                         }
                                         catch (Exception ex)
@@ -4733,7 +4739,7 @@ namespace CapDefectDetector
         {
             if (_img1 == null || _img1.Empty())
             {
-                MessageBox.Show("Нет изображения от камеры. Нажмите 'Получить изображение', чтобы загрузить изображения для тестирования параметров дефектов.");
+                MessageBox.Show($"Нет изображения от камеры. Нажмите '{startStreamButton.Text}', чтобы загрузить изображения для тестирования параметров дефектов.");
                 return;
             }
 
@@ -4813,7 +4819,7 @@ namespace CapDefectDetector
                 try { if (obloyCB.Checked) obloy = CheckForObloyDefects(grayOb, frameOb, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки облоя"); }
 
-                try { if (underFillCb.Checked) obloy = CheckForUnderFillDefects(grayUf, frameUf, finalFrame, fake, contour); }
+                try { if (underFillCb.Checked) underFill = CheckForUnderFillDefects(grayUf, frameUf, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки недолива"); }
 
                 using (Bitmap bmp = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(finalFrame))
@@ -5346,7 +5352,7 @@ namespace CapDefectDetector
         {
             if (_img1 == null || _img1.Empty())
             {
-                MessageBox.Show("Нет изображения от камеры. Нажмите 'Получить изображение', чтобы загрузить изображения для создания рецепта.");
+                MessageBox.Show($"Нет изображения от камеры. Нажмите '{startStreamButton.Text}', чтобы загрузить изображения для создания рецепта.");
                 return;
             }
 
