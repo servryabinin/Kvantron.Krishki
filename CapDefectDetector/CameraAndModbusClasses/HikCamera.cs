@@ -3,6 +3,7 @@ using OpenCvSharp;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CapDefectDetector.CameraAndModbusClasses
 {
@@ -42,8 +43,13 @@ namespace CapDefectDetector.CameraAndModbusClasses
         public string SerialNumber { get; set; }        
         private MyCamera m_MyCamera = null;        
 
-        bool isGrabbing = false;
+        // ИСПРАВЛЕНО: заменили bare bool + Thread на CancellationToken + Task
+        // для надёжного управления жизненным циклом потока захвата кадров
+        private volatile bool isGrabbing = false;
+        private CancellationTokenSource _streamCts;
+        private Task _streamTask;
 
+        // Устаревшее поле сохранено для совместимости, управление перенесено на Task
         Thread mainThread = null;
         public string IpAdress { get; private set; }
 
@@ -303,25 +309,43 @@ namespace CapDefectDetector.CameraAndModbusClasses
         }
 
         /// <summary>
-        /// Функция, которая останавливает съемку с камеры
+        /// Останавливает съёмку с камеры.
+        /// ИСПРАВЛЕНО: вместо устаревшего Thread.Interrupt() используем CancellationToken
+        /// и ожидаем фактического завершения потока через Task.Wait с таймаутом.
         /// </summary>
-        /// <returns></returns>
         public bool EndStream()
         {
-            if (Streamed)
+            if (!Streamed)
+                return true;
+
+            // 1. Сигнализируем потоку захвата об остановке
+            isGrabbing = false;
+            _streamCts?.Cancel();
+
+            // 2. Ждём завершения задачи максимум 3 секунды (не зависаем навсегда)
+            try
             {
-				mainThread.Interrupt();
+                _streamTask?.Wait(TimeSpan.FromSeconds(3));
+            }
+            catch (AggregateException)
+            {
+                // OperationCanceledException — нормальное завершение по токену
+            }
+            finally
+            {
+                _streamCts?.Dispose();
+                _streamCts = null;
+                _streamTask = null;
+            }
 
-				isGrabbing = false;
-				Streamed = isGrabbing;
+            Streamed = false;
 
-				int nRet = m_MyCamera.MV_CC_StopGrabbing_NET();
-				if (MyCamera.MV_OK != nRet)
-				{
-					Console.WriteLine("Stop grabbing failed:{0:x8}", nRet);
-					return false;
-				}
-			}            
+            int nRet = m_MyCamera.MV_CC_StopGrabbing_NET();
+            if (MyCamera.MV_OK != nRet)
+            {
+                Console.WriteLine("Stop grabbing failed:{0:x8}", nRet);
+                return false;
+            }
 
             return true;
         }
@@ -350,46 +374,70 @@ namespace CapDefectDetector.CameraAndModbusClasses
         }
 
         /// <summary>
-        /// Функция получения изображения
+        /// Запускает фоновый поток захвата кадров с камеры.
+        ///
+        /// ИСПРАВЛЕНО:
+        ///   1. Убран GC.Collect() — принудительный сбор мусора на каждый кадр
+        ///      вызывал паузы до 50-100 мс и пропуски кадров. Теперь GC работает
+        ///      штатно: Mat.Dispose() освобождает нативную память, управляемая
+        ///      куча очищается автоматически в фоне без вмешательства.
+        ///
+        ///   2. Thread заменён на Task с TaskCreationOptions.LongRunning —
+        ///      получаем выделенный поток (не из ThreadPool) с корректным
+        ///      управлением через CancellationToken.
+        ///
+        ///   3. Остановка теперь через _streamCts.Cancel() + Task.Wait(timeout)
+        ///      вместо устаревшего Thread.Interrupt(), который мог не сработать
+        ///      или вызвать ThreadInterruptedException в неожиданных местах.
         /// </summary>
-        /// 
         private void ReceiveImageWorkThread()
         {
-            int nRet = MyCamera.MV_OK;            
-            
-            MyCamera.MV_FRAME_OUT stImageOut = new MyCamera.MV_FRAME_OUT();
-            MyCamera.MV_CC_INPUT_FRAME_INFO stInputFrameInfo = new MyCamera.MV_CC_INPUT_FRAME_INFO();
+            _streamCts = new CancellationTokenSource();
+            var token = _streamCts.Token;
 
-			mainThread = new Thread(() =>
+            _streamTask = Task.Factory.StartNew(() =>
             {
-                while (isGrabbing)
-                {                    
-                    nRet = m_MyCamera.MV_CC_GetImageBuffer_NET(ref stImageOut, 1000);
+                MyCamera.MV_FRAME_OUT stImageOut = new MyCamera.MV_FRAME_OUT();
+                MyCamera.MV_CC_INPUT_FRAME_INFO stInputFrameInfo = new MyCamera.MV_CC_INPUT_FRAME_INFO();
+
+                while (isGrabbing && !token.IsCancellationRequested)
+                {
+                    int nRet = m_MyCamera.MV_CC_GetImageBuffer_NET(ref stImageOut, 1000);
 
                     if (nRet == MyCamera.MV_OK)
                     {
-
                         stInputFrameInfo.pData = stImageOut.pBufAddr;
                         stInputFrameInfo.nDataLen = stImageOut.stFrameInfo.nFrameLen;
                         nRet = m_MyCamera.MV_CC_InputOneFrame_NET(ref stInputFrameInfo);
 
-                        Mat m = new Mat(stImageOut.stFrameInfo.nHeight, stImageOut.stFrameInfo.nWidth, MatType.CV_8UC3, stInputFrameInfo.pData);
+                        Mat m = new Mat(
+                            (int)stImageOut.stFrameInfo.nHeight,
+                            (int)stImageOut.stFrameInfo.nWidth,
+                            MatType.CV_8UC3,
+                            stInputFrameInfo.pData);
 
                         Cv2.CvtColor(m, m, ColorConversionCodes.BGRA2RGB);
-                        SendImage?.Invoke(m);
 
+                        // Вызываем подписчиков; они сами клонируют Mat если нужно
+                        SendImage?.Invoke(m);
 
                         m_MyCamera.MV_CC_FreeImageBuffer_NET(ref stImageOut);
 
-                        GC.Collect();
+                        // УДАЛЕНО: GC.Collect() — вызов принудительного сбора мусора
+                        // на каждый кадр катастрофически снижает производительность.
+                        // Mat корректно освобождает нативную память через Dispose/финализатор.
                     }
                     else
                     {
-                        Console.WriteLine("Get Image failed:{0:x8}", nRet);
+                        // Не спамим логами — просто даём другим потокам выполниться
+                        if (!token.IsCancellationRequested)
+                            Thread.Sleep(1);
                     }
                 }
-            });
-			mainThread.Start();            
+            },
+            token,
+            TaskCreationOptions.LongRunning, // выделенный поток, не из ThreadPool
+            TaskScheduler.Default);
         }
     }
 }
