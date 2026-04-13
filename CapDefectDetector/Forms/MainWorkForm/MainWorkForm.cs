@@ -73,7 +73,8 @@ namespace CapDefectDetector
         private volatile ProcessingSettings _settings;
         private System.Windows.Forms.Timer _uiTimer;
 
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource _processingCts;
+        private CancellationTokenSource _applyPrCts;
         private Task _processingTask;
 
         // Блокировки и синхронизация
@@ -334,7 +335,7 @@ namespace CapDefectDetector
                 {
                     _isProcessing = false;
 
-                    _cts?.Cancel();
+                    _processingCts?.Cancel();
 
                     Task.Run(async () =>
                     {
@@ -1800,7 +1801,7 @@ namespace CapDefectDetector
                 return;
             }
 
-            _cts = new CancellationTokenSource();
+            _applyPrCts = new CancellationTokenSource();
 
             try
             {
@@ -1812,7 +1813,7 @@ namespace CapDefectDetector
                     _breakingTimeValue = 55;
                 }
 
-                await Task.Run(() => SendBreakingTime(_breakingTimeValue), _cts.Token);
+                await Task.Run(() => SendBreakingTime(_breakingTimeValue), _processingCts.Token);
 
                 if (!int.TryParse(cameraOffsetTb.Text.Trim(),
                         NumberStyles.Integer,
@@ -1822,7 +1823,7 @@ namespace CapDefectDetector
                     _cameraOffsetValue = 300;
                 }
 
-                await Task.Run(() => SendCameraOffset(_cameraOffsetValue), _cts.Token);
+                await Task.Run(() => SendCameraOffset(_cameraOffsetValue), _processingCts.Token);
 
                 if (!int.TryParse(breakerOffsetTb.Text.Trim(),
                         NumberStyles.Integer,
@@ -1832,7 +1833,7 @@ namespace CapDefectDetector
                     _breakerOffsetValue = 2430;
                 }
 
-                await Task.Run(() => SendBreakerOffset(_breakerOffsetValue), _cts.Token);
+                await Task.Run(() => SendBreakerOffset(_breakerOffsetValue), _processingCts.Token);
             }
             catch (Exception ex)
             {
@@ -3075,7 +3076,7 @@ namespace CapDefectDetector
         {
             try
             {
-                _cts?.Cancel();
+                _processingCts?.Cancel();
 
                 recognizeButton.Text = "Остановка...";
                 recognizeButton.Enabled = false;
@@ -3129,8 +3130,8 @@ namespace CapDefectDetector
                     loadImageButton.Enabled = true;
                 }
 
-                _cts?.Dispose();
-                _cts = null;
+                _processingCts?.Dispose();
+                _processingCts = null;
             }
         }
 
@@ -3160,9 +3161,9 @@ namespace CapDefectDetector
 
                 _settings = ReadSettingsFromUi();
 
-                _cts = new CancellationTokenSource();
+                _processingCts = new CancellationTokenSource();
 
-                _processingTask = Task.Run(() => ProcessingLoop(_cts.Token));
+                _processingTask = Task.Run(() => ProcessingLoop(_processingCts.Token));
 
                 _isProcessing = true;
 
@@ -3182,8 +3183,8 @@ namespace CapDefectDetector
             {
                 ErrorLogger.Log(ex, "Ошибка в StartProcessing");
 
-                _cts?.Dispose();
-                _cts = null;
+                _processingCts?.Dispose();
+                _processingCts = null;
             }
         }
 
