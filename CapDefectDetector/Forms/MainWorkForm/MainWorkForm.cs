@@ -2173,14 +2173,14 @@ namespace CapDefectDetector
 
         #region Методы обработки изображений
 
-        private bool CheckOvality(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] largestContourOvality)
+        private bool CheckOvality(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
 
                 // Если контур пустой или null, сразу возвращаем false
-                if (largestContourOvality == null || largestContourOvality.Length < 5)
+                if (capContour == null || capContour.Length < 5)
                 {
                     ErrorLogger.Log(new Exception("Контур для проверки овальности пустой или содержит недостаточно точек"),
                         "CheckOvality - проверка наличия контуров");
@@ -2189,7 +2189,7 @@ namespace CapDefectDetector
 
                 token.ThrowIfCancellationRequested();
 
-                RotatedRect ellipse = Cv2.FitEllipse(largestContourOvality);
+                RotatedRect ellipse = Cv2.FitEllipse(capContour);
 
                 var majorAxis = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
                 var minorAxis = Math.Min(ellipse.Size.Width, ellipse.Size.Height);
@@ -2217,13 +2217,13 @@ namespace CapDefectDetector
             }
         }
 
-        private bool CheckForInclusions(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] bestContour)
+        private bool CheckForInclusions(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
 
-                if (bestContour == null || bestContour.Length < 5)
+                if (capContour == null || capContour.Length < 5)
                 {
                     ErrorLogger.Log(new Exception("Контур для проверки включений пустой или содержит недостаточно точек"),
                         "CheckForInclusions - проверка наличия контура");
@@ -2235,7 +2235,7 @@ namespace CapDefectDetector
                 RotatedRect ellipse;
                 try
                 {
-                    ellipse = Cv2.FitEllipse(bestContour);
+                    ellipse = Cv2.FitEllipse(capContour);
                 }
                 catch (Exception ex)
                 {
