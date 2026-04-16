@@ -2958,6 +2958,7 @@ namespace CapDefectDetector
             Mat[] channels;
             Cv2.Split(processed, out channels);
 
+
             // ===== Blur =====
             Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
 
