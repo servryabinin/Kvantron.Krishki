@@ -505,12 +505,6 @@ namespace CapDefectDetector
         {
             if (outputImageCmB.Items.Count > 0)
                 outputImageCmB.SelectedIndex = 0;
-
-            if (windowCb.Items.Count > 0)
-                windowCb.SelectedIndex = 0;
-
-            if (morphCb.Items.Count > 0)
-                morphCb.SelectedIndex = 0;
         }
 
         private void InitializeAuthorizationSystem()
