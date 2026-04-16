@@ -2214,37 +2214,6 @@ namespace CapDefectDetector
                 {
                     ErrorLogger.Log(drawEx, "CheckOvality - ошибка при рисовании эллипса или текста");
                 }
-
-                /*// ===== 🔥 СОЗДАНИЕ И СОХРАНЕНИЕ МАСКИ =====
-                try
-                {
-                    using (Mat mask = Mat.Zeros(image.Size(), MatType.CV_8UC1))
-                    using (Mat maskedImage = new Mat())
-                    {
-                        // Белый эллипс = область, которую оставляем
-                        Cv2.Ellipse(mask, ellipse, new Scalar(255), -1);
-
-                        // Применяем маску
-                        image.CopyTo(maskedImage, mask);
-
-                        // Папка
-                        string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Маски крышек");
-                        if (!Directory.Exists(folderPath))
-                            Directory.CreateDirectory(folderPath);
-
-                        // Имя файла (.bmp)
-                        string fileName = $"mask_{DateTime.Now:yyyyMMdd_HHmmss_fff}.bmp";
-                        string fullPath = Path.Combine(folderPath, fileName);
-
-                        // Сохранение
-                        Cv2.ImWrite(fullPath, maskedImage);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "CheckOvality - ошибка при создании/сохранении маски эллипса");
-                }
-*/
                 return isOval;
             }
             catch (Exception ex)
