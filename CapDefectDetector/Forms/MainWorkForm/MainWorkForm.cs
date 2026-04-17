@@ -124,7 +124,10 @@ namespace CapDefectDetector
         private static bool _isGreenColor = false;
         private static bool _isColored = true;
         private static bool _isYellowCap = false;
+        private bool _isBlackOrBrown = false;
         private static int _saturation = 0;
+        private static float _contourCorrectionColor = 1.15f;
+        private static float _contourCorrectionBlackOrBrown = 1.15f;
         // Морфологические элементы
         private Mat element1;
         private Mat element2;
@@ -251,8 +254,14 @@ namespace CapDefectDetector
             }
 
             InitializeComponent();
+            InitializeReceptTabControl();
             InitializeApplication();
             SendStopSignalsToPLC();
+        }
+
+        private void InitializeReceptTabControl()
+        {
+            receptVisualisationTabControl.ItemSize = new System.Drawing.Size(receptVisualisationTabControl.Size.Width / receptVisualisationTabControl.TabPages.Count, receptVisualisationTabControl.ItemSize.Height);
         }
 
         private void ModbusClient_ConnectionStatusChanged(bool isConnected)
@@ -1062,7 +1071,6 @@ namespace CapDefectDetector
         {
             //_statisticsManager = new StatisticsManager(statisticsDataGridView);
         }
-
         #endregion
 
         #region Обработчики событий UI
@@ -2102,6 +2110,7 @@ namespace CapDefectDetector
             morph_size_2 = r.MorphSize2;
             _capsColor = r.CapsColor;
             _saturation = r.CameraSaturation;
+            _contourCorrectionColor = r.ContourCorrectionColor;
 
             // ---------- Камера ----------
             if (_cam != null)
@@ -2136,6 +2145,7 @@ namespace CapDefectDetector
             // ---------- Numeric / Combo ----------
             capcolorUpDown.Value = r.CapsColor;
             saturationUpDown.Value = r.CameraSaturation;
+            contourCorrectionColorUpDown.Value = (decimal)r.ContourCorrectionColor;
 
             if (windowCb.Items.Contains(r.Window.ToString()))
                 windowCb.SelectedItem = r.Window.ToString();
@@ -3024,7 +3034,7 @@ namespace CapDefectDetector
                 float norm = (dx * dx) / (a * a) + (dy * dy) / (b * b);
 
                 // выброс → проекция обратно на эллипс
-                if (norm > OUTIER_THRESHOLD)
+                if (norm > _contourCorrectionColor)
                 {
                     float scale = 1.0f / (float)Math.Sqrt(norm);
 
@@ -3902,7 +3912,7 @@ namespace CapDefectDetector
                                                     _imageForTest = frameToProcess.Clone();
 
                                                     UpdatePictureBox(generalReceptParamPb, _imageOriginReceptParam);
-                                                    UpdatePictureBox(originReceptParamSmallPb, _imageOriginReceptParam);
+                                                    UpdatePictureBox(originColorReceptParamSmallPb, _imageOriginReceptParam);
                                                     UpdatePictureBox(testingPb, _imageForTest);
                                                 }
                                                 catch (Exception ex)
@@ -4944,12 +4954,12 @@ namespace CapDefectDetector
 
             // ---------------- 1. Saturation --------------------
             Mat satImg = SimulateCameraSaturation(_imageOriginReceptParam, (int)saturationUpDown.Value);
-            saturationReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
+            saturationColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
             // ---------------- 2. CapsColor ----------------------
             Mat capsImg = satImg.Clone();
             NonlinearBackgroundDecolorization(capsImg, (byte)capcolorUpDown.Value, _isColored, _isYellowCap, _isGreenColor);
-            capscolorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
+            capscolorColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
 
             // ---------------- 3. Window filtering ----------------
             Mat[] channels;
@@ -4958,7 +4968,7 @@ namespace CapDefectDetector
             int window = int.Parse(windowCb.Text);
             Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
             Mat windowImg = channels[1];
-            windowReceptParamSmallPb.Image = BitmapConverter.ToBitmap(windowImg);
+            windowColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(windowImg);
 
             // ---------------- 4. Morphology ---------------------
             int morph = int.Parse(morphCb.Text);
@@ -4982,7 +4992,7 @@ namespace CapDefectDetector
             Cv2.MedianBlur(channels[2], channels[2], 5);
 
             Mat morphImg = channels[2];
-            morphReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
+            morphColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
 
             // ---------------- 5. Contour -------------------------
             Point[][] contours;
@@ -5023,7 +5033,7 @@ namespace CapDefectDetector
 
                     float norm = (dx * dx) / (a * a) + (dy * dy) / (b * b);
 
-                    if (norm > OUTIER_THRESHOLD)
+                    if (norm > (float)contourCorrectionColorUpDown.Value)
                     {
                         float scale = 1.0f / (float)Math.Sqrt(norm);
 
@@ -5050,9 +5060,10 @@ namespace CapDefectDetector
                 Scalar.Red,
                 2);
 
-            resultContourSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
+            contourCorrectionColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
+            resultContourColorSmallPb.Image = BitmapConverter.ToBitmap(contourDraw);
 
-            ShowInGeneralPreview(resultContourSmallPb);
+            ShowInGeneralPreview(resultContourColorSmallPb);
 
         }
 
@@ -5076,6 +5087,10 @@ namespace CapDefectDetector
             RecomputeAll();
         }
 
+        private void contourCorrectionColorUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            RecomputeAll();
+        }
 
         private void loadImageForReceptParamBt_Click(object sender, EventArgs e)
         {
@@ -5088,7 +5103,7 @@ namespace CapDefectDetector
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     _imageOriginReceptParam = new Mat(ofd.FileName);
-                    originReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
+                    originColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
                     RecomputeAll();
                 }
             }
@@ -5099,34 +5114,39 @@ namespace CapDefectDetector
             RecomputeAll();
         }
 
-        private void originReceptParamSmallPb_Click(object sender, EventArgs e)
+        private void originColorReceptParamSmallPb_Click(object sender, EventArgs e)
         {
-            ShowInGeneralPreview(originReceptParamSmallPb);
+            ShowInGeneralPreview(originColorReceptParamSmallPb);
         }
 
-        private void saturationReceptParamSmallPb_Click(object sender, EventArgs e)
+        private void saturationColorReceptParamSmallPb_Click(object sender, EventArgs e)
         {
-            ShowInGeneralPreview(saturationReceptParamSmallPb);
+            ShowInGeneralPreview(saturationColorReceptParamSmallPb);
         }
 
         private void capscolorReceptParamSmallPb_Click(object sender, EventArgs e)
         {
-            ShowInGeneralPreview(capscolorReceptParamSmallPb);
+            ShowInGeneralPreview(capscolorColorReceptParamSmallPb);
         }
 
         private void windowReceptParamSmallPb_Click(object sender, EventArgs e)
         {
-            ShowInGeneralPreview(windowReceptParamSmallPb);
+            ShowInGeneralPreview(windowColorReceptParamSmallPb);
         }
 
         private void morphReceptParamSmallPb_Click(object sender, EventArgs e)
         {
-            ShowInGeneralPreview(morphReceptParamSmallPb);
+            ShowInGeneralPreview(morphColorReceptParamSmallPb);
+        }
+
+        private void contourCorrectionColorReceptParamSmallPb_Click(object sender, EventArgs e)
+        {
+            ShowInGeneralPreview(contourCorrectionColorReceptParamSmallPb);
         }
 
         private void resultContourSmallPb_Click(object sender, EventArgs e)
         {
-            ShowInGeneralPreview(resultContourSmallPb);
+            ShowInGeneralPreview(resultContourColorSmallPb);
         }
 
         // Вспомогательный метод
@@ -5179,6 +5199,8 @@ namespace CapDefectDetector
                 MorphSize = morphSize,
                 MorphSize2 = morphSize2,
                 CameraSaturation = (int)saturationUpDown.Value,
+                ContourCorrectionColor = (float)contourCorrectionColorUpDown.Value,
+                ContourCorrectionBlackOrBrown = (float)contourCorrectionBlackOrBrownUpDown.Value,
 
                 IsGreen = _isGreenColor,
                 IsColored = _isColored,
@@ -5241,6 +5263,12 @@ namespace CapDefectDetector
                 return false;
             }
 
+            if (contourCorrectionColorUpDown.Value < 0 || contourCorrectionColorUpDown.Value > 2)
+            {
+                error = "Корр. контура должна быть в диапазоне 1–2.";
+                return false;
+            }
+
             // Все проверки прошли
             return true;
         }
@@ -5286,36 +5314,69 @@ namespace CapDefectDetector
             RecomputeAll();
         }
 
+        private void isBlackOrBrownCb_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_isApplyingRecipe) return;
+            _isBlackOrBrown = isBlackOrBrownCb.Checked;
+            UpdateColorModeUI();
+            RecomputeAll();
+        }
+
         private void UpdateColorModeUI()
         {
-            // --- WHITE режим ---
+            // ---------- WHITE ----------
             if (isWhiteCb.Checked)
             {
-                isWhiteCb.Enabled = true;   // ← ВОТ ЭТО КРИТИЧНО
+                isWhiteCb.Enabled = true;
 
                 isColorCb.Checked = false;
                 isGreenCb.Checked = false;
                 isYellowCb.Checked = false;
+                isBlackOrBrownCb.Checked = false;
 
                 isColorCb.Enabled = false;
                 isGreenCb.Enabled = false;
                 isYellowCb.Enabled = false;
+                isBlackOrBrownCb.Enabled = false;
 
+                SelectTab(colorCapTabPage);
                 return;
             }
             else
             {
                 isColorCb.Enabled = true;
                 isGreenCb.Enabled = true;
-                isWhiteCb.Enabled = true;  // ← и тут тоже
+                isYellowCb.Enabled = true;
+                isBlackOrBrownCb.Enabled = true;
             }
 
-            // --- COLOR режим ---
+            // ---------- BLACK / BROWN ----------
+            if (isBlackOrBrownCb.Checked)
+            {
+                isWhiteCb.Checked = false;
+                isColorCb.Checked = false;
+                isGreenCb.Checked = false;
+                isYellowCb.Checked = false;
+
+                isWhiteCb.Enabled = false;
+                isColorCb.Enabled = false;
+                isGreenCb.Enabled = false;
+                isYellowCb.Enabled = false;
+
+                SelectTab(blackOrBrownTabPage);
+                return;
+            }
+
+            // ---------- COLOR ----------
             if (isColorCb.Checked)
             {
+                isWhiteCb.Enabled = false;
+                isBlackOrBrownCb.Enabled = false;
+
                 isYellowCb.Enabled = true;
                 isGreenCb.Enabled = true;
-                isWhiteCb.Enabled = false;
+
+                SelectTab(colorCapTabPage);
             }
             else
             {
@@ -5324,10 +5385,12 @@ namespace CapDefectDetector
 
                 isGreenCb.Enabled = false;
                 isYellowCb.Enabled = false;
+
                 isWhiteCb.Enabled = true;
+                isBlackOrBrownCb.Enabled = true;
             }
 
-            // --- GREEN ---
+            // ---------- GREEN ----------
             if (isGreenCb.Checked)
             {
                 if (!isColorCb.Checked)
@@ -5337,11 +5400,16 @@ namespace CapDefectDetector
                 isYellowCb.Enabled = false;
             }
 
-            // --- YELLOW ---
+            // ---------- YELLOW ----------
             if (isYellowCb.Checked)
             {
                 isGreenCb.Checked = false;
             }
+        }
+
+        private void SelectTab(TabPage page)
+        {
+            receptVisualisationTabControl.SelectedTab = page;
         }
 
         private void loadImageForCreateReceptFromCameraBt_Click(object sender, EventArgs e)
@@ -5355,10 +5423,10 @@ namespace CapDefectDetector
             _imageOriginReceptParam?.Dispose();
             _imageOriginReceptParam = _img1.Clone();
 
-            _img1=null;
+            _img1 = null;
 
-            originReceptParamSmallPb.Image?.Dispose();
-            originReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
+            originColorReceptParamSmallPb.Image?.Dispose();
+            originColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
 
             generalReceptParamPb.Image?.Dispose();
             generalReceptParamPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
@@ -5591,5 +5659,7 @@ namespace CapDefectDetector
             }
         }
         #endregion
+
+        
     }
 }

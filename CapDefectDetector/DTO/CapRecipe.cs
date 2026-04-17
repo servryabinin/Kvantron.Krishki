@@ -14,6 +14,8 @@ namespace CapDefectDetector
         public int MorphSize { get; set; }
         public int MorphSize2 { get; set; }
         public int CameraSaturation { get; set; }
+        public float ContourCorrectionColor{ get; set; }
+        public float ContourCorrectionBlackOrBrown { get; set; }
         public bool IsGreen { get; set; }
         public bool IsColored { get; set; }
         public bool IsYellow { get; set; }
