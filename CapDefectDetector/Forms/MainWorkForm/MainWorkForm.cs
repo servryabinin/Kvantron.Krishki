@@ -26,6 +26,7 @@ namespace CapDefectDetector
 {
     public partial class MainWorkForm : Form
     {
+
         #region Поля и константы
 
         // UI элементы
