@@ -15,11 +15,16 @@ namespace CapDefectDetector
         public int MorphSize2 { get; set; }
         public int CameraSaturation { get; set; }
         public float ContourCorrectionColor{ get; set; }
-        public float ContourCorrectionBlackOrBrown { get; set; }
         public bool IsGreen { get; set; }
         public bool IsColored { get; set; }
         public bool IsYellow { get; set; }
         public bool IsWhite { get; set; }
+
+        //------Для черных/коричневых крышек------
+        public int MedianFilter { get; set; }
+        public int CannyThreshold { get; set; }
+        public float ContourCorrectionBlackOrBrown { get; set; }
+        public bool IsBlackOrBrown{ get; set; }
     }
 
 }
