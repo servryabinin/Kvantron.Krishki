@@ -579,7 +579,7 @@
             morphCb.Font = new Font("Segoe UI", 7.8F);
             morphCb.FormattingEnabled = true;
             morphCb.Items.AddRange(new object[] { "1", "2", "3" });
-            morphCb.Location = new Point(342, 217);
+            morphCb.Location = new Point(342, 226);
             morphCb.Name = "morphCb";
             morphCb.Size = new Size(75, 25);
             morphCb.TabIndex = 7;
@@ -602,7 +602,7 @@
             windowCb.Font = new Font("Segoe UI", 7.8F);
             windowCb.FormattingEnabled = true;
             windowCb.Items.AddRange(new object[] { "3", "5", "7", "9", "11", "13", "15" });
-            windowCb.Location = new Point(258, 217);
+            windowCb.Location = new Point(258, 226);
             windowCb.Name = "windowCb";
             windowCb.Size = new Size(75, 25);
             windowCb.TabIndex = 6;
@@ -2103,7 +2103,7 @@
             receptCapsCmB.BackColor = Color.White;
             receptCapsCmB.Font = new Font("Segoe UI", 7.8F);
             receptCapsCmB.FormattingEnabled = true;
-            receptCapsCmB.Location = new Point(239, 8);
+            receptCapsCmB.Location = new Point(239, 10);
             receptCapsCmB.Name = "receptCapsCmB";
             receptCapsCmB.Size = new Size(230, 25);
             receptCapsCmB.TabIndex = 38;
@@ -2558,9 +2558,9 @@
             label11.Anchor = AnchorStyles.Left;
             label11.AutoSize = true;
             label11.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label11.Location = new Point(6, 44);
+            label11.Location = new Point(6, 51);
             label11.Name = "label11";
-            label11.Size = new Size(129, 34);
+            label11.Size = new Size(113, 26);
             label11.TabIndex = 0;
             label11.Text = "Крышка бесцветная\r\n(белая, серая и т.д)\r\n";
             // 
@@ -2570,9 +2570,9 @@
             isWhiteCb.AutoSize = true;
             isWhiteCb.Font = new Font("Segoe UI", 7.8F);
             isWhiteCb.ForeColor = Color.Black;
-            isWhiteCb.Location = new Point(242, 53);
+            isWhiteCb.Location = new Point(244, 57);
             isWhiteCb.Name = "isWhiteCb";
-            isWhiteCb.Size = new Size(18, 17);
+            isWhiteCb.Size = new Size(15, 14);
             isWhiteCb.TabIndex = 8;
             isWhiteCb.UseVisualStyleBackColor = true;
             isWhiteCb.CheckedChanged += isWhiteCb_CheckedChanged;
@@ -2788,7 +2788,7 @@
             paramDefCmB.BackColor = Color.White;
             paramDefCmB.Font = new Font("Segoe UI", 7.8F);
             paramDefCmB.FormattingEnabled = true;
-            paramDefCmB.Location = new Point(85, 8);
+            paramDefCmB.Location = new Point(85, 11);
             paramDefCmB.Name = "paramDefCmB";
             paramDefCmB.Size = new Size(103, 25);
             paramDefCmB.TabIndex = 39;
@@ -3662,7 +3662,7 @@
             prSettingsCmB.BackColor = Color.White;
             prSettingsCmB.Font = new Font("Segoe UI", 7.8F);
             prSettingsCmB.FormattingEnabled = true;
-            prSettingsCmB.Location = new Point(271, 4);
+            prSettingsCmB.Location = new Point(271, 7);
             prSettingsCmB.Name = "prSettingsCmB";
             prSettingsCmB.Size = new Size(112, 25);
             prSettingsCmB.TabIndex = 39;
