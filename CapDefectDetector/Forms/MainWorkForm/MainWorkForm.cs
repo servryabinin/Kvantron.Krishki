@@ -5728,9 +5728,8 @@ namespace CapDefectDetector
             originColorReceptParamSmallPb.Image?.Dispose();
             originColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
 
-            generalReceptParamPb.Image?.Dispose();
-            generalReceptParamPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
-
+            originBlackOrBrownReceptParamSmallPb.Image?.Dispose();
+            originBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
             RecomputeAll();
         }
 
