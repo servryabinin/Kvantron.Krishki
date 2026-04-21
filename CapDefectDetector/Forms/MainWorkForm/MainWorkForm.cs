@@ -1818,7 +1818,7 @@ namespace CapDefectDetector
                     _breakingTimeValue = 55;
                 }
 
-                await Task.Run(() => SendBreakingTime(_breakingTimeValue), _processingCts.Token);
+                await Task.Run(() => SendBreakingTime(_breakingTimeValue), _applyPrCts.Token);
 
                 if (!int.TryParse(cameraOffsetTb.Text.Trim(),
                         NumberStyles.Integer,
@@ -1828,7 +1828,7 @@ namespace CapDefectDetector
                     _cameraOffsetValue = 300;
                 }
 
-                await Task.Run(() => SendCameraOffset(_cameraOffsetValue), _processingCts.Token);
+                await Task.Run(() => SendCameraOffset(_cameraOffsetValue), _applyPrCts.Token);
 
                 if (!int.TryParse(breakerOffsetTb.Text.Trim(),
                         NumberStyles.Integer,
@@ -1838,7 +1838,7 @@ namespace CapDefectDetector
                     _breakerOffsetValue = 2430;
                 }
 
-                await Task.Run(() => SendBreakerOffset(_breakerOffsetValue), _processingCts.Token);
+                await Task.Run(() => SendBreakerOffset(_breakerOffsetValue), _applyPrCts.Token);
             }
             catch (Exception ex)
             {
@@ -5588,13 +5588,25 @@ namespace CapDefectDetector
                 isBlackOrBrownCb.Enabled = false;
 
                 SelectTab(colorCapTabPage);
+
+                // --- блок black параметров ---
+                medianFilterUpDown.Enabled = false;
+                cannyUpDown.Enabled = false;
+                contourCorrectionBlackOrBrownUpDown.Enabled = false;
+
+                // --- включаем цветные ---
+                saturationUpDown.Enabled = true;
+                capcolorUpDown.Enabled = true;
+                windowCb.Enabled = true;
+                morphCb.Enabled = true;
+                contourCorrectionColorUpDown.Enabled = true;
+
                 return;
             }
             else
             {
                 isColorCb.Enabled = true;
                 isGreenCb.Enabled = true;
-                isYellowCb.Enabled = true;
                 isBlackOrBrownCb.Enabled = true;
             }
 
@@ -5612,7 +5624,29 @@ namespace CapDefectDetector
                 isYellowCb.Enabled = false;
 
                 SelectTab(blackOrBrownTabPage);
+
+                // --- блок цветных параметров ---
+                saturationUpDown.Enabled = false;
+                capcolorUpDown.Enabled = false;
+                windowCb.Enabled = false;
+                morphCb.Enabled = false;
+                contourCorrectionColorUpDown.Enabled = false;
+
+                // --- включаем black параметры ---
+                medianFilterUpDown.Enabled = true;
+                cannyUpDown.Enabled = true;
+                contourCorrectionBlackOrBrownUpDown.Enabled = true;
+
                 return;
+            }
+            else
+            {
+                // если не black → включаем цветные параметры
+                saturationUpDown.Enabled = true;
+                capcolorUpDown.Enabled = true;
+                windowCb.Enabled = true;
+                morphCb.Enabled = true;
+                contourCorrectionColorUpDown.Enabled = true;
             }
 
             // ---------- COLOR ----------
@@ -5621,10 +5655,14 @@ namespace CapDefectDetector
                 isWhiteCb.Enabled = false;
                 isBlackOrBrownCb.Enabled = false;
 
-                isYellowCb.Enabled = true;
                 isGreenCb.Enabled = true;
 
                 SelectTab(colorCapTabPage);
+
+                // --- блок black параметров ---
+                medianFilterUpDown.Enabled = false;
+                cannyUpDown.Enabled = false;
+                contourCorrectionBlackOrBrownUpDown.Enabled = false;
             }
             else
             {
@@ -5632,10 +5670,13 @@ namespace CapDefectDetector
                 isYellowCb.Checked = false;
 
                 isGreenCb.Enabled = false;
-                isYellowCb.Enabled = false;
-
                 isWhiteCb.Enabled = true;
                 isBlackOrBrownCb.Enabled = true;
+
+                // если color выключен → black параметры можно
+                medianFilterUpDown.Enabled = true;
+                cannyUpDown.Enabled = true;
+                contourCorrectionBlackOrBrownUpDown.Enabled = true;
             }
 
             // ---------- GREEN ----------
@@ -5645,14 +5686,25 @@ namespace CapDefectDetector
                     isColorCb.Checked = true;
 
                 isYellowCb.Checked = false;
-                isYellowCb.Enabled = false;
             }
 
             // ---------- YELLOW ----------
             if (isYellowCb.Checked)
             {
                 isGreenCb.Checked = false;
+                isGreenCb.Enabled = false;
             }
+            else
+            {
+                if (isColorCb.Checked)
+                    isGreenCb.Enabled = true;
+            }
+
+            // ---------- ДОСТУПНОСТЬ YELLOW (фикс бага) ----------
+            isYellowCb.Enabled = isColorCb.Checked && !isGreenCb.Checked;
+
+            // ---------- CAP COLOR LOCK ----------
+            capcolorUpDown.Enabled = !isGreenCb.Checked;
         }
 
         private void SelectTab(TabPage page)
