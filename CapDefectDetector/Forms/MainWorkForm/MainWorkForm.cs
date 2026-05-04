@@ -28,7 +28,6 @@ namespace CapDefectDetector
     {
 
         #region Поля и константы
-
         // UI элементы
         private Color _connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
         private Color _disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
