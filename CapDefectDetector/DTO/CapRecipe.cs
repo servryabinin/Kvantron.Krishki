@@ -21,6 +21,7 @@ namespace CapDefectDetector
         public bool IsWhite { get; set; }
 
         //------Для черных/коричневых крышек------
+        public int CameraSaturationBlackOrBrown { get; set; }
         public int MedianFilter { get; set; }
         public int CannyThreshold { get; set; }
         public float ContourCorrectionBlackOrBrown { get; set; }

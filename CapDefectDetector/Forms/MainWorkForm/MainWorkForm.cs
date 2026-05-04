@@ -124,7 +124,8 @@ namespace CapDefectDetector
         private static bool _isColored = true;
         private static bool _isYellowCap = false;
         private bool _isBlackOrBrown = false;
-        private static int _saturation = 0;
+        private static int _saturationColor = 0;
+        private static int _saturationBlackOrBrown = 0;
         private static float _contourCorrectionColor = 1.15f;
         private static float _contourCorrectionBlackOrBrown = 1.15f;
         private static int _medianFilter = 0;
@@ -2112,17 +2113,56 @@ namespace CapDefectDetector
             morph_size = r.MorphSize;
             morph_size_2 = r.MorphSize2;
             _capsColor = r.CapsColor;
-            _saturation = r.CameraSaturation;
-            _contourCorrectionColor = (float)Clamp( (decimal)r.ContourCorrectionColor,contourCorrectionColorUpDown.Minimum,contourCorrectionColorUpDown.Maximum);
+            _saturationColor = r.CameraSaturation;
+
+            _contourCorrectionColor = (float)Clamp(
+                (decimal)r.ContourCorrectionColor,
+                contourCorrectionColorUpDown.Minimum,
+                contourCorrectionColorUpDown.Maximum
+            );
+
             // Для черных/коричневых крышек
-            _medianFilter = (int)Clamp(r.MedianFilter, medianFilterUpDown.Minimum, medianFilterUpDown.Maximum);
-            _cannyThreshold = (int)Clamp(r.CannyThreshold, cannyUpDown.Minimum, cannyUpDown.Maximum);
-            _contourCorrectionBlackOrBrown = (float)Clamp((decimal)r.ContourCorrectionBlackOrBrown, contourCorrectionBlackOrBrownUpDown.Minimum, contourCorrectionBlackOrBrownUpDown.Maximum);
+            _saturationBlackOrBrown = (int)Clamp(
+                r.CameraSaturationBlackOrBrown,
+                saturationBlackOrBrownUpDown.Minimum,
+                saturationBlackOrBrownUpDown.Maximum
+            );
+
+            _medianFilter = (int)Clamp(
+                r.MedianFilter,
+                medianFilterUpDown.Minimum,
+                medianFilterUpDown.Maximum
+            );
+
+            _cannyThreshold = (int)Clamp(
+                r.CannyThreshold,
+                cannyUpDown.Minimum,
+                cannyUpDown.Maximum
+            );
+
+            _contourCorrectionBlackOrBrown = (float)Clamp(
+                (decimal)r.ContourCorrectionBlackOrBrown,
+                contourCorrectionBlackOrBrownUpDown.Minimum,
+                contourCorrectionBlackOrBrownUpDown.Maximum
+            );
+
+            // ---------- Чекбоксы UI (важно ДО камеры) ----------
+            isWhiteCb.Checked = _capsAreWhite;
+            isBlackOrBrownCb.Checked = _isBlackOrBrown;
+            isColorCb.Checked = _isColored;
+            isGreenCb.Checked = _isGreenColor;
+            isYellowCb.Checked = _isYellowCap;
+
+            UpdateColorModeUI();
 
             // ---------- Камера ----------
             if (_cam != null)
             {
-                _cam.Saturation = (uint)r.CameraSaturation;
+                uint saturation = isBlackOrBrownCb.Checked
+                    ? (uint)r.CameraSaturationBlackOrBrown
+                    : (uint)r.CameraSaturation;
+
+                _cam.Saturation = saturation;
                 _cam.SetSaturation();
             }
 
@@ -2138,71 +2178,65 @@ namespace CapDefectDetector
                 inpaintCB.Checked = true;
             }
 
-            // ---------- Чекбоксы UI ----------
-            isWhiteCb.Checked = _capsAreWhite;
-            isBlackOrBrownCb.Checked = _isBlackOrBrown;
-            isColorCb.Checked = _isColored;
-            isGreenCb.Checked = _isGreenColor;
-            isYellowCb.Checked = _isYellowCap;
+            // ---------- Интерфейс рецепта ----------
+            // Для цв/бцв крышек
+            saturationColorUpDown.Value = Clamp(
+                r.CameraSaturation,
+                saturationColorUpDown.Minimum,
+                saturationColorUpDown.Maximum
+            );
 
-            UpdateColorModeUI();
+            capcolorUpDown.Value = Clamp(
+                r.CapsColor,
+                capcolorUpDown.Minimum,
+                capcolorUpDown.Maximum
+            );
 
-            // Интерфейс рецепта
-            //Для цв/бцв крышек
-            saturationUpDown.Value =
-                Clamp(
-                    r.CameraSaturation,
-                    saturationUpDown.Minimum,
-                    saturationUpDown.Maximum
-                );
-            
-            capcolorUpDown.Value =
-                Clamp(
-                    r.CapsColor,
-                    capcolorUpDown.Minimum,
-                    capcolorUpDown.Maximum
-                );
-
-            
             if (windowCb.Items.Contains(r.Window.ToString()))
                 windowCb.SelectedItem = r.Window.ToString();
 
             if (morphCb.Items.Contains(r.MorphSize.ToString()))
                 morphCb.SelectedItem = r.MorphSize.ToString();
 
-           
-            contourCorrectionColorUpDown.Value =
-                Clamp(
-                    (decimal)r.ContourCorrectionColor,
-                    contourCorrectionColorUpDown.Minimum,
-                    contourCorrectionColorUpDown.Maximum
-                );
+            contourCorrectionColorUpDown.Value = Clamp(
+                (decimal)r.ContourCorrectionColor,
+                contourCorrectionColorUpDown.Minimum,
+                contourCorrectionColorUpDown.Maximum
+            );
 
             // Для черных/коричневых крышек
-            medianFilterUpDown.Value =
-                Clamp(
-                    r.MedianFilter,
-                    medianFilterUpDown.Minimum,
-                    medianFilterUpDown.Maximum
-                );
+            saturationBlackOrBrownUpDown.Value = Clamp(
+                r.CameraSaturationBlackOrBrown,
+                saturationBlackOrBrownUpDown.Minimum,
+                saturationBlackOrBrownUpDown.Maximum
+            );
 
-            cannyUpDown.Value =
-                Clamp(
-                    r.CannyThreshold,
-                    cannyUpDown.Minimum,
-                    cannyUpDown.Maximum
-                );
+            medianFilterUpDown.Value = Clamp(
+                r.MedianFilter,
+                medianFilterUpDown.Minimum,
+                medianFilterUpDown.Maximum
+            );
 
-            contourCorrectionBlackOrBrownUpDown.Value =
-                Clamp(
-                    (decimal)r.ContourCorrectionBlackOrBrown,
-                    contourCorrectionBlackOrBrownUpDown.Minimum,
-                    contourCorrectionBlackOrBrownUpDown.Maximum
-                );
+            cannyUpDown.Value = Clamp(
+                r.CannyThreshold,
+                cannyUpDown.Minimum,
+                cannyUpDown.Maximum
+            );
+
+            contourCorrectionBlackOrBrownUpDown.Value = Clamp(
+                (decimal)r.ContourCorrectionBlackOrBrown,
+                contourCorrectionBlackOrBrownUpDown.Minimum,
+                contourCorrectionBlackOrBrownUpDown.Maximum
+            );
 
             // ---------- UI текст ----------
             receptNameTb.Text = r.Name;
-            frameSaturationNumUpD.Text = r.CameraSaturation.ToString();
+
+            frameSaturationNumUpD.Text = (
+                isBlackOrBrownCb.Checked
+                    ? r.CameraSaturationBlackOrBrown
+                    : r.CameraSaturation
+            ).ToString();
 
             RebuildMorphology();
 
@@ -3028,12 +3062,24 @@ namespace CapDefectDetector
 
         private Point[] GetBlackOrBrownContour(Mat grayInput, Mat image)
         {
-            Mat gray = grayInput.Clone();
+            if (image.Empty())
+                return null;
 
+            // ===== Saturation (как в цветных, но свой параметр) =====
+            Mat processed = image.Clone();
+            processed = SimulateCameraSaturation(processed, _saturationBlackOrBrown);
+
+            // переводим в grayscale уже после saturation
+            Mat gray = new Mat();
+            Cv2.CvtColor(processed, gray, ColorConversionCodes.BGR2GRAY);
+
+            // ===== Median =====
             Cv2.MedianBlur(gray, gray, _medianFilter);
 
+            // ===== Canny =====
             Cv2.Canny(gray, gray, _cannyThreshold, 255);
 
+            // ===== Contours =====
             Cv2.FindContours(gray, out Point[][] contours, out _,
                 RetrievalModes.List, ContourApproximationModes.ApproxSimple);
 
@@ -3044,11 +3090,13 @@ namespace CapDefectDetector
             if (allPoints.Count < 5)
                 return null;
 
+            // ===== Hull =====
             Point[] hull = Cv2.ConvexHull(allPoints.ToArray());
 
             if (hull.Length < 5)
                 return hull;
 
+            // ===== Ellipse =====
             RotatedRect ellipse = Cv2.FitEllipse(hull);
 
             Point[] ellipsePoints = Cv2.Ellipse2Poly(
@@ -3070,7 +3118,7 @@ namespace CapDefectDetector
 
             // ===== Цветокоррекция =====
             Mat processed = image.Clone();
-            processed = SimulateCameraSaturation(processed, _saturation);
+            processed = SimulateCameraSaturation(processed, _saturationColor);
             NonlinearBackgroundDecolorization(processed, _capsColor, _isColored, _isYellowCap, _isGreenColor);
 
             Mat[] channels;
@@ -3124,45 +3172,7 @@ namespace CapDefectDetector
 
             var contour = contours[maxInd];
 
-            // защита: FitEllipse требует минимум 5 точек
-            if (contour.Length < 5)
-                return contour;
-
-            // ===== Fit ellipse =====
-            RotatedRect ellipse = Cv2.FitEllipse(contour);
-
-            Point2f center = ellipse.Center;
-
-            float a = ellipse.Size.Width / 2f;
-            float b = ellipse.Size.Height / 2f;
-
-            List<Point> fixedContour = new(contour.Length); HttpStyleUriParser://cpskj.oss-cn-shanghai.aliyuncs.com/CPS-Digital.zip
-
-
-            foreach (var p in contour)
-            {
-                float dx = p.X - center.X;
-                float dy = p.Y - center.Y;
-
-                float norm = (dx * dx) / (a * a) + (dy * dy) / (b * b);
-
-                // выброс → проекция обратно на эллипс
-                if (norm > _contourCorrectionColor)
-                {
-                    float scale = 1.0f / (float)Math.Sqrt(norm);
-
-                    int nx = (int)(center.X + dx * scale);
-                    int ny = (int)(center.Y + dy * scale);
-
-                    fixedContour.Add(new Point(nx, ny));
-                }
-                else
-                {
-                    fixedContour.Add(p);
-                }
-            }
-
-            return fixedContour.ToArray();
+            return contour;
         }
 
 
@@ -5101,7 +5111,17 @@ namespace CapDefectDetector
 
         private Point[] ProcessBlackOrBrown()
         {
-            Mat image = _imageOriginReceptParam.Clone();
+            // --- 1. Saturation (как в цветных крышках) ---
+            Mat satImg = SimulateCameraSaturation(
+                _imageOriginReceptParam,
+                (int)saturationBlackOrBrownUpDown.Value
+            );
+
+            // если есть превью — можно вывести
+            saturationBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
+
+            // дальше работаем уже с satImg
+            Mat image = satImg.Clone();
 
             Mat gray = new Mat();
             Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
@@ -5145,6 +5165,7 @@ namespace CapDefectDetector
 
             return ellipsePoints;
         }
+
         private Point[] ProcessColor()
         {
             if (_imageOriginReceptParam == null || _imageOriginReceptParam.Empty())
@@ -5153,7 +5174,7 @@ namespace CapDefectDetector
             // ---------------- 1. Saturation --------------------
             Mat satImg = SimulateCameraSaturation(
                 _imageOriginReceptParam,
-                (int)saturationUpDown.Value
+                (int)saturationColorUpDown.Value
             );
             saturationColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
@@ -5421,8 +5442,9 @@ namespace CapDefectDetector
                 Window = windowValue,
                 MorphSize = morphSize,
                 MorphSize2 = morphSize2,
-                CameraSaturation = (int)saturationUpDown.Value,
+                CameraSaturation = (int)saturationColorUpDown.Value,
                 ContourCorrectionColor = (float)contourCorrectionColorUpDown.Value,
+                CameraSaturationBlackOrBrown = (int)saturationBlackOrBrownUpDown.Value,
                 ContourCorrectionBlackOrBrown = (float)contourCorrectionBlackOrBrownUpDown.Value,
                 MedianFilter = (int)medianFilterUpDown.Value,
                 CannyThreshold = (int)cannyUpDown.Value,
@@ -5589,12 +5611,13 @@ namespace CapDefectDetector
                 SelectTab(colorCapTabPage);
 
                 // --- блок black параметров ---
+                saturationBlackOrBrownUpDown.Enabled = false;
                 medianFilterUpDown.Enabled = false;
                 cannyUpDown.Enabled = false;
                 contourCorrectionBlackOrBrownUpDown.Enabled = false;
 
                 // --- включаем цветные ---
-                saturationUpDown.Enabled = true;
+                saturationColorUpDown.Enabled = true;
                 capcolorUpDown.Enabled = true;
                 windowCb.Enabled = true;
                 morphCb.Enabled = true;
@@ -5625,13 +5648,14 @@ namespace CapDefectDetector
                 SelectTab(blackOrBrownTabPage);
 
                 // --- блок цветных параметров ---
-                saturationUpDown.Enabled = false;
+                saturationColorUpDown.Enabled = false;
                 capcolorUpDown.Enabled = false;
                 windowCb.Enabled = false;
                 morphCb.Enabled = false;
                 contourCorrectionColorUpDown.Enabled = false;
 
                 // --- включаем black параметры ---
+                saturationBlackOrBrownUpDown.Enabled = true;
                 medianFilterUpDown.Enabled = true;
                 cannyUpDown.Enabled = true;
                 contourCorrectionBlackOrBrownUpDown.Enabled = true;
@@ -5641,7 +5665,7 @@ namespace CapDefectDetector
             else
             {
                 // если не black → включаем цветные параметры
-                saturationUpDown.Enabled = true;
+                saturationColorUpDown.Enabled = true;
                 capcolorUpDown.Enabled = true;
                 windowCb.Enabled = true;
                 morphCb.Enabled = true;
@@ -5659,6 +5683,7 @@ namespace CapDefectDetector
                 SelectTab(colorCapTabPage);
 
                 // --- блок black параметров ---
+                saturationBlackOrBrownUpDown.Enabled = false;
                 medianFilterUpDown.Enabled = false;
                 cannyUpDown.Enabled = false;
                 contourCorrectionBlackOrBrownUpDown.Enabled = false;
@@ -5673,6 +5698,7 @@ namespace CapDefectDetector
                 isBlackOrBrownCb.Enabled = true;
 
                 // если color выключен → black параметры можно
+                saturationBlackOrBrownUpDown.Enabled = true;
                 medianFilterUpDown.Enabled = true;
                 cannyUpDown.Enabled = true;
                 contourCorrectionBlackOrBrownUpDown.Enabled = true;
@@ -5729,6 +5755,11 @@ namespace CapDefectDetector
 
             originBlackOrBrownReceptParamSmallPb.Image?.Dispose();
             originBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(_imageOriginReceptParam);
+            RecomputeAll();
+        }
+
+        private void saturationBlackOrBrownUpDown_ValueChanged(object sender, EventArgs e)
+        {
             RecomputeAll();
         }
 
