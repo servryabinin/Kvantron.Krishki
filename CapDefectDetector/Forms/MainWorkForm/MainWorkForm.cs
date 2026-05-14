@@ -3642,10 +3642,11 @@ namespace CapDefectDetector
                 // Диагностика памяти не должна мешать получению кадра
             }
 
-            ErrorLogger.LogFrameQueue(
+            ErrorLogger.LogMessage(
                 $"Frame queue size is {queueSize}. " +
                 $"Frame: {img.Width}x{img.Height}, type={img.Type()}, empty={img.Empty()}. " +
-                $"Processing={_isProcessing}, StreamCam={_isStreamCam}, privateMemoryMb={privateMemoryMb}.");
+                $"Processing={_isProcessing}, StreamCam={_isStreamCam}, privateMemoryMb={privateMemoryMb}.",
+                "FrameQueueGrowth");
 #endif
         }
 

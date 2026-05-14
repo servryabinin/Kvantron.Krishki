@@ -60,16 +60,6 @@ namespace CapDefectDetector.Logger
 
         public static void LogMessage(string message, string context = "")
         {
-            WriteMessage(LogFile, message, context);
-        }
-
-        public static void LogFrameQueue(string message)
-        {
-            WriteMessage(FrameQueueLogFile, message, "FrameQueueGrowth");
-        }
-
-        private static void WriteMessage(string filePath, string message, string context = "")
-        {
             try
             {
                 StringBuilder sb = new StringBuilder();
@@ -85,7 +75,7 @@ namespace CapDefectDetector.Logger
 
                 lock (SyncRoot)
                 {
-                    File.AppendAllText(filePath, sb.ToString());
+                    File.AppendAllText(LogFile, sb.ToString());
                 }
             }
             catch
