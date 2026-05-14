@@ -4376,6 +4376,10 @@ namespace CapDefectDetector
                             }
                         }
                     }
+                    catch (OperationCanceledException) when (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     catch (Exception ex)
                     {
                         ErrorLogger.Log(ex, "Ошибка цикла обработки");

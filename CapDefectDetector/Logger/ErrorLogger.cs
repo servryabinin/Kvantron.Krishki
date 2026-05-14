@@ -16,6 +16,9 @@ namespace CapDefectDetector.Logger
         private static readonly string LogFile =
             Path.Combine(LogFolder, $"log_{DateTime.Now:yyyyMMdd}.txt");
 
+        private static readonly string FrameQueueLogFile =
+            Path.Combine(LogFolder, $"frame_queue_{DateTime.Now:yyyyMMdd}.txt");
+
         static ErrorLogger()
         {
             try
