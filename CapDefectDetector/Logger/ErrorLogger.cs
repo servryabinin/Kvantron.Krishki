@@ -8,11 +8,16 @@ namespace CapDefectDetector.Logger
 {
     public class ErrorLogger
     {
+        private static readonly object SyncRoot = new object();
+
         private static readonly string LogFolder =
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
         private static readonly string LogFile =
             Path.Combine(LogFolder, $"log_{DateTime.Now:yyyyMMdd}.txt");
+
+        private static readonly string FrameQueueLogFile =
+            Path.Combine(LogFolder, $"frame_queue_{DateTime.Now:yyyyMMdd}.txt");
 
         static ErrorLogger()
         {
@@ -42,7 +47,46 @@ namespace CapDefectDetector.Logger
                 sb.AppendLine("======================================");
                 sb.AppendLine();
 
-                File.AppendAllText(LogFile, sb.ToString());
+                lock (SyncRoot)
+                {
+                    File.AppendAllText(LogFile, sb.ToString());
+                }
+            }
+            catch
+            {
+                // Если даже лог записать не можем - ничего не делаем
+            }
+        }
+
+        public static void LogMessage(string message, string context = "")
+        {
+            WriteMessage(LogFile, message, context);
+        }
+
+        public static void LogFrameQueue(string message)
+        {
+            WriteMessage(FrameQueueLogFile, message, "FrameQueueGrowth");
+        }
+
+        private static void WriteMessage(string filePath, string message, string context = "")
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("======================================");
+                sb.AppendLine($"TIME: {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}");
+
+                if (!string.IsNullOrWhiteSpace(context))
+                    sb.AppendLine($"CONTEXT: {context}");
+
+                sb.AppendLine($"MESSAGE: {message}");
+                sb.AppendLine("======================================");
+                sb.AppendLine();
+
+                lock (SyncRoot)
+                {
+                    File.AppendAllText(filePath, sb.ToString());
+                }
             }
             catch
             {

@@ -17,6 +17,8 @@ namespace CapDefectDetector.FrameProcessing
         private readonly BlockingCollection<Mat> _buffer = [];
         private bool _isDisposed;
 
+        public int Count => _buffer.Count;
+
         public Mat Get(CancellationToken token = default)
         {
             return _buffer.Take(token);

@@ -84,6 +84,10 @@ namespace CapDefectDetector
         private Mat latestFrame = null;
 #else
         private readonly FrameBuffer _imageQueue = new();
+        private readonly object _frameQueueLogLock = new object();
+        private int _lastLoggedFrameQueueSize = 1;
+        private DateTime _lastFrameQueueLogTime = DateTime.MinValue;
+        private static readonly TimeSpan FrameQueueLogMinInterval = TimeSpan.FromSeconds(1);
 #endif
 
         // Счетчики дефектов
@@ -3570,8 +3574,10 @@ namespace CapDefectDetector
                 {
                     try
                     {
+                        _img1?.Dispose();
                         _img1 = img.Clone();
                         _imageQueue.Put(img.Clone());
+                        LogFrameQueueGrowthIfNeeded(img);
                     }
                     catch (Exception ex)
                     {
@@ -3598,6 +3604,51 @@ namespace CapDefectDetector
                 ErrorLogger.Log(ex, "Общая ошибка в GetImage");
             }
         }
+        private void LogFrameQueueGrowthIfNeeded(Mat img)
+        {
+#if !OLD_FRAME_PROCESSING
+            int queueSize = _imageQueue.Count;
+            if (queueSize <= 1)
+            {
+                lock (_frameQueueLogLock)
+                {
+                    _lastLoggedFrameQueueSize = 1;
+                }
+                return;
+            }
+
+            DateTime now = DateTime.Now;
+            bool shouldLog;
+
+            lock (_frameQueueLogLock)
+            {
+                shouldLog = queueSize > _lastLoggedFrameQueueSize ||
+                            now - _lastFrameQueueLogTime >= FrameQueueLogMinInterval;
+
+                if (!shouldLog)
+                    return;
+
+                _lastLoggedFrameQueueSize = queueSize;
+                _lastFrameQueueLogTime = now;
+            }
+
+            long privateMemoryMb = 0;
+            try
+            {
+                privateMemoryMb = Process.GetCurrentProcess().PrivateMemorySize64 / 1024 / 1024;
+            }
+            catch
+            {
+                // Диагностика памяти не должна мешать получению кадра
+            }
+
+            ErrorLogger.LogFrameQueue(
+                $"Frame queue size is {queueSize}. " +
+                $"Frame: {img.Width}x{img.Height}, type={img.Type()}, empty={img.Empty()}. " +
+                $"Processing={_isProcessing}, StreamCam={_isStreamCam}, privateMemoryMb={privateMemoryMb}.");
+#endif
+        }
+
         #endregion
 
         #region Методы управления потоком обработки
@@ -4323,6 +4374,10 @@ namespace CapDefectDetector
                                 ErrorLogger.Log(ex, "Ошибка обработки кадра");
                             }
                         }
+                    }
+                    catch (OperationCanceledException) when (token.IsCancellationRequested)
+                    {
+                        break;
                     }
                     catch (Exception ex)
                     {
