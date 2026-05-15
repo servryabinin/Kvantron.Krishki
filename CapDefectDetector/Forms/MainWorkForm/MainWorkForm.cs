@@ -3071,95 +3071,78 @@ namespace CapDefectDetector
             }
         }
 
-        private Point[] GetBlackOrBrownContour(Mat grayInput, Mat image)
-        {
-            if (image.Empty())
-                return null;
-
-            // ===== Saturation (как в цветных, но свой параметр) =====
-            Mat processed = image.Clone();
-            processed = SimulateCameraSaturation(processed, _saturationBlackOrBrown);
-
-            // переводим в grayscale уже после saturation
-            Mat gray = new Mat();
-            Cv2.CvtColor(processed, gray, ColorConversionCodes.BGR2GRAY);
-
-            // ===== Median =====
-            Cv2.MedianBlur(gray, gray, _medianFilter);
-
-            // ===== Canny =====
-            Cv2.Canny(gray, gray, _cannyThreshold, 255);
-
-            // ===== Contours =====
-            Cv2.FindContours(gray, out Point[][] contours, out _,
-                RetrievalModes.List, ContourApproximationModes.ApproxSimple);
-
-            var allPoints = new List<Point>();
-            foreach (var cnt in contours)
-                allPoints.AddRange(cnt);
-
-            if (allPoints.Count < 5)
-                return null;
-
-            // ===== Hull =====
-            Point[] hull = Cv2.ConvexHull(allPoints.ToArray());
-
-            if (hull.Length < 5)
-                return hull;
-
-            // ===== Ellipse =====
-            RotatedRect ellipse = Cv2.FitEllipse(hull);
-
-            Point[] ellipsePoints = Cv2.Ellipse2Poly(
-                (Point)ellipse.Center,
-                new Size((int)(ellipse.Size.Width / 2), (int)(ellipse.Size.Height / 2)),
-                (int)ellipse.Angle,
-                0,
-                360,
-                1
-            );
-
-            return ellipsePoints;
-        }
-
+        #region Цветные крышки
         private Point[] GetColorCapContour(Mat gray, Mat image)
         {
             if (gray.Empty() || image.Empty())
                 return null;
 
-            // ===== Цветокоррекция =====
-            Mat processed = image.Clone();
-            processed = SimulateCameraSaturation(processed, _saturationColor);
-            NonlinearBackgroundDecolorization(processed, _capsColor, _isColored, _isYellowCap, _isGreenColor);
+            Mat sat = ApplySaturationStep(image, _saturationColor);
 
+            Mat caps = ApplyCapsColorStep(
+                sat,
+                _capsColor,
+                _isColored,
+                _isYellowCap,
+                _isGreenColor
+            );
+
+            Mat[] channels = ApplyWindowStep(caps, window);
+
+            ApplyMorphologyStep(channels, element1, element2);
+
+            return GetMaxContour(channels[2]);
+        }
+
+        private Mat ApplySaturationStep(Mat input, int saturation)
+        {
+            return SimulateCameraSaturation(input, saturation);
+        }
+
+        private Mat ApplyCapsColorStep(Mat input, byte capsColor, bool colored, bool yellow, bool green)
+        {
+            Mat result = input.Clone();
+            NonlinearBackgroundDecolorization(result, capsColor, colored, yellow, green);
+            return result;
+        }
+
+        private Mat[] ApplyWindowStep(Mat input, int window)
+        {
             Mat[] channels;
-            Cv2.Split(processed, out channels);
+            Cv2.Split(input, out channels);
 
+            Cv2.GaussianBlur(
+                channels[0],
+                channels[1],
+                new Size(window, window),
+                4
+            );
 
-            // ===== Blur =====
-            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
+            return channels;
+        }
 
-            // ===== Threshold + Morphology =====
-            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
+        private void ApplyMorphologyStep(Mat[] channels, Mat element1, Mat element2)
+        {
+            Cv2.Threshold(
+                channels[1],
+                channels[0],
+                128,
+                255,
+                ThresholdTypes.Otsu | ThresholdTypes.Binary
+            );
 
             Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
             Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
 
-            // лёгкий антишум перед контурами
             Cv2.MedianBlur(channels[2], channels[2], 5);
+        }
 
-            _blurChannel_0 = channels[0];
-            _blurChannel_1 = channels[1];
-            _blurChannel_2 = channels[2];
-
-            // ===== Поиск контуров =====
-            Point[][] contours;
-            HierarchyIndex[] hierarchy;
-
+        private Point[] GetMaxContour(Mat image)
+        {
             Cv2.FindContours(
-                channels[2],
-                out contours,
-                out hierarchy,
+                image,
+                out Point[][] contours,
+                out _,
                 RetrievalModes.External,
                 ContourApproximationModes.ApproxSimple
             );
@@ -3167,7 +3150,6 @@ namespace CapDefectDetector
             if (contours.Length == 0)
                 return null;
 
-            // ===== Берём самый большой =====
             int maxInd = 0;
             double maxArea = 0;
 
@@ -3181,10 +3163,82 @@ namespace CapDefectDetector
                 }
             }
 
-            var contour = contours[maxInd];
-
-            return contour;
+            return contours[maxInd];
         }
+        #endregion
+
+        #region методы для черных крышек
+        private Point[] GetBlackOrBrownContour(Mat grayInput, Mat image)
+        {
+            if (image.Empty())
+                return null;
+
+            Mat sat = ApplySaturation(image, _saturationBlackOrBrown);
+
+            Mat gray = ToGray(sat);
+
+            Mat blurred = ApplyMedian(gray, _medianFilter);
+
+            Mat edges = ApplyCanny(blurred, _cannyThreshold);
+
+            return ContourToEllipse(edges);
+        }
+
+        private Mat ApplySaturation(Mat image, int saturation)
+        {
+            return SimulateCameraSaturation(image, saturation);
+        }
+
+        private Mat ToGray(Mat image)
+        {
+            Mat gray = new Mat();
+            Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
+            return gray;
+        }
+
+        private Mat ApplyMedian(Mat image, int size)
+        {
+            Mat result = image.Clone();
+            Cv2.MedianBlur(result, result, size);
+            return result;
+        }
+
+        private Mat ApplyCanny(Mat image, int threshold)
+        {
+            Mat result = image.Clone();
+            Cv2.Canny(result, result, threshold, 255);
+            return result;
+        }
+
+        private Point[] ContourToEllipse(Mat image)
+        {
+            Cv2.FindContours(image, out Point[][] contours, out _,
+                RetrievalModes.List, ContourApproximationModes.ApproxSimple);
+
+            var allPoints = new List<Point>();
+            foreach (var cnt in contours)
+                allPoints.AddRange(cnt);
+
+            if (allPoints.Count < 5)
+                return null;
+
+            Point[] hull = Cv2.ConvexHull(allPoints.ToArray());
+
+            if (hull.Length < 5)
+                return hull;
+
+            RotatedRect ellipse = Cv2.FitEllipse(hull);
+
+            return Cv2.Ellipse2Poly(
+                (Point)ellipse.Center,
+                new Size((int)(ellipse.Size.Width / 2), (int)(ellipse.Size.Height / 2)),
+                (int)ellipse.Angle,
+                0,
+                360,
+                1
+            );
+        }
+        #endregion
 
 
         private void GetIdealCapMask(Mat mask, Point center, float innerRadius, float outerRadius)
@@ -5090,10 +5144,7 @@ namespace CapDefectDetector
             {
                 contour = ProcessBlackOrBrown();
 
-                contour = CorrectContour(
-                    contour,
-                    (float)contourCorrectionBlackOrBrownUpDown.Value
-                );
+                contour = CorrectContour(contour,(float)contourCorrectionBlackOrBrownUpDown.Value);
 
                 Mat result = DrawContour(contour);
 
@@ -5122,59 +5173,19 @@ namespace CapDefectDetector
 
         private Point[] ProcessBlackOrBrown()
         {
-            // --- 1. Saturation (как в цветных крышках) ---
-            Mat satImg = SimulateCameraSaturation(
-                _imageOriginReceptParam,
-                (int)saturationBlackOrBrownUpDown.Value
-            );
+            Mat satImg = ApplySaturation(_imageOriginReceptParam,(int)saturationBlackOrBrownUpDown.Value);
 
-            // если есть превью — можно вывести
             saturationBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
-            // дальше работаем уже с satImg
-            Mat image = satImg.Clone();
+            Mat gray = ToGray(satImg);
 
-            Mat gray = new Mat();
-            Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
+            Mat blurred = ApplyMedian(gray, (int)medianFilterUpDown.Value);
+            medianFilterBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(blurred);
 
-            // --- Median ---
-            int medianFilterSize = (int)medianFilterUpDown.Value;
-            Cv2.MedianBlur(gray, gray, medianFilterSize);
-            medianFilterBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(gray);
+            Mat edges = ApplyCanny(blurred, (int)cannyUpDown.Value);
+            cannyBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(edges);
 
-            // --- Canny ---
-            int cannyThreshold = (int)cannyUpDown.Value;
-            Cv2.Canny(gray, gray, cannyThreshold, 255);
-            cannyBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(gray);
-
-            // --- Contours ---
-            Cv2.FindContours(gray, out Point[][] contours, out _,
-                RetrievalModes.List, ContourApproximationModes.ApproxSimple);
-
-            var allPoints = new List<Point>();
-            foreach (var cnt in contours)
-                allPoints.AddRange(cnt);
-
-            if (allPoints.Count < 5)
-                return null;
-
-            // --- Hull ---
-            Point[] hull = Cv2.ConvexHull(allPoints.ToArray());
-
-            // --- Ellipse ---
-            RotatedRect ellipse = Cv2.FitEllipse(hull);
-
-            // --- Points ---
-            Point[] ellipsePoints = Cv2.Ellipse2Poly(
-                (Point)ellipse.Center,
-                new Size((int)(ellipse.Size.Width / 2), (int)(ellipse.Size.Height / 2)),
-                (int)ellipse.Angle,
-                0,
-                360,
-                1
-            );
-
-            return ellipsePoints;
+            return ContourToEllipse(edges);
         }
 
         private Point[] ProcessColor()
@@ -5183,32 +5194,34 @@ namespace CapDefectDetector
                 return null;
 
             // ---------------- 1. Saturation --------------------
-            Mat satImg = SimulateCameraSaturation(
+            Mat satImg = ApplySaturationStep(
                 _imageOriginReceptParam,
                 (int)saturationColorUpDown.Value
             );
-            saturationColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
+
+            saturationColorReceptParamSmallPb.Image =
+                BitmapConverter.ToBitmap(satImg);
 
             // ---------------- 2. CapsColor ----------------------
-            Mat capsImg = satImg.Clone();
-            NonlinearBackgroundDecolorization(
-                capsImg,
+            Mat capsImg = ApplyCapsColorStep(
+                satImg,
                 (byte)capcolorUpDown.Value,
                 _recipeIsColored,
                 _recipeIsYellowCap,
                 _recipeIsGreenColor
             );
-            capscolorColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
 
-            // ---------------- 3. Window filtering ----------------
-            Mat[] channels;
-            Cv2.Split(capsImg, out channels);
+            capscolorColorReceptParamSmallPb.Image =
+                BitmapConverter.ToBitmap(capsImg);
 
-            int window = int.Parse(windowCb.Text);
-            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
+            // ---------------- 3. Window -------------------------
+            Mat[] channels = ApplyWindowStep(
+                capsImg,
+                int.Parse(windowCb.Text)
+            );
 
-            Mat windowImg = channels[1];
-            windowColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(windowImg);
+            windowColorReceptParamSmallPb.Image =
+                BitmapConverter.ToBitmap(channels[1]);
 
             // ---------------- 4. Morphology ---------------------
             int morph = int.Parse(morphCb.Text);
@@ -5225,52 +5238,17 @@ namespace CapDefectDetector
                 new Point(morph, morph)
             );
 
-            Cv2.Threshold(
-                channels[1],
-                channels[0],
-                128,
-                255,
-                ThresholdTypes.Otsu | ThresholdTypes.Binary
-            );
-
-            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
-            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
-
-            // антишум
-            Cv2.MedianBlur(channels[2], channels[2], 5);
+            ApplyMorphologyStep(channels, element1, element2);
 
             Mat morphImg = channels[2];
-            morphColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
+
+            morphColorReceptParamSmallPb.Image =
+                BitmapConverter.ToBitmap(morphImg);
 
             // ---------------- 5. Contour -------------------------
-            Cv2.FindContours(
-                morphImg,
-                out Point[][] contours,
-                out _,
-                RetrievalModes.External,
-                ContourApproximationModes.ApproxSimple
-            );
-
-            if (contours.Length == 0)
-                return null;
-
-            // ищем самый большой
-            int maxInd = 0;
-            int maxLength = 0;
-
-            for (int i = 0; i < contours.Length; i++)
-            {
-                if (contours[i].Length > maxLength)
-                {
-                    maxLength = contours[i].Length;
-                    maxInd = i;
-                }
-            }
-
-            var contour = contours[maxInd];
-
-            return contour;
+            return GetMaxContour(morphImg);
         }
+
         private Point[] CorrectContour(Point[] contour, float threshold)
         {
             if (contour == null || contour.Length < 5)
