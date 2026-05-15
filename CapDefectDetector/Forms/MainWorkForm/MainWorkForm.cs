@@ -32,6 +32,7 @@ namespace CapDefectDetector
         private Color _connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
         private Color _disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
         private bool _capsAreWhite = false;
+        private bool _recipeCapsAreWhite = false;
         private bool _manualDisconnect = false;
 
         // Регистры ПР205
@@ -123,7 +124,11 @@ namespace CapDefectDetector
         private static bool _isGreenColor = false;
         private static bool _isColored = true;
         private static bool _isYellowCap = false;
-        private bool _isBlackOrBrown = false;
+        private static bool _isBlackOrBrown = false;
+        private static bool _recipeIsGreenColor = false;
+        private static bool _recipeIsColored = true;
+        private static bool _recipeIsYellowCap = false;
+        private static bool _recipeIsBlackOrBrown = false;
         private static int _saturationColor = 0;
         private static int _saturationBlackOrBrown = 0;
         private static float _contourCorrectionColor = 1.15f;
@@ -2106,6 +2111,12 @@ namespace CapDefectDetector
             _isYellowCap = r.IsYellow;
             _capsAreWhite = r.IsWhite;
             _isBlackOrBrown = r.IsBlackOrBrown;
+
+            _recipeIsGreenColor = r.IsGreen;
+            _recipeIsColored = r.IsColored;
+            _recipeIsYellowCap = r.IsYellow;
+            _recipeCapsAreWhite = r.IsWhite;
+            _recipeIsBlackOrBrown = r.IsBlackOrBrown;
 
             // ---------- Параметры обработки ----------
             // Для цв/бцв крышек
@@ -5075,7 +5086,7 @@ namespace CapDefectDetector
 
             Point[] contour;
 
-            if (_isBlackOrBrown)
+            if (_recipeIsBlackOrBrown)
             {
                 contour = ProcessBlackOrBrown();
 
@@ -5183,9 +5194,9 @@ namespace CapDefectDetector
             NonlinearBackgroundDecolorization(
                 capsImg,
                 (byte)capcolorUpDown.Value,
-                _isColored,
-                _isYellowCap,
-                _isGreenColor
+                _recipeIsColored,
+                _recipeIsYellowCap,
+                _recipeIsGreenColor
             );
             capscolorColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
 
@@ -5449,11 +5460,11 @@ namespace CapDefectDetector
                 MedianFilter = (int)medianFilterUpDown.Value,
                 CannyThreshold = (int)cannyUpDown.Value,
 
-                IsGreen = _isGreenColor,
-                IsColored = _isColored,
-                IsYellow = _isYellowCap,
-                IsWhite = _capsAreWhite,
-                IsBlackOrBrown = _isBlackOrBrown,
+                IsGreen = _recipeIsGreenColor,
+                IsColored = _recipeIsColored,
+                IsYellow = _recipeIsYellowCap,
+                IsWhite = _recipeCapsAreWhite,
+                IsBlackOrBrown = _recipeIsBlackOrBrown,
             };
 
             // --- JSON с нормальной русской кодировкой ---
@@ -5554,7 +5565,7 @@ namespace CapDefectDetector
         private void isGreenCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _isGreenColor = isGreenCb.Checked;
+            _recipeIsGreenColor = isGreenCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -5562,7 +5573,7 @@ namespace CapDefectDetector
         private void isColorCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _isColored = isColorCb.Checked;
+            _recipeIsColored = isColorCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -5570,7 +5581,7 @@ namespace CapDefectDetector
         private void isYellowCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _isYellowCap = isYellowCb.Checked;
+            _recipeIsYellowCap = isYellowCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -5578,7 +5589,7 @@ namespace CapDefectDetector
         private void isWhiteCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _capsAreWhite = isWhiteCb.Checked;
+            _recipeCapsAreWhite = isWhiteCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -5586,7 +5597,7 @@ namespace CapDefectDetector
         private void isBlackOrBrownCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _isBlackOrBrown = isBlackOrBrownCb.Checked;
+            _recipeIsBlackOrBrown = isBlackOrBrownCb.Checked;
             UpdateColorModeUI();
             RecomputeAll();
         }
