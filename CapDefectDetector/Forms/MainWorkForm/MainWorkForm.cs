@@ -5188,6 +5188,7 @@ namespace CapDefectDetector
             return ContourToEllipse(edges);
         }
 
+
         private Point[] ProcessColor()
         {
             if (_imageOriginReceptParam == null || _imageOriginReceptParam.Empty())
