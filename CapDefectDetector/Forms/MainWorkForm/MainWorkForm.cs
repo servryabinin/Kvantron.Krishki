@@ -26,7 +26,6 @@ namespace CapDefectDetector
 {
     public partial class MainWorkForm : Form
     {
-
         #region Поля и константы
         // UI элементы
         private Color _connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
