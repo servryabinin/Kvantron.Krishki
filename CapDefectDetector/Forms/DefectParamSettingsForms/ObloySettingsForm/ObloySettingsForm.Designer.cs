@@ -64,6 +64,7 @@
             tableLayoutPanel4 = new TableLayoutPanel();
             obloySettings_minAreaObloyNumUd = new NumericUpDown();
             label7 = new Label();
+            label8 = new Label();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -177,6 +178,7 @@
             // 
             // tableLayoutPanel2
             // 
+            tableLayoutPanel2.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetPartial;
             tableLayoutPanel2.ColumnCount = 7;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857141F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857141F));
@@ -185,6 +187,7 @@
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857141F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857141F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857141F));
+            tableLayoutPanel2.Controls.Add(label8, 6, 1);
             tableLayoutPanel2.Controls.Add(label6, 5, 1);
             tableLayoutPanel2.Controls.Add(label5, 4, 1);
             tableLayoutPanel2.Controls.Add(label4, 3, 1);
@@ -215,7 +218,7 @@
             // 
             label6.Anchor = AnchorStyles.None;
             label6.AutoSize = true;
-            label6.Location = new Point(1115, 284);
+            label6.Location = new Point(1117, 281);
             label6.Name = "label6";
             label6.Size = new Size(167, 15);
             label6.TabIndex = 41;
@@ -225,7 +228,7 @@
             // 
             label5.Anchor = AnchorStyles.None;
             label5.AutoSize = true;
-            label5.Location = new Point(941, 284);
+            label5.Location = new Point(942, 281);
             label5.Name = "label5";
             label5.Size = new Size(80, 15);
             label5.TabIndex = 40;
@@ -235,7 +238,7 @@
             // 
             label4.Anchor = AnchorStyles.None;
             label4.AutoSize = true;
-            label4.Location = new Point(691, 284);
+            label4.Location = new Point(693, 281);
             label4.Name = "label4";
             label4.Size = new Size(143, 15);
             label4.TabIndex = 39;
@@ -245,7 +248,7 @@
             // 
             label3.Anchor = AnchorStyles.None;
             label3.AutoSize = true;
-            label3.Location = new Point(499, 284);
+            label3.Location = new Point(501, 281);
             label3.Name = "label3";
             label3.Size = new Size(91, 15);
             label3.TabIndex = 38;
@@ -255,7 +258,7 @@
             // 
             label31.Anchor = AnchorStyles.None;
             label31.AutoSize = true;
-            label31.Location = new Point(247, 284);
+            label31.Location = new Point(249, 281);
             label31.Name = "label31";
             label31.Size = new Size(159, 15);
             label31.TabIndex = 36;
@@ -265,7 +268,7 @@
             // 
             label30.Anchor = AnchorStyles.None;
             label30.AutoSize = true;
-            label30.Location = new Point(78, 284);
+            label30.Location = new Point(79, 281);
             label30.Name = "label30";
             label30.Size = new Size(62, 15);
             label30.TabIndex = 35;
@@ -274,9 +277,9 @@
             // obloySettings_obloyResultPb
             // 
             obloySettings_obloyResultPb.Dock = DockStyle.Fill;
-            obloySettings_obloyResultPb.Location = new Point(1311, 3);
+            obloySettings_obloyResultPb.Location = new Point(1314, 6);
             obloySettings_obloyResultPb.Name = "obloySettings_obloyResultPb";
-            obloySettings_obloyResultPb.Size = new Size(215, 268);
+            obloySettings_obloyResultPb.Size = new Size(209, 260);
             obloySettings_obloyResultPb.SizeMode = PictureBoxSizeMode.Zoom;
             obloySettings_obloyResultPb.TabIndex = 34;
             obloySettings_obloyResultPb.TabStop = false;
@@ -284,9 +287,9 @@
             // obloySettings_obloyContoursPb
             // 
             obloySettings_obloyContoursPb.Dock = DockStyle.Fill;
-            obloySettings_obloyContoursPb.Location = new Point(1093, 3);
+            obloySettings_obloyContoursPb.Location = new Point(1096, 6);
             obloySettings_obloyContoursPb.Name = "obloySettings_obloyContoursPb";
-            obloySettings_obloyContoursPb.Size = new Size(212, 268);
+            obloySettings_obloyContoursPb.Size = new Size(209, 260);
             obloySettings_obloyContoursPb.SizeMode = PictureBoxSizeMode.Zoom;
             obloySettings_obloyContoursPb.TabIndex = 33;
             obloySettings_obloyContoursPb.TabStop = false;
@@ -294,9 +297,9 @@
             // obloySettings_obloyMorphPb
             // 
             obloySettings_obloyMorphPb.Dock = DockStyle.Fill;
-            obloySettings_obloyMorphPb.Location = new Point(875, 3);
+            obloySettings_obloyMorphPb.Location = new Point(878, 6);
             obloySettings_obloyMorphPb.Name = "obloySettings_obloyMorphPb";
-            obloySettings_obloyMorphPb.Size = new Size(212, 268);
+            obloySettings_obloyMorphPb.Size = new Size(209, 260);
             obloySettings_obloyMorphPb.SizeMode = PictureBoxSizeMode.Zoom;
             obloySettings_obloyMorphPb.TabIndex = 32;
             obloySettings_obloyMorphPb.TabStop = false;
@@ -304,9 +307,9 @@
             // obloySettings_obloyAfterAndPb
             // 
             obloySettings_obloyAfterAndPb.Dock = DockStyle.Fill;
-            obloySettings_obloyAfterAndPb.Location = new Point(657, 3);
+            obloySettings_obloyAfterAndPb.Location = new Point(660, 6);
             obloySettings_obloyAfterAndPb.Name = "obloySettings_obloyAfterAndPb";
-            obloySettings_obloyAfterAndPb.Size = new Size(212, 268);
+            obloySettings_obloyAfterAndPb.Size = new Size(209, 260);
             obloySettings_obloyAfterAndPb.SizeMode = PictureBoxSizeMode.Zoom;
             obloySettings_obloyAfterAndPb.TabIndex = 11;
             obloySettings_obloyAfterAndPb.TabStop = false;
@@ -314,9 +317,9 @@
             // obloySettings_obloyBlurInputPb
             // 
             obloySettings_obloyBlurInputPb.Dock = DockStyle.Fill;
-            obloySettings_obloyBlurInputPb.Location = new Point(439, 3);
+            obloySettings_obloyBlurInputPb.Location = new Point(442, 6);
             obloySettings_obloyBlurInputPb.Name = "obloySettings_obloyBlurInputPb";
-            obloySettings_obloyBlurInputPb.Size = new Size(212, 268);
+            obloySettings_obloyBlurInputPb.Size = new Size(209, 260);
             obloySettings_obloyBlurInputPb.SizeMode = PictureBoxSizeMode.Zoom;
             obloySettings_obloyBlurInputPb.TabIndex = 10;
             obloySettings_obloyBlurInputPb.TabStop = false;
@@ -324,9 +327,9 @@
             // obloySettings_obloyCapMaskPb
             // 
             obloySettings_obloyCapMaskPb.Dock = DockStyle.Fill;
-            obloySettings_obloyCapMaskPb.Location = new Point(221, 3);
+            obloySettings_obloyCapMaskPb.Location = new Point(224, 6);
             obloySettings_obloyCapMaskPb.Name = "obloySettings_obloyCapMaskPb";
-            obloySettings_obloyCapMaskPb.Size = new Size(212, 268);
+            obloySettings_obloyCapMaskPb.Size = new Size(209, 260);
             obloySettings_obloyCapMaskPb.SizeMode = PictureBoxSizeMode.Zoom;
             obloySettings_obloyCapMaskPb.TabIndex = 9;
             obloySettings_obloyCapMaskPb.TabStop = false;
@@ -334,9 +337,9 @@
             // obloySettings_obloyOriginalPb
             // 
             obloySettings_obloyOriginalPb.Dock = DockStyle.Fill;
-            obloySettings_obloyOriginalPb.Location = new Point(3, 3);
+            obloySettings_obloyOriginalPb.Location = new Point(6, 6);
             obloySettings_obloyOriginalPb.Name = "obloySettings_obloyOriginalPb";
-            obloySettings_obloyOriginalPb.Size = new Size(212, 268);
+            obloySettings_obloyOriginalPb.Size = new Size(209, 260);
             obloySettings_obloyOriginalPb.SizeMode = PictureBoxSizeMode.Zoom;
             obloySettings_obloyOriginalPb.TabIndex = 1;
             obloySettings_obloyOriginalPb.TabStop = false;
@@ -349,21 +352,21 @@
             tableLayoutPanel3.Controls.Add(label1, 0, 0);
             tableLayoutPanel3.Controls.Add(obloySettings_capFlashOffsetNumUd, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(221, 312);
+            tableLayoutPanel3.Location = new Point(224, 312);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 4;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel3.Size = new Size(212, 141);
+            tableLayoutPanel3.Size = new Size(209, 138);
             tableLayoutPanel3.TabIndex = 37;
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(9, 2);
+            label1.Location = new Point(8, 2);
             label1.Name = "label1";
             label1.Size = new Size(119, 30);
             label1.TabIndex = 37;
@@ -372,11 +375,11 @@
             // obloySettings_capFlashOffsetNumUd
             // 
             obloySettings_capFlashOffsetNumUd.Anchor = AnchorStyles.None;
-            obloySettings_capFlashOffsetNumUd.Location = new Point(140, 6);
+            obloySettings_capFlashOffsetNumUd.Location = new Point(138, 5);
             obloySettings_capFlashOffsetNumUd.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             obloySettings_capFlashOffsetNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_capFlashOffsetNumUd.Name = "obloySettings_capFlashOffsetNumUd";
-            obloySettings_capFlashOffsetNumUd.Size = new Size(69, 23);
+            obloySettings_capFlashOffsetNumUd.Size = new Size(68, 23);
             obloySettings_capFlashOffsetNumUd.TabIndex = 16;
             obloySettings_capFlashOffsetNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -394,14 +397,14 @@
             tableLayoutPanel19.Controls.Add(obloySettings_obloyMorphShapeCb, 1, 2);
             tableLayoutPanel19.Controls.Add(obloySettings_obloyMorphIterNumUd, 1, 3);
             tableLayoutPanel19.Dock = DockStyle.Fill;
-            tableLayoutPanel19.Location = new Point(875, 312);
+            tableLayoutPanel19.Location = new Point(878, 312);
             tableLayoutPanel19.Name = "tableLayoutPanel19";
             tableLayoutPanel19.RowCount = 4;
             tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel19.Size = new Size(212, 141);
+            tableLayoutPanel19.Size = new Size(209, 138);
             tableLayoutPanel19.TabIndex = 31;
             // 
             // label14
@@ -410,7 +413,7 @@
             label14.AutoSize = true;
             label14.Font = new Font("Segoe UI", 7.8F);
             label14.ForeColor = Color.Black;
-            label14.Location = new Point(3, 116);
+            label14.Location = new Point(3, 113);
             label14.Name = "label14";
             label14.Size = new Size(127, 13);
             label14.TabIndex = 28;
@@ -422,9 +425,9 @@
             label13.AutoSize = true;
             label13.Font = new Font("Segoe UI", 7.8F);
             label13.ForeColor = Color.Black;
-            label13.Location = new Point(3, 74);
+            label13.Location = new Point(3, 68);
             label13.Name = "label13";
-            label13.Size = new Size(130, 26);
+            label13.Size = new Size(110, 34);
             label13.TabIndex = 27;
             label13.Text = "Тип структурирующего элемента:";
             // 
@@ -434,7 +437,7 @@
             label11.AutoSize = true;
             label11.Font = new Font("Segoe UI", 7.8F);
             label11.ForeColor = Color.Black;
-            label11.Location = new Point(3, 46);
+            label11.Location = new Point(3, 44);
             label11.Name = "label11";
             label11.Size = new Size(76, 13);
             label11.TabIndex = 26;
@@ -446,7 +449,7 @@
             label12.AutoSize = true;
             label12.Font = new Font("Segoe UI", 7.8F);
             label12.ForeColor = Color.Black;
-            label12.Location = new Point(3, 11);
+            label12.Location = new Point(3, 10);
             label12.Name = "label12";
             label12.Size = new Size(103, 13);
             label12.TabIndex = 25;
@@ -457,20 +460,20 @@
             obloySettings_obloyMorphTypeCb.Anchor = AnchorStyles.None;
             obloySettings_obloyMorphTypeCb.FormattingEnabled = true;
             obloySettings_obloyMorphTypeCb.Items.AddRange(new object[] { "Erode", "Dilate", "Open", "Close" });
-            obloySettings_obloyMorphTypeCb.Location = new Point(140, 6);
+            obloySettings_obloyMorphTypeCb.Location = new Point(138, 5);
             obloySettings_obloyMorphTypeCb.Name = "obloySettings_obloyMorphTypeCb";
-            obloySettings_obloyMorphTypeCb.Size = new Size(69, 23);
+            obloySettings_obloyMorphTypeCb.Size = new Size(68, 23);
             obloySettings_obloyMorphTypeCb.TabIndex = 5;
             // 
             // obloySettings_obloyKernelSizeNumUd
             // 
             obloySettings_obloyKernelSizeNumUd.Anchor = AnchorStyles.None;
             obloySettings_obloyKernelSizeNumUd.Increment = new decimal(new int[] { 2, 0, 0, 0 });
-            obloySettings_obloyKernelSizeNumUd.Location = new Point(140, 41);
+            obloySettings_obloyKernelSizeNumUd.Location = new Point(138, 39);
             obloySettings_obloyKernelSizeNumUd.Maximum = new decimal(new int[] { 11, 0, 0, 0 });
             obloySettings_obloyKernelSizeNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_obloyKernelSizeNumUd.Name = "obloySettings_obloyKernelSizeNumUd";
-            obloySettings_obloyKernelSizeNumUd.Size = new Size(69, 23);
+            obloySettings_obloyKernelSizeNumUd.Size = new Size(68, 23);
             obloySettings_obloyKernelSizeNumUd.TabIndex = 4;
             obloySettings_obloyKernelSizeNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -479,19 +482,19 @@
             obloySettings_obloyMorphShapeCb.Anchor = AnchorStyles.None;
             obloySettings_obloyMorphShapeCb.FormattingEnabled = true;
             obloySettings_obloyMorphShapeCb.Items.AddRange(new object[] { "Ellipse", "Rect", "Cross" });
-            obloySettings_obloyMorphShapeCb.Location = new Point(140, 76);
+            obloySettings_obloyMorphShapeCb.Location = new Point(138, 73);
             obloySettings_obloyMorphShapeCb.Name = "obloySettings_obloyMorphShapeCb";
-            obloySettings_obloyMorphShapeCb.Size = new Size(69, 23);
+            obloySettings_obloyMorphShapeCb.Size = new Size(68, 23);
             obloySettings_obloyMorphShapeCb.TabIndex = 6;
             // 
             // obloySettings_obloyMorphIterNumUd
             // 
             obloySettings_obloyMorphIterNumUd.Anchor = AnchorStyles.None;
-            obloySettings_obloyMorphIterNumUd.Location = new Point(140, 111);
+            obloySettings_obloyMorphIterNumUd.Location = new Point(138, 108);
             obloySettings_obloyMorphIterNumUd.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             obloySettings_obloyMorphIterNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_obloyMorphIterNumUd.Name = "obloySettings_obloyMorphIterNumUd";
-            obloySettings_obloyMorphIterNumUd.Size = new Size(69, 23);
+            obloySettings_obloyMorphIterNumUd.Size = new Size(68, 23);
             obloySettings_obloyMorphIterNumUd.TabIndex = 3;
             obloySettings_obloyMorphIterNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -503,24 +506,24 @@
             tableLayoutPanel4.Controls.Add(obloySettings_minAreaObloyNumUd, 1, 0);
             tableLayoutPanel4.Controls.Add(label7, 0, 0);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(1093, 312);
+            tableLayoutPanel4.Location = new Point(1096, 312);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 4;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel4.Size = new Size(212, 141);
+            tableLayoutPanel4.Size = new Size(209, 138);
             tableLayoutPanel4.TabIndex = 42;
             // 
             // obloySettings_minAreaObloyNumUd
             // 
             obloySettings_minAreaObloyNumUd.Anchor = AnchorStyles.None;
-            obloySettings_minAreaObloyNumUd.Location = new Point(140, 6);
+            obloySettings_minAreaObloyNumUd.Location = new Point(138, 5);
             obloySettings_minAreaObloyNumUd.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             obloySettings_minAreaObloyNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_minAreaObloyNumUd.Name = "obloySettings_minAreaObloyNumUd";
-            obloySettings_minAreaObloyNumUd.Size = new Size(69, 23);
+            obloySettings_minAreaObloyNumUd.Size = new Size(68, 23);
             obloySettings_minAreaObloyNumUd.TabIndex = 33;
             obloySettings_minAreaObloyNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -532,9 +535,19 @@
             label7.ForeColor = Color.Black;
             label7.Location = new Point(3, 4);
             label7.Name = "label7";
-            label7.Size = new Size(131, 26);
+            label7.Size = new Size(128, 26);
             label7.TabIndex = 26;
             label7.Text = "Минимальный размер облоя:";
+            // 
+            // label8
+            // 
+            label8.Anchor = AnchorStyles.None;
+            label8.AutoSize = true;
+            label8.Location = new Point(1402, 281);
+            label8.Name = "label8";
+            label8.Size = new Size(33, 15);
+            label8.TabIndex = 43;
+            label8.Text = "Итог";
             // 
             // ObloySettingsForm
             // 
@@ -606,5 +619,6 @@
         private Button obloySettings_loadImageForObloySettingsBt;
         private Button obloySettings_okBt;
         private Button obloySettings_cancelBt;
+        private Label label8;
     }
 }

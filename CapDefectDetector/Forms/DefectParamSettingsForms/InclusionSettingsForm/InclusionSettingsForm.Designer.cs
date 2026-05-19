@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InclusionSettingsForm));
             tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel4 = new TableLayoutPanel();
+            label15 = new Label();
             label10 = new Label();
             label3 = new Label();
             inclusionSettings_inclusionResultPb = new PictureBox();
@@ -55,27 +56,26 @@
             inclusionSettings_adaptiveThresholdTypesCb = new ComboBox();
             inclusionSettings_thresholdTypesCb = new ComboBox();
             tableLayoutPanel5 = new TableLayoutPanel();
+            inclusionSettings_iterationsNumUd = new NumericUpDown();
+            inclusionSettings_kernelSizeNumUd = new NumericUpDown();
+            inclusionSettings_morphTypesCb = new ComboBox();
             label11 = new Label();
             label12 = new Label();
             label13 = new Label();
             label14 = new Label();
             inclusionSettings_morphShapesCb = new ComboBox();
-            label2 = new Label();
-            inclusionSettings_okBt = new Button();
-            inclusionSettings_morphTypesCb = new ComboBox();
-            inclusionSettings_kernelSizeNumUd = new NumericUpDown();
-            inclusionSettings_iterationsNumUd = new NumericUpDown();
-            label15 = new Label();
             tableLayoutPanel6 = new TableLayoutPanel();
-            inclusionSettings_inclusionMaxSquareNumUd = new NumericUpDown();
-            inclusionSettings_inclusionMinSquareNumUd = new NumericUpDown();
-            inclusionSettings_inclusionCircleCoefNumUd = new NumericUpDown();
-            label24 = new Label();
-            label23 = new Label();
             label22 = new Label();
+            label23 = new Label();
+            label24 = new Label();
+            inclusionSettings_inclusionCircleCoefNumUd = new NumericUpDown();
+            inclusionSettings_inclusionMinSquareNumUd = new NumericUpDown();
+            inclusionSettings_inclusionMaxSquareNumUd = new NumericUpDown();
+            label2 = new Label();
             tableLayoutPanel7 = new TableLayoutPanel();
-            inclusionSettings_cancelBt = new Button();
             inclusionSettings_loadImageForInclusionSettingsBt = new Button();
+            inclusionSettings_okBt = new Button();
+            inclusionSettings_cancelBt = new Button();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionResultPb).BeginInit();
@@ -90,12 +90,12 @@
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_cNumUd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_blockSizeNumUd).BeginInit();
             tableLayoutPanel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)inclusionSettings_kernelSizeNumUd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_iterationsNumUd).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)inclusionSettings_kernelSizeNumUd).BeginInit();
             tableLayoutPanel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMaxSquareNumUd).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMinSquareNumUd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionCircleCoefNumUd).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMinSquareNumUd).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMaxSquareNumUd).BeginInit();
             tableLayoutPanel7.SuspendLayout();
             SuspendLayout();
             // 
@@ -152,6 +152,18 @@
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 30.8823528F));
             tableLayoutPanel4.Size = new Size(1431, 450);
             tableLayoutPanel4.TabIndex = 7;
+            // 
+            // label15
+            // 
+            label15.Anchor = AnchorStyles.None;
+            label15.AutoSize = true;
+            label15.Font = new Font("Segoe UI", 7.8F);
+            label15.ForeColor = Color.Black;
+            label15.Location = new Point(967, 285);
+            label15.Name = "label15";
+            label15.Size = new Size(204, 13);
+            label15.TabIndex = 32;
+            label15.Text = "Ограничения размеров вкраплений";
             // 
             // label10
             // 
@@ -412,18 +424,20 @@
             // 
             // inclusionSettings_adaptiveThresholdTypesCb
             // 
+            inclusionSettings_adaptiveThresholdTypesCb.Anchor = AnchorStyles.None;
             inclusionSettings_adaptiveThresholdTypesCb.FormattingEnabled = true;
             inclusionSettings_adaptiveThresholdTypesCb.Items.AddRange(new object[] { "MeanC", "GaussianC" });
-            inclusionSettings_adaptiveThresholdTypesCb.Location = new Point(151, 3);
+            inclusionSettings_adaptiveThresholdTypesCb.Location = new Point(151, 4);
             inclusionSettings_adaptiveThresholdTypesCb.Name = "inclusionSettings_adaptiveThresholdTypesCb";
             inclusionSettings_adaptiveThresholdTypesCb.Size = new Size(74, 23);
             inclusionSettings_adaptiveThresholdTypesCb.TabIndex = 28;
             // 
             // inclusionSettings_thresholdTypesCb
             // 
+            inclusionSettings_thresholdTypesCb.Anchor = AnchorStyles.None;
             inclusionSettings_thresholdTypesCb.FormattingEnabled = true;
             inclusionSettings_thresholdTypesCb.Items.AddRange(new object[] { "Binary", "BinaryInv" });
-            inclusionSettings_thresholdTypesCb.Location = new Point(151, 35);
+            inclusionSettings_thresholdTypesCb.Location = new Point(151, 36);
             inclusionSettings_thresholdTypesCb.Name = "inclusionSettings_thresholdTypesCb";
             inclusionSettings_thresholdTypesCb.Size = new Size(74, 23);
             inclusionSettings_thresholdTypesCb.TabIndex = 29;
@@ -451,6 +465,41 @@
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel5.Size = new Size(228, 130);
             tableLayoutPanel5.TabIndex = 31;
+            // 
+            // inclusionSettings_iterationsNumUd
+            // 
+            inclusionSettings_iterationsNumUd.Anchor = AnchorStyles.None;
+            inclusionSettings_iterationsNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inclusionSettings_iterationsNumUd.Location = new Point(151, 102);
+            inclusionSettings_iterationsNumUd.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            inclusionSettings_iterationsNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            inclusionSettings_iterationsNumUd.Name = "inclusionSettings_iterationsNumUd";
+            inclusionSettings_iterationsNumUd.Size = new Size(74, 21);
+            inclusionSettings_iterationsNumUd.TabIndex = 32;
+            inclusionSettings_iterationsNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            // 
+            // inclusionSettings_kernelSizeNumUd
+            // 
+            inclusionSettings_kernelSizeNumUd.Anchor = AnchorStyles.None;
+            inclusionSettings_kernelSizeNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inclusionSettings_kernelSizeNumUd.Increment = new decimal(new int[] { 2, 0, 0, 0 });
+            inclusionSettings_kernelSizeNumUd.Location = new Point(151, 37);
+            inclusionSettings_kernelSizeNumUd.Maximum = new decimal(new int[] { 15, 0, 0, 0 });
+            inclusionSettings_kernelSizeNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            inclusionSettings_kernelSizeNumUd.Name = "inclusionSettings_kernelSizeNumUd";
+            inclusionSettings_kernelSizeNumUd.Size = new Size(74, 21);
+            inclusionSettings_kernelSizeNumUd.TabIndex = 31;
+            inclusionSettings_kernelSizeNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            // 
+            // inclusionSettings_morphTypesCb
+            // 
+            inclusionSettings_morphTypesCb.Anchor = AnchorStyles.None;
+            inclusionSettings_morphTypesCb.FormattingEnabled = true;
+            inclusionSettings_morphTypesCb.Items.AddRange(new object[] { "Open", "Close", "Erode", "Dilate" });
+            inclusionSettings_morphTypesCb.Location = new Point(151, 4);
+            inclusionSettings_morphTypesCb.Name = "inclusionSettings_morphTypesCb";
+            inclusionSettings_morphTypesCb.Size = new Size(74, 23);
+            inclusionSettings_morphTypesCb.TabIndex = 30;
             // 
             // label11
             // 
@@ -502,87 +551,13 @@
             // 
             // inclusionSettings_morphShapesCb
             // 
+            inclusionSettings_morphShapesCb.Anchor = AnchorStyles.None;
             inclusionSettings_morphShapesCb.FormattingEnabled = true;
             inclusionSettings_morphShapesCb.Items.AddRange(new object[] { "Ellipse", "Rect", "Cross" });
-            inclusionSettings_morphShapesCb.Location = new Point(151, 67);
+            inclusionSettings_morphShapesCb.Location = new Point(151, 68);
             inclusionSettings_morphShapesCb.Name = "inclusionSettings_morphShapesCb";
             inclusionSettings_morphShapesCb.Size = new Size(74, 23);
             inclusionSettings_morphShapesCb.TabIndex = 29;
-            // 
-            // label2
-            // 
-            label2.BackColor = Color.FromArgb(4, 85, 191);
-            label2.BorderStyle = BorderStyle.Fixed3D;
-            label2.Dock = DockStyle.Fill;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(0, 0);
-            label2.Margin = new Padding(0);
-            label2.Name = "label2";
-            label2.Size = new Size(1437, 55);
-            label2.TabIndex = 1;
-            label2.Text = "Настройка параметров Вкрапления";
-            label2.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // inclusionSettings_okBt
-            // 
-            inclusionSettings_okBt.BackColor = Color.FromArgb(66, 133, 244);
-            inclusionSettings_okBt.Dock = DockStyle.Fill;
-            inclusionSettings_okBt.FlatAppearance.BorderSize = 0;
-            inclusionSettings_okBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            inclusionSettings_okBt.ForeColor = Color.White;
-            inclusionSettings_okBt.Location = new Point(1190, 3);
-            inclusionSettings_okBt.Name = "inclusionSettings_okBt";
-            inclusionSettings_okBt.Size = new Size(115, 35);
-            inclusionSettings_okBt.TabIndex = 6;
-            inclusionSettings_okBt.Text = "OK";
-            inclusionSettings_okBt.UseVisualStyleBackColor = false;
-            // 
-            // inclusionSettings_morphTypesCb
-            // 
-            inclusionSettings_morphTypesCb.FormattingEnabled = true;
-            inclusionSettings_morphTypesCb.Items.AddRange(new object[] { "Open", "Close", "Erode", "Dilate" });
-            inclusionSettings_morphTypesCb.Location = new Point(151, 3);
-            inclusionSettings_morphTypesCb.Name = "inclusionSettings_morphTypesCb";
-            inclusionSettings_morphTypesCb.Size = new Size(74, 23);
-            inclusionSettings_morphTypesCb.TabIndex = 30;
-            // 
-            // inclusionSettings_kernelSizeNumUd
-            // 
-            inclusionSettings_kernelSizeNumUd.Anchor = AnchorStyles.None;
-            inclusionSettings_kernelSizeNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inclusionSettings_kernelSizeNumUd.Increment = new decimal(new int[] { 2, 0, 0, 0 });
-            inclusionSettings_kernelSizeNumUd.Location = new Point(151, 37);
-            inclusionSettings_kernelSizeNumUd.Maximum = new decimal(new int[] { 15, 0, 0, 0 });
-            inclusionSettings_kernelSizeNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            inclusionSettings_kernelSizeNumUd.Name = "inclusionSettings_kernelSizeNumUd";
-            inclusionSettings_kernelSizeNumUd.Size = new Size(74, 21);
-            inclusionSettings_kernelSizeNumUd.TabIndex = 31;
-            inclusionSettings_kernelSizeNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
-            // 
-            // inclusionSettings_iterationsNumUd
-            // 
-            inclusionSettings_iterationsNumUd.Anchor = AnchorStyles.None;
-            inclusionSettings_iterationsNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inclusionSettings_iterationsNumUd.Location = new Point(151, 102);
-            inclusionSettings_iterationsNumUd.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
-            inclusionSettings_iterationsNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            inclusionSettings_iterationsNumUd.Name = "inclusionSettings_iterationsNumUd";
-            inclusionSettings_iterationsNumUd.Size = new Size(74, 21);
-            inclusionSettings_iterationsNumUd.TabIndex = 32;
-            inclusionSettings_iterationsNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
-            // 
-            // label15
-            // 
-            label15.Anchor = AnchorStyles.None;
-            label15.AutoSize = true;
-            label15.Font = new Font("Segoe UI", 7.8F);
-            label15.ForeColor = Color.Black;
-            label15.Location = new Point(967, 285);
-            label15.Name = "label15";
-            label15.Size = new Size(204, 13);
-            label15.TabIndex = 32;
-            label15.Text = "Ограничения размеров вкраплений";
             // 
             // tableLayoutPanel6
             // 
@@ -606,29 +581,41 @@
             tableLayoutPanel6.Size = new Size(228, 130);
             tableLayoutPanel6.TabIndex = 33;
             // 
-            // inclusionSettings_inclusionMaxSquareNumUd
+            // label22
             // 
-            inclusionSettings_inclusionMaxSquareNumUd.Anchor = AnchorStyles.None;
-            inclusionSettings_inclusionMaxSquareNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inclusionSettings_inclusionMaxSquareNumUd.Location = new Point(151, 37);
-            inclusionSettings_inclusionMaxSquareNumUd.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
-            inclusionSettings_inclusionMaxSquareNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            inclusionSettings_inclusionMaxSquareNumUd.Name = "inclusionSettings_inclusionMaxSquareNumUd";
-            inclusionSettings_inclusionMaxSquareNumUd.Size = new Size(74, 21);
-            inclusionSettings_inclusionMaxSquareNumUd.TabIndex = 31;
-            inclusionSettings_inclusionMaxSquareNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            label22.Anchor = AnchorStyles.Left;
+            label22.AutoSize = true;
+            label22.Font = new Font("Segoe UI", 7.8F);
+            label22.ForeColor = Color.Black;
+            label22.Location = new Point(3, 35);
+            label22.Name = "label22";
+            label22.Size = new Size(139, 26);
+            label22.TabIndex = 36;
+            label22.Text = "Максимальная площадь вкрапления:";
             // 
-            // inclusionSettings_inclusionMinSquareNumUd
+            // label23
             // 
-            inclusionSettings_inclusionMinSquareNumUd.Anchor = AnchorStyles.None;
-            inclusionSettings_inclusionMinSquareNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inclusionSettings_inclusionMinSquareNumUd.Location = new Point(151, 5);
-            inclusionSettings_inclusionMinSquareNumUd.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
-            inclusionSettings_inclusionMinSquareNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            inclusionSettings_inclusionMinSquareNumUd.Name = "inclusionSettings_inclusionMinSquareNumUd";
-            inclusionSettings_inclusionMinSquareNumUd.Size = new Size(74, 21);
-            inclusionSettings_inclusionMinSquareNumUd.TabIndex = 32;
-            inclusionSettings_inclusionMinSquareNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            label23.Anchor = AnchorStyles.Left;
+            label23.AutoSize = true;
+            label23.Font = new Font("Segoe UI", 7.8F);
+            label23.ForeColor = Color.Black;
+            label23.Location = new Point(3, 3);
+            label23.Name = "label23";
+            label23.Size = new Size(136, 26);
+            label23.TabIndex = 35;
+            label23.Text = "Минимальная площадь вкрапления:";
+            // 
+            // label24
+            // 
+            label24.Anchor = AnchorStyles.Left;
+            label24.AutoSize = true;
+            label24.Font = new Font("Segoe UI", 7.8F);
+            label24.ForeColor = Color.Black;
+            label24.Location = new Point(3, 67);
+            label24.Name = "label24";
+            label24.Size = new Size(138, 26);
+            label24.TabIndex = 34;
+            label24.Text = "Коэффициент округлости вкраплений:";
             // 
             // inclusionSettings_inclusionCircleCoefNumUd
             // 
@@ -644,41 +631,44 @@
             inclusionSettings_inclusionCircleCoefNumUd.TabIndex = 33;
             inclusionSettings_inclusionCircleCoefNumUd.Value = new decimal(new int[] { 6, 0, 0, 65536 });
             // 
-            // label24
+            // inclusionSettings_inclusionMinSquareNumUd
             // 
-            label24.Anchor = AnchorStyles.Left;
-            label24.AutoSize = true;
-            label24.Font = new Font("Segoe UI", 7.8F);
-            label24.ForeColor = Color.Black;
-            label24.Location = new Point(3, 67);
-            label24.Name = "label24";
-            label24.Size = new Size(138, 26);
-            label24.TabIndex = 34;
-            label24.Text = "Коэффициент округлости вкраплений:";
+            inclusionSettings_inclusionMinSquareNumUd.Anchor = AnchorStyles.None;
+            inclusionSettings_inclusionMinSquareNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inclusionSettings_inclusionMinSquareNumUd.Location = new Point(151, 5);
+            inclusionSettings_inclusionMinSquareNumUd.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            inclusionSettings_inclusionMinSquareNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            inclusionSettings_inclusionMinSquareNumUd.Name = "inclusionSettings_inclusionMinSquareNumUd";
+            inclusionSettings_inclusionMinSquareNumUd.Size = new Size(74, 21);
+            inclusionSettings_inclusionMinSquareNumUd.TabIndex = 32;
+            inclusionSettings_inclusionMinSquareNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
             // 
-            // label23
+            // inclusionSettings_inclusionMaxSquareNumUd
             // 
-            label23.Anchor = AnchorStyles.Left;
-            label23.AutoSize = true;
-            label23.Font = new Font("Segoe UI", 7.8F);
-            label23.ForeColor = Color.Black;
-            label23.Location = new Point(3, 3);
-            label23.Name = "label23";
-            label23.Size = new Size(136, 26);
-            label23.TabIndex = 35;
-            label23.Text = "Минимальная площадь вкрапления:";
+            inclusionSettings_inclusionMaxSquareNumUd.Anchor = AnchorStyles.None;
+            inclusionSettings_inclusionMaxSquareNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inclusionSettings_inclusionMaxSquareNumUd.Location = new Point(151, 37);
+            inclusionSettings_inclusionMaxSquareNumUd.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            inclusionSettings_inclusionMaxSquareNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            inclusionSettings_inclusionMaxSquareNumUd.Name = "inclusionSettings_inclusionMaxSquareNumUd";
+            inclusionSettings_inclusionMaxSquareNumUd.Size = new Size(74, 21);
+            inclusionSettings_inclusionMaxSquareNumUd.TabIndex = 31;
+            inclusionSettings_inclusionMaxSquareNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
             // 
-            // label22
+            // label2
             // 
-            label22.Anchor = AnchorStyles.Left;
-            label22.AutoSize = true;
-            label22.Font = new Font("Segoe UI", 7.8F);
-            label22.ForeColor = Color.Black;
-            label22.Location = new Point(3, 35);
-            label22.Name = "label22";
-            label22.Size = new Size(139, 26);
-            label22.TabIndex = 36;
-            label22.Text = "Максимальная площадь вкрапления:";
+            label2.BackColor = Color.FromArgb(4, 85, 191);
+            label2.BorderStyle = BorderStyle.Fixed3D;
+            label2.Dock = DockStyle.Fill;
+            label2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label2.ForeColor = Color.White;
+            label2.Location = new Point(0, 0);
+            label2.Margin = new Padding(0);
+            label2.Name = "label2";
+            label2.Size = new Size(1437, 55);
+            label2.TabIndex = 1;
+            label2.Text = "Настройка параметров Вкрапления";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel7
             // 
@@ -697,20 +687,6 @@
             tableLayoutPanel7.Size = new Size(1431, 41);
             tableLayoutPanel7.TabIndex = 8;
             // 
-            // inclusionSettings_cancelBt
-            // 
-            inclusionSettings_cancelBt.BackColor = Color.FromArgb(66, 133, 244);
-            inclusionSettings_cancelBt.Dock = DockStyle.Fill;
-            inclusionSettings_cancelBt.FlatAppearance.BorderSize = 0;
-            inclusionSettings_cancelBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            inclusionSettings_cancelBt.ForeColor = Color.White;
-            inclusionSettings_cancelBt.Location = new Point(1311, 3);
-            inclusionSettings_cancelBt.Name = "inclusionSettings_cancelBt";
-            inclusionSettings_cancelBt.Size = new Size(117, 35);
-            inclusionSettings_cancelBt.TabIndex = 7;
-            inclusionSettings_cancelBt.Text = "Отмена";
-            inclusionSettings_cancelBt.UseVisualStyleBackColor = false;
-            // 
             // inclusionSettings_loadImageForInclusionSettingsBt
             // 
             inclusionSettings_loadImageForInclusionSettingsBt.BackColor = Color.FromArgb(66, 133, 244);
@@ -724,6 +700,34 @@
             inclusionSettings_loadImageForInclusionSettingsBt.TabIndex = 8;
             inclusionSettings_loadImageForInclusionSettingsBt.Text = "Загрузить изображение с папки";
             inclusionSettings_loadImageForInclusionSettingsBt.UseVisualStyleBackColor = false;
+            // 
+            // inclusionSettings_okBt
+            // 
+            inclusionSettings_okBt.BackColor = Color.FromArgb(66, 133, 244);
+            inclusionSettings_okBt.Dock = DockStyle.Fill;
+            inclusionSettings_okBt.FlatAppearance.BorderSize = 0;
+            inclusionSettings_okBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            inclusionSettings_okBt.ForeColor = Color.White;
+            inclusionSettings_okBt.Location = new Point(1190, 3);
+            inclusionSettings_okBt.Name = "inclusionSettings_okBt";
+            inclusionSettings_okBt.Size = new Size(115, 35);
+            inclusionSettings_okBt.TabIndex = 6;
+            inclusionSettings_okBt.Text = "OK";
+            inclusionSettings_okBt.UseVisualStyleBackColor = false;
+            // 
+            // inclusionSettings_cancelBt
+            // 
+            inclusionSettings_cancelBt.BackColor = Color.FromArgb(66, 133, 244);
+            inclusionSettings_cancelBt.Dock = DockStyle.Fill;
+            inclusionSettings_cancelBt.FlatAppearance.BorderSize = 0;
+            inclusionSettings_cancelBt.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
+            inclusionSettings_cancelBt.ForeColor = Color.White;
+            inclusionSettings_cancelBt.Location = new Point(1311, 3);
+            inclusionSettings_cancelBt.Name = "inclusionSettings_cancelBt";
+            inclusionSettings_cancelBt.Size = new Size(117, 35);
+            inclusionSettings_cancelBt.TabIndex = 7;
+            inclusionSettings_cancelBt.Text = "Отмена";
+            inclusionSettings_cancelBt.UseVisualStyleBackColor = false;
             // 
             // InclusionSettingsForm
             // 
@@ -752,13 +756,13 @@
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_blockSizeNumUd).EndInit();
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)inclusionSettings_kernelSizeNumUd).EndInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_iterationsNumUd).EndInit();
+            ((System.ComponentModel.ISupportInitialize)inclusionSettings_kernelSizeNumUd).EndInit();
             tableLayoutPanel6.ResumeLayout(false);
             tableLayoutPanel6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMaxSquareNumUd).EndInit();
-            ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMinSquareNumUd).EndInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionCircleCoefNumUd).EndInit();
+            ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMinSquareNumUd).EndInit();
+            ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMaxSquareNumUd).EndInit();
             tableLayoutPanel7.ResumeLayout(false);
             ResumeLayout(false);
         }

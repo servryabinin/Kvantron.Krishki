@@ -31,14 +31,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWorkForm));
             pictureBox1 = new PictureBox();
             panel2 = new Panel();
-            groupBox2 = new GroupBox();
-            tableLayoutPanel41 = new TableLayoutPanel();
-            ovalityCoefNumUpD = new NumericUpDown();
-            label21 = new Label();
             cameraStatusLabel = new Label();
             label16 = new Label();
             label15 = new Label();
             camStatus = new Label();
+            ovalityCoefNumUpD = new NumericUpDown();
             tableLayoutPanel9 = new TableLayoutPanel();
             label75 = new Label();
             contourCorrectionColorReceptParamSmallPb = new PictureBox();
@@ -81,11 +78,9 @@
             saturationBlackOrBrownUpDown = new NumericUpDown();
             groupBox1 = new GroupBox();
             outputImageCmB = new ComboBox();
-            groupBox4 = new GroupBox();
             tableLayoutPanel44 = new TableLayoutPanel();
             obloyPixCountNumUpD = new NumericUpDown();
             label47 = new Label();
-            groupBox3 = new GroupBox();
             tableLayoutPanel42 = new TableLayoutPanel();
             coefCapRadiusInclusionUpD = new NumericUpDown();
             label60 = new Label();
@@ -95,7 +90,6 @@
             label22 = new Label();
             label24 = new Label();
             maxSquareInclusionNumUpD = new NumericUpDown();
-            groupBox5 = new GroupBox();
             tableLayoutPanel43 = new TableLayoutPanel();
             whiteThresoldNumUpD = new NumericUpDown();
             label29 = new Label();
@@ -210,16 +204,23 @@
             saveDefectSettingsNew = new Button();
             panel4 = new Panel();
             tableLayoutPanel40 = new TableLayoutPanel();
-            tableLayoutPanel50 = new TableLayoutPanel();
-            ovalityParamLb = new Label();
-            tableLayoutPanel51 = new TableLayoutPanel();
-            label77 = new Label();
-            groupBox13 = new GroupBox();
+            tableLayoutPanel54 = new TableLayoutPanel();
             tableLayoutPanel45 = new TableLayoutPanel();
             label62 = new Label();
             countCorrugationsNumUpD = new NumericUpDown();
             label61 = new Label();
             coefCapRadiusMaskUnderFillNumUpD = new NumericUpDown();
+            underfillParamLb = new Label();
+            tableLayoutPanel53 = new TableLayoutPanel();
+            obloyParamLb = new Label();
+            tableLayoutPanel52 = new TableLayoutPanel();
+            inpaintParamLb = new Label();
+            tableLayoutPanel41 = new TableLayoutPanel();
+            inclusionParamLb = new Label();
+            tableLayoutPanel50 = new TableLayoutPanel();
+            ovalityParamLb = new Label();
+            tableLayoutPanel51 = new TableLayoutPanel();
+            label77 = new Label();
             groupBox8 = new GroupBox();
             tableLayoutPanel27 = new TableLayoutPanel();
             testDefectParamBt = new Button();
@@ -320,8 +321,6 @@
             tableLayoutPanel16 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
-            groupBox2.SuspendLayout();
-            tableLayoutPanel41.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).BeginInit();
             tableLayoutPanel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)contourCorrectionColorReceptParamSmallPb).BeginInit();
@@ -349,16 +348,13 @@
             ((System.ComponentModel.ISupportInitialize)cannyUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)saturationBlackOrBrownUpDown).BeginInit();
             groupBox1.SuspendLayout();
-            groupBox4.SuspendLayout();
             tableLayoutPanel44.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)obloyPixCountNumUpD).BeginInit();
-            groupBox3.SuspendLayout();
             tableLayoutPanel42.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)coefCapRadiusInclusionUpD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)minSquareInclusionNumUpD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)circleCoefNumUpD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)maxSquareInclusionNumUpD).BeginInit();
-            groupBox5.SuspendLayout();
             tableLayoutPanel43.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)whiteThresoldNumUpD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)minSquareInpaintNumUpD).BeginInit();
@@ -392,12 +388,15 @@
             tableLayoutPanel46.SuspendLayout();
             panel4.SuspendLayout();
             tableLayoutPanel40.SuspendLayout();
-            tableLayoutPanel50.SuspendLayout();
-            tableLayoutPanel51.SuspendLayout();
-            groupBox13.SuspendLayout();
+            tableLayoutPanel54.SuspendLayout();
             tableLayoutPanel45.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)countCorrugationsNumUpD).BeginInit();
             ((System.ComponentModel.ISupportInitialize)coefCapRadiusMaskUnderFillNumUpD).BeginInit();
+            tableLayoutPanel53.SuspendLayout();
+            tableLayoutPanel52.SuspendLayout();
+            tableLayoutPanel41.SuspendLayout();
+            tableLayoutPanel50.SuspendLayout();
+            tableLayoutPanel51.SuspendLayout();
             groupBox8.SuspendLayout();
             tableLayoutPanel27.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)testingResultPb).BeginInit();
@@ -466,7 +465,6 @@
             // panel2
             // 
             panel2.BorderStyle = BorderStyle.Fixed3D;
-            panel2.Controls.Add(groupBox2);
             panel2.Controls.Add(cameraStatusLabel);
             panel2.Controls.Add(label16);
             panel2.Controls.Add(label15);
@@ -476,60 +474,6 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(1095, 151);
             panel2.TabIndex = 9;
-            // 
-            // groupBox2
-            // 
-            groupBox2.BackColor = Color.White;
-            groupBox2.Controls.Add(tableLayoutPanel41);
-            groupBox2.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox2.ForeColor = Color.Black;
-            groupBox2.Location = new Point(542, 48);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(285, 80);
-            groupBox2.TabIndex = 9;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Овальность";
-            // 
-            // tableLayoutPanel41
-            // 
-            tableLayoutPanel41.ColumnCount = 1;
-            tableLayoutPanel41.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel41.Controls.Add(label21, 0, 0);
-            tableLayoutPanel41.Dock = DockStyle.Fill;
-            tableLayoutPanel41.Location = new Point(3, 17);
-            tableLayoutPanel41.Name = "tableLayoutPanel41";
-            tableLayoutPanel41.RowCount = 2;
-            tableLayoutPanel41.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel41.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel41.Size = new Size(279, 60);
-            tableLayoutPanel41.TabIndex = 4;
-            // 
-            // ovalityCoefNumUpD
-            // 
-            ovalityCoefNumUpD.Anchor = AnchorStyles.Left;
-            ovalityCoefNumUpD.DecimalPlaces = 3;
-            ovalityCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            ovalityCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
-            ovalityCoefNumUpD.Location = new Point(3, 20);
-            ovalityCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
-            ovalityCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
-            ovalityCoefNumUpD.Name = "ovalityCoefNumUpD";
-            ovalityCoefNumUpD.Size = new Size(100, 21);
-            ovalityCoefNumUpD.TabIndex = 9;
-            ovalityCoefNumUpD.Value = new decimal(new int[] { 96, 0, 0, 131072 });
-            ovalityCoefNumUpD.ValueChanged += ovalityCoefNumUpD_ValueChanged;
-            // 
-            // label21
-            // 
-            label21.Anchor = AnchorStyles.Left;
-            label21.AutoSize = true;
-            label21.Font = new Font("Segoe UI", 7.8F);
-            label21.ForeColor = SystemColors.ActiveCaptionText;
-            label21.Location = new Point(3, 8);
-            label21.Name = "label21";
-            label21.Size = new Size(150, 13);
-            label21.TabIndex = 7;
-            label21.Text = "Коэффициент овальности:";
             // 
             // cameraStatusLabel
             // 
@@ -574,6 +518,21 @@
             camStatus.Size = new Size(94, 13);
             camStatus.TabIndex = 2;
             camStatus.Text = "Не подключена";
+            // 
+            // ovalityCoefNumUpD
+            // 
+            ovalityCoefNumUpD.Anchor = AnchorStyles.Left;
+            ovalityCoefNumUpD.DecimalPlaces = 3;
+            ovalityCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            ovalityCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
+            ovalityCoefNumUpD.Location = new Point(3, 27);
+            ovalityCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            ovalityCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
+            ovalityCoefNumUpD.Name = "ovalityCoefNumUpD";
+            ovalityCoefNumUpD.Size = new Size(100, 21);
+            ovalityCoefNumUpD.TabIndex = 9;
+            ovalityCoefNumUpD.Value = new decimal(new int[] { 96, 0, 0, 131072 });
+            ovalityCoefNumUpD.ValueChanged += ovalityCoefNumUpD_ValueChanged;
             // 
             // tableLayoutPanel9
             // 
@@ -1143,20 +1102,6 @@
             outputImageCmB.TabIndex = 0;
             outputImageCmB.SelectedIndexChanged += outputImageCmB_SelectedIndexChanged;
             // 
-            // groupBox4
-            // 
-            groupBox4.BackColor = Color.White;
-            groupBox4.Controls.Add(tableLayoutPanel44);
-            groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox4.ForeColor = Color.Black;
-            groupBox4.Location = new Point(3, 485);
-            groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(285, 81);
-            groupBox4.TabIndex = 13;
-            groupBox4.TabStop = false;
-            groupBox4.Text = "Облой";
-            // 
             // tableLayoutPanel44
             // 
             tableLayoutPanel44.ColumnCount = 1;
@@ -1164,18 +1109,19 @@
             tableLayoutPanel44.Controls.Add(obloyPixCountNumUpD, 0, 1);
             tableLayoutPanel44.Controls.Add(label47, 0, 0);
             tableLayoutPanel44.Dock = DockStyle.Fill;
-            tableLayoutPanel44.Location = new Point(3, 17);
+            tableLayoutPanel44.Location = new Point(2, 24);
+            tableLayoutPanel44.Margin = new Padding(0);
             tableLayoutPanel44.Name = "tableLayoutPanel44";
             tableLayoutPanel44.RowCount = 2;
             tableLayoutPanel44.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel44.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel44.Size = new Size(279, 61);
+            tableLayoutPanel44.Size = new Size(281, 55);
             tableLayoutPanel44.TabIndex = 4;
             // 
             // obloyPixCountNumUpD
             // 
             obloyPixCountNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            obloyPixCountNumUpD.Location = new Point(3, 33);
+            obloyPixCountNumUpD.Location = new Point(3, 30);
             obloyPixCountNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             obloyPixCountNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             obloyPixCountNumUpD.Name = "obloyPixCountNumUpD";
@@ -1190,25 +1136,11 @@
             label47.AutoSize = true;
             label47.Font = new Font("Segoe UI", 7.8F);
             label47.ForeColor = Color.Black;
-            label47.Location = new Point(3, 8);
+            label47.Location = new Point(3, 7);
             label47.Name = "label47";
             label47.Size = new Size(172, 13);
             label47.TabIndex = 7;
             label47.Text = "Минимальная площадь облоя:";
-            // 
-            // groupBox3
-            // 
-            groupBox3.BackColor = Color.White;
-            groupBox3.Controls.Add(tableLayoutPanel42);
-            groupBox3.Dock = DockStyle.Fill;
-            groupBox3.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold);
-            groupBox3.ForeColor = Color.Black;
-            groupBox3.Location = new Point(3, 89);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(285, 243);
-            groupBox3.TabIndex = 10;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "Вкрапления";
             // 
             // tableLayoutPanel42
             // 
@@ -1222,8 +1154,8 @@
             tableLayoutPanel42.Controls.Add(label22, 0, 4);
             tableLayoutPanel42.Controls.Add(label24, 0, 6);
             tableLayoutPanel42.Controls.Add(maxSquareInclusionNumUpD, 0, 5);
-            tableLayoutPanel42.Dock = DockStyle.Fill;
-            tableLayoutPanel42.Location = new Point(3, 17);
+            tableLayoutPanel42.Location = new Point(2, 22);
+            tableLayoutPanel42.Margin = new Padding(0);
             tableLayoutPanel42.Name = "tableLayoutPanel42";
             tableLayoutPanel42.RowCount = 8;
             tableLayoutPanel42.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
@@ -1234,7 +1166,7 @@
             tableLayoutPanel42.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             tableLayoutPanel42.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             tableLayoutPanel42.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
-            tableLayoutPanel42.Size = new Size(279, 223);
+            tableLayoutPanel42.Size = new Size(279, 216);
             tableLayoutPanel42.TabIndex = 4;
             // 
             // coefCapRadiusInclusionUpD
@@ -1295,7 +1227,7 @@
             circleCoefNumUpD.DecimalPlaces = 2;
             circleCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             circleCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            circleCoefNumUpD.Location = new Point(3, 195);
+            circleCoefNumUpD.Location = new Point(3, 192);
             circleCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             circleCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
             circleCoefNumUpD.Name = "circleCoefNumUpD";
@@ -1340,20 +1272,6 @@
             maxSquareInclusionNumUpD.Value = new decimal(new int[] { 500, 0, 0, 0 });
             maxSquareInclusionNumUpD.ValueChanged += maxSquareInclusionNumUpD_ValueChanged;
             // 
-            // groupBox5
-            // 
-            groupBox5.BackColor = Color.White;
-            groupBox5.Controls.Add(tableLayoutPanel43);
-            groupBox5.Dock = DockStyle.Fill;
-            groupBox5.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox5.ForeColor = Color.Black;
-            groupBox5.Location = new Point(3, 338);
-            groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(285, 141);
-            groupBox5.TabIndex = 11;
-            groupBox5.TabStop = false;
-            groupBox5.Text = "Непрокрас";
-            // 
             // tableLayoutPanel43
             // 
             tableLayoutPanel43.ColumnCount = 1;
@@ -1362,22 +1280,22 @@
             tableLayoutPanel43.Controls.Add(label29, 0, 0);
             tableLayoutPanel43.Controls.Add(label28, 0, 2);
             tableLayoutPanel43.Controls.Add(minSquareInpaintNumUpD, 0, 1);
-            tableLayoutPanel43.Dock = DockStyle.Fill;
-            tableLayoutPanel43.Location = new Point(3, 17);
+            tableLayoutPanel43.Location = new Point(2, 24);
+            tableLayoutPanel43.Margin = new Padding(0);
             tableLayoutPanel43.Name = "tableLayoutPanel43";
             tableLayoutPanel43.RowCount = 4;
             tableLayoutPanel43.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel43.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel43.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel43.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel43.Size = new Size(279, 121);
+            tableLayoutPanel43.Size = new Size(279, 113);
             tableLayoutPanel43.TabIndex = 4;
             // 
             // whiteThresoldNumUpD
             // 
             whiteThresoldNumUpD.Anchor = AnchorStyles.Left;
             whiteThresoldNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            whiteThresoldNumUpD.Location = new Point(3, 95);
+            whiteThresoldNumUpD.Location = new Point(3, 88);
             whiteThresoldNumUpD.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             whiteThresoldNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             whiteThresoldNumUpD.Name = "whiteThresoldNumUpD";
@@ -1392,7 +1310,7 @@
             label29.AutoSize = true;
             label29.Font = new Font("Segoe UI", 7.8F);
             label29.ForeColor = Color.Black;
-            label29.Location = new Point(3, 8);
+            label29.Location = new Point(3, 7);
             label29.Name = "label29";
             label29.Size = new Size(203, 13);
             label29.TabIndex = 36;
@@ -1404,7 +1322,7 @@
             label28.AutoSize = true;
             label28.Font = new Font("Segoe UI", 7.8F);
             label28.ForeColor = Color.Black;
-            label28.Location = new Point(3, 68);
+            label28.Location = new Point(3, 63);
             label28.Name = "label28";
             label28.Size = new Size(172, 13);
             label28.TabIndex = 38;
@@ -1414,7 +1332,7 @@
             // 
             minSquareInpaintNumUpD.Anchor = AnchorStyles.Left;
             minSquareInpaintNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            minSquareInpaintNumUpD.Location = new Point(3, 34);
+            minSquareInpaintNumUpD.Location = new Point(3, 31);
             minSquareInpaintNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             minSquareInpaintNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             minSquareInpaintNumUpD.Name = "minSquareInpaintNumUpD";
@@ -2918,11 +2836,11 @@
             tableLayoutPanel40.ColumnCount = 1;
             tableLayoutPanel40.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel40.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel40.Controls.Add(groupBox4, 0, 3);
+            tableLayoutPanel40.Controls.Add(tableLayoutPanel54, 0, 4);
+            tableLayoutPanel40.Controls.Add(tableLayoutPanel53, 0, 3);
+            tableLayoutPanel40.Controls.Add(tableLayoutPanel52, 0, 2);
+            tableLayoutPanel40.Controls.Add(tableLayoutPanel41, 0, 1);
             tableLayoutPanel40.Controls.Add(tableLayoutPanel50, 0, 0);
-            tableLayoutPanel40.Controls.Add(groupBox3, 0, 1);
-            tableLayoutPanel40.Controls.Add(groupBox5, 0, 2);
-            tableLayoutPanel40.Controls.Add(groupBox13, 0, 4);
             tableLayoutPanel40.Dock = DockStyle.Fill;
             tableLayoutPanel40.Location = new Point(0, 0);
             tableLayoutPanel40.Name = "tableLayoutPanel40";
@@ -2935,75 +2853,22 @@
             tableLayoutPanel40.Size = new Size(291, 710);
             tableLayoutPanel40.TabIndex = 4;
             // 
-            // tableLayoutPanel50
+            // tableLayoutPanel54
             // 
-            tableLayoutPanel50.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
-            tableLayoutPanel50.ColumnCount = 1;
-            tableLayoutPanel50.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel50.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel50.Controls.Add(ovalityParamLb, 0, 0);
-            tableLayoutPanel50.Controls.Add(tableLayoutPanel51, 0, 1);
-            tableLayoutPanel50.Dock = DockStyle.Fill;
-            tableLayoutPanel50.Location = new Point(3, 3);
-            tableLayoutPanel50.Name = "tableLayoutPanel50";
-            tableLayoutPanel50.RowCount = 2;
-            tableLayoutPanel50.RowStyles.Add(new RowStyle(SizeType.Percent, 25.9740257F));
-            tableLayoutPanel50.RowStyles.Add(new RowStyle(SizeType.Percent, 74.02597F));
-            tableLayoutPanel50.Size = new Size(285, 80);
-            tableLayoutPanel50.TabIndex = 4;
-            // 
-            // ovalityParamLb
-            // 
-            ovalityParamLb.Anchor = AnchorStyles.None;
-            ovalityParamLb.AutoSize = true;
-            ovalityParamLb.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            ovalityParamLb.ForeColor = Color.Black;
-            ovalityParamLb.Location = new Point(107, 5);
-            ovalityParamLb.Name = "ovalityParamLb";
-            ovalityParamLb.Size = new Size(70, 13);
-            ovalityParamLb.TabIndex = 22;
-            ovalityParamLb.Text = "Овальность";
-            // 
-            // tableLayoutPanel51
-            // 
-            tableLayoutPanel51.ColumnCount = 1;
-            tableLayoutPanel51.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel51.Controls.Add(ovalityCoefNumUpD, 0, 1);
-            tableLayoutPanel51.Controls.Add(label77, 0, 0);
-            tableLayoutPanel51.Dock = DockStyle.Fill;
-            tableLayoutPanel51.Location = new Point(6, 27);
-            tableLayoutPanel51.Name = "tableLayoutPanel51";
-            tableLayoutPanel51.RowCount = 2;
-            tableLayoutPanel51.RowStyles.Add(new RowStyle(SizeType.Percent, 32.55814F));
-            tableLayoutPanel51.RowStyles.Add(new RowStyle(SizeType.Percent, 67.441864F));
-            tableLayoutPanel51.Size = new Size(273, 47);
-            tableLayoutPanel51.TabIndex = 5;
-            // 
-            // label77
-            // 
-            label77.Anchor = AnchorStyles.Left;
-            label77.AutoSize = true;
-            label77.Font = new Font("Segoe UI", 7.8F);
-            label77.ForeColor = SystemColors.ActiveCaptionText;
-            label77.Location = new Point(3, 1);
-            label77.Name = "label77";
-            label77.Size = new Size(150, 13);
-            label77.TabIndex = 7;
-            label77.Text = "Коэффициент овальности:";
-            // 
-            // groupBox13
-            // 
-            groupBox13.BackColor = Color.White;
-            groupBox13.Controls.Add(tableLayoutPanel45);
-            groupBox13.Dock = DockStyle.Fill;
-            groupBox13.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            groupBox13.ForeColor = Color.Black;
-            groupBox13.Location = new Point(3, 572);
-            groupBox13.Name = "groupBox13";
-            groupBox13.Size = new Size(285, 135);
-            groupBox13.TabIndex = 14;
-            groupBox13.TabStop = false;
-            groupBox13.Text = "Недолив";
+            tableLayoutPanel54.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel54.ColumnCount = 1;
+            tableLayoutPanel54.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel54.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel54.Controls.Add(tableLayoutPanel45, 0, 1);
+            tableLayoutPanel54.Controls.Add(underfillParamLb, 0, 0);
+            tableLayoutPanel54.Dock = DockStyle.Fill;
+            tableLayoutPanel54.Location = new Point(3, 572);
+            tableLayoutPanel54.Name = "tableLayoutPanel54";
+            tableLayoutPanel54.RowCount = 2;
+            tableLayoutPanel54.RowStyles.Add(new RowStyle(SizeType.Percent, 18.181818F));
+            tableLayoutPanel54.RowStyles.Add(new RowStyle(SizeType.Percent, 81.8181839F));
+            tableLayoutPanel54.Size = new Size(285, 135);
+            tableLayoutPanel54.TabIndex = 5;
             // 
             // tableLayoutPanel45
             // 
@@ -3014,14 +2879,15 @@
             tableLayoutPanel45.Controls.Add(label61, 0, 2);
             tableLayoutPanel45.Controls.Add(coefCapRadiusMaskUnderFillNumUpD, 0, 1);
             tableLayoutPanel45.Dock = DockStyle.Fill;
-            tableLayoutPanel45.Location = new Point(3, 17);
+            tableLayoutPanel45.Location = new Point(2, 27);
+            tableLayoutPanel45.Margin = new Padding(0);
             tableLayoutPanel45.Name = "tableLayoutPanel45";
             tableLayoutPanel45.RowCount = 4;
             tableLayoutPanel45.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel45.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel45.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel45.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel45.Size = new Size(279, 115);
+            tableLayoutPanel45.Size = new Size(281, 106);
             tableLayoutPanel45.TabIndex = 4;
             // 
             // label62
@@ -3030,7 +2896,7 @@
             label62.AutoSize = true;
             label62.Font = new Font("Segoe UI", 7.8F);
             label62.ForeColor = Color.Black;
-            label62.Location = new Point(3, 7);
+            label62.Location = new Point(3, 6);
             label62.Name = "label62";
             label62.Size = new Size(203, 13);
             label62.TabIndex = 44;
@@ -3039,7 +2905,7 @@
             // countCorrugationsNumUpD
             // 
             countCorrugationsNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            countCorrugationsNumUpD.Location = new Point(3, 87);
+            countCorrugationsNumUpD.Location = new Point(3, 81);
             countCorrugationsNumUpD.Maximum = new decimal(new int[] { 15, 0, 0, 0 });
             countCorrugationsNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             countCorrugationsNumUpD.Name = "countCorrugationsNumUpD";
@@ -3054,7 +2920,7 @@
             label61.AutoSize = true;
             label61.Font = new Font("Segoe UI", 7.8F);
             label61.ForeColor = Color.Black;
-            label61.Location = new Point(3, 63);
+            label61.Location = new Point(3, 58);
             label61.Name = "label61";
             label61.Size = new Size(177, 13);
             label61.TabIndex = 7;
@@ -3065,7 +2931,7 @@
             coefCapRadiusMaskUnderFillNumUpD.DecimalPlaces = 2;
             coefCapRadiusMaskUnderFillNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             coefCapRadiusMaskUnderFillNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            coefCapRadiusMaskUnderFillNumUpD.Location = new Point(3, 31);
+            coefCapRadiusMaskUnderFillNumUpD.Location = new Point(3, 29);
             coefCapRadiusMaskUnderFillNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             coefCapRadiusMaskUnderFillNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
             coefCapRadiusMaskUnderFillNumUpD.Name = "coefCapRadiusMaskUnderFillNumUpD";
@@ -3073,6 +2939,164 @@
             coefCapRadiusMaskUnderFillNumUpD.TabIndex = 43;
             coefCapRadiusMaskUnderFillNumUpD.Value = new decimal(new int[] { 8, 0, 0, 65536 });
             coefCapRadiusMaskUnderFillNumUpD.ValueChanged += coefCapRadiusMaskUnderFillNumUpD_ValueChanged;
+            // 
+            // underfillParamLb
+            // 
+            underfillParamLb.Anchor = AnchorStyles.None;
+            underfillParamLb.AutoSize = true;
+            underfillParamLb.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            underfillParamLb.ForeColor = Color.Black;
+            underfillParamLb.Location = new Point(115, 7);
+            underfillParamLb.Name = "underfillParamLb";
+            underfillParamLb.Size = new Size(55, 13);
+            underfillParamLb.TabIndex = 26;
+            underfillParamLb.Text = "Недолив";
+            underfillParamLb.Click += underfillParamLb_Click;
+            // 
+            // tableLayoutPanel53
+            // 
+            tableLayoutPanel53.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel53.ColumnCount = 1;
+            tableLayoutPanel53.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel53.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel53.Controls.Add(tableLayoutPanel44, 0, 1);
+            tableLayoutPanel53.Controls.Add(obloyParamLb, 0, 0);
+            tableLayoutPanel53.Dock = DockStyle.Fill;
+            tableLayoutPanel53.Location = new Point(3, 485);
+            tableLayoutPanel53.Name = "tableLayoutPanel53";
+            tableLayoutPanel53.RowCount = 2;
+            tableLayoutPanel53.RowStyles.Add(new RowStyle(SizeType.Percent, 27.1604939F));
+            tableLayoutPanel53.RowStyles.Add(new RowStyle(SizeType.Percent, 72.83951F));
+            tableLayoutPanel53.Size = new Size(285, 81);
+            tableLayoutPanel53.TabIndex = 5;
+            // 
+            // obloyParamLb
+            // 
+            obloyParamLb.Anchor = AnchorStyles.None;
+            obloyParamLb.AutoSize = true;
+            obloyParamLb.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            obloyParamLb.ForeColor = Color.Black;
+            obloyParamLb.Location = new Point(121, 5);
+            obloyParamLb.Name = "obloyParamLb";
+            obloyParamLb.Size = new Size(43, 13);
+            obloyParamLb.TabIndex = 25;
+            obloyParamLb.Text = "Облой";
+            obloyParamLb.Click += obloyParamLb_Click;
+            // 
+            // tableLayoutPanel52
+            // 
+            tableLayoutPanel52.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel52.ColumnCount = 1;
+            tableLayoutPanel52.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel52.Controls.Add(inpaintParamLb, 0, 0);
+            tableLayoutPanel52.Controls.Add(tableLayoutPanel43, 0, 1);
+            tableLayoutPanel52.Dock = DockStyle.Fill;
+            tableLayoutPanel52.Location = new Point(3, 338);
+            tableLayoutPanel52.Name = "tableLayoutPanel52";
+            tableLayoutPanel52.RowCount = 2;
+            tableLayoutPanel52.RowStyles.Add(new RowStyle(SizeType.Percent, 15F));
+            tableLayoutPanel52.RowStyles.Add(new RowStyle(SizeType.Percent, 85F));
+            tableLayoutPanel52.Size = new Size(285, 141);
+            tableLayoutPanel52.TabIndex = 4;
+            // 
+            // inpaintParamLb
+            // 
+            inpaintParamLb.Anchor = AnchorStyles.None;
+            inpaintParamLb.AutoSize = true;
+            inpaintParamLb.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            inpaintParamLb.ForeColor = Color.Black;
+            inpaintParamLb.Location = new Point(109, 5);
+            inpaintParamLb.Name = "inpaintParamLb";
+            inpaintParamLb.Size = new Size(66, 13);
+            inpaintParamLb.TabIndex = 24;
+            inpaintParamLb.Text = "Непрокрас";
+            inpaintParamLb.Click += inpaintParamLb_Click;
+            // 
+            // tableLayoutPanel41
+            // 
+            tableLayoutPanel41.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel41.ColumnCount = 1;
+            tableLayoutPanel41.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel41.Controls.Add(tableLayoutPanel42, 0, 1);
+            tableLayoutPanel41.Controls.Add(inclusionParamLb, 0, 0);
+            tableLayoutPanel41.Dock = DockStyle.Fill;
+            tableLayoutPanel41.Location = new Point(3, 89);
+            tableLayoutPanel41.Name = "tableLayoutPanel41";
+            tableLayoutPanel41.RowCount = 2;
+            tableLayoutPanel41.RowStyles.Add(new RowStyle(SizeType.Percent, 8F));
+            tableLayoutPanel41.RowStyles.Add(new RowStyle(SizeType.Percent, 92F));
+            tableLayoutPanel41.Size = new Size(285, 243);
+            tableLayoutPanel41.TabIndex = 4;
+            // 
+            // inclusionParamLb
+            // 
+            inclusionParamLb.Anchor = AnchorStyles.None;
+            inclusionParamLb.AutoSize = true;
+            inclusionParamLb.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            inclusionParamLb.ForeColor = Color.Black;
+            inclusionParamLb.Location = new Point(106, 4);
+            inclusionParamLb.Name = "inclusionParamLb";
+            inclusionParamLb.Size = new Size(73, 13);
+            inclusionParamLb.TabIndex = 23;
+            inclusionParamLb.Text = "Вкрапления";
+            inclusionParamLb.Click += inclusionParamLb_Click;
+            // 
+            // tableLayoutPanel50
+            // 
+            tableLayoutPanel50.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tableLayoutPanel50.ColumnCount = 1;
+            tableLayoutPanel50.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel50.Controls.Add(ovalityParamLb, 0, 0);
+            tableLayoutPanel50.Controls.Add(tableLayoutPanel51, 0, 1);
+            tableLayoutPanel50.Dock = DockStyle.Fill;
+            tableLayoutPanel50.Location = new Point(3, 3);
+            tableLayoutPanel50.Name = "tableLayoutPanel50";
+            tableLayoutPanel50.RowCount = 2;
+            tableLayoutPanel50.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel50.RowStyles.Add(new RowStyle(SizeType.Percent, 75F));
+            tableLayoutPanel50.Size = new Size(285, 80);
+            tableLayoutPanel50.TabIndex = 4;
+            // 
+            // ovalityParamLb
+            // 
+            ovalityParamLb.Anchor = AnchorStyles.None;
+            ovalityParamLb.AutoSize = true;
+            ovalityParamLb.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            ovalityParamLb.ForeColor = Color.Black;
+            ovalityParamLb.Location = new Point(107, 4);
+            ovalityParamLb.Name = "ovalityParamLb";
+            ovalityParamLb.Size = new Size(70, 13);
+            ovalityParamLb.TabIndex = 22;
+            ovalityParamLb.Text = "Овальность";
+            ovalityParamLb.Click += ovalityParamLb_Click;
+            // 
+            // tableLayoutPanel51
+            // 
+            tableLayoutPanel51.ColumnCount = 1;
+            tableLayoutPanel51.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel51.Controls.Add(ovalityCoefNumUpD, 0, 1);
+            tableLayoutPanel51.Controls.Add(label77, 0, 0);
+            tableLayoutPanel51.Dock = DockStyle.Fill;
+            tableLayoutPanel51.Location = new Point(2, 22);
+            tableLayoutPanel51.Margin = new Padding(0);
+            tableLayoutPanel51.Name = "tableLayoutPanel51";
+            tableLayoutPanel51.RowCount = 2;
+            tableLayoutPanel51.RowStyles.Add(new RowStyle(SizeType.Percent, 35F));
+            tableLayoutPanel51.RowStyles.Add(new RowStyle(SizeType.Percent, 65F));
+            tableLayoutPanel51.Size = new Size(281, 56);
+            tableLayoutPanel51.TabIndex = 5;
+            // 
+            // label77
+            // 
+            label77.Anchor = AnchorStyles.Left;
+            label77.AutoSize = true;
+            label77.Font = new Font("Segoe UI", 7.8F);
+            label77.ForeColor = SystemColors.ActiveCaptionText;
+            label77.Location = new Point(3, 3);
+            label77.Name = "label77";
+            label77.Size = new Size(150, 13);
+            label77.TabIndex = 7;
+            label77.Text = "Коэффициент овальности:";
             // 
             // groupBox8
             // 
@@ -4467,9 +4491,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            tableLayoutPanel41.ResumeLayout(false);
-            tableLayoutPanel41.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).EndInit();
             tableLayoutPanel9.ResumeLayout(false);
             tableLayoutPanel9.PerformLayout();
@@ -4499,18 +4520,15 @@
             ((System.ComponentModel.ISupportInitialize)cannyUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)saturationBlackOrBrownUpDown).EndInit();
             groupBox1.ResumeLayout(false);
-            groupBox4.ResumeLayout(false);
             tableLayoutPanel44.ResumeLayout(false);
             tableLayoutPanel44.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)obloyPixCountNumUpD).EndInit();
-            groupBox3.ResumeLayout(false);
             tableLayoutPanel42.ResumeLayout(false);
             tableLayoutPanel42.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)coefCapRadiusInclusionUpD).EndInit();
             ((System.ComponentModel.ISupportInitialize)minSquareInclusionNumUpD).EndInit();
             ((System.ComponentModel.ISupportInitialize)circleCoefNumUpD).EndInit();
             ((System.ComponentModel.ISupportInitialize)maxSquareInclusionNumUpD).EndInit();
-            groupBox5.ResumeLayout(false);
             tableLayoutPanel43.ResumeLayout(false);
             tableLayoutPanel43.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)whiteThresoldNumUpD).EndInit();
@@ -4551,15 +4569,22 @@
             tableLayoutPanel46.PerformLayout();
             panel4.ResumeLayout(false);
             tableLayoutPanel40.ResumeLayout(false);
-            tableLayoutPanel50.ResumeLayout(false);
-            tableLayoutPanel50.PerformLayout();
-            tableLayoutPanel51.ResumeLayout(false);
-            tableLayoutPanel51.PerformLayout();
-            groupBox13.ResumeLayout(false);
+            tableLayoutPanel54.ResumeLayout(false);
+            tableLayoutPanel54.PerformLayout();
             tableLayoutPanel45.ResumeLayout(false);
             tableLayoutPanel45.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)countCorrugationsNumUpD).EndInit();
             ((System.ComponentModel.ISupportInitialize)coefCapRadiusMaskUnderFillNumUpD).EndInit();
+            tableLayoutPanel53.ResumeLayout(false);
+            tableLayoutPanel53.PerformLayout();
+            tableLayoutPanel52.ResumeLayout(false);
+            tableLayoutPanel52.PerformLayout();
+            tableLayoutPanel41.ResumeLayout(false);
+            tableLayoutPanel41.PerformLayout();
+            tableLayoutPanel50.ResumeLayout(false);
+            tableLayoutPanel50.PerformLayout();
+            tableLayoutPanel51.ResumeLayout(false);
+            tableLayoutPanel51.PerformLayout();
             groupBox8.ResumeLayout(false);
             tableLayoutPanel27.ResumeLayout(false);
             tableLayoutPanel27.PerformLayout();
@@ -4701,19 +4726,15 @@
         private Button testDefectParamBt;
         private PictureBox testingPb;
         private GroupBox groupBox7;
-        private GroupBox groupBox2;
         private NumericUpDown ovalityCoefNumUpD;
-        private GroupBox groupBox3;
         private NumericUpDown maxSquareInclusionNumUpD;
         private NumericUpDown minSquareInclusionNumUpD;
         private NumericUpDown circleCoefNumUpD;
         private Label label24;
         private Label label22;
         private Label label23;
-        private GroupBox groupBox4;
         private NumericUpDown obloyPixCountNumUpD;
         private Label label47;
-        private GroupBox groupBox5;
         private NumericUpDown whiteThresoldNumUpD;
         private NumericUpDown minSquareInpaintNumUpD;
         private Label label28;
@@ -4819,9 +4840,7 @@
         private Button loadImageForTestDefectFromCameraBt;
         private Label label60;
         private NumericUpDown coefCapRadiusInclusionUpD;
-        private Label label21;
         private Panel panel4;
-        private GroupBox groupBox13;
         private NumericUpDown countCorrugationsNumUpD;
         private Label label61;
         private Label label62;
@@ -4858,7 +4877,6 @@
         private TableLayoutPanel tableLayoutPanel38;
         private TableLayoutPanel tableLayoutPanel40;
         private TableLayoutPanel tableLayoutPanel42;
-        private TableLayoutPanel tableLayoutPanel41;
         private TableLayoutPanel tableLayoutPanel44;
         private TableLayoutPanel tableLayoutPanel43;
         private TableLayoutPanel tableLayoutPanel45;
@@ -4917,5 +4935,13 @@
         private Label ovalityParamLb;
         private TableLayoutPanel tableLayoutPanel51;
         private Label label77;
+        private TableLayoutPanel tableLayoutPanel41;
+        private Label inclusionParamLb;
+        private TableLayoutPanel tableLayoutPanel52;
+        private Label inpaintParamLb;
+        private TableLayoutPanel tableLayoutPanel53;
+        private TableLayoutPanel tableLayoutPanel54;
+        private Label obloyParamLb;
+        private Label underfillParamLb;
     }
 }

@@ -202,6 +202,7 @@
             // 
             // tableLayoutPanel3
             // 
+            tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetPartial;
             tableLayoutPanel3.ColumnCount = 7;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857113F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.2857151F));
@@ -242,9 +243,9 @@
             // underfillSettings_underfillResultPb
             // 
             underfillSettings_underfillResultPb.Dock = DockStyle.Fill;
-            underfillSettings_underfillResultPb.Location = new Point(1352, 3);
+            underfillSettings_underfillResultPb.Location = new Point(1350, 6);
             underfillSettings_underfillResultPb.Name = "underfillSettings_underfillResultPb";
-            underfillSettings_underfillResultPb.Size = new Size(220, 258);
+            underfillSettings_underfillResultPb.Size = new Size(219, 251);
             underfillSettings_underfillResultPb.SizeMode = PictureBoxSizeMode.Zoom;
             underfillSettings_underfillResultPb.TabIndex = 33;
             underfillSettings_underfillResultPb.TabStop = false;
@@ -252,9 +253,9 @@
             // underfillSettings_underfillSignalPb
             // 
             underfillSettings_underfillSignalPb.Dock = DockStyle.Fill;
-            underfillSettings_underfillSignalPb.Location = new Point(1127, 3);
+            underfillSettings_underfillSignalPb.Location = new Point(1126, 6);
             underfillSettings_underfillSignalPb.Name = "underfillSettings_underfillSignalPb";
-            underfillSettings_underfillSignalPb.Size = new Size(219, 258);
+            underfillSettings_underfillSignalPb.Size = new Size(215, 251);
             underfillSettings_underfillSignalPb.SizeMode = PictureBoxSizeMode.Zoom;
             underfillSettings_underfillSignalPb.TabIndex = 32;
             underfillSettings_underfillSignalPb.TabStop = false;
@@ -262,9 +263,9 @@
             // underfillSettings_underfillStripePb
             // 
             underfillSettings_underfillStripePb.Dock = DockStyle.Fill;
-            underfillSettings_underfillStripePb.Location = new Point(902, 3);
+            underfillSettings_underfillStripePb.Location = new Point(902, 6);
             underfillSettings_underfillStripePb.Name = "underfillSettings_underfillStripePb";
-            underfillSettings_underfillStripePb.Size = new Size(219, 258);
+            underfillSettings_underfillStripePb.Size = new Size(215, 251);
             underfillSettings_underfillStripePb.SizeMode = PictureBoxSizeMode.Zoom;
             underfillSettings_underfillStripePb.TabIndex = 31;
             underfillSettings_underfillStripePb.TabStop = false;
@@ -272,9 +273,9 @@
             // underfillSettings_underfillMaskPb
             // 
             underfillSettings_underfillMaskPb.Dock = DockStyle.Fill;
-            underfillSettings_underfillMaskPb.Location = new Point(677, 3);
+            underfillSettings_underfillMaskPb.Location = new Point(678, 6);
             underfillSettings_underfillMaskPb.Name = "underfillSettings_underfillMaskPb";
-            underfillSettings_underfillMaskPb.Size = new Size(219, 258);
+            underfillSettings_underfillMaskPb.Size = new Size(215, 251);
             underfillSettings_underfillMaskPb.SizeMode = PictureBoxSizeMode.Zoom;
             underfillSettings_underfillMaskPb.TabIndex = 30;
             underfillSettings_underfillMaskPb.TabStop = false;
@@ -282,9 +283,9 @@
             // underfillSettings_underfillEllipsePb
             // 
             underfillSettings_underfillEllipsePb.Dock = DockStyle.Fill;
-            underfillSettings_underfillEllipsePb.Location = new Point(452, 3);
+            underfillSettings_underfillEllipsePb.Location = new Point(454, 6);
             underfillSettings_underfillEllipsePb.Name = "underfillSettings_underfillEllipsePb";
-            underfillSettings_underfillEllipsePb.Size = new Size(219, 258);
+            underfillSettings_underfillEllipsePb.Size = new Size(215, 251);
             underfillSettings_underfillEllipsePb.SizeMode = PictureBoxSizeMode.Zoom;
             underfillSettings_underfillEllipsePb.TabIndex = 29;
             underfillSettings_underfillEllipsePb.TabStop = false;
@@ -292,9 +293,9 @@
             // underfillSettings_underfillColorCorrectedPb
             // 
             underfillSettings_underfillColorCorrectedPb.Dock = DockStyle.Fill;
-            underfillSettings_underfillColorCorrectedPb.Location = new Point(227, 3);
+            underfillSettings_underfillColorCorrectedPb.Location = new Point(230, 6);
             underfillSettings_underfillColorCorrectedPb.Name = "underfillSettings_underfillColorCorrectedPb";
-            underfillSettings_underfillColorCorrectedPb.Size = new Size(219, 258);
+            underfillSettings_underfillColorCorrectedPb.Size = new Size(215, 251);
             underfillSettings_underfillColorCorrectedPb.SizeMode = PictureBoxSizeMode.Zoom;
             underfillSettings_underfillColorCorrectedPb.TabIndex = 28;
             underfillSettings_underfillColorCorrectedPb.TabStop = false;
@@ -302,9 +303,9 @@
             // underfillSettings_underfillOriginPb
             // 
             underfillSettings_underfillOriginPb.Dock = DockStyle.Fill;
-            underfillSettings_underfillOriginPb.Location = new Point(3, 3);
+            underfillSettings_underfillOriginPb.Location = new Point(6, 6);
             underfillSettings_underfillOriginPb.Name = "underfillSettings_underfillOriginPb";
-            underfillSettings_underfillOriginPb.Size = new Size(218, 258);
+            underfillSettings_underfillOriginPb.Size = new Size(215, 251);
             underfillSettings_underfillOriginPb.SizeMode = PictureBoxSizeMode.Zoom;
             underfillSettings_underfillOriginPb.TabIndex = 27;
             underfillSettings_underfillOriginPb.TabStop = false;
@@ -313,7 +314,7 @@
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(81, 272);
+            label1.Location = new Point(82, 270);
             label1.Name = "label1";
             label1.Size = new Size(62, 15);
             label1.TabIndex = 5;
@@ -323,7 +324,7 @@
             // 
             label3.Anchor = AnchorStyles.None;
             label3.AutoSize = true;
-            label3.Location = new Point(262, 272);
+            label3.Location = new Point(263, 270);
             label3.Name = "label3";
             label3.Size = new Size(148, 15);
             label3.TabIndex = 6;
@@ -337,24 +338,24 @@
             tableLayoutPanel4.Controls.Add(underfillSettings_UnderFillcapsColorNumUd, 1, 0);
             tableLayoutPanel4.Controls.Add(label4, 0, 0);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(227, 298);
+            tableLayoutPanel4.Location = new Point(230, 299);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 4;
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel4.Size = new Size(219, 128);
+            tableLayoutPanel4.Size = new Size(215, 124);
             tableLayoutPanel4.TabIndex = 7;
             // 
             // underfillSettings_UnderFillcapsColorNumUd
             // 
             underfillSettings_UnderFillcapsColorNumUd.Anchor = AnchorStyles.None;
-            underfillSettings_UnderFillcapsColorNumUd.Location = new Point(145, 4);
+            underfillSettings_UnderFillcapsColorNumUd.Location = new Point(142, 4);
             underfillSettings_UnderFillcapsColorNumUd.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             underfillSettings_UnderFillcapsColorNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_UnderFillcapsColorNumUd.Name = "underfillSettings_UnderFillcapsColorNumUd";
-            underfillSettings_UnderFillcapsColorNumUd.Size = new Size(71, 23);
+            underfillSettings_UnderFillcapsColorNumUd.Size = new Size(70, 23);
             underfillSettings_UnderFillcapsColorNumUd.TabIndex = 9;
             underfillSettings_UnderFillcapsColorNumUd.Value = new decimal(new int[] { 60, 0, 0, 0 });
             // 
@@ -362,7 +363,7 @@
             // 
             label4.Anchor = AnchorStyles.Left;
             label4.AutoSize = true;
-            label4.Location = new Point(3, 1);
+            label4.Location = new Point(3, 0);
             label4.Name = "label4";
             label4.Size = new Size(102, 30);
             label4.TabIndex = 7;
@@ -372,7 +373,7 @@
             // 
             label5.Anchor = AnchorStyles.None;
             label5.AutoSize = true;
-            label5.Location = new Point(510, 272);
+            label5.Location = new Point(510, 270);
             label5.Name = "label5";
             label5.Size = new Size(103, 15);
             label5.TabIndex = 8;
@@ -386,14 +387,14 @@
             tableLayoutPanel5.Controls.Add(underfillSettings_coefCapRadiusUnderFillNumUd, 1, 0);
             tableLayoutPanel5.Controls.Add(label62, 0, 0);
             tableLayoutPanel5.Dock = DockStyle.Fill;
-            tableLayoutPanel5.Location = new Point(452, 298);
+            tableLayoutPanel5.Location = new Point(454, 299);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
             tableLayoutPanel5.RowCount = 4;
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.Size = new Size(219, 128);
+            tableLayoutPanel5.Size = new Size(215, 124);
             tableLayoutPanel5.TabIndex = 9;
             // 
             // underfillSettings_coefCapRadiusUnderFillNumUd
@@ -401,11 +402,11 @@
             underfillSettings_coefCapRadiusUnderFillNumUd.Anchor = AnchorStyles.None;
             underfillSettings_coefCapRadiusUnderFillNumUd.DecimalPlaces = 2;
             underfillSettings_coefCapRadiusUnderFillNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            underfillSettings_coefCapRadiusUnderFillNumUd.Location = new Point(145, 4);
+            underfillSettings_coefCapRadiusUnderFillNumUd.Location = new Point(142, 4);
             underfillSettings_coefCapRadiusUnderFillNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_coefCapRadiusUnderFillNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
             underfillSettings_coefCapRadiusUnderFillNumUd.Name = "underfillSettings_coefCapRadiusUnderFillNumUd";
-            underfillSettings_coefCapRadiusUnderFillNumUd.Size = new Size(71, 23);
+            underfillSettings_coefCapRadiusUnderFillNumUd.Size = new Size(70, 23);
             underfillSettings_coefCapRadiusUnderFillNumUd.TabIndex = 46;
             underfillSettings_coefCapRadiusUnderFillNumUd.Value = new decimal(new int[] { 90, 0, 0, 131072 });
             // 
@@ -415,7 +416,7 @@
             label62.AutoSize = true;
             label62.Font = new Font("Segoe UI", 7.8F);
             label62.ForeColor = Color.Black;
-            label62.Location = new Point(3, 3);
+            label62.Location = new Point(3, 2);
             label62.Name = "label62";
             label62.Size = new Size(105, 26);
             label62.TabIndex = 45;
@@ -425,7 +426,7 @@
             // 
             label21.Anchor = AnchorStyles.None;
             label21.AutoSize = true;
-            label21.Location = new Point(744, 272);
+            label21.Location = new Point(743, 270);
             label21.Name = "label21";
             label21.Size = new Size(84, 15);
             label21.TabIndex = 15;
@@ -441,14 +442,14 @@
             tableLayoutPanel6.Controls.Add(label6, 0, 0);
             tableLayoutPanel6.Controls.Add(label7, 0, 1);
             tableLayoutPanel6.Dock = DockStyle.Fill;
-            tableLayoutPanel6.Location = new Point(677, 298);
+            tableLayoutPanel6.Location = new Point(678, 299);
             tableLayoutPanel6.Name = "tableLayoutPanel6";
             tableLayoutPanel6.RowCount = 4;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel6.Size = new Size(219, 128);
+            tableLayoutPanel6.Size = new Size(215, 124);
             tableLayoutPanel6.TabIndex = 16;
             // 
             // underfillSettings_rectHeightCoefNumUd
@@ -456,7 +457,7 @@
             underfillSettings_rectHeightCoefNumUd.Anchor = AnchorStyles.None;
             underfillSettings_rectHeightCoefNumUd.DecimalPlaces = 2;
             underfillSettings_rectHeightCoefNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            underfillSettings_rectHeightCoefNumUd.Location = new Point(149, 36);
+            underfillSettings_rectHeightCoefNumUd.Location = new Point(146, 35);
             underfillSettings_rectHeightCoefNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_rectHeightCoefNumUd.Name = "underfillSettings_rectHeightCoefNumUd";
             underfillSettings_rectHeightCoefNumUd.Size = new Size(62, 23);
@@ -466,7 +467,7 @@
             // underfillSettings_innerOffsetNumUd
             // 
             underfillSettings_innerOffsetNumUd.Anchor = AnchorStyles.None;
-            underfillSettings_innerOffsetNumUd.Location = new Point(150, 4);
+            underfillSettings_innerOffsetNumUd.Location = new Point(146, 4);
             underfillSettings_innerOffsetNumUd.Maximum = new decimal(new int[] { 30, 0, 0, 0 });
             underfillSettings_innerOffsetNumUd.Name = "underfillSettings_innerOffsetNumUd";
             underfillSettings_innerOffsetNumUd.Size = new Size(61, 23);
@@ -491,7 +492,7 @@
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 7.8F);
             label7.ForeColor = Color.Black;
-            label7.Location = new Point(3, 35);
+            label7.Location = new Point(3, 33);
             label7.Name = "label7";
             label7.Size = new Size(127, 26);
             label7.TabIndex = 46;
@@ -501,7 +502,7 @@
             // 
             label25.Anchor = AnchorStyles.None;
             label25.AutoSize = true;
-            label25.Location = new Point(958, 272);
+            label25.Location = new Point(956, 270);
             label25.Name = "label25";
             label25.Size = new Size(107, 15);
             label25.TabIndex = 20;
@@ -515,21 +516,21 @@
             tableLayoutPanel8.Controls.Add(underfillSettings_underFillRectWidthNumUd, 1, 0);
             tableLayoutPanel8.Controls.Add(label8, 0, 0);
             tableLayoutPanel8.Dock = DockStyle.Fill;
-            tableLayoutPanel8.Location = new Point(902, 298);
+            tableLayoutPanel8.Location = new Point(902, 299);
             tableLayoutPanel8.Name = "tableLayoutPanel8";
             tableLayoutPanel8.RowCount = 4;
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel8.Size = new Size(219, 128);
+            tableLayoutPanel8.Size = new Size(215, 124);
             tableLayoutPanel8.TabIndex = 21;
             // 
             // underfillSettings_underFillRectWidthNumUd
             // 
             underfillSettings_underFillRectWidthNumUd.Anchor = AnchorStyles.None;
             underfillSettings_underFillRectWidthNumUd.Increment = new decimal(new int[] { 32, 0, 0, 0 });
-            underfillSettings_underFillRectWidthNumUd.Location = new Point(153, 4);
+            underfillSettings_underFillRectWidthNumUd.Location = new Point(150, 4);
             underfillSettings_underFillRectWidthNumUd.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
             underfillSettings_underFillRectWidthNumUd.Minimum = new decimal(new int[] { 64, 0, 0, 0 });
             underfillSettings_underFillRectWidthNumUd.Name = "underfillSettings_underFillRectWidthNumUd";
@@ -543,7 +544,7 @@
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 7.8F);
             label8.ForeColor = Color.Black;
-            label8.Location = new Point(3, 3);
+            label8.Location = new Point(3, 2);
             label8.Name = "label8";
             label8.Size = new Size(124, 26);
             label8.TabIndex = 45;
@@ -553,7 +554,7 @@
             // 
             label27.Anchor = AnchorStyles.None;
             label27.AutoSize = true;
-            label27.Location = new Point(1198, 272);
+            label27.Location = new Point(1195, 270);
             label27.Name = "label27";
             label27.Size = new Size(76, 15);
             label27.TabIndex = 23;
@@ -566,20 +567,21 @@
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
             tableLayoutPanel9.Controls.Add(underfillSettings_corrugationsCountForUnderFillNumUd, 1, 0);
             tableLayoutPanel9.Controls.Add(label61, 0, 0);
-            tableLayoutPanel9.Location = new Point(1127, 298);
+            tableLayoutPanel9.Dock = DockStyle.Fill;
+            tableLayoutPanel9.Location = new Point(1126, 299);
             tableLayoutPanel9.Name = "tableLayoutPanel9";
             tableLayoutPanel9.RowCount = 4;
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel9.Size = new Size(219, 128);
+            tableLayoutPanel9.Size = new Size(215, 124);
             tableLayoutPanel9.TabIndex = 24;
             // 
             // underfillSettings_corrugationsCountForUnderFillNumUd
             // 
             underfillSettings_corrugationsCountForUnderFillNumUd.Anchor = AnchorStyles.None;
-            underfillSettings_corrugationsCountForUnderFillNumUd.Location = new Point(153, 4);
+            underfillSettings_corrugationsCountForUnderFillNumUd.Location = new Point(150, 4);
             underfillSettings_corrugationsCountForUnderFillNumUd.Maximum = new decimal(new int[] { 20, 0, 0, 0 });
             underfillSettings_corrugationsCountForUnderFillNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_corrugationsCountForUnderFillNumUd.Name = "underfillSettings_corrugationsCountForUnderFillNumUd";
@@ -593,7 +595,7 @@
             label61.AutoSize = true;
             label61.Font = new Font("Segoe UI", 7.8F);
             label61.ForeColor = Color.Black;
-            label61.Location = new Point(3, 3);
+            label61.Location = new Point(3, 2);
             label61.Name = "label61";
             label61.Size = new Size(128, 26);
             label61.TabIndex = 47;
@@ -603,7 +605,7 @@
             // 
             label29.Anchor = AnchorStyles.None;
             label29.AutoSize = true;
-            label29.Location = new Point(1445, 272);
+            label29.Location = new Point(1443, 270);
             label29.Name = "label29";
             label29.Size = new Size(33, 15);
             label29.TabIndex = 26;

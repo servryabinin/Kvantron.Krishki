@@ -10,6 +10,11 @@ using CapDefectDetector.Authorization;
 using CapDefectDetector.CameraAndModbusClasses;
 using CapDefectDetector.DTO;
 using CapDefectDetector.Forms;
+using CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm;
+using CapDefectDetector.Forms.DefectParamSettingsForms.InpaintSettingsForm;
+using CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm;
+using CapDefectDetector.Forms.DefectParamSettingsForms.OvalitySettingsForm;
+using CapDefectDetector.Forms.DefectParamSettingsForms.UnderfillSettingsForm;
 using CapDefectDetector.FrameProcessing;
 using CapDefectDetector.Hardware;
 using CapDefectDetector.Logger;
@@ -1090,17 +1095,23 @@ namespace CapDefectDetector
             _labelNormalFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
             _labelHoverFont = new Font("Segoe UI", 8.25F, FontStyle.Bold | FontStyle.Underline);
 
-            ApplyHover(ovalityParamLb);
+            ApplyHover(ovalityParamLb, inclusionParamLb, inpaintParamLb, obloyParamLb, underfillParamLb);
         }
 
-        private void ApplyHover(Label label)
+        private void ApplyHover(params Label[] labels)
         {
-            label.Cursor = Cursors.Hand;
-            label.ForeColor = _labelNormalColor;
-            label.Font = _labelNormalFont;
+            foreach (var label in labels)
+            {
+                label.Cursor = Cursors.Hand;
+                label.ForeColor = _labelNormalColor;
+                label.Font = _labelNormalFont;
 
-            label.MouseEnter += Label_MouseEnter;
-            label.MouseLeave += Label_MouseLeave;
+                label.MouseEnter -= Label_MouseEnter;
+                label.MouseLeave -= Label_MouseLeave;
+
+                label.MouseEnter += Label_MouseEnter;
+                label.MouseLeave += Label_MouseLeave;
+            }
         }
         #endregion
 
@@ -3087,7 +3098,7 @@ namespace CapDefectDetector
             {
                 contour = GetBlackOrBrownContour(gray, image);
                 return CorrectContour(contour, _contourCorrectionBlackOrBrown);
-            }  
+            }
             else
             {
                 contour = GetColorCapContour(gray, image);
@@ -5168,7 +5179,7 @@ namespace CapDefectDetector
             {
                 contour = ProcessBlackOrBrown();
 
-                contour = CorrectContour(contour,(float)contourCorrectionBlackOrBrownUpDown.Value);
+                contour = CorrectContour(contour, (float)contourCorrectionBlackOrBrownUpDown.Value);
 
                 Mat result = DrawContour(contour);
 
@@ -5197,7 +5208,7 @@ namespace CapDefectDetector
 
         private Point[] ProcessBlackOrBrown()
         {
-            Mat satImg = ApplySaturation(_imageOriginReceptParam,(int)saturationBlackOrBrownUpDown.Value);
+            Mat satImg = ApplySaturation(_imageOriginReceptParam, (int)saturationBlackOrBrownUpDown.Value);
 
             saturationBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
@@ -6042,7 +6053,7 @@ namespace CapDefectDetector
         }
         #endregion
 
-        #region Выделение лейблов
+        #region Выделение лейблов и работа с кнопками
         private void Label_MouseEnter(object sender, EventArgs e)
         {
             if (sender is Label lbl)
@@ -6058,6 +6069,46 @@ namespace CapDefectDetector
             {
                 lbl.ForeColor = _labelNormalColor;
                 lbl.Font = _labelNormalFont;
+            }
+        }
+
+        private void ovalityParamLb_Click(object sender, EventArgs e)
+        {
+            using (var form = new OvalitySettingsForm())
+            {
+                form.ShowDialog(this);
+            }
+        }
+
+        private void inclusionParamLb_Click(object sender, EventArgs e)
+        {
+            using (var form = new InclusionSettingsForm())
+            {
+                form.ShowDialog(this);
+            }
+        }
+
+        private void inpaintParamLb_Click(object sender, EventArgs e)
+        {
+            using (var form = new InpaintSettingsForm())
+            {
+                form.ShowDialog(this);
+            }
+        }
+
+        private void obloyParamLb_Click(object sender, EventArgs e)
+        {
+            using (var form = new ObloySettingsForm())
+            {
+                form.ShowDialog(this);
+            }
+        }
+
+        private void underfillParamLb_Click(object sender, EventArgs e)
+        {
+            using (var form = new UnderfillSettingsForm())
+            {
+                form.ShowDialog(this);
             }
         }
         #endregion
