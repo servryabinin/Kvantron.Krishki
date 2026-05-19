@@ -33,6 +33,12 @@ namespace CapDefectDetector
         private bool _capsAreWhite = false;
         private bool _recipeCapsAreWhite = false;
         private bool _manualDisconnect = false;
+        // Выделение лейблов
+        private Color _labelNormalColor = Color.Black;
+        private Color _labelHoverColor = Color.FromArgb(66, 133, 244);
+
+        private Font _labelNormalFont;
+        private Font _labelHoverFont;
 
         // Регистры ПР205
         private HikCamera _cam;
@@ -409,6 +415,7 @@ namespace CapDefectDetector
             InitializeUISelections();
             InitializeAuthorizationSystem();
             InitializeStatistics();
+            InitLabelHoverEffects();
         }
 
         private void InitializeCoreSystems()
@@ -1076,6 +1083,24 @@ namespace CapDefectDetector
         private void InitializeStatistics()
         {
             //_statisticsManager = new StatisticsManager(statisticsDataGridView);
+        }
+
+        private void InitLabelHoverEffects()
+        {
+            _labelNormalFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            _labelHoverFont = new Font("Segoe UI", 8.25F, FontStyle.Bold | FontStyle.Underline);
+
+            ApplyHover(ovalityParamLb);
+        }
+
+        private void ApplyHover(Label label)
+        {
+            label.Cursor = Cursors.Hand;
+            label.ForeColor = _labelNormalColor;
+            label.Font = _labelNormalFont;
+
+            label.MouseEnter += Label_MouseEnter;
+            label.MouseLeave += Label_MouseLeave;
         }
         #endregion
 
@@ -6013,6 +6038,26 @@ namespace CapDefectDetector
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Ошибка обновления UI");
+            }
+        }
+        #endregion
+
+        #region Выделение лейблов
+        private void Label_MouseEnter(object sender, EventArgs e)
+        {
+            if (sender is Label lbl)
+            {
+                lbl.ForeColor = _labelHoverColor;
+                lbl.Font = _labelHoverFont;
+            }
+        }
+
+        private void Label_MouseLeave(object sender, EventArgs e)
+        {
+            if (sender is Label lbl)
+            {
+                lbl.ForeColor = _labelNormalColor;
+                lbl.Font = _labelNormalFont;
             }
         }
         #endregion
