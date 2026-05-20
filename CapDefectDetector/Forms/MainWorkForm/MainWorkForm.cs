@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using CapDefectDetector.Authorization;
 using CapDefectDetector.CameraAndModbusClasses;
+using CapDefectDetector.Domain;
 using CapDefectDetector.DTO;
 using CapDefectDetector.Forms;
 using CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm;
@@ -17,8 +18,8 @@ using CapDefectDetector.Forms.DefectParamSettingsForms.OvalitySettingsForm;
 using CapDefectDetector.Forms.DefectParamSettingsForms.UnderfillSettingsForm;
 using CapDefectDetector.FrameProcessing;
 using CapDefectDetector.Hardware;
+using CapDefectDetector.ImageProcessing.CapContours;
 using CapDefectDetector.Logger;
-using CapDefectDetector.Domain;
 using CapDefectDetector.ResultStateAndProcessingSettings;
 using CapDefectDetector.StatisticProcessing;
 using Newtonsoft.Json;
@@ -42,7 +43,6 @@ namespace CapDefectDetector
         // Выделение лейблов
         private Color _labelNormalColor = Color.Black;
         private Color _labelHoverColor = Color.FromArgb(66, 133, 244);
-
         private Font _labelNormalFont;
         private Font _labelHoverFont;
 
@@ -129,6 +129,9 @@ namespace CapDefectDetector
         private readonly object _trigTablesLock = new object();
         private const int UNDERFILL_RECT_WIDTH = 1024;
 
+        //Объекты для нахождения контуров
+        private CapContourProcessorBase _colorProcessor;
+        private CapContourProcessorBase _blackOrBrownProcessor;
         // Поля рецепта
         private byte _capsColor = 0;
         private const byte GREEN_THRESHOLD = 40;
@@ -2298,6 +2301,8 @@ namespace CapDefectDetector
 
             RebuildMorphology();
 
+            BuildProcessors();
+
             _isApplyingRecipe = false;
         }
 
@@ -2306,6 +2311,12 @@ namespace CapDefectDetector
             if (value < min) return min;
             if (value > max) return max;
             return value;
+        }
+
+        private void BuildProcessors()
+        {
+            _colorProcessor = new ColorCapContourProcessor(_saturationColor, _capsColor, _isColored, _isYellowCap, _isGreenColor, window, element1, element2);
+            _blackOrBrownProcessor = new BlackOrBrownCapContourProcessor(_saturationBlackOrBrown, _medianFilter, _cannyThreshold);
         }
 
         private void outputImageCmB_SelectedIndexChanged(object sender, EventArgs e)
@@ -3045,77 +3056,28 @@ namespace CapDefectDetector
 
         #region Вспомогательные методы обработки
 
-        /*private Point[] GetCapContour(Mat gray, Mat image)
-        {
-            if (gray.Empty() || image.Empty())
-                return null;
-
-            //Цветокоррекция (Начало)
-            Mat processed = image.Clone();
-            processed = SimulateCameraSaturation(processed, saturation);
-            NonlinearBackgroundDecolorization(processed, capsColor);
-            //Цветокоррекция (Конец)
-
-            Mat[] channels;
-            Cv2.Split(processed, out channels);
-
-            //Окно фильтра (Начало)
-            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
-            //Окно фильтра (Конец)
-
-            //Морфологический фильтр (Начало)
-            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
-            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
-            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
-            //Морфологический фильтр (Конец)
-
-            blurChannel_0 = channels[0];
-            blurChannel_1 = channels[1];
-            blurChannel_2 = channels[2];
-
-            //Контур (начало)
-            Point[][] contours;
-            HierarchyIndex[] hierarchy;
-            Cv2.FindContours(
-                channels[2],
-                out contours,
-                out hierarchy,
-                RetrievalModes.External,
-                ContourApproximationModes.ApproxNone
-            );
-
-            int maxInd = 0;
-            int maxLength = 0;
-            for (int i = 0; i < contours.Length; i++)
-            {
-                if (contours[i].Length > maxLength)
-                {
-                    maxLength = contours[i].Length;
-                    maxInd = i;
-                }
-            }
-            //Контур (Конец)
-
-            return contours.Length > 0 ? contours[maxInd] : null;
-        }*/
-
         private Point[] GetCapContour(Mat gray, Mat image)
         {
             if (gray.Empty() || image.Empty())
                 return null;
 
-            Point[] contour;
+            CapContourProcessorBase processor;
+            float threshold;
 
             if (_isBlackOrBrown)
             {
-                contour = GetBlackOrBrownContour(gray, image);
-                return CorrectContour(contour, _contourCorrectionBlackOrBrown);
+                processor = _blackOrBrownProcessor;
+                threshold = _contourCorrectionBlackOrBrown;
             }
             else
             {
-                contour = GetColorCapContour(gray, image);
-                return CorrectContour(contour, _contourCorrectionColor);
+                processor = _colorProcessor;
+                threshold = _contourCorrectionColor;
             }
+
+            Point[] contour = processor.GetContour(gray, image);
+
+            return CorrectContour(contour, threshold);
         }
 
         #region Цветные крышки
@@ -4861,7 +4823,7 @@ namespace CapDefectDetector
             {
                 byte* data = (byte*)img.DataPointer;
 
-                // 1️⃣ Выбеливание, если крышка не зелёная
+                // 1️ Выбеливание, если крышка не зелёная
                 if (!isGreenColor)
                 {
                     for (int i = 0; i < total; i++)
@@ -4873,7 +4835,7 @@ namespace CapDefectDetector
                 }
                 else
                 {
-                    // 2️⃣ Ветка для зелёных крышек — как в C++-коде
+                    // 2️ Ветка для зелёных крышек — как в C++-коде
                     for (int i = 0; i < total; i += 3)
                     {
                         data[i + 1] = (byte)Math.Abs(
@@ -4882,7 +4844,7 @@ namespace CapDefectDetector
                     }
                 }
 
-                // 2️⃣ Если крышка цветная
+                // 3 Если крышка цветная
                 if (isColored)
                 {
                     for (int i = 0; i < total; i += 3)
