@@ -18,6 +18,7 @@ using CapDefectDetector.Forms.DefectParamSettingsForms.UnderfillSettingsForm;
 using CapDefectDetector.FrameProcessing;
 using CapDefectDetector.Hardware;
 using CapDefectDetector.Logger;
+using CapDefectDetector.Domain;
 using CapDefectDetector.ResultStateAndProcessingSettings;
 using CapDefectDetector.StatisticProcessing;
 using Newtonsoft.Json;
@@ -2133,7 +2134,18 @@ namespace CapDefectDetector
             Properties.Settings.Default.Settings_LastRecipeFileName = key;
             Properties.Settings.Default.Save();
 
-            ApplyRecipe(_recipes[key]);
+            ApplyRecipe(BuildCap(_recipes[key]));
+        }
+
+        private void ApplyRecipe(Cap cap)
+        {
+            ApplyRecipe(cap.Recipe.ToDto());
+        }
+
+        private static Cap BuildCap(CapRecipe recipe)
+        {
+            var domainRecipe = recipe.ToDomain();
+            return CapFactory.Create(recipe.Name, recipe.Name, domainRecipe);
         }
 
         private void ApplyRecipe(CapRecipe r)
@@ -3114,13 +3126,7 @@ namespace CapDefectDetector
 
             Mat sat = ApplySaturationStep(image, _saturationColor);
 
-            Mat caps = ApplyCapsColorStep(
-                sat,
-                _capsColor,
-                _isColored,
-                _isYellowCap,
-                _isGreenColor
-            );
+            Mat caps = ApplyCapsColorStep(sat, _capsColor, _isColored, _isYellowCap, _isGreenColor);
 
             Mat[] channels = ApplyWindowStep(caps, window);
 
@@ -3158,12 +3164,7 @@ namespace CapDefectDetector
 
         private void ApplyMorphologyStep(Mat[] channels, Mat element1, Mat element2)
         {
-            Cv2.Threshold(
-                channels[1],
-                channels[0],
-                128,
-                255,
-                ThresholdTypes.Otsu | ThresholdTypes.Binary
+            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary
             );
 
             Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
@@ -3264,14 +3265,7 @@ namespace CapDefectDetector
 
             RotatedRect ellipse = Cv2.FitEllipse(hull);
 
-            return Cv2.Ellipse2Poly(
-                (Point)ellipse.Center,
-                new Size((int)(ellipse.Size.Width / 2), (int)(ellipse.Size.Height / 2)),
-                (int)ellipse.Angle,
-                0,
-                360,
-                1
-            );
+            return Cv2.Ellipse2Poly((Point)ellipse.Center, new Size((int)(ellipse.Size.Width / 2), (int)(ellipse.Size.Height / 2)), (int)ellipse.Angle, 0, 360, 1);
         }
         #endregion
 
@@ -5192,10 +5186,7 @@ namespace CapDefectDetector
             {
                 contour = ProcessColor();
 
-                contour = CorrectContour(
-                    contour,
-                    (float)contourCorrectionColorUpDown.Value
-                );
+                contour = CorrectContour(contour, (float)contourCorrectionColorUpDown.Value);
 
                 Mat result = DrawContour(contour);
 
@@ -5229,59 +5220,30 @@ namespace CapDefectDetector
             if (_imageOriginReceptParam == null || _imageOriginReceptParam.Empty())
                 return null;
 
-            // ---------------- 1. Saturation --------------------
-            Mat satImg = ApplySaturationStep(
-                _imageOriginReceptParam,
-                (int)saturationColorUpDown.Value
-            );
+            Mat satImg = ApplySaturationStep(_imageOriginReceptParam,(int)saturationColorUpDown.Value);
 
-            saturationColorReceptParamSmallPb.Image =
-                BitmapConverter.ToBitmap(satImg);
+            saturationColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
-            // ---------------- 2. CapsColor ----------------------
-            Mat capsImg = ApplyCapsColorStep(
-                satImg,
-                (byte)capcolorUpDown.Value,
-                _recipeIsColored,
-                _recipeIsYellowCap,
-                _recipeIsGreenColor
-            );
+            Mat capsImg = ApplyCapsColorStep(satImg, (byte)capcolorUpDown.Value, _recipeIsColored, _recipeIsYellowCap, _recipeIsGreenColor);
 
-            capscolorColorReceptParamSmallPb.Image =
-                BitmapConverter.ToBitmap(capsImg);
+            capscolorColorReceptParamSmallPb.Image =BitmapConverter.ToBitmap(capsImg);
 
-            // ---------------- 3. Window -------------------------
-            Mat[] channels = ApplyWindowStep(
-                capsImg,
-                int.Parse(windowCb.Text)
-            );
+            Mat[] channels = ApplyWindowStep(capsImg, int.Parse(windowCb.Text));
 
-            windowColorReceptParamSmallPb.Image =
-                BitmapConverter.ToBitmap(channels[1]);
+            windowColorReceptParamSmallPb.Image =BitmapConverter.ToBitmap(channels[1]);
 
-            // ---------------- 4. Morphology ---------------------
             int morph = int.Parse(morphCb.Text);
 
-            Mat element1 = Cv2.GetStructuringElement(
-                MorphShapes.Rect,
-                new Size(2 * morph + 1, 2 * morph + 1),
-                new Point(morph, morph)
-            );
+            Mat element1 = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
 
-            Mat element2 = Cv2.GetStructuringElement(
-                MorphShapes.Cross,
-                new Size(2 * morph + 1, 2 * morph + 1),
-                new Point(morph, morph)
-            );
+            Mat element2 = Cv2.GetStructuringElement(MorphShapes.Cross, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
 
             ApplyMorphologyStep(channels, element1, element2);
 
             Mat morphImg = channels[2];
 
-            morphColorReceptParamSmallPb.Image =
-                BitmapConverter.ToBitmap(morphImg);
+            morphColorReceptParamSmallPb.Image =BitmapConverter.ToBitmap(morphImg);
 
-            // ---------------- 5. Contour -------------------------
             return GetMaxContour(morphImg);
         }
 
@@ -5418,12 +5380,11 @@ namespace CapDefectDetector
             ShowInGeneralPreview(resultContourColorSmallPb, generalReceptParamPb);
         }
 
-        // Вспомогательный метод
         private void ShowInGeneralPreview(PictureBox smallPb, PictureBox generalPb)
         {
             if (smallPb.Image != null)
             {
-                generalPb.Image?.Dispose(); // освобождаем предыдущий Image
+                generalPb.Image?.Dispose();
                 generalPb.Image = (System.Drawing.Image)smallPb.Image.Clone();
             }
         }
@@ -5436,7 +5397,6 @@ namespace CapDefectDetector
                 return;
             }
 
-            // --- Папка ---
             string folder = _recipesFolder;
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
@@ -5447,22 +5407,20 @@ namespace CapDefectDetector
 
             bool existedBefore = File.Exists(fullPath);
 
-            // --- Window ---
             int windowValue = 0;
             if (windowCb.SelectedItem != null)
                 int.TryParse(windowCb.SelectedItem.ToString(), out windowValue);
 
-            // --- MorphSize ---
             int morphSize = 1;
             if (morphCb.SelectedItem != null)
                 int.TryParse(morphCb.SelectedItem.ToString(), out morphSize);
 
             int morphSize2 = morphSize;
 
-            // --- Рецепт ---
-            var recipe = new CapRecipe
+            var domainRecipe = new CapContourRecipe
             {
                 Name = name,
+                Kind = _recipeIsBlackOrBrown ? CapKind.BlackOrBrown : CapKind.Colored,
                 CapsColor = (byte)capcolorUpDown.Value,
                 Window = windowValue,
                 MorphSize = morphSize,
@@ -5477,11 +5435,11 @@ namespace CapDefectDetector
                 IsGreen = _recipeIsGreenColor,
                 IsColored = _recipeIsColored,
                 IsYellow = _recipeIsYellowCap,
-                IsWhite = _recipeCapsAreWhite,
-                IsBlackOrBrown = _recipeIsBlackOrBrown,
+                IsWhite = _recipeCapsAreWhite
             };
 
-            // --- JSON с нормальной русской кодировкой ---
+            var recipe = domainRecipe.ToDto();
+
             string json = System.Text.Json.JsonSerializer.Serialize(
                 recipe,
                 new System.Text.Json.JsonSerializerOptions
@@ -5493,7 +5451,6 @@ namespace CapDefectDetector
 
             File.WriteAllText(fullPath, json, Encoding.UTF8);
 
-            // --- Обновляем список рецептов ---
             LoadRecipes();
 
             receptCapsCmB.Items.Clear();
@@ -5501,7 +5458,6 @@ namespace CapDefectDetector
                 receptCapsCmB.Items.Add(recipeName);
             receptCapsCmB.SelectedItem = name;
 
-            // --- Сообщение ---
             if (existedBefore)
                 MessageBox.Show($"Рецепт \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
@@ -5563,7 +5519,6 @@ namespace CapDefectDetector
                 }
             }
 
-            // Все проверки прошли
             return true;
         }
 
@@ -6074,7 +6029,13 @@ namespace CapDefectDetector
 
         private void ovalityParamLb_Click(object sender, EventArgs e)
         {
-            using (var form = new OvalitySettingsForm())
+            if (!TryBuildDefectFormContext(out var context))
+            {
+                return;
+            }
+
+            var defectSettings = BuildDefectSettingsModel();
+            using (var form = new OvalitySettingsForm(context, defectSettings.Ovality))
             {
                 form.ShowDialog(this);
             }
@@ -6082,7 +6043,13 @@ namespace CapDefectDetector
 
         private void inclusionParamLb_Click(object sender, EventArgs e)
         {
-            using (var form = new InclusionSettingsForm())
+            if (!TryBuildDefectFormContext(out var context))
+            {
+                return;
+            }
+
+            var defectSettings = BuildDefectSettingsModel();
+            using (var form = new InclusionSettingsForm(context, defectSettings.Inclusion))
             {
                 form.ShowDialog(this);
             }
@@ -6090,7 +6057,13 @@ namespace CapDefectDetector
 
         private void inpaintParamLb_Click(object sender, EventArgs e)
         {
-            using (var form = new InpaintSettingsForm())
+            if (!TryBuildDefectFormContext(out var context))
+            {
+                return;
+            }
+
+            var defectSettings = BuildDefectSettingsModel();
+            using (var form = new InpaintSettingsForm(context, defectSettings.Inpaint))
             {
                 form.ShowDialog(this);
             }
@@ -6098,7 +6071,13 @@ namespace CapDefectDetector
 
         private void obloyParamLb_Click(object sender, EventArgs e)
         {
-            using (var form = new ObloySettingsForm())
+            if (!TryBuildDefectFormContext(out var context))
+            {
+                return;
+            }
+
+            var defectSettings = BuildDefectSettingsModel();
+            using (var form = new ObloySettingsForm(context, defectSettings.Obloy))
             {
                 form.ShowDialog(this);
             }
@@ -6106,10 +6085,65 @@ namespace CapDefectDetector
 
         private void underfillParamLb_Click(object sender, EventArgs e)
         {
-            using (var form = new UnderfillSettingsForm())
+            if (!TryBuildDefectFormContext(out var context))
+            {
+                return;
+            }
+
+            var defectSettings = BuildDefectSettingsModel();
+            using (var form = new UnderfillSettingsForm(context, defectSettings.Underfill))
             {
                 form.ShowDialog(this);
             }
+        }
+
+        private bool TryBuildDefectFormContext(out DefectSettingsFormContext context)
+        {
+            context = null;
+
+            string key = receptCapsCmB.SelectedItem?.ToString();
+            if (string.IsNullOrWhiteSpace(key) || !_recipes.TryGetValue(key, out CapRecipe selectedRecipe))
+            {
+                MessageBox.Show("Выберите рецепт крышки перед открытием формы настройки дефекта.",
+                    "Рецепт не выбран", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (_imageForTest == null || _imageForTest.Empty())
+            {
+                MessageBox.Show("Загрузите тестовое изображение перед открытием формы настройки дефекта.",
+                    "Нет тестового изображения", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            var cap = BuildCap(selectedRecipe);
+            context = new DefectSettingsFormContext
+            {
+                Cap = cap,
+                Recipe = cap.Recipe,
+                ImageForTest = _imageForTest
+            };
+            return true;
+        }
+
+        private DefectSettingsModel BuildDefectSettingsModel()
+        {
+            var dto = new DefectSettings
+            {
+                Name = "Current",
+                OvalityThreshold = double.Parse(ovalityCoefNumUpD.Text),
+                InclusionThreshold = double.Parse(circleCoefNumUpD.Text),
+                MinAreaInclusion = double.Parse(minSquareInclusionNumUpD.Text),
+                MaxAreaInclusion = double.Parse(maxSquareInclusionNumUpD.Text),
+                CoefCapRadiusInclusion = double.Parse(coefCapRadiusInclusionUpD.Text),
+                MinAreaInpaintDefect = double.Parse(minSquareInpaintNumUpD.Text),
+                MinInpaintWhiteThreshold = double.Parse(whiteThresoldNumUpD.Text),
+                MinAreaObloy = double.Parse(obloyPixCountNumUpD.Text),
+                CorrugationsCountForUnderFill = double.Parse(countCorrugationsNumUpD.Text),
+                CoefCapRadiusUnderFill = double.Parse(coefCapRadiusMaskUnderFillNumUpD.Text)
+            };
+
+            return dto.ToDomain();
         }
         #endregion
     }
