@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CapDefectDetector.DTO
+namespace CapDefectDetector.DTO.CameraSettings
 {
     class CameraSettings
     {

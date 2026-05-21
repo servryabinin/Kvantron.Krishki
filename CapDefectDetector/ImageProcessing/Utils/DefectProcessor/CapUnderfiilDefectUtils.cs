@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
+using CapDefectDetector.DTO.DefectSettings;
 using CapDefectDetector.ImageProcessing.Utils.ContourProcessor;
 using CapDefectDetector.Logger;
 using MathNet.Numerics.IntegralTransforms;
@@ -22,7 +23,6 @@ namespace CapDefectDetector.ImageProcessing.Utils
         private double _coefCapRadiusUnderFill;
 
         private double _rectHeightCoef;
-
         private int _innerOffset;
 
         private int _underfillRectWidth;
@@ -36,37 +36,20 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
         private readonly CapColorContourUtils _colorUtils;
 
-        public CapUnderfillDefectUtils(
-            CapColorContourUtils colorUtils,
-            byte capsColor, bool decolorizeBackground, bool normalizeBrightness, bool preserveDetails,
-            double coefCapRadiusUnderFill,
-            double rectHeightCoef, int innerOffset,
-            int underfillRectWidth,
-            double corrugationsCountForUnderFill,
-            double[] sinTable,
-            double[] cosTable)
+        public CapUnderfillDefectUtils(CapColorContourUtils colorUtils,UnderfillDefectSettings settings)
         {
-            _colorUtils = colorUtils;
+            SetCapsColor(settings.CapsColor);
+            SetDecolorizeBackground(settings.DecolorizeBackground);
+            SetNormalizeBrightness(settings.NormalizeBrightness);
+            SetPreserveDetails(settings.PreserveDetails);
 
-            _capsColor = capsColor;
+            SetCoefCapRadiusUnderFill(settings.CoefCapRadiusUnderFill);
+            SetRectHeightCoef(settings.RectHeightCoef);
+            SetInnerOffset(settings.InnerOffset);
 
-            _decolorizeBackground = decolorizeBackground;
-            _normalizeBrightness = normalizeBrightness;
-            _preserveDetails = preserveDetails;
+            SetUnderfillRectWidth(settings.UnderfillRectWidth);
 
-            _coefCapRadiusUnderFill = coefCapRadiusUnderFill;
-
-            _rectHeightCoef = rectHeightCoef;
-
-            _innerOffset = innerOffset;
-
-            _underfillRectWidth = underfillRectWidth;
-            InitializeTrigTables();
-
-            _corrugationsCountForUnderFill = corrugationsCountForUnderFill;
-
-            _sinTable = sinTable;
-            _cosTable = cosTable;
+            SetCorrugationsCountForUnderFill(settings.CorrugationsCountForUnderFill);
         }
 
         public void SetCapsColor(byte value) => _capsColor = value;
@@ -91,6 +74,22 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
         public void SetCorrugationsCountForUnderFill(double value)
             => _corrugationsCountForUnderFill = value;
+
+        public UnderfillDefectSettings GetSettings()
+        {
+            return new UnderfillDefectSettings
+            {
+                CapsColor = _capsColor,
+                DecolorizeBackground = _decolorizeBackground,
+                NormalizeBrightness = _normalizeBrightness,
+                PreserveDetails = _preserveDetails,
+                CoefCapRadiusUnderFill = _coefCapRadiusUnderFill,
+                RectHeightCoef = _rectHeightCoef,
+                InnerOffset = _innerOffset,
+                UnderfillRectWidth = _underfillRectWidth,
+                CorrugationsCountForUnderFill = _corrugationsCountForUnderFill
+            };
+        }
 
         private void InitializeTrigTables()
         {
@@ -122,9 +121,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
                 if (capContour == null || capContour.Length < 5)
                 {
-                    ErrorLogger.Log(
-                        new Exception("Контур для проверки недолива пустой или содержит недостаточно точек"),
-                        "CheckForUnderFillDefects - проверка наличия контура");
+                    ErrorLogger.Log(new Exception("Контур для проверки недолива пустой или содержит недостаточно точек"),"CheckForUnderFillDefects - проверка наличия контура");
 
                     return false;
                 }
@@ -159,8 +156,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex,
-                    "CheckForUnderFillDefects - ошибка при определении недолива");
+                ErrorLogger.Log(ex, "CheckForUnderFillDefects - ошибка при определении недолива");
 
                 return false;
             }
@@ -184,7 +180,6 @@ namespace CapDefectDetector.ImageProcessing.Utils
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex,"CapUnderFillUtils - ошибка коррекции цвета");
-
                 throw;
             }
         }
@@ -201,35 +196,23 @@ namespace CapDefectDetector.ImageProcessing.Utils
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "CapUnderFillUtils - ошибка создания grayscale");
-
                 throw;
             }
         }
 
-        // ================= ELLIPSES =================
-
-        private (RotatedRect outerEllipse, RotatedRect innerEllipse)
-            CreateEllipses(Point[] contour)
+        private (RotatedRect outerEllipse, RotatedRect innerEllipse) CreateEllipses(Point[] contour)
         {
             try
             {
                 RotatedRect outerEllipse = Cv2.FitEllipse(contour);
-
-                Size2f innerSize = new Size2f(
-                    (float)(outerEllipse.Size.Width * _coefCapRadiusUnderFill),
-                    (float)(outerEllipse.Size.Height * _coefCapRadiusUnderFill));
-
-                RotatedRect innerEllipse = new RotatedRect(
-                    outerEllipse.Center,
-                    innerSize,
-                    outerEllipse.Angle);
+                Size2f innerSize = new Size2f((float)(outerEllipse.Size.Width * _coefCapRadiusUnderFill),(float)(outerEllipse.Size.Height * _coefCapRadiusUnderFill));
+                RotatedRect innerEllipse = new RotatedRect(outerEllipse.Center,innerSize,outerEllipse.Angle);
 
                 return (outerEllipse, innerEllipse);
             }
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "CapUnderFillUtils - ошибка построения эллипсов");
-
                 throw;
             }
         }
@@ -251,8 +234,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex,
-                    "CapUnderFillUtils - ошибка создания crown mask");
+                ErrorLogger.Log(ex, "CapUnderFillUtils - ошибка создания crown mask");
 
                 throw;
             }
@@ -268,8 +250,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex,
-                    "CapUnderFillUtils - ошибка применения маски");
+                ErrorLogger.Log(ex,"CapUnderFillUtils - ошибка применения маски");
 
                 throw;
             }

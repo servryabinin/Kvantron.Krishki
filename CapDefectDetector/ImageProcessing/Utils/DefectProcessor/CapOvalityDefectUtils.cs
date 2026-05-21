@@ -1,4 +1,5 @@
 ﻿using System;
+using CapDefectDetector.DTO.DefectSettings;
 using CapDefectDetector.Logger;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
@@ -7,16 +8,24 @@ namespace CapDefectDetector.ImageProcessing.Utils
 {
     public class CapOvalityUtils
     {
-        private double _ovalityThreshold;
+        public double _ovalityThreshold;
 
-        public CapOvalityUtils(double ovalityThreshold)
+        public CapOvalityUtils(OvalityDefectSettings settings)
         {
-            _ovalityThreshold = ovalityThreshold;
+            SetThreshold(settings.OvalityThreshold);
         }
 
         public void SetThreshold(double value)
         {
             _ovalityThreshold = value;
+        }
+
+        public OvalityDefectSettings GetSettings()
+        {
+            return new OvalityDefectSettings
+            {
+                OvalityThreshold = _ovalityThreshold
+            };
         }
 
         public bool CheckOvality(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
@@ -57,10 +66,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
         private void LogInvalidContour()
         {
-            ErrorLogger.Log(
-                new Exception("Контур для проверки овальности пустой или содержит недостаточно точек"),
-                "CheckOvality - проверка наличия контуров"
-            );
+            ErrorLogger.Log(new Exception("Контур для проверки овальности пустой или содержит недостаточно точек"),"CheckOvality - проверка наличия контуров");
         }
 
         private RotatedRect FitCapEllipse(Point[] contour)
@@ -89,18 +95,8 @@ namespace CapDefectDetector.ImageProcessing.Utils
             try
             {
                 Scalar color = isOval ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
-
                 Cv2.Ellipse(drawFrame, ellipse, color, 2);
-
-                Cv2.PutText(
-                    drawFrame,
-                    $"Ratio: {axisRatio:F5}",
-                    new Point(10, 30),
-                    HersheyFonts.HersheySimplex,
-                    1,
-                    color,
-                    2
-                );
+                Cv2.PutText(drawFrame,$"Ratio: {axisRatio:F5}",new Point(10, 30),HersheyFonts.HersheySimplex,1,color,2);
             }
             catch (Exception drawEx)
             {

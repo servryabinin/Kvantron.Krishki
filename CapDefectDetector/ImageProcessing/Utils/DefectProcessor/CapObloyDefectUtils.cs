@@ -1,4 +1,5 @@
 ﻿using System;
+using CapDefectDetector.DTO.DefectSettings;
 using CapDefectDetector.Logger;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
@@ -17,20 +18,20 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
         private Mat _elementMask;
 
-        public CapObloyDefectUtils(
-            double capFlashOffset,
-            MorphShapes morphShape,MorphTypes morphType, int kernelSize, int morphIterations,
-            double minAreaObloy)
+        public CapObloyDefectUtils(ObloyDefectSettings settings)
         {
-            _capFlashOffset = capFlashOffset;
-            _morphShape = morphShape;
-            _morphType = morphType;
-            _kernelSize = kernelSize;
-            _morphIterations = morphIterations;
-            _minAreaObloy = minAreaObloy;
+            SetCapFlashOffset(settings.CapFlashOffset);
+
+            SetKernelSize(settings.KernelSize);
+            SetMorphShape(settings.MorphShape);
+            SetMorphType(settings.MorphType);
+            SetMorphIterations(settings.MorphIterations);
+
+            SetMinAreaObloy(settings.MinAreaObloy);
 
             InitKernel();
         }
+
 
         public void SetCapFlashOffset(double value) => _capFlashOffset = value;
         public void SetMorphShape(MorphShapes value) 
@@ -46,6 +47,19 @@ namespace CapDefectDetector.ImageProcessing.Utils
         }
         public void SetMorphIterations(int value) => _morphIterations = value;
         public void SetMinAreaObloy(double value) => _minAreaObloy = value;
+
+        public ObloyDefectSettings GetSettings()
+        {
+            return new ObloyDefectSettings
+            {
+                CapFlashOffset = _capFlashOffset,
+                MorphShape = _morphShape,
+                MorphType = _morphType,
+                KernelSize = _kernelSize,
+                MorphIterations = _morphIterations,
+                MinAreaObloy = _minAreaObloy
+            };
+        }
 
         public bool CheckForObloyDefects(
             Mat gray,

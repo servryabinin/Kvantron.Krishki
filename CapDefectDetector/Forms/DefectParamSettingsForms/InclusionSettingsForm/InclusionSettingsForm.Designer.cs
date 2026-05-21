@@ -71,6 +71,8 @@
             inclusionSettings_inclusionCircleCoefNumUd = new NumericUpDown();
             inclusionSettings_inclusionMinSquareNumUd = new NumericUpDown();
             inclusionSettings_inclusionMaxSquareNumUd = new NumericUpDown();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            inclusionSettings_resultLabel = new Label();
             label2 = new Label();
             tableLayoutPanel7 = new TableLayoutPanel();
             inclusionSettings_loadImageForInclusionSettingsBt = new Button();
@@ -96,6 +98,7 @@
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionCircleCoefNumUd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMinSquareNumUd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMaxSquareNumUd).BeginInit();
+            tableLayoutPanel8.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
             SuspendLayout();
             // 
@@ -143,6 +146,7 @@
             tableLayoutPanel4.Controls.Add(tableLayoutPanel3, 2, 2);
             tableLayoutPanel4.Controls.Add(tableLayoutPanel5, 3, 2);
             tableLayoutPanel4.Controls.Add(tableLayoutPanel6, 4, 2);
+            tableLayoutPanel4.Controls.Add(tableLayoutPanel8, 5, 2);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(3, 58);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -318,12 +322,13 @@
             inclusionSettings_circleCoefNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             inclusionSettings_circleCoefNumUpD.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
             inclusionSettings_circleCoefNumUpD.Location = new Point(151, 5);
-            inclusionSettings_circleCoefNumUpD.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            inclusionSettings_circleCoefNumUpD.Maximum = new decimal(new int[] { 99, 0, 0, 131072 });
             inclusionSettings_circleCoefNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 131072 });
             inclusionSettings_circleCoefNumUpD.Name = "inclusionSettings_circleCoefNumUpD";
             inclusionSettings_circleCoefNumUpD.Size = new Size(74, 21);
             inclusionSettings_circleCoefNumUpD.TabIndex = 23;
             inclusionSettings_circleCoefNumUpD.Value = new decimal(new int[] { 65, 0, 0, 131072 });
+            inclusionSettings_circleCoefNumUpD.ValueChanged += inclusionSettings_circleCoefNumUpD_ValueChanged;
             // 
             // tableLayoutPanel3
             // 
@@ -360,6 +365,7 @@
             inclusionSettings_cNumUd.Size = new Size(74, 21);
             inclusionSettings_cNumUd.TabIndex = 31;
             inclusionSettings_cNumUd.Value = new decimal(new int[] { 8, 0, 0, 65536 });
+            inclusionSettings_cNumUd.ValueChanged += inclusionSettings_cNumUd_ValueChanged;
             // 
             // inclusionSettings_blockSizeNumUd
             // 
@@ -373,6 +379,7 @@
             inclusionSettings_blockSizeNumUd.Size = new Size(74, 21);
             inclusionSettings_blockSizeNumUd.TabIndex = 30;
             inclusionSettings_blockSizeNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            inclusionSettings_blockSizeNumUd.ValueChanged += inclusionSettings_blockSizeNumUd_ValueChanged;
             // 
             // label6
             // 
@@ -426,21 +433,21 @@
             // 
             inclusionSettings_adaptiveThresholdTypesCb.Anchor = AnchorStyles.None;
             inclusionSettings_adaptiveThresholdTypesCb.FormattingEnabled = true;
-            inclusionSettings_adaptiveThresholdTypesCb.Items.AddRange(new object[] { "MeanC", "GaussianC" });
             inclusionSettings_adaptiveThresholdTypesCb.Location = new Point(151, 4);
             inclusionSettings_adaptiveThresholdTypesCb.Name = "inclusionSettings_adaptiveThresholdTypesCb";
             inclusionSettings_adaptiveThresholdTypesCb.Size = new Size(74, 23);
             inclusionSettings_adaptiveThresholdTypesCb.TabIndex = 28;
+            inclusionSettings_adaptiveThresholdTypesCb.SelectedIndexChanged += inclusionSettings_adaptiveThresholdTypesCb_SelectedIndexChanged;
             // 
             // inclusionSettings_thresholdTypesCb
             // 
             inclusionSettings_thresholdTypesCb.Anchor = AnchorStyles.None;
             inclusionSettings_thresholdTypesCb.FormattingEnabled = true;
-            inclusionSettings_thresholdTypesCb.Items.AddRange(new object[] { "Binary", "BinaryInv" });
             inclusionSettings_thresholdTypesCb.Location = new Point(151, 36);
             inclusionSettings_thresholdTypesCb.Name = "inclusionSettings_thresholdTypesCb";
             inclusionSettings_thresholdTypesCb.Size = new Size(74, 23);
             inclusionSettings_thresholdTypesCb.TabIndex = 29;
+            inclusionSettings_thresholdTypesCb.SelectedIndexChanged += inclusionSettings_thresholdTypesCb_SelectedIndexChanged;
             // 
             // tableLayoutPanel5
             // 
@@ -477,6 +484,7 @@
             inclusionSettings_iterationsNumUd.Size = new Size(74, 21);
             inclusionSettings_iterationsNumUd.TabIndex = 32;
             inclusionSettings_iterationsNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            inclusionSettings_iterationsNumUd.ValueChanged += inclusionSettings_iterationsNumUd_ValueChanged;
             // 
             // inclusionSettings_kernelSizeNumUd
             // 
@@ -490,16 +498,17 @@
             inclusionSettings_kernelSizeNumUd.Size = new Size(74, 21);
             inclusionSettings_kernelSizeNumUd.TabIndex = 31;
             inclusionSettings_kernelSizeNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            inclusionSettings_kernelSizeNumUd.ValueChanged += inclusionSettings_kernelSizeNumUd_ValueChanged;
             // 
             // inclusionSettings_morphTypesCb
             // 
             inclusionSettings_morphTypesCb.Anchor = AnchorStyles.None;
             inclusionSettings_morphTypesCb.FormattingEnabled = true;
-            inclusionSettings_morphTypesCb.Items.AddRange(new object[] { "Open", "Close", "Erode", "Dilate" });
             inclusionSettings_morphTypesCb.Location = new Point(151, 4);
             inclusionSettings_morphTypesCb.Name = "inclusionSettings_morphTypesCb";
             inclusionSettings_morphTypesCb.Size = new Size(74, 23);
             inclusionSettings_morphTypesCb.TabIndex = 30;
+            inclusionSettings_morphTypesCb.SelectedIndexChanged += inclusionSettings_morphTypesCb_SelectedIndexChanged;
             // 
             // label11
             // 
@@ -553,11 +562,11 @@
             // 
             inclusionSettings_morphShapesCb.Anchor = AnchorStyles.None;
             inclusionSettings_morphShapesCb.FormattingEnabled = true;
-            inclusionSettings_morphShapesCb.Items.AddRange(new object[] { "Ellipse", "Rect", "Cross" });
             inclusionSettings_morphShapesCb.Location = new Point(151, 68);
             inclusionSettings_morphShapesCb.Name = "inclusionSettings_morphShapesCb";
             inclusionSettings_morphShapesCb.Size = new Size(74, 23);
             inclusionSettings_morphShapesCb.TabIndex = 29;
+            inclusionSettings_morphShapesCb.SelectedIndexChanged += inclusionSettings_morphShapesCb_SelectedIndexChanged;
             // 
             // tableLayoutPanel6
             // 
@@ -622,7 +631,7 @@
             inclusionSettings_inclusionCircleCoefNumUd.Anchor = AnchorStyles.None;
             inclusionSettings_inclusionCircleCoefNumUd.DecimalPlaces = 2;
             inclusionSettings_inclusionCircleCoefNumUd.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inclusionSettings_inclusionCircleCoefNumUd.Increment = new decimal(new int[] { 2, 0, 0, 0 });
+            inclusionSettings_inclusionCircleCoefNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
             inclusionSettings_inclusionCircleCoefNumUd.Location = new Point(151, 69);
             inclusionSettings_inclusionCircleCoefNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             inclusionSettings_inclusionCircleCoefNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
@@ -630,6 +639,7 @@
             inclusionSettings_inclusionCircleCoefNumUd.Size = new Size(74, 21);
             inclusionSettings_inclusionCircleCoefNumUd.TabIndex = 33;
             inclusionSettings_inclusionCircleCoefNumUd.Value = new decimal(new int[] { 6, 0, 0, 65536 });
+            inclusionSettings_inclusionCircleCoefNumUd.ValueChanged += inclusionSettings_inclusionCircleCoefNumUd_ValueChanged;
             // 
             // inclusionSettings_inclusionMinSquareNumUd
             // 
@@ -642,6 +652,7 @@
             inclusionSettings_inclusionMinSquareNumUd.Size = new Size(74, 21);
             inclusionSettings_inclusionMinSquareNumUd.TabIndex = 32;
             inclusionSettings_inclusionMinSquareNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            inclusionSettings_inclusionMinSquareNumUd.ValueChanged += inclusionSettings_inclusionMinSquareNumUd_ValueChanged;
             // 
             // inclusionSettings_inclusionMaxSquareNumUd
             // 
@@ -654,6 +665,34 @@
             inclusionSettings_inclusionMaxSquareNumUd.Size = new Size(74, 21);
             inclusionSettings_inclusionMaxSquareNumUd.TabIndex = 31;
             inclusionSettings_inclusionMaxSquareNumUd.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            inclusionSettings_inclusionMaxSquareNumUd.ValueChanged += inclusionSettings_inclusionMaxSquareNumUd_ValueChanged;
+            // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.ColumnCount = 1;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.Controls.Add(inclusionSettings_resultLabel, 0, 0);
+            tableLayoutPanel8.Dock = DockStyle.Fill;
+            tableLayoutPanel8.Location = new Point(1192, 314);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 1;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.Size = new Size(233, 130);
+            tableLayoutPanel8.TabIndex = 34;
+            // 
+            // inclusionSettings_resultLabel
+            // 
+            inclusionSettings_resultLabel.Anchor = AnchorStyles.None;
+            inclusionSettings_resultLabel.AutoSize = true;
+            inclusionSettings_resultLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            inclusionSettings_resultLabel.ForeColor = SystemColors.ControlDark;
+            inclusionSettings_resultLabel.Location = new Point(79, 50);
+            inclusionSettings_resultLabel.Name = "inclusionSettings_resultLabel";
+            inclusionSettings_resultLabel.Size = new Size(74, 30);
+            inclusionSettings_resultLabel.TabIndex = 26;
+            inclusionSettings_resultLabel.Text = "NONE";
             // 
             // label2
             // 
@@ -700,6 +739,7 @@
             inclusionSettings_loadImageForInclusionSettingsBt.TabIndex = 8;
             inclusionSettings_loadImageForInclusionSettingsBt.Text = "Загрузить изображение с папки";
             inclusionSettings_loadImageForInclusionSettingsBt.UseVisualStyleBackColor = false;
+            inclusionSettings_loadImageForInclusionSettingsBt.Click += inclusionSettings_loadImageBt_Click;
             // 
             // inclusionSettings_okBt
             // 
@@ -714,6 +754,7 @@
             inclusionSettings_okBt.TabIndex = 6;
             inclusionSettings_okBt.Text = "OK";
             inclusionSettings_okBt.UseVisualStyleBackColor = false;
+            inclusionSettings_okBt.Click += inclusionSettings_okBt_Click;
             // 
             // inclusionSettings_cancelBt
             // 
@@ -728,6 +769,7 @@
             inclusionSettings_cancelBt.TabIndex = 7;
             inclusionSettings_cancelBt.Text = "Отмена";
             inclusionSettings_cancelBt.UseVisualStyleBackColor = false;
+            inclusionSettings_cancelBt.Click += inclusionSettings_cancelBt_Click;
             // 
             // InclusionSettingsForm
             // 
@@ -763,6 +805,8 @@
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionCircleCoefNumUd).EndInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMinSquareNumUd).EndInit();
             ((System.ComponentModel.ISupportInitialize)inclusionSettings_inclusionMaxSquareNumUd).EndInit();
+            tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
             tableLayoutPanel7.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -816,5 +860,7 @@
         private TableLayoutPanel tableLayoutPanel7;
         private Button inclusionSettings_cancelBt;
         private Button inclusionSettings_loadImageForInclusionSettingsBt;
+        private TableLayoutPanel tableLayoutPanel8;
+        private Label inclusionSettings_resultLabel;
     }
 }

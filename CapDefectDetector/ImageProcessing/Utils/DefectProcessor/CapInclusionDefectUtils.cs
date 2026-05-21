@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using CapDefectDetector.DTO.DefectSettings;
 using CapDefectDetector.Logger;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
@@ -25,26 +26,23 @@ namespace CapDefectDetector.ImageProcessing.Utils
         private double _maxAreaInclusion;
         private double _inclusionThreshold;
 
-        public CapInclusionUtils(double coefCapRadiusInclusion,
-                                 AdaptiveThresholdTypes adaptiveType, ThresholdTypes thresholdType, int blockSize, double c,
-                                 MorphShapes morphShape, MorphTypes morphType, int kernelSize, int morphIterations,
-                                 double minAreaInclusion, double maxAreaInclusion, double inclusionThreshold)
+        public CapInclusionUtils(InclusionDefectSettings settings)
         {
-            _coefCapRadiusInclusion = coefCapRadiusInclusion;
+            SetCoefCapRadiusInclusion(settings.CoefCapRadiusInclusion);
 
-            _adaptiveType = adaptiveType;
-            _thresholdType = thresholdType;
-            _blockSize = blockSize;
-            _c = c;
+            SetAdaptiveType(settings.AdaptiveType);
+            SetThresholdType(settings.ThresholdType);
+            SetBlockSize(settings.BlockSize);
+            SetC(settings.C);
 
-            _morphShape = morphShape;
-            _morphType = morphType;
-            _kernelSize = kernelSize;
-            _morphIterations = morphIterations;
+            SetMorphShape(settings.MorphShape);
+            SetMorphType(settings.MorphType);
+            SetKernelSize(settings.KernelSize);
+            SetMorphIterations(settings.MorphIterations);
 
-            _minAreaInclusion = minAreaInclusion;
-            _maxAreaInclusion = maxAreaInclusion;
-            _inclusionThreshold = inclusionThreshold;
+            SetMinAreaInclusion(settings.MinAreaInclusion);
+            SetMaxAreaInclusion(settings.MaxAreaInclusion);
+            SetInclusionThreshold(settings.InclusionThreshold);
         }
 
         public void SetCoefCapRadiusInclusion(double value) => _coefCapRadiusInclusion = value;
@@ -60,75 +58,96 @@ namespace CapDefectDetector.ImageProcessing.Utils
         public void SetMaxAreaInclusion(double value) => _maxAreaInclusion = value;
         public void SetInclusionThreshold(double value) => _inclusionThreshold = value;
 
-        public bool CheckForInclusions(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
+        public InclusionDefectSettings GetSettings()
+        {
+            return new InclusionDefectSettings
+            {
+                CoefCapRadiusInclusion = _coefCapRadiusInclusion,
+                AdaptiveType = _adaptiveType,
+                ThresholdType = _thresholdType,
+                BlockSize = _blockSize,
+                C = _c,
+                MorphShape = _morphShape,
+                MorphType = _morphType,
+                KernelSize = _kernelSize,
+                MorphIterations = _morphIterations,
+                MinAreaInclusion = _minAreaInclusion,
+                MaxAreaInclusion = _maxAreaInclusion,
+                InclusionThreshold = _inclusionThreshold
+            };
+        }
+
+        public bool CheckForInclusions(
+            Mat gray,
+            Mat image,
+            Mat drawFrame,
+            CancellationToken token,
+            Point[] capContour)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
 
                 if (capContour == null || capContour.Length < 5)
-                {
-                    ErrorLogger.Log(
-                        new Exception("Контур для проверки включений пустой или содержит недостаточно точек"),
-                        "CheckForInclusions - проверка наличия контура"
-                    );
                     return false;
-                }
 
                 token.ThrowIfCancellationRequested();
 
-                RotatedRect ellipse;
-                try
-                {
-                    ellipse = Cv2.FitEllipse(capContour);
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "CheckForInclusions - ошибка при расчёте эллипса");
-                    return false;
-                }
+                Mat step1 = DrawSearchArea(drawFrame, capContour);
 
-                Point2f center = ellipse.Center;
-                float radius = ComputeRadius(ellipse);
+                Mat step2 = AdaptiveBinarizeStep(gray, capContour);
 
-                try
-                {
-                    Cv2.Circle(drawFrame, (Point)center, (int)radius, new Scalar(255, 0, 0), 2);
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "CheckForInclusions - ошибка при рисовании эллипса");
-                }
+                Mat step3 = MorphologyStep(step2);
 
-                try
-                {
-                    using (Mat mask = CreateMask(gray.Size(), center, radius))
-                    using (Mat cropped = new Mat())
-                    {
-                        gray.CopyTo(cropped, mask);
+                bool found = DetectInclusionsStep(step3, drawFrame, token);
 
-                        using (Mat binary = AdaptiveBinarize(cropped))
-                        using (Mat filtered = ApplyMorphology(binary))
-                        {
-                            return ProcessContours(filtered, drawFrame, token);
-                        }
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "CheckForInclusions - ошибка при обработке изображения для поиска включений");
-                    return false;
-                }
+                return found;
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex, "CheckForInclusions - непредвиденная ошибка");
+                ErrorLogger.Log(ex, "CheckForInclusions - error");
                 return false;
             }
+        }
+
+        public Mat DrawSearchArea(Mat drawFrame, Point[] capContour)
+        {
+            RotatedRect ellipse = Cv2.FitEllipse(capContour);
+
+            Point2f center = ellipse.Center;
+            float radius = ComputeRadius(ellipse);
+
+            Cv2.Circle(drawFrame, (Point)center, (int)radius, new Scalar(255, 0, 0), 2);
+
+            return drawFrame;
+        }
+
+        public Mat AdaptiveBinarizeStep(Mat gray, Point[] capContour)
+        {
+            RotatedRect ellipse = Cv2.FitEllipse(capContour);
+
+            Mat mask = CreateMask(gray.Size(), ellipse.Center, ComputeRadius(ellipse));
+
+            Mat cropped = new Mat();
+            gray.CopyTo(cropped, mask);
+
+            Mat binary = new Mat();
+
+            Cv2.AdaptiveThreshold(cropped,binary,255,_adaptiveType,_thresholdType,_blockSize,_c);
+
+            return binary;
+        }
+
+        public Mat MorphologyStep(Mat binary)
+        {
+            Mat result = new Mat();
+
+            using (var kernel = Cv2.GetStructuringElement(_morphShape,new Size(_kernelSize, _kernelSize)))
+            {
+                Cv2.MorphologyEx(binary,result,_morphType,kernel,iterations: _morphIterations);
+            }
+
+            return result;
         }
 
         private float ComputeRadius(RotatedRect ellipse)
@@ -143,44 +162,14 @@ namespace CapDefectDetector.ImageProcessing.Utils
             return mask;
         }
 
-        private Mat AdaptiveBinarize(Mat croppedRegion)
+        public bool DetectInclusionsStep(Mat filteredBinary, Mat drawFrame, CancellationToken token)
         {
-            Mat binary = new Mat();
-
-            Cv2.AdaptiveThreshold(
-                croppedRegion,
-                binary,
-                255,
-                _adaptiveType,
-                _thresholdType,
-                _blockSize,
-                _c
-            );
-
-            return binary;
-        }
-
-        private Mat ApplyMorphology(Mat binary)
-        {
-            Mat result = new Mat();
-
-            using (var kernel = Cv2.GetStructuringElement(_morphShape, new Size(_kernelSize, _kernelSize)))
-            {
-                Cv2.MorphologyEx(
-                    binary,
-                    result,
-                    _morphType,
-                    kernel,
-                    iterations: _morphIterations
-                );
-            }
-
-            return result;
-        }
-
-        private bool ProcessContours(Mat filteredBinary, Mat drawFrame, CancellationToken token)
-        {
-            Cv2.FindContours(filteredBinary, out Point[][] contours, out _, RetrievalModes.List, ContourApproximationModes.ApproxSimple);
+            Cv2.FindContours(
+                filteredBinary,
+                out Point[][] contours,
+                out _,
+                RetrievalModes.List,
+                ContourApproximationModes.ApproxSimple);
 
             bool found = false;
 
@@ -194,16 +183,10 @@ namespace CapDefectDetector.ImageProcessing.Utils
                     area < _maxAreaInclusion &&
                     IsCircularContour(contour))
                 {
-                    try
-                    {
-                        Rect bbox = Cv2.BoundingRect(contour);
-                        Cv2.Rectangle(drawFrame, bbox.TopLeft, bbox.BottomRight, new Scalar(0, 0, 255), 2);
-                        found = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.Log(ex, "CheckForInclusions - ошибка при рисовании прямоугольника вокруг включения");
-                    }
+                    Rect bbox = Cv2.BoundingRect(contour);
+                    Cv2.Rectangle(drawFrame, bbox.TopLeft, bbox.BottomRight, new Scalar(0, 0, 255), 2);
+
+                    found = true;
                 }
             }
 

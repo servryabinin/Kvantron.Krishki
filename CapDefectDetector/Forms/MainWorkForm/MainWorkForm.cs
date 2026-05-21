@@ -6,10 +6,15 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using CapDefectDetector.Authorization;
 using CapDefectDetector.CameraAndModbusClasses;
 using CapDefectDetector.Domain;
-using CapDefectDetector.DTO;
+using CapDefectDetector.DTO.CameraSettings;
+using CapDefectDetector.DTO.CapRecipe;
+using CapDefectDetector.DTO.DefectSettings;
+using CapDefectDetector.DTO.PrSettings;
 using CapDefectDetector.Forms;
 using CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm;
 using CapDefectDetector.Forms.DefectParamSettingsForms.InpaintSettingsForm;
@@ -44,6 +49,7 @@ namespace CapDefectDetector
         // Выделение лейблов
         private Color _labelNormalColor = Color.Black;
         private Color _labelHoverColor = Color.FromArgb(66, 133, 244);
+        private Color _labelDisabledHoverColor = Color.Gray;
         private Font _labelNormalFont;
         private Font _labelHoverFont;
 
@@ -98,7 +104,7 @@ namespace CapDefectDetector
 #else
         private readonly FrameBuffer _imageQueue = new();
 #endif
-  
+
         // Счетчики дефектов
         private int _ovalityDefectCount = 0;
         private int _inclusionDefectCount = 0;
@@ -127,6 +133,7 @@ namespace CapDefectDetector
         //Объекты утилит для нахождения контуров
         private readonly CapColorContourUtils _colorUtils = new CapColorContourUtils();
         private readonly CapBlackOrBrownContourUtils _blackOrBrownUtils = new CapBlackOrBrownContourUtils();
+        private CapRecipe _currentRecipe;
         // Поля рецепта
         private byte _capsColor = 0;
         private const byte GREEN_THRESHOLD = 40;
@@ -165,57 +172,13 @@ namespace CapDefectDetector
         private CapPaintDefectUtils _paintUtils;
         private CapObloyDefectUtils _obloyUtils;
         private CapUnderfillDefectUtils _underfillUtils;
-        // Параметры дефектов
-        //Овальность
-        private double _ovalityThreshold = 0.7;
-        //Непрокрас
-        private double _sMin = 0.05;
-        private double _sMax = 0.95;
-        private double _vMin = 0.05;
-        private double _vMax = 0.95;
-        private double _minInpaintWhiteThreshold = 150.0;
-        private double _minAreaInpaintDefect = 500.0;
-        //Вкрапления
-        private double _coefCapRadiusInclusion = 0.7;
-        private AdaptiveThresholdTypes _inclusionAdaptiveType = AdaptiveThresholdTypes.MeanC;
-        private ThresholdTypes _inclusionThresholdType = ThresholdTypes.BinaryInv;
-        private int _inclusionBlockSize = 11;
-        private double _inclusionC = 2;
-        private MorphShapes _inclusionMorphShape = MorphShapes.Ellipse;
-        private MorphTypes _inclusionMorphType = MorphTypes.Open;
-        private int _inclusionKernelSize = 3;
-        private int _inclusionMorphIterations = 1;
-        private double _minAreaInclusion = 50.0;
-        private double _maxAreaInclusion = 500.0;
-        private double _inclusionThreshold = 0.5;
-        //Облой
-        private double _capFlashOffset = 3.0;
-        private MorphShapes _obloyMorphShape = MorphShapes.Rect;
-        private MorphTypes _obloyMorphType = MorphTypes.Erode;
-        private int _obloyKernelSize = 3;
-        private int _obloyMorphIterations = 1;
-        private double _minAreaObloy = 1000.0;
-        //Недолив
-        private byte _capsColorUnderfiil;
-        private bool _decolorizeBackground;
-        private bool _normalizeBrightness;
-        private bool _preserveDetails;
-        private double _coefCapRadiusUnderFill = 0.8;
-        private double _rectHeightCoef;
-        private int _innerOffset;
-        private int _underfillRectWidth;
-        private double _corrugationsCountForUnderFill = 10;
-        private double[] _sinTable;
-        private double[] _cosTable;
-        private readonly object _trigTablesLock = new object();
-        private const int UNDERFILL_RECT_WIDTH = 1024;
+        private DefectSettings _currentDefectSettings;
 
         // Параметры для нахождения "Облой"
         private Mat _capRadiusMask = new Mat(532, 568, MatType.CV_8UC1);
         private Mat _blurChannel_0;
         private Mat _blurChannel_1;
         private Mat _blurChannel_2;
-        private const float CAP_FLASH_OFFSET = 5.0f;
 
         // Изображения для различных проверок
         private Mat _imageForOvality;
@@ -468,16 +431,12 @@ namespace CapDefectDetector
             InitializeDefectSettingsFileWatcher();
             InitializePrSettingsFileWatcher();
             InitializeCameraSettingsFileWatcher();
-            LoadCameraParam();
-            LoadDefectParam();
             InitializeRecepts();
             InitializeDefectSettings();
             InitializePrSettings();
             LoadPrParam();
             InitializeCameraSettings();
             InitializeMorphologicalElements();
-            InitializeTrigTables();
-            InitProcessingUtils();
 
             recognizeButton.Enabled = false;
 
@@ -630,28 +589,6 @@ namespace CapDefectDetector
                 new Size(2 * morph_size_2 + 1, 2 * morph_size_2 + 1),
                 new Point(morph_size_2, morph_size_2)
             );
-
-            elementMask = Cv2.GetStructuringElement(
-                MorphShapes.Rect,
-                new Size(3, 3),
-                new Point(1, 1)
-            );
-        }
-
-        private void InitializeTrigTables()
-        {
-            lock (_trigTablesLock)
-            {
-                _sinTable = new double[UNDERFILL_RECT_WIDTH];
-                _cosTable = new double[UNDERFILL_RECT_WIDTH];
-
-                double dTheta = 2 * Math.PI / UNDERFILL_RECT_WIDTH;
-                for (int i = 0; i < UNDERFILL_RECT_WIDTH; i++)
-                {
-                    _sinTable[i] = Math.Sin(i * dTheta);
-                    _cosTable[i] = Math.Cos(i * dTheta);
-                }
-            }
         }
 
         private void InitializeDefectSettingsFileWatcher()
@@ -840,96 +777,6 @@ namespace CapDefectDetector
             }
         }
 
-        private void LoadDefectParam()
-        {
-            // ===== Параметры ПР =====
-            double.TryParse(Properties.Settings.Default.Settings_OvalityThreshold, out _ovalityThreshold);
-
-            if (ovalityCoefNumUpD != null)
-            {
-                ovalityCoefNumUpD.Text = _ovalityThreshold.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_InclusionThreshold, out _inclusionThreshold);
-
-            if (circleCoefNumUpD != null)
-            {
-                circleCoefNumUpD.Text = _inclusionThreshold.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_MinAreaInclusion, out _minAreaInclusion);
-
-            if (minSquareInclusionNumUpD != null)
-            {
-                minSquareInclusionNumUpD.Text = _minAreaInclusion.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_MaxAreaInclusion, out _maxAreaInclusion);
-
-            if (maxSquareInclusionNumUpD != null)
-            {
-                maxSquareInclusionNumUpD.Text = _maxAreaInclusion.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_CoefCapRadiusInclusion, out _coefCapRadiusInclusion);
-
-            if (coefCapRadiusInclusionUpD != null)
-            {
-                coefCapRadiusInclusionUpD.Text = _coefCapRadiusInclusion.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_MinAreaInpaintDefect, out _minAreaInpaintDefect);
-
-            if (minSquareInpaintNumUpD != null)
-            {
-                minSquareInpaintNumUpD.Text = _minAreaInpaintDefect.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_MinInpaintWhiteThreshold, out _minInpaintWhiteThreshold);
-
-            if (whiteThresoldNumUpD != null)
-            {
-                whiteThresoldNumUpD.Text = _minInpaintWhiteThreshold.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_MinAreaObloy, out _minAreaObloy);
-
-            if (obloyPixCountNumUpD != null)
-            {
-                obloyPixCountNumUpD.Text = _minAreaObloy.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_СorrugationsCountForUnderFill, out _corrugationsCountForUnderFill);
-
-            if (countCorrugationsNumUpD != null)
-            {
-                countCorrugationsNumUpD.Text = _corrugationsCountForUnderFill.ToString();
-            }
-
-            double.TryParse(Properties.Settings.Default.Settings_СoefCapRadiusUnderFill, out _coefCapRadiusUnderFill);
-
-            if (coefCapRadiusMaskUnderFillNumUpD != null)
-            {
-                coefCapRadiusMaskUnderFillNumUpD.Text = _coefCapRadiusUnderFill.ToString();
-            }
-        }
-
-        private void LoadCameraParam()
-        {
-            // ===== Параметры камеры (Width, Height, Exposure, Saturation) =====
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_WidthFrame))
-                frameWidthNumUpD.Text = Properties.Settings.Default.Settings_WidthFrame;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_HeightFrame))
-                frameHeightNumUpD.Text = Properties.Settings.Default.Settings_HeightFrame;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_ExposureFrame))
-                frameExposureNumUpD.Text = Properties.Settings.Default.Settings_ExposureFrame;
-
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.Settings_SaturationFrame))
-                frameSaturationNumUpD.Text = Properties.Settings.Default.Settings_SaturationFrame;
-        }
-
         private void SendStopSignalsToPLC()
         {
             try
@@ -1042,22 +889,6 @@ namespace CapDefectDetector
                     cameraSettingsCmB.SelectedIndex = 0;
                 }
             }
-        }
-
-        private void InitProcessingUtils()
-        {
-            _ovalityUtils = new CapOvalityUtils(_ovalityThreshold);
-            _inclusionUtils = new CapInclusionUtils(_coefCapRadiusInclusion,
-                                                    _inclusionAdaptiveType,_inclusionThresholdType,_inclusionBlockSize,_inclusionC,
-                                                    _inclusionMorphShape,_inclusionMorphType,_inclusionKernelSize,_inclusionMorphIterations,
-                                                    _minAreaInclusion,_maxAreaInclusion,_inclusionThreshold);
-            _paintUtils = new CapPaintDefectUtils(_minAreaInpaintDefect, _minInpaintWhiteThreshold, _sMin, _sMax, _vMin, _vMax);
-            _obloyUtils = new CapObloyDefectUtils(_capFlashOffset,_obloyMorphShape,_obloyMorphType,_obloyKernelSize,_obloyMorphIterations,_minAreaObloy);
-            _underfillUtils = new CapUnderfillDefectUtils( _colorUtils,_capsColor,_decolorizeBackground,_normalizeBrightness,_preserveDetails,
-                                                           _coefCapRadiusUnderFill,
-                                                           _rectHeightCoef,_innerOffset,
-                                                           _underfillRectWidth,_corrugationsCountForUnderFill,
-                                                           _sinTable, _cosTable);
         }
 
         private void LoadRecipes()
@@ -1946,12 +1777,10 @@ namespace CapDefectDetector
         private void saveDefectSettingsNew_Click(object sender, EventArgs e)
         {
             if (!ValidateDefectSettings())
-            {
                 return;
-            }
 
-            // --- Папка ---
             string folder = _folderParamDefect;
+
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
@@ -1964,56 +1793,39 @@ namespace CapDefectDetector
             var defectSettings = new DefectSettings
             {
                 Name = name,
-                OvalityThreshold = double.Parse(ovalityCoefNumUpD.Text),
-                InclusionThreshold = double.Parse(circleCoefNumUpD.Text),
-                MinAreaInclusion = double.Parse(minSquareInclusionNumUpD.Text),
-                MaxAreaInclusion = double.Parse(maxSquareInclusionNumUpD.Text),
-                CoefCapRadiusInclusion = double.Parse(coefCapRadiusInclusionUpD.Text),
-                MinAreaInpaintDefect = double.Parse(minSquareInpaintNumUpD.Text),
-                MinInpaintWhiteThreshold = double.Parse(whiteThresoldNumUpD.Text),
-                MinAreaObloy = double.Parse(obloyPixCountNumUpD.Text),
-                CorrugationsCountForUnderFill = double.Parse(countCorrugationsNumUpD.Text),
-                CoefCapRadiusUnderFill = double.Parse(coefCapRadiusMaskUnderFillNumUpD.Text)
+
+                Ovality = _ovalityUtils.GetSettings(),
+                Inclusion = _inclusionUtils.GetSettings(),
+                Paint = _paintUtils.GetSettings(),
+                Obloy = _obloyUtils.GetSettings(),
+                Underfill = _underfillUtils.GetSettings()
             };
 
-            // --- JSON с нормальной русской кодировкой ---
             string json = System.Text.Json.JsonSerializer.Serialize(
-                defectSettings,
-                new System.Text.Json.JsonSerializerOptions
-                {
-                    WriteIndented = true,
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                }
-            );
+                        defectSettings,
+                        new System.Text.Json.JsonSerializerOptions
+                        {
+                            WriteIndented = true,
+                            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                            Converters =
+                            {
+                                new System.Text.Json.Serialization.JsonStringEnumConverter(
+                                    System.Text.Json.JsonNamingPolicy.CamelCase,
+                                    allowIntegerValues: true)
+                            }
+                        });
 
             File.WriteAllText(fullPath, json, Encoding.UTF8);
 
-            // Сохраняем в Settings
-            Properties.Settings.Default.Settings_OvalityThreshold = ovalityCoefNumUpD.Text;
-            Properties.Settings.Default.Settings_InclusionThreshold = circleCoefNumUpD.Text;
-            Properties.Settings.Default.Settings_MinAreaInclusion = minSquareInclusionNumUpD.Text;
-            Properties.Settings.Default.Settings_MaxAreaInclusion = maxSquareInclusionNumUpD.Text;
-            Properties.Settings.Default.Settings_CoefCapRadiusInclusion = coefCapRadiusInclusionUpD.Text;
-            Properties.Settings.Default.Settings_MinAreaInpaintDefect = minSquareInpaintNumUpD.Text;
-            Properties.Settings.Default.Settings_MinInpaintWhiteThreshold = whiteThresoldNumUpD.Text;
-            Properties.Settings.Default.Settings_MinAreaObloy = obloyPixCountNumUpD.Text;
-            Properties.Settings.Default.Settings_СorrugationsCountForUnderFill = countCorrugationsNumUpD.Text;
-            Properties.Settings.Default.Settings_СoefCapRadiusUnderFill = coefCapRadiusMaskUnderFillNumUpD.Text;
-            Properties.Settings.Default.Save();
-
-            // --- Обновляем список настроек дефектов ---
             LoadDefectSettings();
 
             paramDefCmB.Items.Clear();
-            foreach (var defectSettingsNamer in _defectSettings.Keys)
-                paramDefCmB.Items.Add(defectSettingsNamer);
+            foreach (var key in _defectSettings.Keys)
+                paramDefCmB.Items.Add(key);
+
             paramDefCmB.SelectedItem = name;
 
-            // --- Сообщение ---
-            if (existedBefore)
-                MessageBox.Show($"Файл настроек \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else
-                MessageBox.Show($"Файл настроек \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(existedBefore ? $"Файл настроек \"{name}\" обновлён!" : $"Файл настроек \"{name}\" создан!");
         }
 
         private void paramDefCmB_SelectedIndexChanged(object sender, EventArgs e)
@@ -2032,22 +1844,35 @@ namespace CapDefectDetector
         {
             _isApplyingDefectSettings = true;
 
-            ovalityCoefNumUpD.Text = r.OvalityThreshold.ToString();
+            try
+            {
+                _currentDefectSettings = r;
 
-            circleCoefNumUpD.Text = r.InclusionThreshold.ToString();
-            coefCapRadiusInclusionUpD.Text = r.CoefCapRadiusInclusion.ToString();
-            minSquareInclusionNumUpD.Text = r.MinAreaInclusion.ToString();
-            maxSquareInclusionNumUpD.Text = r.MaxAreaInclusion.ToString();
+                _ovalityUtils = new CapOvalityUtils(r.Ovality);
+                ovalityCoefNumUpD.Value = (decimal)r.Ovality.OvalityThreshold;
 
-            minSquareInpaintNumUpD.Text = r.MinAreaInpaintDefect.ToString();
-            whiteThresoldNumUpD.Text = r.MinInpaintWhiteThreshold.ToString();
+                _inclusionUtils = new CapInclusionUtils(r.Inclusion);
+                coefCapRadiusInclusionUpD.Value = (decimal)r.Inclusion.CoefCapRadiusInclusion;
+                minSquareInclusionNumUpD.Value = (decimal)r.Inclusion.MinAreaInclusion;
+                maxSquareInclusionNumUpD.Value = (decimal)r.Inclusion.MaxAreaInclusion;
+                circleCoefNumUpD.Value = (decimal)r.Inclusion.InclusionThreshold;
 
-            obloyPixCountNumUpD.Text = r.MinAreaObloy.ToString();
+                _paintUtils = new CapPaintDefectUtils(r.Paint);
+                minSquareInpaintNumUpD.Value = (decimal)r.Paint.MinAreaInpaintDefect;
+                whiteThresoldNumUpD.Value = (decimal)r.Paint.MinInpaintWhiteThreshold;
 
-            countCorrugationsNumUpD.Text = r.CorrugationsCountForUnderFill.ToString();
-            coefCapRadiusMaskUnderFillNumUpD.Text = r.CoefCapRadiusUnderFill.ToString();
+                _obloyUtils = new CapObloyDefectUtils(r.Obloy);
+                capFlashOffsetNumUpD.Value = (decimal)r.Obloy.CapFlashOffset;
+                obloyPixCountNumUpD.Value = (decimal)r.Obloy.MinAreaObloy;
 
-            _isApplyingDefectSettings = false;
+                _underfillUtils = new CapUnderfillDefectUtils(_colorUtils, r.Underfill);
+                coefCapRadiusMaskUnderFillNumUpD.Value = (decimal)r.Underfill.CoefCapRadiusUnderFill;
+                countCorrugationsNumUpD.Value = (decimal)r.Underfill.CorrugationsCountForUnderFill;
+            }
+            finally
+            {
+                _isApplyingDefectSettings = false;
+            }
         }
 
         private bool ValidateDefectSettings()
@@ -2188,23 +2013,14 @@ namespace CapDefectDetector
             Properties.Settings.Default.Settings_LastRecipeFileName = key;
             Properties.Settings.Default.Save();
 
-            ApplyRecipe(BuildCap(_recipes[key]));
-        }
-
-        private void ApplyRecipe(Cap cap)
-        {
-            ApplyRecipe(cap.Recipe.ToDto());
-        }
-
-        private static Cap BuildCap(CapRecipe recipe)
-        {
-            var domainRecipe = recipe.ToDomain();
-            return CapFactory.Create(recipe.Name, recipe.Name, domainRecipe);
+            ApplyRecipe(_recipes[key]);
         }
 
         private void ApplyRecipe(CapRecipe r)
         {
             _isApplyingRecipe = true;
+
+            _currentRecipe = r;
 
             // ---------- Цветовые флаги ----------
             _isGreenColor = r.IsGreen;
@@ -2385,570 +2201,6 @@ namespace CapDefectDetector
 
         #endregion
 
-        #region Методы обработки изображений
-        private bool CheckForPaintDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
-        {
-            try
-            {
-                token.ThrowIfCancellationRequested();
-
-                if (capContour == null || capContour.Length < 5)
-                {
-                    ErrorLogger.Log(new Exception("Контур крышки пустой или содержит недостаточно точек"),
-                        "CheckForPaintDefects - проверка контура");
-                    return false;
-                }
-
-                using (Mat hsv = new Mat())
-                {
-                    try
-                    {
-                        Cv2.CvtColor(image, hsv, ColorConversionCodes.BGR2HSV);
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при преобразовании в HSV");
-                        return false;
-                    }
-
-                    token.ThrowIfCancellationRequested();
-
-                    using (Mat capMask = Mat.Zeros(image.Size(), MatType.CV_8UC1))
-                    {
-                        try
-                        {
-                            Cv2.FillPoly(capMask, new[] { capContour }, new Scalar(255));
-                        }
-                        catch (Exception ex)
-                        {
-                            ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при создании маски крышки");
-                            return false;
-                        }
-
-                        token.ThrowIfCancellationRequested();
-
-                        using (Mat maskedHSV = new Mat())
-                        {
-                            try
-                            {
-                                Cv2.BitwiseAnd(hsv, hsv, maskedHSV, capMask);
-                            }
-                            catch (Exception ex)
-                            {
-                                ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при применении маски к HSV");
-                                return false;
-                            }
-
-                            token.ThrowIfCancellationRequested();
-
-                            Mat[] hsvChannels;
-                            try
-                            {
-                                Cv2.Split(maskedHSV, out hsvChannels);
-                            }
-                            catch (Exception ex)
-                            {
-                                ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при разделении HSV каналов");
-                                return false;
-                            }
-
-                            using (Mat sChannel = hsvChannels[1])
-                            using (Mat vChannel = hsvChannels[2])
-                            using (Mat whiteMask = new Mat())
-                            {
-                                try
-                                {
-                                    Cv2.InRange(hsv, new Scalar(0, 255 * 0.05, 255 * 0.05),
-                                                  new Scalar(180, 255 * 0.95, 255 * 0.95), whiteMask);
-                                }
-                                catch (Exception ex)
-                                {
-                                    ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при создании белой маски");
-                                    return false;
-                                }
-
-                                token.ThrowIfCancellationRequested();
-
-                                using (Mat defectsMask = new Mat())
-                                {
-                                    try
-                                    {
-                                        Cv2.BitwiseNot(whiteMask, defectsMask);
-                                        using (Mat maskedDefects = new Mat())
-                                        {
-                                            Cv2.BitwiseAnd(defectsMask, capMask, maskedDefects);
-                                            token.ThrowIfCancellationRequested();
-
-                                            Point[][] contours;
-                                            HierarchyIndex[] hierarchy;
-                                            Cv2.FindContours(maskedDefects, out contours, out hierarchy,
-                                                             RetrievalModes.External,
-                                                             ContourApproximationModes.ApproxSimple);
-
-                                            var significantContours = contours.Where(c =>
-                                                Cv2.ContourArea(c) > _minAreaInpaintDefect).ToList();
-                                            token.ThrowIfCancellationRequested();
-
-                                            var whiteDefects = new List<Point[]>();
-                                            foreach (var contour in significantContours)
-                                            {
-                                                token.ThrowIfCancellationRequested();
-                                                try
-                                                {
-                                                    using (Mat contourMask = Mat.Zeros(image.Size(), MatType.CV_8UC1))
-                                                    {
-                                                        Cv2.FillPoly(contourMask, new[] { contour }, new Scalar(255));
-                                                        using (Mat maskedImage = new Mat())
-                                                        {
-                                                            Cv2.BitwiseAnd(image, image, maskedImage, contourMask);
-                                                            Scalar meanColor = Cv2.Mean(maskedImage, contourMask);
-
-                                                            if (Math.Abs(meanColor.Val2 - 255) < _minInpaintWhiteThreshold)
-                                                            {
-                                                                whiteDefects.Add(contour);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при обработке контура дефекта");
-                                                }
-                                            }
-
-                                            if (whiteDefects.Count > 0)
-                                            {
-                                                try
-                                                {
-                                                    Cv2.DrawContours(drawFrame, whiteDefects, -1, new Scalar(0, 0, 255), 2);
-                                                    foreach (var contour in whiteDefects)
-                                                    {
-                                                        Rect boundingBox = Cv2.BoundingRect(contour);
-                                                        Cv2.Rectangle(drawFrame, boundingBox, new Scalar(0, 255, 255), 2);
-                                                    }
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при рисовании контуров дефектов");
-                                                }
-                                            }
-
-                                            return whiteDefects.Count > 0;
-                                        }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        ErrorLogger.Log(ex, "CheckForPaintDefects - ошибка при создании маски дефектов");
-                                        return false;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                return false;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "CheckForPaintDefects - непредвиденная ошибка");
-                return false;
-            }
-        }
-
-        private bool CheckForObloyDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
-        {
-            try
-            {
-                token.ThrowIfCancellationRequested();
-
-                if (capContour == null || capContour.Length < 5)
-                {
-                    ErrorLogger.Log(new Exception("Контур крышки пустой или содержит слишком мало точек"),
-                        "CheckForObloyDefects - проверка контура");
-                    return false;
-                }
-
-                if (_blurChannel_1 == null || _blurChannel_2 == null)
-                {
-                    ErrorLogger.Log(new Exception("Каналы blurChannel_1 или blurChannel_2 не инициализированы"),
-                        "CheckForObloyDefects - проверка инициализации каналов");
-                    return false;
-                }
-
-                // Вычисляем центр крышки
-                double sumX = 0, sumY = 0;
-                foreach (var pt in capContour)
-                {
-                    sumX += pt.X;
-                    sumY += pt.Y;
-                }
-                var capCenter = new Point((int)(sumX / capContour.Length), (int)(sumY / capContour.Length));
-
-                double radius = 0;
-                foreach (var pt in capContour)
-                {
-                    double dx = pt.X - capCenter.X;
-                    double dy = pt.Y - capCenter.Y;
-                    radius += Math.Sqrt(dx * dx + dy * dy);
-                }
-                radius /= capContour.Length;
-
-                try
-                {
-                    if (_capRadiusMask == null || _capRadiusMask.Size() != image.Size())
-                    {
-                        _capRadiusMask?.Dispose();
-                        _capRadiusMask = new Mat(image.Rows, image.Cols, MatType.CV_8UC1);
-                    }
-
-                    GetIdealCapMask(_capRadiusMask, capCenter,
-                                    (float)(radius + 3.0f),
-                                    (float)(radius + 3.0f + CAP_FLASH_OFFSET));
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при создании маски крышки");
-                    return false;
-                }
-
-                try
-                {
-                    Cv2.BitwiseAnd(_capRadiusMask, _blurChannel_2, _blurChannel_2);
-                    Cv2.MorphologyEx(_blurChannel_2, _blurChannel_1, MorphTypes.Erode, elementMask);
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при применении морфологии");
-                    return false;
-                }
-
-                Point[][] obloyContours;
-                HierarchyIndex[] hierarchyObloy;
-                try
-                {
-                    Cv2.FindContours(_blurChannel_1, out obloyContours, out hierarchyObloy,
-                                     RetrievalModes.External, ContourApproximationModes.ApproxNone);
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при поиске контуров");
-                    return false;
-                }
-
-                int pixCount;
-                try
-                {
-                    pixCount = Cv2.CountNonZero(_blurChannel_1);
-                }
-                catch (Exception ex)
-                {
-                    ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при подсчете ненулевых пикселей");
-                    return false;
-                }
-
-                if (pixCount > _minAreaObloy)
-                {
-                    try
-                    {
-                        Cv2.DrawContours(drawFrame, obloyContours, -1, new Scalar(0, 0, 255), 2);
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.Log(ex, "CheckForObloyDefects - ошибка при рисовании контуров дефектов");
-                    }
-                }
-
-                return pixCount > _minAreaObloy;
-            }
-            catch (OperationCanceledException)
-            {
-                return false;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "CheckForObloyDefects - непредвиденная ошибка");
-                return false;
-            }
-        }
-
-        private bool CheckForUnderFillDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
-        {
-            try
-            {
-                token.ThrowIfCancellationRequested();
-
-                if (capContour == null || capContour.Length < 5)
-                {
-                    ErrorLogger.Log(new Exception("Контур для проверки недолива пустой или содержит недостаточно точек"),
-                        "CheckForUnderFillDefects - проверка наличия контура");
-                    return false;
-                }
-
-                Mat colorCorrectedImage = image.Clone();
-                Mat colorCorrectedGray = null;
-
-                try
-                {
-                    NonlinearBackgroundDecolorization(colorCorrectedImage, _capsColor, true, true, false);
-
-                    // Создаем grayscale версию
-                    colorCorrectedGray = new Mat();
-                    Cv2.CvtColor(colorCorrectedImage, colorCorrectedGray, ColorConversionCodes.BGR2GRAY);
-
-                    token.ThrowIfCancellationRequested();
-
-                    // === ЭТАП А: Нахождение коронки ===
-                    RotatedRect outerEllipse = Cv2.FitEllipse(capContour);
-
-                    Size2f outerSize = outerEllipse.Size;
-                    Size2f innerSize = new Size2f(
-                        (float)(outerSize.Width * _coefCapRadiusUnderFill),
-                        (float)(outerSize.Height * _coefCapRadiusUnderFill)
-                    );
-
-                    RotatedRect innerEllipse = new RotatedRect(
-                        outerEllipse.Center,
-                        innerSize,
-                        outerEllipse.Angle
-                    );
-
-                    token.ThrowIfCancellationRequested();
-
-                    // Параметры развертки
-                    int rectHeight = (int)(Math.Max(outerSize.Width, outerSize.Height) * 0.15);
-
-                    // === ЭТАП Б: Выделение коронки и разворот ===
-                    Mat crownMask = new Mat(colorCorrectedImage.Size(), MatType.CV_8UC1, Scalar.All(0));
-
-                    try
-                    {
-                        Cv2.Ellipse(crownMask, outerEllipse, Scalar.White, -1);
-                        Cv2.Ellipse(crownMask, innerEllipse, Scalar.Black, -1);
-
-                        token.ThrowIfCancellationRequested();
-
-                        // Выделяем область коронки на цветном и grayscale изображениях
-                        Mat maskedColor = new Mat();
-                        Cv2.BitwiseAnd(colorCorrectedImage, colorCorrectedImage, maskedColor, crownMask);
-
-                        Mat maskedGray = new Mat();
-                        Cv2.BitwiseAnd(colorCorrectedGray, colorCorrectedGray, maskedGray, crownMask);
-
-                        token.ThrowIfCancellationRequested();
-
-                        // Разворачиваем коронку в прямоугольник
-                        Mat rectifiedCrown = new Mat(rectHeight, UNDERFILL_RECT_WIDTH, MatType.CV_8UC1);
-
-                        float outerRadius = (float)(Math.Max(outerSize.Width, outerSize.Height) / 2);
-                        float innerRadius = (float)(Math.Max(innerSize.Width, innerSize.Height) / 2);
-                        float meanRadius = (outerRadius + innerRadius) / 2;
-
-                        Point center = new Point((int)outerEllipse.Center.X, (int)outerEllipse.Center.Y);
-
-                        // Используем кэшированные тригонометрические таблицы
-                        GetStripeImg(maskedGray, 
-                            rectifiedCrown, 
-                            _sinTable, 
-                            _cosTable, 
-                            center, 
-                            (int)meanRadius,    
-                            maskedGray.Width, 
-                            maskedGray.Height,
-                            UNDERFILL_RECT_WIDTH, 
-                            rectHeight);
-
-                        token.ThrowIfCancellationRequested();
-
-                        // === ЭТАП В: Анализ через Фурье ===
-                        float[] rowStatistics = new float[UNDERFILL_RECT_WIDTH];
-                        GetWStatistics(rectifiedCrown, rowStatistics, UNDERFILL_RECT_WIDTH, rectHeight);
-
-                        token.ThrowIfCancellationRequested();
-
-                        bool hasUnderfill = AnalyzeUnderfillFFT(rowStatistics, UNDERFILL_RECT_WIDTH, _corrugationsCountForUnderFill);
-
-                        // Отрисовка результата
-                        try
-                        {
-                            Scalar color = hasUnderfill ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
-                            Cv2.Ellipse(drawFrame, innerEllipse, color, 2);
-                        }
-                        catch (Exception drawEx)
-                        {
-                            ErrorLogger.Log(drawEx, "CheckForUnderFillDefects - ошибка при рисовании эллипса");
-                        }
-
-                        return hasUnderfill;
-                    }
-                    finally
-                    {
-                        crownMask?.Dispose();
-                        // maskedColor и maskedGray будут автоматически освобождены в using, который добавим ниже
-                    }
-                }
-                finally
-                {
-                    // Освобождаем созданные ресурсы
-                    colorCorrectedImage?.Dispose();
-                    colorCorrectedGray?.Dispose();
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                return false;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "CheckForUnderFillDefects - ошибка при определении недолива");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Анализ Фурье для определения недолива
-        /// </summary>
-        private bool AnalyzeUnderfillFFT(float[] signal, int length, double expectedHarmonic)
-        {
-            try
-            {
-                if (signal == null || signal.Length < length)
-                    return false;
-
-                // Копируем сигнал для анализа
-                float[] data = new float[length];
-                Array.Copy(signal, data, length);
-
-                // Центрируем сигнал (вычитаем среднее)
-                double mean = 0;
-                for (int i = 0; i < length; i++)
-                    mean += data[i];
-                mean /= length;
-
-                for (int i = 0; i < length; i++)
-                    data[i] -= (float)mean;
-
-                // Преобразуем в комплексные числа для FFT
-                System.Numerics.Complex[] complexData = new System.Numerics.Complex[length];
-                for (int i = 0; i < length; i++)
-                    complexData[i] = new System.Numerics.Complex(data[i], 0);
-
-                // Выполняем FFT
-                MathNet.Numerics.IntegralTransforms.Fourier.Forward(complexData);
-
-                // Анализируем гармоники в окрестности ожидаемой
-                int minHarmonic = (int)Math.Max(1, expectedHarmonic - 2);
-                int maxHarmonic = (int)Math.Min(length / 2, expectedHarmonic + 2);
-
-                double maxMagnitude = 0;
-                int maxIndex = minHarmonic;
-
-                for (int i = minHarmonic; i <= maxHarmonic; i++)
-                {
-                    double magnitude = complexData[i].Magnitude;
-                    if (magnitude > maxMagnitude)
-                    {
-                        maxMagnitude = magnitude;
-                        maxIndex = i;
-                    }
-                }
-
-                bool result;
-
-                if (maxIndex >= expectedHarmonic - 1 && maxIndex <= expectedHarmonic + 1)
-                {
-                    result = false;
-                }
-                else
-                {
-                    result = true;
-                }
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, "AnalyzeUnderfillFFT - ошибка при Фурье-анализе");
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Получение усредненной яркости по строкам развертки
-        /// </summary>
-        private static void GetWStatistics(Mat src, float[] dst, int w, int h)
-        {
-            Array.Clear(dst, 0, dst.Length);
-
-            unsafe
-            {
-                byte* srcPtr = (byte*)src.DataPointer;
-                fixed (float* dstPtr = dst)
-                {
-                    for (int j = 0; j < h; j++)
-                    {
-                        byte* rowPtr = srcPtr + j * w;
-                        for (int i = 0; i < w; i++)
-                            dstPtr[i] += rowPtr[i];
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Получение развертки изображения
-        /// </summary>
-        private static void GetStripeImg(Mat src, Mat dst, double[] sinTable, double[] cosTable,
-                                         Point center, int radius, int w, int h, int width, int height)
-        {
-            const int INNER_OFFSET = 7; // Можно сделать параметром
-
-            int hr = radius - height;
-
-            for (int j = 0; j < height; j++)
-            {
-                int r = hr + j + INNER_OFFSET;
-                for (int i = 0; i < width; i++)
-                {
-                    double x = sinTable[i] * r + center.X;
-                    double y = cosTable[i] * r + center.Y;
-
-                    // Билинейная интерполяция
-                    dst.Set<byte>(j, i, Bilinear8Bit(src, x, y, w, h));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Билинейная интерполяция для 8-битных изображений
-        /// </summary>
-        private static byte Bilinear8Bit(Mat img, double x, double y, int w, int h)
-        {
-            int u = (int)x;
-            int v = (int)y;
-
-            if (u < 0 || v < 0 || u >= w - 1 || v >= h - 1)
-                return 0;
-
-            double dx = x - u;
-            double dy = y - v;
-
-            byte p1 = img.At<byte>(v, u);
-            byte p2 = img.At<byte>(v, u + 1);
-            byte p3 = img.At<byte>(v + 1, u);
-            byte p4 = img.At<byte>(v + 1, u + 1);
-
-            double interpolated = (1 - dx) * (1 - dy) * p1 +
-                                  dx * (1 - dy) * p2 +
-                                  (1 - dx) * dy * p3 +
-                                  dx * dy * p4;
-
-            return (byte)Math.Round(interpolated);
-        }
-        #endregion
-
         #region Вспомогательные методы обработки
 
         private CapContourResult GetCapContour(Mat gray, Mat image)
@@ -2974,7 +2226,7 @@ namespace CapDefectDetector
                 return null;
 
             Mat sat = _colorUtils.ApplySaturationStep(image, _saturationColor);
-            Mat caps = _colorUtils.ApplyCapsColorStep(sat,_capsColor,_isColored,_isYellowCap,_isGreenColor);
+            Mat caps = _colorUtils.ApplyCapsColorStep(sat, _capsColor, _isColored, _isYellowCap, _isGreenColor);
             Mat[] channels = _colorUtils.ApplyWindowStep(caps, window);
             _colorUtils.ApplyMorphologyStep(channels, element1, element2);
             Point[] contour = _colorUtils.GetMaxContour(channels[2]);
@@ -3011,27 +2263,6 @@ namespace CapDefectDetector
             };
         }
         #endregion
-
-
-        private void GetIdealCapMask(Mat mask, Point center, float innerRadius, float outerRadius)
-        {
-            mask.SetTo(0);
-
-            using var outer = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);
-            using var inner = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);
-
-            Cv2.Circle(outer, center, (int)outerRadius, Scalar.White, -1);
-            Cv2.Circle(inner, center, (int)innerRadius, Scalar.White, -1);
-            Cv2.Subtract(outer, inner, mask);
-        }
-
-        private bool IsCircularContour(Point[] contour)
-        {
-            double perimeter = Cv2.ArcLength(contour, true);
-            double area = Cv2.ContourArea(contour);
-            double circularity = (4 * Math.PI * area) / (perimeter * perimeter);
-            return circularity > _inclusionThreshold;
-        }
 
         #endregion
 
@@ -3287,59 +2518,69 @@ namespace CapDefectDetector
 
         private void ovalityCoefNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _ovalityThreshold = (double)ovalityCoefNumUpD.Value;
-            _ovalityUtils.SetThreshold((float)ovalityCoefNumUpD.Value);
+            if (_isApplyingDefectSettings) return;
+
+            _ovalityUtils.SetThreshold((double)ovalityCoefNumUpD.Value);
         }
 
         private void circleCoefNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _inclusionThreshold = (double)circleCoefNumUpD.Value;
-            _inclusionUtils.SetInclusionThreshold(_inclusionThreshold);
+            if (_isApplyingDefectSettings) return;
+            _inclusionUtils.SetInclusionThreshold((double)circleCoefNumUpD.Value);
         }
 
         private void coefCapRadiusInclusionUpD_ValueChanged(object sender, EventArgs e)
         {
-            _coefCapRadiusInclusion = (double)coefCapRadiusInclusionUpD.Value;
-            _inclusionUtils.SetCoefCapRadiusInclusion(_coefCapRadiusInclusion);
+            if (_isApplyingDefectSettings) return;
+            _inclusionUtils.SetCoefCapRadiusInclusion((double)coefCapRadiusInclusionUpD.Value);
         }
 
         private void minSquareInclusionNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _minAreaInclusion = (double)minSquareInclusionNumUpD.Value;
-            _inclusionUtils.SetMinAreaInclusion(_minAreaInclusion);
+            if (_isApplyingDefectSettings) return;
+            _inclusionUtils.SetMinAreaInclusion((double)minSquareInclusionNumUpD.Value);
         }
 
         private void maxSquareInclusionNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _maxAreaInclusion = (double)maxSquareInclusionNumUpD.Value;
-            _inclusionUtils.SetMaxAreaInclusion(_maxAreaInclusion);
+            if (_isApplyingDefectSettings) return;
+            _inclusionUtils.SetMaxAreaInclusion((double)maxSquareInclusionNumUpD.Value);
         }
 
         private void minSquareInpaintNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _minAreaInpaintDefect = (double)minSquareInpaintNumUpD.Value;
-            _paintUtils.SetMinAreaInpaintDefect(_minAreaInpaintDefect);
+            if (_isApplyingDefectSettings) return;
+            _paintUtils.SetMinAreaInpaintDefect((double)minSquareInpaintNumUpD.Value);
         }
 
         private void whiteThresoldNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _minInpaintWhiteThreshold = (double)whiteThresoldNumUpD.Value;
-            _paintUtils.SetMinInpaintWhiteThreshold(_minInpaintWhiteThreshold);
+            if (_isApplyingDefectSettings) return;
+            _paintUtils.SetMinInpaintWhiteThreshold((double)whiteThresoldNumUpD.Value);
+        }
+
+        private void capFlashOffsetNumUpD_ValueChanged(object sender, EventArgs e)
+        {
+            if (_isApplyingDefectSettings) return;
+            _obloyUtils.SetCapFlashOffset((double)capFlashOffsetNumUpD.Value);
         }
 
         private void obloyPixCountNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _minAreaObloy = (double)obloyPixCountNumUpD.Value;
+            if (_isApplyingDefectSettings) return;
+            _obloyUtils.SetMinAreaObloy((double)obloyPixCountNumUpD.Value);
         }
 
         private void countCorrugationsNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _corrugationsCountForUnderFill = (double)countCorrugationsNumUpD.Value;
+            if (_isApplyingDefectSettings) return;
+            _underfillUtils.SetCorrugationsCountForUnderFill((double)countCorrugationsNumUpD.Value);
         }
 
         private void coefCapRadiusMaskUnderFillNumUpD_ValueChanged(object sender, EventArgs e)
         {
-            _coefCapRadiusUnderFill = (double)coefCapRadiusMaskUnderFillNumUpD.Value;
+            if (_isApplyingDefectSettings) return;
+            _underfillUtils.SetCoefCapRadiusUnderFill((double)coefCapRadiusMaskUnderFillNumUpD.Value);
         }
 
         private void LoadSettings()
@@ -4025,7 +3266,7 @@ namespace CapDefectDetector
                 bool isObloy = false;
                 try
                 {
-                    isObloy = _obloyUtils.CheckForObloyDefects(gray,image,drawFrame,token,capContour,_blurChannel_1, _blurChannel_2,_capRadiusMask);
+                    isObloy = _obloyUtils.CheckForObloyDefects(gray, image, drawFrame, token, capContour, _blurChannel_1, _blurChannel_2, _capRadiusMask);
                 }
                 catch (Exception ex)
                 {
@@ -4487,7 +3728,7 @@ namespace CapDefectDetector
                 try { if (inpaintCB.Checked) paint = _paintUtils.CheckForPaintDefects(grayP, frameP, finalFrame, fake, contour); }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки дефектов краски"); }
 
-                try { if (obloyCB.Checked) obloy = _obloyUtils.CheckForObloyDefects(grayOb,frameOb,finalFrame,fake,capResult?.Contour, capResult?.Blur1,capResult?.Blur2,capResult?.Mask); ; }
+                try { if (obloyCB.Checked) obloy = _obloyUtils.CheckForObloyDefects(grayOb, frameOb, finalFrame, fake, capResult?.Contour, capResult?.Blur1, capResult?.Blur2, capResult?.Mask); ; }
                 catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка проверки облоя"); }
 
                 try { if (underFillCb.Checked) underFill = _underfillUtils.CheckForUnderFillDefects(grayUf, frameUf, finalFrame, fake, contour); }
@@ -4641,7 +3882,7 @@ namespace CapDefectDetector
 
         private Point[] ProcessBlackOrBrown()
         {
-            Mat satImg =  _blackOrBrownUtils.ApplySaturationStep(_imageOriginReceptParam, (int)saturationBlackOrBrownUpDown.Value);
+            Mat satImg = _blackOrBrownUtils.ApplySaturationStep(_imageOriginReceptParam, (int)saturationBlackOrBrownUpDown.Value);
             saturationBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
             Mat gray = _blackOrBrownUtils.ApplyGrayStep(satImg);
@@ -4661,14 +3902,14 @@ namespace CapDefectDetector
             if (_imageOriginReceptParam == null || _imageOriginReceptParam.Empty())
                 return null;
 
-            Mat satImg = _colorUtils.ApplySaturationStep(_imageOriginReceptParam,(int)saturationColorUpDown.Value);
+            Mat satImg = _colorUtils.ApplySaturationStep(_imageOriginReceptParam, (int)saturationColorUpDown.Value);
             saturationColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
             Mat capsImg = _colorUtils.ApplyCapsColorStep(satImg, (byte)capcolorUpDown.Value, _recipeIsColored, _recipeIsYellowCap, _recipeIsGreenColor);
-            capscolorColorReceptParamSmallPb.Image =BitmapConverter.ToBitmap(capsImg);
+            capscolorColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
 
             Mat[] channels = _colorUtils.ApplyWindowStep(capsImg, int.Parse(windowCb.Text));
-            windowColorReceptParamSmallPb.Image =BitmapConverter.ToBitmap(channels[1]);
+            windowColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(channels[1]);
 
             int morph = int.Parse(morphCb.Text);
             Mat element1 = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
@@ -4676,7 +3917,7 @@ namespace CapDefectDetector
             _colorUtils.ApplyMorphologyStep(channels, element1, element2);
             Mat morphImg = channels[2];
 
-            morphColorReceptParamSmallPb.Image =BitmapConverter.ToBitmap(morphImg);
+            morphColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
 
             return _colorUtils.GetMaxContour(morphImg);
         }
@@ -4813,10 +4054,9 @@ namespace CapDefectDetector
 
             int morphSize2 = morphSize;
 
-            var domainRecipe = new CapContourRecipe
+            var recipe = new CapRecipe
             {
                 Name = name,
-                Kind = _recipeIsBlackOrBrown ? CapKind.BlackOrBrown : CapKind.Colored,
                 CapsColor = (byte)capcolorUpDown.Value,
                 Window = windowValue,
                 MorphSize = morphSize,
@@ -4833,8 +4073,6 @@ namespace CapDefectDetector
                 IsYellow = _recipeIsYellowCap,
                 IsWhite = _recipeCapsAreWhite
             };
-
-            var recipe = domainRecipe.ToDto();
 
             string json = System.Text.Json.JsonSerializer.Serialize(
                 recipe,
@@ -5409,8 +4647,16 @@ namespace CapDefectDetector
         {
             if (sender is Label lbl)
             {
-                lbl.ForeColor = _labelHoverColor;
                 lbl.Font = _labelHoverFont;
+
+                if (_isProcessing || _isProcessingFromFolder)
+                {
+                    lbl.ForeColor = _labelDisabledHoverColor;
+                }
+                else
+                {
+                    lbl.ForeColor = _labelHoverColor;
+                }
             }
         }
 
@@ -5425,121 +4671,48 @@ namespace CapDefectDetector
 
         private void ovalityParamLb_Click(object sender, EventArgs e)
         {
-            if (!TryBuildDefectFormContext(out var context))
-            {
+            if (_isProcessing || _isProcessingFromFolder)
                 return;
-            }
 
-            var defectSettings = BuildDefectSettingsModel();
-            using (var form = new OvalitySettingsForm(context, defectSettings.Ovality))
+            var form = new OvalitySettingsForm(_imageForTest, _currentRecipe, _ovalityUtils);
+
+            if (form.ShowDialog() == DialogResult.OK)
             {
-                form.ShowDialog(this);
+                var settings = _ovalityUtils.GetSettings();
+                ovalityCoefNumUpD.Value = (decimal)settings.OvalityThreshold;
             }
         }
 
         private void inclusionParamLb_Click(object sender, EventArgs e)
         {
-            if (!TryBuildDefectFormContext(out var context))
-            {
+            if (_isProcessing || _isProcessingFromFolder)
                 return;
-            }
 
-            var defectSettings = BuildDefectSettingsModel();
-            using (var form = new InclusionSettingsForm(context, defectSettings.Inclusion))
+            var form = new InclusionSettingsForm(_imageForTest, _currentRecipe, _inclusionUtils);
+
+            if (form.ShowDialog() == DialogResult.OK)
             {
-                form.ShowDialog(this);
+                var settings = _inclusionUtils.GetSettings();
+                coefCapRadiusInclusionUpD.Value = (decimal)settings.CoefCapRadiusInclusion;
+                minSquareInclusionNumUpD.Value = (decimal)settings.MinAreaInclusion;
+                maxSquareInclusionNumUpD.Value = (decimal)settings.MaxAreaInclusion;
+                circleCoefNumUpD.Value = (decimal)settings.InclusionThreshold;
             }
         }
 
         private void inpaintParamLb_Click(object sender, EventArgs e)
         {
-            if (!TryBuildDefectFormContext(out var context))
-            {
-                return;
-            }
 
-            var defectSettings = BuildDefectSettingsModel();
-            using (var form = new InpaintSettingsForm(context, defectSettings.Inpaint))
-            {
-                form.ShowDialog(this);
-            }
         }
 
         private void obloyParamLb_Click(object sender, EventArgs e)
         {
-            if (!TryBuildDefectFormContext(out var context))
-            {
-                return;
-            }
 
-            var defectSettings = BuildDefectSettingsModel();
-            using (var form = new ObloySettingsForm(context, defectSettings.Obloy))
-            {
-                form.ShowDialog(this);
-            }
         }
 
         private void underfillParamLb_Click(object sender, EventArgs e)
         {
-            if (!TryBuildDefectFormContext(out var context))
-            {
-                return;
-            }
 
-            var defectSettings = BuildDefectSettingsModel();
-            using (var form = new UnderfillSettingsForm(context, defectSettings.Underfill))
-            {
-                form.ShowDialog(this);
-            }
-        }
-
-        private bool TryBuildDefectFormContext(out DefectSettingsFormContext context)
-        {
-            context = null;
-
-            string key = receptCapsCmB.SelectedItem?.ToString();
-            if (string.IsNullOrWhiteSpace(key) || !_recipes.TryGetValue(key, out CapRecipe selectedRecipe))
-            {
-                MessageBox.Show("Выберите рецепт крышки перед открытием формы настройки дефекта.",
-                    "Рецепт не выбран", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            if (_imageForTest == null || _imageForTest.Empty())
-            {
-                MessageBox.Show("Загрузите тестовое изображение перед открытием формы настройки дефекта.",
-                    "Нет тестового изображения", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            var cap = BuildCap(selectedRecipe);
-            context = new DefectSettingsFormContext
-            {
-                Cap = cap,
-                Recipe = cap.Recipe,
-                ImageForTest = _imageForTest
-            };
-            return true;
-        }
-
-        private DefectSettingsModel BuildDefectSettingsModel()
-        {
-            var dto = new DefectSettings
-            {
-                Name = "Current",
-                OvalityThreshold = double.Parse(ovalityCoefNumUpD.Text),
-                InclusionThreshold = double.Parse(circleCoefNumUpD.Text),
-                MinAreaInclusion = double.Parse(minSquareInclusionNumUpD.Text),
-                MaxAreaInclusion = double.Parse(maxSquareInclusionNumUpD.Text),
-                CoefCapRadiusInclusion = double.Parse(coefCapRadiusInclusionUpD.Text),
-                MinAreaInpaintDefect = double.Parse(minSquareInpaintNumUpD.Text),
-                MinInpaintWhiteThreshold = double.Parse(whiteThresoldNumUpD.Text),
-                MinAreaObloy = double.Parse(obloyPixCountNumUpD.Text),
-                CorrugationsCountForUnderFill = double.Parse(countCorrugationsNumUpD.Text),
-                CoefCapRadiusUnderFill = double.Parse(coefCapRadiusMaskUnderFillNumUpD.Text)
-            };
-
-            return dto.ToDomain();
         }
         #endregion
     }

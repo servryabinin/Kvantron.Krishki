@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using CapDefectDetector.DTO.DefectSettings;
 using CapDefectDetector.Logger;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
@@ -12,19 +13,21 @@ namespace CapDefectDetector.ImageProcessing.Utils
     {
         private double _minAreaInpaintDefect;
         private double _minInpaintWhiteThreshold;
+
         private double _sMin;
         private double _sMax;
         private double _vMin;
         private double _vMax;
 
-        public CapPaintDefectUtils(double minAreaInpaintDefect, double minInpaintWhiteThreshold, double sMin,double sMax, double vMin, double vMax)
+        public CapPaintDefectUtils(PaintDefectSettings settings)
         {
-            _minAreaInpaintDefect = minAreaInpaintDefect;
-            _minInpaintWhiteThreshold = minInpaintWhiteThreshold;
-            _sMin = sMin;
-            _sMax = sMax;
-            _vMin = vMin;
-            _vMax = vMax;
+            SetMinAreaInpaintDefect(settings.MinAreaInpaintDefect);
+            SetMinInpaintWhiteThreshold(settings.MinInpaintWhiteThreshold);
+
+            SetSMin(settings.SMin);
+            SetSMax(settings.SMax);
+            SetVMin(settings.VMin);
+            SetVMax(settings.VMax);
         }
 
         public void SetMinAreaInpaintDefect(double value) => _minAreaInpaintDefect = value;
@@ -33,6 +36,19 @@ namespace CapDefectDetector.ImageProcessing.Utils
         public void SetSMax(double value) => _sMax = value;
         public void SetVMin(double value) => _vMin = value;
         public void SetVMax(double value) => _vMax = value;
+
+        public PaintDefectSettings GetSettings()
+        {
+            return new PaintDefectSettings
+            {
+                SMin = _sMin,
+                SMax = _sMax,
+                VMin = _vMin,
+                VMax = _vMax,
+                MinInpaintWhiteThreshold = _minInpaintWhiteThreshold,
+                MinAreaInpaintDefect = _minAreaInpaintDefect
+            };
+        }
 
         public bool CheckForPaintDefects(
             Mat gray,

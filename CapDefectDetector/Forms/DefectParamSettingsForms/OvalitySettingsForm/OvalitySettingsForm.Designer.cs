@@ -43,8 +43,10 @@
             label3 = new Label();
             label4 = new Label();
             tableLayoutPanel3 = new TableLayoutPanel();
-            label21 = new Label();
             ovalitySettings_ovalityCoefNumUd = new NumericUpDown();
+            label21 = new Label();
+            tableLayoutPanel5 = new TableLayoutPanel();
+            ovalitySettings_resultLabel = new Label();
             label2 = new Label();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -55,6 +57,7 @@
             ((System.ComponentModel.ISupportInitialize)ovalitySettings_ovalityOriginPb).BeginInit();
             tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ovalitySettings_ovalityCoefNumUd).BeginInit();
+            tableLayoutPanel5.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -120,6 +123,7 @@
             ovalitySettings_loadImageForOvalitySettingsBt.TabIndex = 8;
             ovalitySettings_loadImageForOvalitySettingsBt.Text = "Загрузить изображение с папки";
             ovalitySettings_loadImageForOvalitySettingsBt.UseVisualStyleBackColor = false;
+            ovalitySettings_loadImageForOvalitySettingsBt.Click += ovalitySettings_loadImageForOvalitySettingsBt_Click;
             // 
             // ovalitySettings_okBt
             // 
@@ -134,6 +138,7 @@
             ovalitySettings_okBt.TabIndex = 6;
             ovalitySettings_okBt.Text = "OK";
             ovalitySettings_okBt.UseVisualStyleBackColor = false;
+            ovalitySettings_okBt.Click += ovalitySettings_okBt_Click;
             // 
             // ovalitySettings_cancelBt
             // 
@@ -148,12 +153,13 @@
             ovalitySettings_cancelBt.TabIndex = 7;
             ovalitySettings_cancelBt.Text = "Отмена";
             ovalitySettings_cancelBt.UseVisualStyleBackColor = false;
+            ovalitySettings_cancelBt.Click += ovalitySettings_cancelBt_Click;
             // 
             // tableLayoutPanel4
             // 
             tableLayoutPanel4.CellBorderStyle = TableLayoutPanelCellBorderStyle.OutsetPartial;
             tableLayoutPanel4.ColumnCount = 3;
-            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33333F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333359F));
             tableLayoutPanel4.Controls.Add(ovalitySettings_ovalityResultPb, 2, 0);
@@ -163,13 +169,14 @@
             tableLayoutPanel4.Controls.Add(label3, 1, 1);
             tableLayoutPanel4.Controls.Add(label4, 2, 1);
             tableLayoutPanel4.Controls.Add(tableLayoutPanel3, 1, 2);
+            tableLayoutPanel4.Controls.Add(tableLayoutPanel5, 2, 2);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(3, 54);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 3;
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 61.76618F));
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 7.350735F));
-            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 30.88309F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
+            tableLayoutPanel4.RowStyles.Add(new RowStyle(SizeType.Percent, 10F));
             tableLayoutPanel4.Size = new Size(868, 409);
             tableLayoutPanel4.TabIndex = 7;
             // 
@@ -178,7 +185,7 @@
             ovalitySettings_ovalityResultPb.Dock = DockStyle.Fill;
             ovalitySettings_ovalityResultPb.Location = new Point(582, 6);
             ovalitySettings_ovalityResultPb.Name = "ovalitySettings_ovalityResultPb";
-            ovalitySettings_ovalityResultPb.Size = new Size(280, 239);
+            ovalitySettings_ovalityResultPb.Size = new Size(280, 311);
             ovalitySettings_ovalityResultPb.SizeMode = PictureBoxSizeMode.Zoom;
             ovalitySettings_ovalityResultPb.TabIndex = 32;
             ovalitySettings_ovalityResultPb.TabStop = false;
@@ -188,7 +195,7 @@
             ovalitySettings_ovalityCoefPb.Dock = DockStyle.Fill;
             ovalitySettings_ovalityCoefPb.Location = new Point(294, 6);
             ovalitySettings_ovalityCoefPb.Name = "ovalitySettings_ovalityCoefPb";
-            ovalitySettings_ovalityCoefPb.Size = new Size(279, 239);
+            ovalitySettings_ovalityCoefPb.Size = new Size(279, 311);
             ovalitySettings_ovalityCoefPb.SizeMode = PictureBoxSizeMode.Zoom;
             ovalitySettings_ovalityCoefPb.TabIndex = 31;
             ovalitySettings_ovalityCoefPb.TabStop = false;
@@ -198,7 +205,7 @@
             ovalitySettings_ovalityOriginPb.Dock = DockStyle.Fill;
             ovalitySettings_ovalityOriginPb.Location = new Point(6, 6);
             ovalitySettings_ovalityOriginPb.Name = "ovalitySettings_ovalityOriginPb";
-            ovalitySettings_ovalityOriginPb.Size = new Size(279, 239);
+            ovalitySettings_ovalityOriginPb.Size = new Size(279, 311);
             ovalitySettings_ovalityOriginPb.SizeMode = PictureBoxSizeMode.Zoom;
             ovalitySettings_ovalityOriginPb.TabIndex = 30;
             ovalitySettings_ovalityOriginPb.TabStop = false;
@@ -207,7 +214,7 @@
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(114, 258);
+            label1.Location = new Point(114, 335);
             label1.Name = "label1";
             label1.Size = new Size(62, 15);
             label1.TabIndex = 4;
@@ -217,7 +224,7 @@
             // 
             label3.Anchor = AnchorStyles.None;
             label3.AutoSize = true;
-            label3.Location = new Point(376, 258);
+            label3.Location = new Point(376, 335);
             label3.Name = "label3";
             label3.Size = new Size(115, 15);
             label3.TabIndex = 5;
@@ -227,7 +234,7 @@
             // 
             label4.Anchor = AnchorStyles.None;
             label4.AutoSize = true;
-            label4.Location = new Point(705, 258);
+            label4.Location = new Point(705, 335);
             label4.Name = "label4";
             label4.Size = new Size(33, 15);
             label4.TabIndex = 6;
@@ -238,18 +245,32 @@
             tableLayoutPanel3.ColumnCount = 2;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
-            tableLayoutPanel3.Controls.Add(label21, 0, 0);
             tableLayoutPanel3.Controls.Add(ovalitySettings_ovalityCoefNumUd, 1, 0);
+            tableLayoutPanel3.Controls.Add(label21, 0, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(294, 286);
+            tableLayoutPanel3.Location = new Point(294, 368);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 4;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel3.Size = new Size(279, 117);
+            tableLayoutPanel3.RowCount = 1;
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel3.Size = new Size(279, 35);
             tableLayoutPanel3.TabIndex = 29;
+            // 
+            // ovalitySettings_ovalityCoefNumUd
+            // 
+            ovalitySettings_ovalityCoefNumUd.Anchor = AnchorStyles.None;
+            ovalitySettings_ovalityCoefNumUd.DecimalPlaces = 3;
+            ovalitySettings_ovalityCoefNumUd.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
+            ovalitySettings_ovalityCoefNumUd.Location = new Point(188, 6);
+            ovalitySettings_ovalityCoefNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            ovalitySettings_ovalityCoefNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
+            ovalitySettings_ovalityCoefNumUd.Name = "ovalitySettings_ovalityCoefNumUd";
+            ovalitySettings_ovalityCoefNumUd.Size = new Size(83, 23);
+            ovalitySettings_ovalityCoefNumUd.TabIndex = 7;
+            ovalitySettings_ovalityCoefNumUd.Value = new decimal(new int[] { 960, 0, 0, 196608 });
+            ovalitySettings_ovalityCoefNumUd.ValueChanged += ovalitySettings_ovalityCoefNumUd_ValueChanged;
             // 
             // label21
             // 
@@ -257,24 +278,38 @@
             label21.AutoSize = true;
             label21.Font = new Font("Segoe UI", 7.8F);
             label21.ForeColor = SystemColors.ActiveCaptionText;
-            label21.Location = new Point(3, 8);
+            label21.Location = new Point(3, 11);
             label21.Name = "label21";
             label21.Size = new Size(150, 13);
             label21.TabIndex = 25;
             label21.Text = "Коэффициент овальности:";
             // 
-            // ovalitySettings_ovalityCoefNumUd
+            // tableLayoutPanel5
             // 
-            ovalitySettings_ovalityCoefNumUd.Anchor = AnchorStyles.None;
-            ovalitySettings_ovalityCoefNumUd.DecimalPlaces = 3;
-            ovalitySettings_ovalityCoefNumUd.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
-            ovalitySettings_ovalityCoefNumUd.Location = new Point(188, 3);
-            ovalitySettings_ovalityCoefNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
-            ovalitySettings_ovalityCoefNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
-            ovalitySettings_ovalityCoefNumUd.Name = "ovalitySettings_ovalityCoefNumUd";
-            ovalitySettings_ovalityCoefNumUd.Size = new Size(83, 23);
-            ovalitySettings_ovalityCoefNumUd.TabIndex = 7;
-            ovalitySettings_ovalityCoefNumUd.Value = new decimal(new int[] { 960, 0, 0, 196608 });
+            tableLayoutPanel5.ColumnCount = 1;
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel5.Controls.Add(ovalitySettings_resultLabel, 0, 0);
+            tableLayoutPanel5.Dock = DockStyle.Fill;
+            tableLayoutPanel5.Location = new Point(582, 368);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 1;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel5.Size = new Size(280, 35);
+            tableLayoutPanel5.TabIndex = 33;
+            // 
+            // ovalitySettings_resultLabel
+            // 
+            ovalitySettings_resultLabel.Anchor = AnchorStyles.None;
+            ovalitySettings_resultLabel.AutoSize = true;
+            ovalitySettings_resultLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            ovalitySettings_resultLabel.ForeColor = SystemColors.ControlDark;
+            ovalitySettings_resultLabel.Location = new Point(103, 2);
+            ovalitySettings_resultLabel.Name = "ovalitySettings_resultLabel";
+            ovalitySettings_resultLabel.Size = new Size(74, 30);
+            ovalitySettings_resultLabel.TabIndex = 26;
+            ovalitySettings_resultLabel.Text = "NONE";
             // 
             // label2
             // 
@@ -300,6 +335,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "OvalitySettingsForm";
             Text = "Настройка параметров Овальности";
+            FormClosed += OvalitySettingsForm_FormClosed;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel7.ResumeLayout(false);
@@ -311,6 +347,8 @@
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ovalitySettings_ovalityCoefNumUd).EndInit();
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel5.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -334,5 +372,7 @@
         private PictureBox ovalitySettings_ovalityOriginPb;
         private PictureBox ovalitySettings_ovalityCoefPb;
         private PictureBox ovalitySettings_ovalityResultPb;
+        private TableLayoutPanel tableLayoutPanel5;
+        private Label ovalitySettings_resultLabel;
     }
 }

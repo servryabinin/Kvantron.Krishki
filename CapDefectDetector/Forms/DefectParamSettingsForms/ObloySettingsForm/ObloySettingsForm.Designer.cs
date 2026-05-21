@@ -36,6 +36,7 @@
             obloySettings_cancelBt = new Button();
             label2 = new Label();
             tableLayoutPanel2 = new TableLayoutPanel();
+            label8 = new Label();
             label6 = new Label();
             label5 = new Label();
             label4 = new Label();
@@ -64,7 +65,6 @@
             tableLayoutPanel4 = new TableLayoutPanel();
             obloySettings_minAreaObloyNumUd = new NumericUpDown();
             label7 = new Label();
-            label8 = new Label();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -213,6 +213,16 @@
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 32.1100922F));
             tableLayoutPanel2.Size = new Size(1529, 456);
             tableLayoutPanel2.TabIndex = 5;
+            // 
+            // label8
+            // 
+            label8.Anchor = AnchorStyles.None;
+            label8.AutoSize = true;
+            label8.Location = new Point(1402, 281);
+            label8.Name = "label8";
+            label8.Size = new Size(33, 15);
+            label8.TabIndex = 43;
+            label8.Text = "Итог";
             // 
             // label6
             // 
@@ -366,11 +376,11 @@
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(8, 2);
+            label1.Location = new Point(3, 2);
             label1.Name = "label1";
-            label1.Size = new Size(119, 30);
+            label1.Size = new Size(129, 30);
             label1.TabIndex = 37;
-            label1.Text = "Смещение от вн.контура крышки:";
+            label1.Text = "Смещение от контура крышки:";
             // 
             // obloySettings_capFlashOffsetNumUd
             // 
@@ -538,16 +548,6 @@
             label7.Size = new Size(128, 26);
             label7.TabIndex = 26;
             label7.Text = "Минимальный размер облоя:";
-            // 
-            // label8
-            // 
-            label8.Anchor = AnchorStyles.None;
-            label8.AutoSize = true;
-            label8.Location = new Point(1402, 281);
-            label8.Name = "label8";
-            label8.Size = new Size(33, 15);
-            label8.TabIndex = 43;
-            label8.Text = "Итог";
             // 
             // ObloySettingsForm
             // 
