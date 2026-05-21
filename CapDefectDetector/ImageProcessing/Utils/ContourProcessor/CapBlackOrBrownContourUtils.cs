@@ -1,67 +1,45 @@
-﻿using OpenCvSharp;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 
-namespace CapDefectDetector.ImageProcessing.CapContours
+namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
 {
-    public class BlackOrBrownCapContourProcessor : CapContourProcessorBase
+    public class CapBlackOrBrownContourUtils
     {
-        private readonly int _saturation;
-        private readonly int _medianFilter;
-        private readonly int _cannyThreshold;
-
-        public BlackOrBrownCapContourProcessor(int saturation, int medianFilter, int cannyThreshold)
+        public Mat ApplySaturationStep(Mat input, int saturation)
         {
-            _saturation = saturation;
-            _medianFilter = medianFilter;
-            _cannyThreshold = cannyThreshold;
+            return SimulateCameraSaturation(input, saturation);
         }
 
-        public override Point[] GetContour(Mat gray, Mat image)
-        {
-            if (gray.Empty() || image.Empty())
-                return null;
-
-            Mat sat = ApplySaturationStep(image);
-
-            Mat grayImg = ApplyGrayStep(sat);
-
-            Mat blurred = ApplyMedianStep(grayImg);
-
-            Mat edges = ApplyCannyStep(blurred);
-
-            return ApplyEllipseStep(edges);
-        }
-
-        private Mat ApplySaturationStep(Mat input)
-        {
-            return SimulateCameraSaturation(input, _saturation);
-        }
-
-        private Mat ApplyGrayStep(Mat input)
+        public Mat ApplyGrayStep(Mat input)
         {
             Mat gray = new Mat();
             Cv2.CvtColor(input, gray, ColorConversionCodes.BGR2GRAY);
             return gray;
         }
 
-        private Mat ApplyMedianStep(Mat input)
+        public Mat ApplyMedianStep(Mat input, int medianFilter)
         {
             Mat result = input.Clone();
-            Cv2.MedianBlur(result, result, _medianFilter);
+            Cv2.MedianBlur(result, result, medianFilter);
             return result;
         }
 
-        private Mat ApplyCannyStep(Mat input)
+        public Mat ApplyCannyStep(Mat input, int cannyThreshold)
         {
             Mat result = input.Clone();
-            Cv2.Canny(result, result, _cannyThreshold, 255);
+            Cv2.Canny(result, result, cannyThreshold, 255);
             return result;
         }
 
-        private Point[] ApplyEllipseStep(Mat image)
+        public Point[] ApplyEllipseStep(Mat image)
         {
-            Cv2.FindContours(image,out Point[][] contours,out _,RetrievalModes.List,ContourApproximationModes.ApproxSimple);
+            Cv2.FindContours(image, out Point[][] contours, out _, RetrievalModes.List, ContourApproximationModes.ApproxSimple);
 
             var allPoints = new List<Point>();
 
@@ -78,10 +56,10 @@ namespace CapDefectDetector.ImageProcessing.CapContours
 
             RotatedRect ellipse = Cv2.FitEllipse(hull);
 
-            return Cv2.Ellipse2Poly((Point)ellipse.Center,new Size((int)(ellipse.Size.Width / 2), (int)(ellipse.Size.Height / 2)),(int)ellipse.Angle,0,360,1);
+            return Cv2.Ellipse2Poly((Point)ellipse.Center, new Size((int)(ellipse.Size.Width / 2), (int)(ellipse.Size.Height / 2)), (int)ellipse.Angle, 0, 360, 1);
         }
 
-        protected override Mat SimulateCameraSaturation(Mat img, int saturation)
+        public Mat SimulateCameraSaturation(Mat img, int saturation)
         {
             if (img.Empty())
                 return null;
@@ -120,7 +98,7 @@ namespace CapDefectDetector.ImageProcessing.CapContours
             return imgSat;
         }
 
-        protected override Point[] CorrectContour(Point[] contour, float threshold)
+        public Point[] CorrectContour(Point[] contour, float threshold)
         {
             if (contour == null || contour.Length < 5)
                 return contour;

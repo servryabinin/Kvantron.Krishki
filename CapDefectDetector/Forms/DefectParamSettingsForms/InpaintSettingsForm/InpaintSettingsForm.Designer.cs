@@ -150,11 +150,11 @@
             label15.AutoSize = true;
             label15.Font = new Font("Segoe UI", 7.8F);
             label15.ForeColor = Color.Black;
-            label15.Location = new Point(789, 290);
+            label15.Location = new Point(790, 290);
             label15.Name = "label15";
-            label15.Size = new Size(230, 13);
+            label15.Size = new Size(229, 13);
             label15.TabIndex = 36;
-            label15.Text = "Ограничения характеристик вкраплений";
+            label15.Text = "Ограничения характеристик непрокраса";
             // 
             // label23
             // 

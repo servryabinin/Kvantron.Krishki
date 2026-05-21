@@ -1,91 +1,55 @@
-﻿using OpenCvSharp;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
 
-namespace CapDefectDetector.ImageProcessing.CapContours
+namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
 {
-    public class ColorCapContourProcessor : CapContourProcessorBase
+    public class CapColorContourUtils
     {
-        private readonly int _saturation;
-        private readonly byte _capsColor;
-        private readonly bool _isColored;
-        private readonly bool _isYellow;
-        private readonly bool _isGreen;
-
-        private readonly int _window;
-
-        private readonly Mat _element1;
-        private readonly Mat _element2;
-
         private const byte GREEN_THRESHOLD = 40;
 
-        public ColorCapContourProcessor(int saturation, byte capsColor, bool isColored, bool isYellow, bool isGreen, int window, Mat element1, Mat element2)
+        public Mat ApplySaturationStep(Mat input, int saturation)
         {
-            _saturation = saturation;
-            _capsColor = capsColor;
-            _isColored = isColored;
-            _isYellow = isYellow;
-            _isGreen = isGreen;
-            _window = window;
-            _element1 = element1;
-            _element2 = element2;
+            return SimulateCameraSaturation(input, saturation);
         }
 
-        public override Point[] GetContour(Mat gray, Mat image)
-        {
-            if (gray.Empty() || image.Empty())
-                return null;
-
-            Mat sat = ApplySaturationStep(image);
-
-            Mat caps = ApplyCapsColorStep(sat);
-
-            Mat[] channels = ApplyWindowStep(caps);
-
-            ApplyMorphologyStep(channels);
-
-            return GetMaxContour(channels[2]);
-        }
-
-        private Mat ApplySaturationStep(Mat input)
-        {
-            return SimulateCameraSaturation(input,_saturation);
-        }
-
-        private Mat ApplyCapsColorStep(Mat input)
+        public Mat ApplyCapsColorStep(Mat input, byte capsColor, bool isColored, bool isYellow, bool isGreen)
         {
             Mat result = input.Clone();
 
-            NonlinearBackgroundDecolorization(result,_capsColor,_isColored,_isYellow,_isGreen);
+            NonlinearBackgroundDecolorization(result, capsColor, isColored, isYellow, isGreen);
 
             return result;
         }
 
-        private Mat[] ApplyWindowStep(Mat input)
+        public Mat[] ApplyWindowStep(Mat input, int window)
         {
             Mat[] channels;
 
             Cv2.Split(input, out channels);
 
-            Cv2.GaussianBlur(channels[0],channels[1],new Size(_window, _window),4);
+            Cv2.GaussianBlur(channels[0], channels[1], new Size(window, window), 4);
 
             return channels;
         }
 
-        private void ApplyMorphologyStep(Mat[] channels)
+        public void ApplyMorphologyStep(Mat[] channels, Mat element1, Mat element2)
         {
-            Cv2.Threshold(channels[1],channels[0],128,255,ThresholdTypes.Otsu | ThresholdTypes.Binary);
-
-            Cv2.MorphologyEx(channels[0],channels[1],MorphTypes.Dilate,_element1);
-
-            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, _element2);
-
-            Cv2.MedianBlur(channels[2],channels[2],5);
+            Cv2.Threshold(channels[1], channels[0], 128, 255, ThresholdTypes.Otsu | ThresholdTypes.Binary);
+            Cv2.MorphologyEx(channels[0], channels[1], MorphTypes.Dilate, element1);
+            Cv2.MorphologyEx(channels[1], channels[2], MorphTypes.Erode, element2);
+            Cv2.MedianBlur(channels[2], channels[2], 5);
         }
 
-        private Point[] GetMaxContour(Mat image)
+        public Point[] GetMaxContour(Mat image)
         {
-            Cv2.FindContours(image,out Point[][] contours,out _,RetrievalModes.External,ContourApproximationModes.ApproxSimple);
+            Cv2.FindContours(image, out Point[][] contours, out _, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
 
             if (contours.Length == 0)
                 return null;
@@ -173,7 +137,7 @@ namespace CapDefectDetector.ImageProcessing.CapContours
             }
         }
 
-        protected override Mat SimulateCameraSaturation(Mat img, int saturation)
+        public Mat SimulateCameraSaturation(Mat img, int saturation)
         {
             if (img.Empty())
                 return null;
@@ -209,7 +173,7 @@ namespace CapDefectDetector.ImageProcessing.CapContours
             return imgSat;
         }
 
-        protected override Point[] CorrectContour(Point[] contour, float threshold)
+        public Point[] CorrectContour(Point[] contour, float threshold)
         {
             if (contour == null || contour.Length < 5)
                 return contour;
