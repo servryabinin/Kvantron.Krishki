@@ -65,6 +65,8 @@
             tableLayoutPanel4 = new TableLayoutPanel();
             obloySettings_minAreaObloyNumUd = new NumericUpDown();
             label7 = new Label();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            obloySettings_resultLabel = new Label();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -82,6 +84,7 @@
             ((System.ComponentModel.ISupportInitialize)obloySettings_obloyMorphIterNumUd).BeginInit();
             tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)obloySettings_minAreaObloyNumUd).BeginInit();
+            tableLayoutPanel8.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -132,6 +135,7 @@
             obloySettings_loadImageForObloySettingsBt.TabIndex = 8;
             obloySettings_loadImageForObloySettingsBt.Text = "Загрузить изображение с папки";
             obloySettings_loadImageForObloySettingsBt.UseVisualStyleBackColor = false;
+            obloySettings_loadImageForObloySettingsBt.Click += obloySettings_loadImageForObloySettingsBt_Click;
             // 
             // obloySettings_okBt
             // 
@@ -146,6 +150,7 @@
             obloySettings_okBt.TabIndex = 6;
             obloySettings_okBt.Text = "OK";
             obloySettings_okBt.UseVisualStyleBackColor = false;
+            obloySettings_okBt.Click += obloySettings_okBt_Click;
             // 
             // obloySettings_cancelBt
             // 
@@ -160,6 +165,7 @@
             obloySettings_cancelBt.TabIndex = 7;
             obloySettings_cancelBt.Text = "Отмена";
             obloySettings_cancelBt.UseVisualStyleBackColor = false;
+            obloySettings_cancelBt.Click += obloySettings_cancelBt_Click;
             // 
             // label2
             // 
@@ -204,6 +210,7 @@
             tableLayoutPanel2.Controls.Add(tableLayoutPanel3, 1, 2);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel19, 4, 2);
             tableLayoutPanel2.Controls.Add(tableLayoutPanel4, 5, 2);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanel8, 6, 2);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new Point(3, 60);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -356,6 +363,7 @@
             // 
             // tableLayoutPanel3
             // 
+            tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel3.ColumnCount = 2;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
@@ -376,25 +384,27 @@
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(3, 2);
+            label1.Location = new Point(16, 3);
             label1.Name = "label1";
-            label1.Size = new Size(129, 30);
+            label1.Size = new Size(103, 30);
             label1.TabIndex = 37;
             label1.Text = "Смещение от контура крышки:";
             // 
             // obloySettings_capFlashOffsetNumUd
             // 
             obloySettings_capFlashOffsetNumUd.Anchor = AnchorStyles.None;
-            obloySettings_capFlashOffsetNumUd.Location = new Point(138, 5);
+            obloySettings_capFlashOffsetNumUd.Location = new Point(139, 6);
             obloySettings_capFlashOffsetNumUd.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             obloySettings_capFlashOffsetNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_capFlashOffsetNumUd.Name = "obloySettings_capFlashOffsetNumUd";
-            obloySettings_capFlashOffsetNumUd.Size = new Size(68, 23);
+            obloySettings_capFlashOffsetNumUd.Size = new Size(64, 23);
             obloySettings_capFlashOffsetNumUd.TabIndex = 16;
             obloySettings_capFlashOffsetNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            obloySettings_capFlashOffsetNumUd.ValueChanged += obloySettings_capFlashOffsetNumUd_ValueChanged;
             // 
             // tableLayoutPanel19
             // 
+            tableLayoutPanel19.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel19.ColumnCount = 2;
             tableLayoutPanel19.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel19.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
@@ -423,9 +433,9 @@
             label14.AutoSize = true;
             label14.Font = new Font("Segoe UI", 7.8F);
             label14.ForeColor = Color.Black;
-            label14.Location = new Point(3, 113);
+            label14.Location = new Point(6, 105);
             label14.Name = "label14";
-            label14.Size = new Size(127, 13);
+            label14.Size = new Size(72, 26);
             label14.TabIndex = 28;
             label14.Text = "Количество итераций:";
             // 
@@ -435,9 +445,9 @@
             label13.AutoSize = true;
             label13.Font = new Font("Segoe UI", 7.8F);
             label13.ForeColor = Color.Black;
-            label13.Location = new Point(3, 68);
+            label13.Location = new Point(6, 69);
             label13.Name = "label13";
-            label13.Size = new Size(110, 34);
+            label13.Size = new Size(110, 30);
             label13.TabIndex = 27;
             label13.Text = "Тип структурирующего элемента:";
             // 
@@ -447,7 +457,7 @@
             label11.AutoSize = true;
             label11.Font = new Font("Segoe UI", 7.8F);
             label11.ForeColor = Color.Black;
-            label11.Location = new Point(3, 44);
+            label11.Location = new Point(6, 44);
             label11.Name = "label11";
             label11.Size = new Size(76, 13);
             label11.TabIndex = 26;
@@ -459,7 +469,7 @@
             label12.AutoSize = true;
             label12.Font = new Font("Segoe UI", 7.8F);
             label12.ForeColor = Color.Black;
-            label12.Location = new Point(3, 10);
+            label12.Location = new Point(6, 11);
             label12.Name = "label12";
             label12.Size = new Size(103, 13);
             label12.TabIndex = 25;
@@ -470,46 +480,51 @@
             obloySettings_obloyMorphTypeCb.Anchor = AnchorStyles.None;
             obloySettings_obloyMorphTypeCb.FormattingEnabled = true;
             obloySettings_obloyMorphTypeCb.Items.AddRange(new object[] { "Erode", "Dilate", "Open", "Close" });
-            obloySettings_obloyMorphTypeCb.Location = new Point(138, 5);
+            obloySettings_obloyMorphTypeCb.Location = new Point(139, 6);
             obloySettings_obloyMorphTypeCb.Name = "obloySettings_obloyMorphTypeCb";
-            obloySettings_obloyMorphTypeCb.Size = new Size(68, 23);
+            obloySettings_obloyMorphTypeCb.Size = new Size(64, 23);
             obloySettings_obloyMorphTypeCb.TabIndex = 5;
+            obloySettings_obloyMorphTypeCb.SelectedIndexChanged += obloySettings_obloyMorphTypeCb_SelectedIndexChanged;
             // 
             // obloySettings_obloyKernelSizeNumUd
             // 
             obloySettings_obloyKernelSizeNumUd.Anchor = AnchorStyles.None;
             obloySettings_obloyKernelSizeNumUd.Increment = new decimal(new int[] { 2, 0, 0, 0 });
-            obloySettings_obloyKernelSizeNumUd.Location = new Point(138, 39);
+            obloySettings_obloyKernelSizeNumUd.Location = new Point(139, 39);
             obloySettings_obloyKernelSizeNumUd.Maximum = new decimal(new int[] { 11, 0, 0, 0 });
             obloySettings_obloyKernelSizeNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_obloyKernelSizeNumUd.Name = "obloySettings_obloyKernelSizeNumUd";
-            obloySettings_obloyKernelSizeNumUd.Size = new Size(68, 23);
+            obloySettings_obloyKernelSizeNumUd.Size = new Size(64, 23);
             obloySettings_obloyKernelSizeNumUd.TabIndex = 4;
             obloySettings_obloyKernelSizeNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            obloySettings_obloyKernelSizeNumUd.ValueChanged += obloySettings_obloyKernelSizeNumUd_ValueChanged;
             // 
             // obloySettings_obloyMorphShapeCb
             // 
             obloySettings_obloyMorphShapeCb.Anchor = AnchorStyles.None;
             obloySettings_obloyMorphShapeCb.FormattingEnabled = true;
             obloySettings_obloyMorphShapeCb.Items.AddRange(new object[] { "Ellipse", "Rect", "Cross" });
-            obloySettings_obloyMorphShapeCb.Location = new Point(138, 73);
+            obloySettings_obloyMorphShapeCb.Location = new Point(139, 72);
             obloySettings_obloyMorphShapeCb.Name = "obloySettings_obloyMorphShapeCb";
-            obloySettings_obloyMorphShapeCb.Size = new Size(68, 23);
+            obloySettings_obloyMorphShapeCb.Size = new Size(64, 23);
             obloySettings_obloyMorphShapeCb.TabIndex = 6;
+            obloySettings_obloyMorphShapeCb.SelectedIndexChanged += obloySettings_obloyMorphShapeCb_SelectedIndexChanged;
             // 
             // obloySettings_obloyMorphIterNumUd
             // 
             obloySettings_obloyMorphIterNumUd.Anchor = AnchorStyles.None;
-            obloySettings_obloyMorphIterNumUd.Location = new Point(138, 108);
+            obloySettings_obloyMorphIterNumUd.Location = new Point(139, 107);
             obloySettings_obloyMorphIterNumUd.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             obloySettings_obloyMorphIterNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_obloyMorphIterNumUd.Name = "obloySettings_obloyMorphIterNumUd";
-            obloySettings_obloyMorphIterNumUd.Size = new Size(68, 23);
+            obloySettings_obloyMorphIterNumUd.Size = new Size(64, 23);
             obloySettings_obloyMorphIterNumUd.TabIndex = 3;
             obloySettings_obloyMorphIterNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            obloySettings_obloyMorphIterNumUd.ValueChanged += obloySettings_obloyMorphIterNumUd_ValueChanged;
             // 
             // tableLayoutPanel4
             // 
+            tableLayoutPanel4.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel4.ColumnCount = 2;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
@@ -529,13 +544,14 @@
             // obloySettings_minAreaObloyNumUd
             // 
             obloySettings_minAreaObloyNumUd.Anchor = AnchorStyles.None;
-            obloySettings_minAreaObloyNumUd.Location = new Point(138, 5);
+            obloySettings_minAreaObloyNumUd.Location = new Point(139, 6);
             obloySettings_minAreaObloyNumUd.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             obloySettings_minAreaObloyNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_minAreaObloyNumUd.Name = "obloySettings_minAreaObloyNumUd";
-            obloySettings_minAreaObloyNumUd.Size = new Size(68, 23);
+            obloySettings_minAreaObloyNumUd.Size = new Size(64, 23);
             obloySettings_minAreaObloyNumUd.TabIndex = 33;
             obloySettings_minAreaObloyNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            obloySettings_minAreaObloyNumUd.ValueChanged += obloySettings_minAreaObloyNumUd_ValueChanged;
             // 
             // label7
             // 
@@ -543,11 +559,38 @@
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 7.8F);
             label7.ForeColor = Color.Black;
-            label7.Location = new Point(3, 4);
+            label7.Location = new Point(6, 5);
             label7.Name = "label7";
-            label7.Size = new Size(128, 26);
+            label7.Size = new Size(89, 26);
             label7.TabIndex = 26;
             label7.Text = "Минимальный размер облоя:";
+            // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.ColumnCount = 1;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.Controls.Add(obloySettings_resultLabel, 0, 0);
+            tableLayoutPanel8.Dock = DockStyle.Fill;
+            tableLayoutPanel8.Location = new Point(1314, 312);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 1;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.Size = new Size(209, 138);
+            tableLayoutPanel8.TabIndex = 44;
+            // 
+            // obloySettings_resultLabel
+            // 
+            obloySettings_resultLabel.Anchor = AnchorStyles.None;
+            obloySettings_resultLabel.AutoSize = true;
+            obloySettings_resultLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            obloySettings_resultLabel.ForeColor = SystemColors.ControlDark;
+            obloySettings_resultLabel.Location = new Point(67, 54);
+            obloySettings_resultLabel.Name = "obloySettings_resultLabel";
+            obloySettings_resultLabel.Size = new Size(74, 30);
+            obloySettings_resultLabel.TabIndex = 26;
+            obloySettings_resultLabel.Text = "NONE";
             // 
             // ObloySettingsForm
             // 
@@ -579,6 +622,8 @@
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)obloySettings_minAreaObloyNumUd).EndInit();
+            tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -620,5 +665,7 @@
         private Button obloySettings_okBt;
         private Button obloySettings_cancelBt;
         private Label label8;
+        private TableLayoutPanel tableLayoutPanel8;
+        private Label obloySettings_resultLabel;
     }
 }

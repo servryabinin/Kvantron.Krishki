@@ -154,7 +154,6 @@ namespace CapDefectDetector
         // Морфологические элементы
         private Mat element1;
         private Mat element2;
-        private Mat elementMask;
         private int window = 15;
         private int morph_size = 7;
         private int morph_size_2 = 7;
@@ -167,8 +166,8 @@ namespace CapDefectDetector
         private bool _isApplyingRecipe = false;
 
         //Объекты классов утилит для дефектов
-        private CapOvalityUtils _ovalityUtils;
-        private CapInclusionUtils _inclusionUtils;
+        private CapOvalityDefectUtils _ovalityUtils;
+        private CapInclusionDefectUtils _inclusionUtils;
         private CapPaintDefectUtils _paintUtils;
         private CapObloyDefectUtils _obloyUtils;
         private CapUnderfillDefectUtils _underfillUtils;
@@ -1848,10 +1847,10 @@ namespace CapDefectDetector
             {
                 _currentDefectSettings = r;
 
-                _ovalityUtils = new CapOvalityUtils(r.Ovality);
+                _ovalityUtils = new CapOvalityDefectUtils(r.Ovality);
                 ovalityCoefNumUpD.Value = (decimal)r.Ovality.OvalityThreshold;
 
-                _inclusionUtils = new CapInclusionUtils(r.Inclusion);
+                _inclusionUtils = new CapInclusionDefectUtils(r.Inclusion);
                 coefCapRadiusInclusionUpD.Value = (decimal)r.Inclusion.CoefCapRadiusInclusion;
                 minSquareInclusionNumUpD.Value = (decimal)r.Inclusion.MinAreaInclusion;
                 maxSquareInclusionNumUpD.Value = (decimal)r.Inclusion.MaxAreaInclusion;
@@ -2980,19 +2979,19 @@ namespace CapDefectDetector
                                     var underFillTask = Task.FromResult(false);
 
                                     if (settings.Ovality)
-                                        ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, _frameToDisplay, timeoutCts.Token, RunCheckOvality, capContour);
+                                        ovalityTask = RunCheckWithTimeout(_grayForOvality, _imageForOvality, _frameToDisplay, timeoutCts.Token, RunCheckOvality, capResult);
 
                                     if (settings.Inclusion)
-                                        inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, _frameToDisplay, timeoutCts.Token, RunCheckForInclusions, capContour);
+                                        inclusionsTask = RunCheckWithTimeout(_grayForInclusions, _imageForInclusions, _frameToDisplay, timeoutCts.Token, RunCheckForInclusions, capResult);
 
                                     if (settings.Inpaint)
-                                        paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, _frameToDisplay, timeoutCts.Token, RunCheckForPaintDefects, capContour);
+                                        paintTask = RunCheckWithTimeout(_grayForPaintDefects, _imageForPaintDefects, _frameToDisplay, timeoutCts.Token, RunCheckForPaintDefects, capResult);
 
                                     if (settings.Obloy)
-                                        obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, _frameToDisplay, timeoutCts.Token, RunCheckForObloyDefects, capContour);
+                                        obloyTask = RunCheckWithTimeout(_grayForObloyDefects, _imageForObloyDefects, _frameToDisplay, timeoutCts.Token, RunCheckForObloyDefects, capResult);
 
                                     if (settings.UnderFill)
-                                        underFillTask = RunCheckWithTimeout(_grayForUnderfill, _imageForUnderfill, _frameToDisplay, timeoutCts.Token, RunCheckForUnderFillDefects, capContour);
+                                        underFillTask = RunCheckWithTimeout(_grayForUnderfill, _imageForUnderfill, _frameToDisplay, timeoutCts.Token, RunCheckForUnderFillDefects, capResult);
 
                                     await Task.WhenAll(ovalityTask, inclusionsTask, paintTask, obloyTask, underFillTask);
 
@@ -3123,14 +3122,14 @@ namespace CapDefectDetector
             }
         }
 
-        private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Func<Mat, Mat, Mat, CancellationToken, Point[], bool> checkFunc, Point[] capContour)
+        private async Task<bool> RunCheckWithTimeout(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Func<Mat, Mat, Mat, CancellationToken, CapContourResult, bool> checkFunc, CapContourResult capResult)
         {
             try
             {
                 return await Task.Run(() =>
                 {
                     token.ThrowIfCancellationRequested();
-                    return checkFunc(gray, image, drawFrame, token, capContour);
+                    return checkFunc(gray, image, drawFrame, token, capResult);
                 }, token);
             }
             catch (OperationCanceledException)
@@ -3148,7 +3147,7 @@ namespace CapDefectDetector
 
         #region Методы проверки дефектов
 
-        private bool RunCheckOvality(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
+        private bool RunCheckOvality(Mat gray, Mat image, Mat drawFrame, CancellationToken token, CapContourResult capResult)
         {
             try
             {
@@ -3158,7 +3157,7 @@ namespace CapDefectDetector
                 bool isOval = false;
                 try
                 {
-                    isOval = _ovalityUtils.CheckOvality(gray, image, drawFrame, token, capContour);
+                    isOval = _ovalityUtils.CheckOvality(gray, image, drawFrame, token, capResult.Contour);
                 }
                 catch (Exception ex)
                 {
@@ -3184,7 +3183,7 @@ namespace CapDefectDetector
             }
         }
 
-        private bool RunCheckForInclusions(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
+        private bool RunCheckForInclusions(Mat gray, Mat image, Mat drawFrame, CancellationToken token, CapContourResult capResult)
         {
             try
             {
@@ -3194,7 +3193,7 @@ namespace CapDefectDetector
                 bool isInclusion = false;
                 try
                 {
-                    isInclusion = _inclusionUtils.CheckForInclusions(gray, image, drawFrame, token, capContour);
+                    isInclusion = _inclusionUtils.CheckForInclusions(gray, image, drawFrame, token, capResult.Contour);
                 }
                 catch (Exception ex)
                 {
@@ -3220,7 +3219,7 @@ namespace CapDefectDetector
             }
         }
 
-        private bool RunCheckForPaintDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
+        private bool RunCheckForPaintDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, CapContourResult capResult)
         {
             try
             {
@@ -3230,7 +3229,7 @@ namespace CapDefectDetector
                 bool isInpaint = false;
                 try
                 {
-                    isInpaint = _paintUtils.CheckForPaintDefects(gray, image, drawFrame, token, capContour);
+                    isInpaint = _paintUtils.CheckForPaintDefects(gray, image, drawFrame, token, capResult.Contour);
                 }
                 catch (Exception ex)
                 {
@@ -3256,7 +3255,7 @@ namespace CapDefectDetector
             }
         }
 
-        private bool RunCheckForObloyDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
+        private bool RunCheckForObloyDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, CapContourResult capResult)
         {
             try
             {
@@ -3266,7 +3265,7 @@ namespace CapDefectDetector
                 bool isObloy = false;
                 try
                 {
-                    isObloy = _obloyUtils.CheckForObloyDefects(gray, image, drawFrame, token, capContour, _blurChannel_1, _blurChannel_2, _capRadiusMask);
+                    isObloy = _obloyUtils.CheckForObloyDefects(gray, image, drawFrame, token, capResult.Contour, capResult.Blur1, capResult.Blur2, capResult.Mask);
                 }
                 catch (Exception ex)
                 {
@@ -3292,7 +3291,7 @@ namespace CapDefectDetector
             }
         }
 
-        private bool RunCheckForUnderFillDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
+        private bool RunCheckForUnderFillDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, CapContourResult capResult)
         {
             try
             {
@@ -3302,7 +3301,7 @@ namespace CapDefectDetector
                 bool isUnderFill = false;
                 try
                 {
-                    isUnderFill = _underfillUtils.CheckForUnderFillDefects(gray, image, drawFrame, token, capContour);
+                    isUnderFill = _underfillUtils.CheckForUnderFillDefects(gray, image, drawFrame, token, capResult.Contour);
                 }
                 catch (Exception ex)
                 {
@@ -4674,7 +4673,7 @@ namespace CapDefectDetector
             if (_isProcessing || _isProcessingFromFolder)
                 return;
 
-            var form = new OvalitySettingsForm(_imageForTest, _currentRecipe, _ovalityUtils);
+            var form = new OvalitySettingsForm(_imageForTest, _currentRecipe, _ovalityUtils, element1, element2);
 
             if (form.ShowDialog() == DialogResult.OK)
             {
@@ -4688,7 +4687,7 @@ namespace CapDefectDetector
             if (_isProcessing || _isProcessingFromFolder)
                 return;
 
-            var form = new InclusionSettingsForm(_imageForTest, _currentRecipe, _inclusionUtils);
+            var form = new InclusionSettingsForm(_imageForTest, _currentRecipe, _inclusionUtils, element1, element2);
 
             if (form.ShowDialog() == DialogResult.OK)
             {
@@ -4702,17 +4701,47 @@ namespace CapDefectDetector
 
         private void inpaintParamLb_Click(object sender, EventArgs e)
         {
+            if (_isProcessing || _isProcessingFromFolder)
+                return;
 
+            var form = new InpaintSettingsForm(_imageForTest, _currentRecipe, _paintUtils, element1, element2);
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+               var settings = _paintUtils.GetSettings();
+                minSquareInpaintNumUpD.Value = (decimal)settings.MinAreaInpaintDefect;
+                whiteThresoldNumUpD.Value = (decimal)settings.MinInpaintWhiteThreshold;
+            }
         }
 
         private void obloyParamLb_Click(object sender, EventArgs e)
         {
+            if (_isProcessing || _isProcessingFromFolder)
+                return;
 
+            var form = new ObloySettingsForm(_imageForTest, _currentRecipe, _obloyUtils, element1, element2);
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                var settings = _obloyUtils.GetSettings();
+                capFlashOffsetNumUpD.Value = (decimal)settings.CapFlashOffset;
+                obloyPixCountNumUpD.Value = (decimal)settings.MinAreaObloy;
+            }
         }
 
         private void underfillParamLb_Click(object sender, EventArgs e)
         {
+            if (_isProcessing || _isProcessingFromFolder)
+                return;
 
+            var form = new UnderfillSettingsForm(_imageForTest, _currentRecipe, _underfillUtils, element1, element2);
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                var settings = _underfillUtils.GetSettings();
+                coefCapRadiusMaskUnderFillNumUpD.Value = (decimal)settings.CoefCapRadiusUnderFill;
+                countCorrugationsNumUpD.Value = (decimal)settings.CorrugationsCountForUnderFill;
+            }
         }
         #endregion
     }

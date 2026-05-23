@@ -56,6 +56,8 @@
             label29 = new Label();
             inpaintSettings_inpaintMinAreaNumUd = new NumericUpDown();
             inpaintSettings_inpaintWhiteThresholdNumUd = new NumericUpDown();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            inpaintSettings_resultLabel = new Label();
             label2 = new Label();
             tableLayoutPanel7 = new TableLayoutPanel();
             inpaintSettings_loadImageForInpaintSettingsBt = new Button();
@@ -77,6 +79,7 @@
             tableLayoutPanel15.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)inpaintSettings_inpaintMinAreaNumUd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)inpaintSettings_inpaintWhiteThresholdNumUd).BeginInit();
+            tableLayoutPanel8.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
             SuspendLayout();
             // 
@@ -134,6 +137,7 @@
             tableLayoutPanel4.Controls.Add(tableLayoutPanel3, 1, 2);
             tableLayoutPanel4.Controls.Add(inpaintSettings_paintWhiteMaskPb, 1, 0);
             tableLayoutPanel4.Controls.Add(tableLayoutPanel15, 3, 2);
+            tableLayoutPanel4.Controls.Add(tableLayoutPanel8, 4, 2);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(3, 61);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -238,6 +242,7 @@
             // 
             // tableLayoutPanel3
             // 
+            tableLayoutPanel3.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel3.ColumnCount = 2;
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
@@ -266,7 +271,7 @@
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 7.8F);
             label7.ForeColor = SystemColors.ActiveCaptionText;
-            label7.Location = new Point(3, 109);
+            label7.Location = new Point(6, 108);
             label7.Name = "label7";
             label7.Size = new Size(124, 13);
             label7.TabIndex = 32;
@@ -278,7 +283,7 @@
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 7.8F);
             label6.ForeColor = SystemColors.ActiveCaptionText;
-            label6.Location = new Point(3, 76);
+            label6.Location = new Point(6, 75);
             label6.Name = "label6";
             label6.Size = new Size(121, 13);
             label6.TabIndex = 31;
@@ -290,7 +295,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 7.8F);
             label5.ForeColor = SystemColors.ActiveCaptionText;
-            label5.Location = new Point(3, 43);
+            label5.Location = new Point(6, 43);
             label5.Name = "label5";
             label5.Size = new Size(123, 13);
             label5.TabIndex = 30;
@@ -301,13 +306,14 @@
             inpaintSettings_sMinNumUd.Anchor = AnchorStyles.None;
             inpaintSettings_sMinNumUd.DecimalPlaces = 2;
             inpaintSettings_sMinNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            inpaintSettings_sMinNumUd.Location = new Point(164, 5);
+            inpaintSettings_sMinNumUd.Location = new Point(165, 6);
             inpaintSettings_sMinNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             inpaintSettings_sMinNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
             inpaintSettings_sMinNumUd.Name = "inpaintSettings_sMinNumUd";
-            inpaintSettings_sMinNumUd.Size = new Size(82, 23);
+            inpaintSettings_sMinNumUd.Size = new Size(78, 23);
             inpaintSettings_sMinNumUd.TabIndex = 26;
             inpaintSettings_sMinNumUd.Value = new decimal(new int[] { 5, 0, 0, 131072 });
+            inpaintSettings_sMinNumUd.ValueChanged += inpaintSettings_sMinNumUd_ValueChanged;
             // 
             // label21
             // 
@@ -315,7 +321,7 @@
             label21.AutoSize = true;
             label21.Font = new Font("Segoe UI", 7.8F);
             label21.ForeColor = SystemColors.ActiveCaptionText;
-            label21.Location = new Point(3, 10);
+            label21.Location = new Point(6, 11);
             label21.Name = "label21";
             label21.Size = new Size(120, 13);
             label21.TabIndex = 25;
@@ -326,39 +332,42 @@
             inpaintSettings_sMaxNumUd.Anchor = AnchorStyles.None;
             inpaintSettings_sMaxNumUd.DecimalPlaces = 2;
             inpaintSettings_sMaxNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            inpaintSettings_sMaxNumUd.Location = new Point(164, 38);
+            inpaintSettings_sMaxNumUd.Location = new Point(165, 38);
             inpaintSettings_sMaxNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             inpaintSettings_sMaxNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
             inpaintSettings_sMaxNumUd.Name = "inpaintSettings_sMaxNumUd";
-            inpaintSettings_sMaxNumUd.Size = new Size(82, 23);
+            inpaintSettings_sMaxNumUd.Size = new Size(78, 23);
             inpaintSettings_sMaxNumUd.TabIndex = 27;
             inpaintSettings_sMaxNumUd.Value = new decimal(new int[] { 95, 0, 0, 131072 });
+            inpaintSettings_sMaxNumUd.ValueChanged += inpaintSettings_sMaxNumUd_ValueChanged;
             // 
             // inpaintSettings_vMinNumUd
             // 
             inpaintSettings_vMinNumUd.Anchor = AnchorStyles.None;
             inpaintSettings_vMinNumUd.DecimalPlaces = 2;
             inpaintSettings_vMinNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            inpaintSettings_vMinNumUd.Location = new Point(164, 71);
+            inpaintSettings_vMinNumUd.Location = new Point(165, 70);
             inpaintSettings_vMinNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             inpaintSettings_vMinNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
             inpaintSettings_vMinNumUd.Name = "inpaintSettings_vMinNumUd";
-            inpaintSettings_vMinNumUd.Size = new Size(82, 23);
+            inpaintSettings_vMinNumUd.Size = new Size(78, 23);
             inpaintSettings_vMinNumUd.TabIndex = 28;
             inpaintSettings_vMinNumUd.Value = new decimal(new int[] { 5, 0, 0, 131072 });
+            inpaintSettings_vMinNumUd.ValueChanged += inpaintSettings_vMinNumUd_ValueChanged;
             // 
             // inpaintSettings_vMaxNumUd
             // 
             inpaintSettings_vMaxNumUd.Anchor = AnchorStyles.None;
             inpaintSettings_vMaxNumUd.DecimalPlaces = 2;
             inpaintSettings_vMaxNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            inpaintSettings_vMaxNumUd.Location = new Point(164, 104);
+            inpaintSettings_vMaxNumUd.Location = new Point(165, 103);
             inpaintSettings_vMaxNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             inpaintSettings_vMaxNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
             inpaintSettings_vMaxNumUd.Name = "inpaintSettings_vMaxNumUd";
-            inpaintSettings_vMaxNumUd.Size = new Size(82, 23);
+            inpaintSettings_vMaxNumUd.Size = new Size(78, 23);
             inpaintSettings_vMaxNumUd.TabIndex = 29;
             inpaintSettings_vMaxNumUd.Value = new decimal(new int[] { 95, 0, 0, 131072 });
+            inpaintSettings_vMaxNumUd.ValueChanged += inpaintSettings_vMaxNumUd_ValueChanged;
             // 
             // inpaintSettings_paintWhiteMaskPb
             // 
@@ -372,6 +381,7 @@
             // 
             // tableLayoutPanel15
             // 
+            tableLayoutPanel15.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel15.ColumnCount = 2;
             tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
@@ -396,9 +406,9 @@
             label28.AutoSize = true;
             label28.Font = new Font("Segoe UI", 7.8F);
             label28.ForeColor = Color.Black;
-            label28.Location = new Point(3, 36);
+            label28.Location = new Point(6, 36);
             label28.Name = "label28";
-            label28.Size = new Size(151, 26);
+            label28.Size = new Size(148, 26);
             label28.TabIndex = 39;
             label28.Text = "Близость к белому (от 1 до 255)";
             // 
@@ -408,7 +418,7 @@
             label29.AutoSize = true;
             label29.Font = new Font("Segoe UI", 7.8F);
             label29.ForeColor = Color.Black;
-            label29.Location = new Point(3, 3);
+            label29.Location = new Point(6, 4);
             label29.Name = "label29";
             label29.Size = new Size(136, 26);
             label29.TabIndex = 37;
@@ -417,24 +427,53 @@
             // inpaintSettings_inpaintMinAreaNumUd
             // 
             inpaintSettings_inpaintMinAreaNumUd.Anchor = AnchorStyles.None;
-            inpaintSettings_inpaintMinAreaNumUd.Location = new Point(164, 5);
+            inpaintSettings_inpaintMinAreaNumUd.Location = new Point(165, 6);
             inpaintSettings_inpaintMinAreaNumUd.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             inpaintSettings_inpaintMinAreaNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             inpaintSettings_inpaintMinAreaNumUd.Name = "inpaintSettings_inpaintMinAreaNumUd";
-            inpaintSettings_inpaintMinAreaNumUd.Size = new Size(82, 23);
+            inpaintSettings_inpaintMinAreaNumUd.Size = new Size(78, 23);
             inpaintSettings_inpaintMinAreaNumUd.TabIndex = 4;
             inpaintSettings_inpaintMinAreaNumUd.Value = new decimal(new int[] { 1000, 0, 0, 0 });
+            inpaintSettings_inpaintMinAreaNumUd.ValueChanged += inpaintSettings_inpaintMinAreaNumUd_ValueChanged;
             // 
             // inpaintSettings_inpaintWhiteThresholdNumUd
             // 
             inpaintSettings_inpaintWhiteThresholdNumUd.Anchor = AnchorStyles.None;
-            inpaintSettings_inpaintWhiteThresholdNumUd.Location = new Point(164, 38);
+            inpaintSettings_inpaintWhiteThresholdNumUd.Location = new Point(165, 38);
             inpaintSettings_inpaintWhiteThresholdNumUd.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             inpaintSettings_inpaintWhiteThresholdNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             inpaintSettings_inpaintWhiteThresholdNumUd.Name = "inpaintSettings_inpaintWhiteThresholdNumUd";
-            inpaintSettings_inpaintWhiteThresholdNumUd.Size = new Size(82, 23);
+            inpaintSettings_inpaintWhiteThresholdNumUd.Size = new Size(78, 23);
             inpaintSettings_inpaintWhiteThresholdNumUd.TabIndex = 5;
             inpaintSettings_inpaintWhiteThresholdNumUd.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            inpaintSettings_inpaintWhiteThresholdNumUd.ValueChanged += inpaintSettings_inpaintWhiteThresholdNumUd_ValueChanged;
+            // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.ColumnCount = 1;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.Controls.Add(inpaintSettings_resultLabel, 0, 0);
+            tableLayoutPanel8.Dock = DockStyle.Fill;
+            tableLayoutPanel8.Location = new Point(1038, 319);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 1;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel8.Size = new Size(252, 133);
+            tableLayoutPanel8.TabIndex = 38;
+            // 
+            // inpaintSettings_resultLabel
+            // 
+            inpaintSettings_resultLabel.Anchor = AnchorStyles.None;
+            inpaintSettings_resultLabel.AutoSize = true;
+            inpaintSettings_resultLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            inpaintSettings_resultLabel.ForeColor = SystemColors.ControlDark;
+            inpaintSettings_resultLabel.Location = new Point(89, 51);
+            inpaintSettings_resultLabel.Name = "inpaintSettings_resultLabel";
+            inpaintSettings_resultLabel.Size = new Size(74, 30);
+            inpaintSettings_resultLabel.TabIndex = 26;
+            inpaintSettings_resultLabel.Text = "NONE";
             // 
             // label2
             // 
@@ -481,6 +520,7 @@
             inpaintSettings_loadImageForInpaintSettingsBt.TabIndex = 8;
             inpaintSettings_loadImageForInpaintSettingsBt.Text = "Загрузить изображение с папки";
             inpaintSettings_loadImageForInpaintSettingsBt.UseVisualStyleBackColor = false;
+            inpaintSettings_loadImageForInpaintSettingsBt.Click += inpaintSettings_loadImageForInpaintSettingsBt_Click;
             // 
             // inpaintSettings_okBt
             // 
@@ -495,6 +535,7 @@
             inpaintSettings_okBt.TabIndex = 6;
             inpaintSettings_okBt.Text = "OK";
             inpaintSettings_okBt.UseVisualStyleBackColor = false;
+            inpaintSettings_okBt.Click += inpaintSettings_okBt_Click;
             // 
             // inpaintSettings_cancelBt
             // 
@@ -509,6 +550,7 @@
             inpaintSettings_cancelBt.TabIndex = 7;
             inpaintSettings_cancelBt.Text = "Отмена";
             inpaintSettings_cancelBt.UseVisualStyleBackColor = false;
+            inpaintSettings_cancelBt.Click += inpaintSettings_cancelBt_Click;
             // 
             // InpaintSettingsForm
             // 
@@ -538,6 +580,8 @@
             tableLayoutPanel15.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)inpaintSettings_inpaintMinAreaNumUd).EndInit();
             ((System.ComponentModel.ISupportInitialize)inpaintSettings_inpaintWhiteThresholdNumUd).EndInit();
+            tableLayoutPanel8.ResumeLayout(false);
+            tableLayoutPanel8.PerformLayout();
             tableLayoutPanel7.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -576,5 +620,7 @@
         private NumericUpDown inpaintSettings_inpaintWhiteThresholdNumUd;
         private Label label29;
         private Label label28;
+        private TableLayoutPanel tableLayoutPanel8;
+        private Label inpaintSettings_resultLabel;
     }
 }

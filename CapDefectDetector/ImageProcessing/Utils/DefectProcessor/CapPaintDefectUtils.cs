@@ -50,79 +50,61 @@ namespace CapDefectDetector.ImageProcessing.Utils
             };
         }
 
-        public bool CheckForPaintDefects(
-            Mat gray,
-            Mat image,
-            Mat drawFrame,
-            CancellationToken token,
-            Point[] capContour)
+        public bool CheckForPaintDefects(Mat gray, Mat image, Mat drawFrame, CancellationToken token, Point[] capContour)
         {
             try
             {
-                token.ThrowIfCancellationRequested();
-
                 if (capContour == null || capContour.Length < 5)
                 {
                     ErrorLogger.Log(
-                        new Exception("Контур крышки пустой или содержит недостаточно точек"),
+                        new Exception("Контур крышки пустой или содержит слишком мало точек"),
                         "CheckForPaintDefects - проверка контура");
                     return false;
                 }
 
-                using (Mat hsv = CreateHsv(image))
+                using (Mat whiteMask = CreateWhiteMaskStep(image, capContour))
+                using (Mat maskedDefects = CreateMaskedDefectsStep(whiteMask, image, capContour))
                 {
-                    token.ThrowIfCancellationRequested();
-
-                    using (Mat capMask = CreateCapMask(image, capContour))
-                    {
-                        token.ThrowIfCancellationRequested();
-
-                        using (Mat maskedHSV = ApplyMaskToHsv(hsv, capMask))
-                        {
-                            token.ThrowIfCancellationRequested();
-
-                            Cv2.Split(maskedHSV, out Mat[] hsvChannels);
-
-                            using (hsvChannels[0])
-                            using (hsvChannels[1])
-                            using (hsvChannels[2])
-                            using (Mat whiteMask = CreateWhiteMask(maskedHSV))
-                            {
-                                token.ThrowIfCancellationRequested();
-
-                                using (Mat defectsMask = CreateDefectsMask(whiteMask))
-                                {
-                                    using (Mat maskedDefects = ApplyDefectsMask(defectsMask, capMask))
-                                    {
-                                        token.ThrowIfCancellationRequested();
-
-                                        var contours = FindContours(maskedDefects, token);
-
-                                        var significantContours = contours
-                                            .Where(c => Cv2.ContourArea(c) > _minAreaInpaintDefect)
-                                            .ToList();
-
-                                        var defects = ProcessContours(significantContours, image, token);
-
-                                        DrawDefects(drawFrame, defects);
-
-                                        return defects.Count > 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    return DrawPaintDefectContoursStep(maskedDefects, image, drawFrame, token);
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                return false;
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex, "CheckForPaintDefects - непредвиденная ошибка");
+                ErrorLogger.Log(ex, "CheckForPaintDefects");
                 return false;
             }
+        }
+
+        public Mat CreateWhiteMaskStep(Mat image, Point[] capContour)
+        {
+            using (Mat hsv = CreateHsv(image))
+            using (Mat capMask = CreateCapMask(image, capContour))
+            using (Mat maskedHSV = ApplyMaskToHsv(hsv, capMask))
+            {
+                return CreateWhiteMask(maskedHSV);
+            }
+        }
+
+        public Mat CreateMaskedDefectsStep(Mat whiteMask, Mat image, Point[] capContour)
+        {
+            using (Mat capMask = CreateCapMask(image, capContour))
+            using (Mat defectsMask = CreateDefectsMask(whiteMask))
+            {
+                return ApplyDefectsMask(defectsMask, capMask);
+            }
+        }
+
+        public bool DrawPaintDefectContoursStep(Mat maskedDefects, Mat image, Mat drawFrame, CancellationToken token)
+        {
+            var contours = FindContours(maskedDefects, token);
+
+            var significantContours = contours.Where(c => Cv2.ContourArea(c) > _minAreaInpaintDefect).ToList();
+
+            var defects = ProcessContours(significantContours, image, token);
+
+            DrawDefects(drawFrame, defects);
+
+            return defects.Count > 0;
         }
 
         private Mat CreateHsv(Mat image)

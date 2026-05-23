@@ -15,8 +15,8 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.OvalitySettingsForm
         private Mat _image;
         private readonly CapRecipe _recipe;
 
-        private readonly CapOvalityUtils _sourceOvalityUtils;
-        private readonly CapOvalityUtils _editableOvalityUtils;
+        private readonly CapOvalityDefectUtils _sourceOvalityUtils;
+        private readonly CapOvalityDefectUtils _editableOvalityUtils;
         private readonly CapColorContourUtils _colorUtils;
         private readonly CapBlackOrBrownContourUtils _blackOrBrownUtils;
         #endregion
@@ -26,9 +26,11 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.OvalitySettingsForm
         private RotatedRect _ellipse;
         private float _axisRatio;
         private bool _isOval;
+        private Mat _element1;
+        private Mat _element2;
         #endregion
 
-        public OvalitySettingsForm(Mat image, CapRecipe recipe, CapOvalityUtils ovalityUtils)
+        public OvalitySettingsForm(Mat image, CapRecipe recipe, CapOvalityDefectUtils ovalityUtils, Mat element1, Mat element2)
         {
             InitializeComponent();
 
@@ -36,7 +38,10 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.OvalitySettingsForm
             _recipe = recipe;
 
             _sourceOvalityUtils = ovalityUtils;
-            _editableOvalityUtils = new CapOvalityUtils(ovalityUtils.GetSettings());
+            _editableOvalityUtils = new CapOvalityDefectUtils(ovalityUtils.GetSettings());
+
+            _element1 = element1;
+            _element2 = element2;
 
             _colorUtils = new CapColorContourUtils();
             _blackOrBrownUtils = new CapBlackOrBrownContourUtils();
@@ -116,7 +121,7 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.OvalitySettingsForm
             Mat sat = _colorUtils.ApplySaturationStep(image, _recipe.CameraSaturation);
             Mat caps = _colorUtils.ApplyCapsColorStep(sat, _recipe.CapsColor, _recipe.IsColored, _recipe.IsYellow, _recipe.IsGreen);
             Mat[] channels = _colorUtils.ApplyWindowStep(caps, _recipe.Window);
-            _colorUtils.ApplyMorphologyStep(channels, null, null);
+            _colorUtils.ApplyMorphologyStep(channels, _element1, _element2);
             var contour = _colorUtils.GetMaxContour(channels[2]);
             contour = _colorUtils.CorrectContour(contour, _recipe.ContourCorrectionColor);
 

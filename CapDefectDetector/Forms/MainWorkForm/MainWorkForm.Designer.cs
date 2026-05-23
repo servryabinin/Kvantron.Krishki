@@ -607,7 +607,7 @@
             morphCb.Font = new Font("Segoe UI", 7.8F);
             morphCb.FormattingEnabled = true;
             morphCb.Items.AddRange(new object[] { "1", "2", "3" });
-            morphCb.Location = new Point(342, 241);
+            morphCb.Location = new Point(342, 240);
             morphCb.Name = "morphCb";
             morphCb.Size = new Size(75, 20);
             morphCb.TabIndex = 7;
@@ -630,7 +630,7 @@
             windowCb.Font = new Font("Segoe UI", 7.8F);
             windowCb.FormattingEnabled = true;
             windowCb.Items.AddRange(new object[] { "3", "5", "7", "9", "11", "13", "15" });
-            windowCb.Location = new Point(258, 241);
+            windowCb.Location = new Point(258, 240);
             windowCb.Name = "windowCb";
             windowCb.Size = new Size(75, 20);
             windowCb.TabIndex = 6;
@@ -1114,7 +1114,7 @@
             tableLayoutPanel44.Controls.Add(obloyPixCountNumUpD, 0, 3);
             tableLayoutPanel44.Controls.Add(label47, 0, 2);
             tableLayoutPanel44.Dock = DockStyle.Fill;
-            tableLayoutPanel44.Location = new Point(2, 29);
+            tableLayoutPanel44.Location = new Point(2, 24);
             tableLayoutPanel44.Margin = new Padding(0);
             tableLayoutPanel44.Name = "tableLayoutPanel44";
             tableLayoutPanel44.RowCount = 4;
@@ -1122,13 +1122,13 @@
             tableLayoutPanel44.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel44.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
             tableLayoutPanel44.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel44.Size = new Size(281, 102);
+            tableLayoutPanel44.Size = new Size(281, 107);
             tableLayoutPanel44.TabIndex = 4;
             // 
             // capFlashOffsetNumUpD
             // 
             capFlashOffsetNumUpD.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            capFlashOffsetNumUpD.Location = new Point(3, 28);
+            capFlashOffsetNumUpD.Location = new Point(3, 29);
             capFlashOffsetNumUpD.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             capFlashOffsetNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             capFlashOffsetNumUpD.Name = "capFlashOffsetNumUpD";
@@ -1152,7 +1152,7 @@
             // obloyPixCountNumUpD
             // 
             obloyPixCountNumUpD.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            obloyPixCountNumUpD.Location = new Point(3, 78);
+            obloyPixCountNumUpD.Location = new Point(3, 81);
             obloyPixCountNumUpD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             obloyPixCountNumUpD.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             obloyPixCountNumUpD.Name = "obloyPixCountNumUpD";
@@ -1167,7 +1167,7 @@
             label47.AutoSize = true;
             label47.Font = new Font("Segoe UI", 7.8F);
             label47.ForeColor = Color.Black;
-            label47.Location = new Point(3, 56);
+            label47.Location = new Point(3, 58);
             label47.Name = "label47";
             label47.Size = new Size(172, 13);
             label47.TabIndex = 7;
@@ -2107,7 +2107,7 @@
             receptCapsCmB.BackColor = Color.White;
             receptCapsCmB.Font = new Font("Segoe UI", 7.8F);
             receptCapsCmB.FormattingEnabled = true;
-            receptCapsCmB.Location = new Point(239, 11);
+            receptCapsCmB.Location = new Point(239, 10);
             receptCapsCmB.Name = "receptCapsCmB";
             receptCapsCmB.Size = new Size(230, 20);
             receptCapsCmB.TabIndex = 38;
@@ -2794,7 +2794,7 @@
             paramDefCmB.BackColor = Color.White;
             paramDefCmB.Font = new Font("Segoe UI", 7.8F);
             paramDefCmB.FormattingEnabled = true;
-            paramDefCmB.Location = new Point(85, 12);
+            paramDefCmB.Location = new Point(85, 11);
             paramDefCmB.Name = "paramDefCmB";
             paramDefCmB.Size = new Size(103, 20);
             paramDefCmB.TabIndex = 39;
@@ -2996,8 +2996,8 @@
             tableLayoutPanel53.Location = new Point(3, 441);
             tableLayoutPanel53.Name = "tableLayoutPanel53";
             tableLayoutPanel53.RowCount = 2;
-            tableLayoutPanel53.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel53.RowStyles.Add(new RowStyle(SizeType.Percent, 80F));
+            tableLayoutPanel53.RowStyles.Add(new RowStyle(SizeType.Percent, 16.0305347F));
+            tableLayoutPanel53.RowStyles.Add(new RowStyle(SizeType.Percent, 83.96947F));
             tableLayoutPanel53.Size = new Size(285, 133);
             tableLayoutPanel53.TabIndex = 5;
             // 
@@ -3007,7 +3007,7 @@
             obloyParamLb.AutoSize = true;
             obloyParamLb.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 204);
             obloyParamLb.ForeColor = Color.Black;
-            obloyParamLb.Location = new Point(121, 8);
+            obloyParamLb.Location = new Point(121, 5);
             obloyParamLb.Name = "obloyParamLb";
             obloyParamLb.Size = new Size(43, 13);
             obloyParamLb.TabIndex = 25;
@@ -3829,7 +3829,7 @@
             prSettingsCmB.BackColor = Color.White;
             prSettingsCmB.Font = new Font("Segoe UI", 7.8F);
             prSettingsCmB.FormattingEnabled = true;
-            prSettingsCmB.Location = new Point(271, 8);
+            prSettingsCmB.Location = new Point(271, 7);
             prSettingsCmB.Name = "prSettingsCmB";
             prSettingsCmB.Size = new Size(112, 20);
             prSettingsCmB.TabIndex = 39;

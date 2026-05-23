@@ -18,8 +18,8 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
         private Mat _image;
         private readonly CapRecipe _recipe;
 
-        private readonly CapInclusionUtils _sourceInclusionUtils;
-        private readonly CapInclusionUtils _editableInclusionUtils;
+        private readonly CapInclusionDefectUtils _sourceInclusionUtils;
+        private readonly CapInclusionDefectUtils _editableInclusionUtils;
         private readonly CapColorContourUtils _colorUtils;
         private readonly CapBlackOrBrownContourUtils _blackOrBrownUtils;
         #endregion
@@ -27,9 +27,11 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
         #region Глобальные поля
         private Point[] _contour;
         private bool _isInclusion;
+        private Mat _element1;
+        private Mat _element2;
         #endregion
 
-        public InclusionSettingsForm(Mat image, CapRecipe recipe, CapInclusionUtils inclusionUtils)
+        public InclusionSettingsForm(Mat image, CapRecipe recipe, CapInclusionDefectUtils inclusionUtils, Mat element1, Mat element2)
         {
             InitializeComponent();
 
@@ -37,7 +39,10 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
             _recipe = recipe;
 
             _sourceInclusionUtils = inclusionUtils;
-            _editableInclusionUtils = new CapInclusionUtils(inclusionUtils.GetSettings());
+            _editableInclusionUtils = new CapInclusionDefectUtils(inclusionUtils.GetSettings());
+
+            _element1 = element1;
+            _element2 = element2;
 
             _colorUtils = new CapColorContourUtils();
             _blackOrBrownUtils = new CapBlackOrBrownContourUtils();
@@ -48,6 +53,21 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
         }
 
         #region Визуализация
+        private void BindEnums()
+        {
+            inclusionSettings_adaptiveThresholdTypesCb.Items.Clear();
+            inclusionSettings_adaptiveThresholdTypesCb.Items.AddRange(Enum.GetNames(typeof(AdaptiveThresholdTypes)));
+
+            inclusionSettings_thresholdTypesCb.Items.Clear();
+            inclusionSettings_thresholdTypesCb.Items.AddRange(Enum.GetNames(typeof(ThresholdTypes)));
+
+            inclusionSettings_morphTypesCb.Items.Clear();
+            inclusionSettings_morphTypesCb.Items.AddRange(Enum.GetNames(typeof(MorphTypes)));
+
+            inclusionSettings_morphShapesCb.Items.Clear();
+            inclusionSettings_morphShapesCb.Items.AddRange(Enum.GetNames(typeof(MorphShapes)));
+        }
+
         private void ApplySettingsToUI()
         {
             var s = _editableInclusionUtils.GetSettings();
@@ -64,21 +84,6 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
             inclusionSettings_inclusionCircleCoefNumUd.Value = (decimal)s.InclusionThreshold;
             inclusionSettings_inclusionMinSquareNumUd.Value = (decimal)s.MinAreaInclusion;
             inclusionSettings_inclusionMaxSquareNumUd.Value = (decimal)s.MaxAreaInclusion;
-        }
-
-        private void BindEnums()
-        {
-            inclusionSettings_adaptiveThresholdTypesCb.Items.Clear();
-            inclusionSettings_adaptiveThresholdTypesCb.Items.AddRange(Enum.GetNames(typeof(AdaptiveThresholdTypes)));
-
-            inclusionSettings_thresholdTypesCb.Items.Clear();
-            inclusionSettings_thresholdTypesCb.Items.AddRange(Enum.GetNames(typeof(ThresholdTypes)));
-
-            inclusionSettings_morphTypesCb.Items.Clear();
-            inclusionSettings_morphTypesCb.Items.AddRange(Enum.GetNames(typeof(MorphTypes)));
-
-            inclusionSettings_morphShapesCb.Items.Clear();
-            inclusionSettings_morphShapesCb.Items.AddRange(Enum.GetNames(typeof(MorphShapes)));
         }
 
         private void UpdateVisualization()
@@ -108,7 +113,6 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
             _isInclusion = RunInclusion(draw);
 
             UpdateVisualization();
-
         }
 
         private bool RunInclusion(Mat drawFrame)
@@ -168,7 +172,7 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
             Mat sat = _colorUtils.ApplySaturationStep(image, _recipe.CameraSaturation);
             Mat caps = _colorUtils.ApplyCapsColorStep(sat, _recipe.CapsColor, _recipe.IsColored, _recipe.IsYellow, _recipe.IsGreen);
             Mat[] channels = _colorUtils.ApplyWindowStep(caps, _recipe.Window);
-            _colorUtils.ApplyMorphologyStep(channels, null, null);
+            _colorUtils.ApplyMorphologyStep(channels, _element1, _element2);
             var contour = _colorUtils.GetMaxContour(channels[2]);
             contour = _colorUtils.CorrectContour(contour, _recipe.ContourCorrectionColor);
 
@@ -198,7 +202,6 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
                 Mask = edges
             };
         }
-
         #endregion
 
         #region Обработчики событий при взаимодействии с интерфейсом

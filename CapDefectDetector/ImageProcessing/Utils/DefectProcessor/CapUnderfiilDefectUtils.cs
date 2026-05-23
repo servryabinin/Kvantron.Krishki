@@ -34,7 +34,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
         private double[] _cosTable;
         private readonly object _trigTablesLock = new object();
 
-        private readonly CapColorContourUtils _colorUtils;
+        public readonly CapColorContourUtils _colorUtils;
 
         public CapUnderfillDefectUtils(CapColorContourUtils colorUtils,UnderfillDefectSettings settings)
         {
@@ -142,7 +142,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
                         token.ThrowIfCancellationRequested();
 
                         float[] signal = BuildSignal(stripe, rectHeight);
-                        bool hasUnderfill = AnalyzeUnderfillFFT(signal,_underfillRectWidth,_corrugationsCountForUnderFill);
+                        bool hasUnderfill = AnalyzeUnderfillFFT(signal);
 
                         DrawResult(drawFrame, innerEllipse, hasUnderfill);
 
@@ -162,7 +162,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private Mat CreateCorrectedImage(Mat image)
+        public Mat CreateCorrectedImage(Mat image)
         {
             try
             {
@@ -184,7 +184,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private Mat CreateGray(Mat image)
+        public Mat CreateGray(Mat image)
         {
             try
             {
@@ -200,7 +200,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private (RotatedRect outerEllipse, RotatedRect innerEllipse) CreateEllipses(Point[] contour)
+        public (RotatedRect outerEllipse, RotatedRect innerEllipse) CreateEllipses(Point[] contour)
         {
             try
             {
@@ -217,12 +217,12 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private int CalculateRectHeight(RotatedRect ellipse)
+        public int CalculateRectHeight(RotatedRect ellipse)
         {
             return (int)(Math.Max(ellipse.Size.Width, ellipse.Size.Height) * _rectHeightCoef);
         }
 
-        private Mat CreateCrownMask(Mat image, RotatedRect outerEllipse, RotatedRect innerEllipse)
+        public Mat CreateCrownMask(Mat image, RotatedRect outerEllipse, RotatedRect innerEllipse)
         {
             try
             {
@@ -240,7 +240,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private Mat ApplyMask(Mat gray, Mat mask)
+        public Mat ApplyMask(Mat gray, Mat mask)
         {
             try
             {
@@ -257,7 +257,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
         }
 
 
-        private Mat CreateStripe(
+        public Mat CreateStripe(
             Mat maskedGray,
             RotatedRect outerEllipse,
             RotatedRect innerEllipse,
@@ -282,7 +282,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private float[] BuildSignal(Mat stripe, int rectHeight)
+        public float[] BuildSignal(Mat stripe, int rectHeight)
         {
             try
             {
@@ -297,7 +297,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private void DrawResult(Mat drawFrame,RotatedRect ellipse,bool defect)
+        public void DrawResult(Mat drawFrame,RotatedRect ellipse,bool defect)
         {
             try
             {
@@ -311,33 +311,33 @@ namespace CapDefectDetector.ImageProcessing.Utils
         }
 
 
-        private bool AnalyzeUnderfillFFT(float[] signal,int length,double expectedHarmonic)
+        public bool AnalyzeUnderfillFFT(float[] signal)
         {
             try
             {
-                if (signal == null || signal.Length < length)
+                if (signal == null || signal.Length < _underfillRectWidth)
                     return false;
 
-                float[] data = new float[length];
-                Array.Copy(signal, data, length);
+                float[] data = new float[_underfillRectWidth];
+                Array.Copy(signal, data, _underfillRectWidth);
 
                 double mean = 0;
-                for (int i = 0; i < length; i++)
+                for (int i = 0; i < _underfillRectWidth; i++)
                     mean += data[i];
-                mean /= length;
+                mean /= _underfillRectWidth;
 
-                for (int i = 0; i < length; i++)
+                for (int i = 0; i < _underfillRectWidth; i++)
                     data[i] -= (float)mean;
 
-                Complex[] complexData = new Complex[length];
-                for (int i = 0; i < length; i++)
+                Complex[] complexData = new Complex[_underfillRectWidth];
+                for (int i = 0; i < _underfillRectWidth; i++)
                     complexData[i] = new Complex(data[i], 0);
 
                 Fourier.Forward(complexData);
 
-                int minHarmonic = (int)Math.Max(1, expectedHarmonic - 2);
+                int minHarmonic = (int)Math.Max(1, _corrugationsCountForUnderFill - 2);
 
-                int maxHarmonic = (int)Math.Min(length / 2, expectedHarmonic + 2);
+                int maxHarmonic = (int)Math.Min(_underfillRectWidth / 2, _corrugationsCountForUnderFill + 2);
 
                 double maxMagnitude = 0;
                 int maxIndex = minHarmonic;
@@ -354,7 +354,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
                 bool result;
 
-                if (maxIndex >= expectedHarmonic - 1 && maxIndex <= expectedHarmonic + 1)
+                if (maxIndex >= _corrugationsCountForUnderFill - 1 && maxIndex <= _corrugationsCountForUnderFill + 1)
                 {
                     result = false;
                 }
@@ -373,7 +373,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private static void GetWStatistics(Mat src,float[] dst,int w,int h)
+        public static void GetWStatistics(Mat src,float[] dst,int w,int h)
         {
             Array.Clear(dst, 0, dst.Length);
 
@@ -392,7 +392,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private static void GetStripeImg(
+        public static void GetStripeImg(
             Mat src,
             Mat dst,
             double[] sinTable,
@@ -421,7 +421,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        private static byte Bilinear8Bit(Mat img,double x,double y,int w,int h)
+        public static byte Bilinear8Bit(Mat img,double x,double y,int w,int h)
         {
             int u = (int)x;
             int v = (int)y;

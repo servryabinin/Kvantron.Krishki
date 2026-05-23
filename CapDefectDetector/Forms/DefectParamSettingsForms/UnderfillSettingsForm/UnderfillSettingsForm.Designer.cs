@@ -47,8 +47,14 @@
             label1 = new Label();
             label3 = new Label();
             tableLayoutPanel4 = new TableLayoutPanel();
+            label9 = new Label();
             underfillSettings_UnderFillcapsColorNumUd = new NumericUpDown();
             label4 = new Label();
+            label10 = new Label();
+            label11 = new Label();
+            underfillSettings_decolorizeBackgroundChb = new CheckBox();
+            underfillSettings_normalizeBrightnessChb = new CheckBox();
+            underfillSettings_preserveDetailsChb = new CheckBox();
             label5 = new Label();
             tableLayoutPanel5 = new TableLayoutPanel();
             underfillSettings_coefCapRadiusUnderFillNumUd = new NumericUpDown();
@@ -60,14 +66,16 @@
             label6 = new Label();
             label7 = new Label();
             label25 = new Label();
+            tableLayoutPanel8 = new TableLayoutPanel();
+            underfillSettings_underFillRectWidthNumUd = new NumericUpDown();
+            label8 = new Label();
             label27 = new Label();
             tableLayoutPanel9 = new TableLayoutPanel();
             underfillSettings_corrugationsCountForUnderFillNumUd = new NumericUpDown();
             label61 = new Label();
             label29 = new Label();
-            tableLayoutPanel8 = new TableLayoutPanel();
-            label8 = new Label();
-            underfillSettings_underFillRectWidthNumUd = new NumericUpDown();
+            tableLayoutPanel10 = new TableLayoutPanel();
+            underfillSettings_resultLabel = new Label();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel7.SuspendLayout();
@@ -86,10 +94,11 @@
             tableLayoutPanel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)underfillSettings_rectHeightCoefNumUd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)underfillSettings_innerOffsetNumUd).BeginInit();
-            tableLayoutPanel9.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)underfillSettings_corrugationsCountForUnderFillNumUd).BeginInit();
             tableLayoutPanel8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)underfillSettings_underFillRectWidthNumUd).BeginInit();
+            tableLayoutPanel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)underfillSettings_corrugationsCountForUnderFillNumUd).BeginInit();
+            tableLayoutPanel10.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -156,6 +165,7 @@
             underfillSettings_loadImageForUnderfillSettingsBt.TabIndex = 8;
             underfillSettings_loadImageForUnderfillSettingsBt.Text = "Загрузить изображение с папки";
             underfillSettings_loadImageForUnderfillSettingsBt.UseVisualStyleBackColor = false;
+            underfillSettings_loadImageForUnderfillSettingsBt.Click += underfillSettings_loadImageForUnderfillSettingsBt_Click;
             // 
             // underfillSettings_okBt
             // 
@@ -170,6 +180,7 @@
             underfillSettings_okBt.TabIndex = 6;
             underfillSettings_okBt.Text = "OK";
             underfillSettings_okBt.UseVisualStyleBackColor = false;
+            underfillSettings_okBt.Click += underfillSettings_okBt_Click;
             // 
             // underfillSettings_cancelBt
             // 
@@ -184,6 +195,7 @@
             underfillSettings_cancelBt.TabIndex = 7;
             underfillSettings_cancelBt.Text = "Отмена";
             underfillSettings_cancelBt.UseVisualStyleBackColor = false;
+            underfillSettings_cancelBt.Click += underfillSettings_cancelBt_Click;
             // 
             // label2
             // 
@@ -230,6 +242,7 @@
             tableLayoutPanel3.Controls.Add(label27, 5, 1);
             tableLayoutPanel3.Controls.Add(tableLayoutPanel9, 5, 2);
             tableLayoutPanel3.Controls.Add(label29, 6, 1);
+            tableLayoutPanel3.Controls.Add(tableLayoutPanel10, 6, 2);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 57);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -332,11 +345,18 @@
             // 
             // tableLayoutPanel4
             // 
+            tableLayoutPanel4.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel4.ColumnCount = 2;
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
+            tableLayoutPanel4.Controls.Add(label9, 0, 1);
             tableLayoutPanel4.Controls.Add(underfillSettings_UnderFillcapsColorNumUd, 1, 0);
             tableLayoutPanel4.Controls.Add(label4, 0, 0);
+            tableLayoutPanel4.Controls.Add(label10, 0, 2);
+            tableLayoutPanel4.Controls.Add(label11, 0, 3);
+            tableLayoutPanel4.Controls.Add(underfillSettings_decolorizeBackgroundChb, 1, 1);
+            tableLayoutPanel4.Controls.Add(underfillSettings_normalizeBrightnessChb, 1, 2);
+            tableLayoutPanel4.Controls.Add(underfillSettings_preserveDetailsChb, 1, 3);
             tableLayoutPanel4.Dock = DockStyle.Fill;
             tableLayoutPanel4.Location = new Point(230, 299);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -348,26 +368,90 @@
             tableLayoutPanel4.Size = new Size(215, 124);
             tableLayoutPanel4.TabIndex = 7;
             // 
+            // label9
+            // 
+            label9.Anchor = AnchorStyles.Left;
+            label9.AutoSize = true;
+            label9.Location = new Point(6, 39);
+            label9.Name = "label9";
+            label9.Size = new Size(16, 15);
+            label9.TabIndex = 10;
+            label9.Text = "1:";
+            // 
             // underfillSettings_UnderFillcapsColorNumUd
             // 
             underfillSettings_UnderFillcapsColorNumUd.Anchor = AnchorStyles.None;
-            underfillSettings_UnderFillcapsColorNumUd.Location = new Point(142, 4);
+            underfillSettings_UnderFillcapsColorNumUd.Location = new Point(142, 6);
             underfillSettings_UnderFillcapsColorNumUd.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             underfillSettings_UnderFillcapsColorNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_UnderFillcapsColorNumUd.Name = "underfillSettings_UnderFillcapsColorNumUd";
-            underfillSettings_UnderFillcapsColorNumUd.Size = new Size(70, 23);
+            underfillSettings_UnderFillcapsColorNumUd.Size = new Size(67, 23);
             underfillSettings_UnderFillcapsColorNumUd.TabIndex = 9;
             underfillSettings_UnderFillcapsColorNumUd.Value = new decimal(new int[] { 60, 0, 0, 0 });
+            underfillSettings_UnderFillcapsColorNumUd.ValueChanged += underfillSettings_UnderFillcapsColorNumUd_ValueChanged;
             // 
             // label4
             // 
             label4.Anchor = AnchorStyles.Left;
             label4.AutoSize = true;
-            label4.Location = new Point(3, 0);
+            label4.Location = new Point(6, 9);
             label4.Name = "label4";
-            label4.Size = new Size(102, 30);
+            label4.Size = new Size(122, 15);
             label4.TabIndex = 7;
-            label4.Text = "Цветокоррекция крышки:";
+            label4.Text = "Цветокорр. крышки:";
+            // 
+            // label10
+            // 
+            label10.Anchor = AnchorStyles.Left;
+            label10.AutoSize = true;
+            label10.Location = new Point(6, 69);
+            label10.Name = "label10";
+            label10.Size = new Size(16, 15);
+            label10.TabIndex = 11;
+            label10.Text = "2:";
+            // 
+            // label11
+            // 
+            label11.Anchor = AnchorStyles.Left;
+            label11.AutoSize = true;
+            label11.Location = new Point(6, 99);
+            label11.Name = "label11";
+            label11.Size = new Size(16, 15);
+            label11.TabIndex = 12;
+            label11.Text = "3:";
+            // 
+            // underfillSettings_decolorizeBackgroundChb
+            // 
+            underfillSettings_decolorizeBackgroundChb.Anchor = AnchorStyles.None;
+            underfillSettings_decolorizeBackgroundChb.AutoSize = true;
+            underfillSettings_decolorizeBackgroundChb.Location = new Point(168, 39);
+            underfillSettings_decolorizeBackgroundChb.Name = "underfillSettings_decolorizeBackgroundChb";
+            underfillSettings_decolorizeBackgroundChb.Size = new Size(15, 14);
+            underfillSettings_decolorizeBackgroundChb.TabIndex = 13;
+            underfillSettings_decolorizeBackgroundChb.UseVisualStyleBackColor = true;
+            underfillSettings_decolorizeBackgroundChb.CheckedChanged += underfillSettings_decolorizeBackgroundChb_CheckedChanged;
+            // 
+            // underfillSettings_normalizeBrightnessChb
+            // 
+            underfillSettings_normalizeBrightnessChb.Anchor = AnchorStyles.None;
+            underfillSettings_normalizeBrightnessChb.AutoSize = true;
+            underfillSettings_normalizeBrightnessChb.Location = new Point(168, 69);
+            underfillSettings_normalizeBrightnessChb.Name = "underfillSettings_normalizeBrightnessChb";
+            underfillSettings_normalizeBrightnessChb.Size = new Size(15, 14);
+            underfillSettings_normalizeBrightnessChb.TabIndex = 14;
+            underfillSettings_normalizeBrightnessChb.UseVisualStyleBackColor = true;
+            underfillSettings_normalizeBrightnessChb.CheckedChanged += underfillSettings_normalizeBrightnessChb_CheckedChanged;
+            // 
+            // underfillSettings_preserveDetailsChb
+            // 
+            underfillSettings_preserveDetailsChb.Anchor = AnchorStyles.None;
+            underfillSettings_preserveDetailsChb.AutoSize = true;
+            underfillSettings_preserveDetailsChb.Location = new Point(168, 100);
+            underfillSettings_preserveDetailsChb.Name = "underfillSettings_preserveDetailsChb";
+            underfillSettings_preserveDetailsChb.Size = new Size(15, 14);
+            underfillSettings_preserveDetailsChb.TabIndex = 15;
+            underfillSettings_preserveDetailsChb.UseVisualStyleBackColor = true;
+            underfillSettings_preserveDetailsChb.CheckedChanged += underfillSettings_preserveDetailsChb_CheckedChanged;
             // 
             // label5
             // 
@@ -381,6 +465,7 @@
             // 
             // tableLayoutPanel5
             // 
+            tableLayoutPanel5.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel5.ColumnCount = 2;
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
@@ -402,13 +487,14 @@
             underfillSettings_coefCapRadiusUnderFillNumUd.Anchor = AnchorStyles.None;
             underfillSettings_coefCapRadiusUnderFillNumUd.DecimalPlaces = 2;
             underfillSettings_coefCapRadiusUnderFillNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            underfillSettings_coefCapRadiusUnderFillNumUd.Location = new Point(142, 4);
+            underfillSettings_coefCapRadiusUnderFillNumUd.Location = new Point(142, 6);
             underfillSettings_coefCapRadiusUnderFillNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_coefCapRadiusUnderFillNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 131072 });
             underfillSettings_coefCapRadiusUnderFillNumUd.Name = "underfillSettings_coefCapRadiusUnderFillNumUd";
-            underfillSettings_coefCapRadiusUnderFillNumUd.Size = new Size(70, 23);
+            underfillSettings_coefCapRadiusUnderFillNumUd.Size = new Size(67, 23);
             underfillSettings_coefCapRadiusUnderFillNumUd.TabIndex = 46;
             underfillSettings_coefCapRadiusUnderFillNumUd.Value = new decimal(new int[] { 90, 0, 0, 131072 });
+            underfillSettings_coefCapRadiusUnderFillNumUd.ValueChanged += underfillSettings_coefCapRadiusUnderFillNumUd_ValueChanged;
             // 
             // label62
             // 
@@ -416,7 +502,7 @@
             label62.AutoSize = true;
             label62.Font = new Font("Segoe UI", 7.8F);
             label62.ForeColor = Color.Black;
-            label62.Location = new Point(3, 2);
+            label62.Location = new Point(6, 3);
             label62.Name = "label62";
             label62.Size = new Size(105, 26);
             label62.TabIndex = 45;
@@ -434,6 +520,7 @@
             // 
             // tableLayoutPanel6
             // 
+            tableLayoutPanel6.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel6.ColumnCount = 2;
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
@@ -457,22 +544,24 @@
             underfillSettings_rectHeightCoefNumUd.Anchor = AnchorStyles.None;
             underfillSettings_rectHeightCoefNumUd.DecimalPlaces = 2;
             underfillSettings_rectHeightCoefNumUd.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
-            underfillSettings_rectHeightCoefNumUd.Location = new Point(146, 35);
+            underfillSettings_rectHeightCoefNumUd.Location = new Point(144, 36);
             underfillSettings_rectHeightCoefNumUd.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_rectHeightCoefNumUd.Name = "underfillSettings_rectHeightCoefNumUd";
             underfillSettings_rectHeightCoefNumUd.Size = new Size(62, 23);
             underfillSettings_rectHeightCoefNumUd.TabIndex = 48;
             underfillSettings_rectHeightCoefNumUd.Value = new decimal(new int[] { 2, 0, 0, 65536 });
+            underfillSettings_rectHeightCoefNumUd.ValueChanged += underfillSettings_rectHeightCoefNumUd_ValueChanged;
             // 
             // underfillSettings_innerOffsetNumUd
             // 
             underfillSettings_innerOffsetNumUd.Anchor = AnchorStyles.None;
-            underfillSettings_innerOffsetNumUd.Location = new Point(146, 4);
+            underfillSettings_innerOffsetNumUd.Location = new Point(145, 6);
             underfillSettings_innerOffsetNumUd.Maximum = new decimal(new int[] { 30, 0, 0, 0 });
             underfillSettings_innerOffsetNumUd.Name = "underfillSettings_innerOffsetNumUd";
             underfillSettings_innerOffsetNumUd.Size = new Size(61, 23);
             underfillSettings_innerOffsetNumUd.TabIndex = 47;
             underfillSettings_innerOffsetNumUd.Value = new decimal(new int[] { 8, 0, 0, 0 });
+            underfillSettings_innerOffsetNumUd.ValueChanged += underfillSettings_innerOffsetNumUd_ValueChanged;
             // 
             // label6
             // 
@@ -480,7 +569,7 @@
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 7.8F);
             label6.ForeColor = Color.Black;
-            label6.Location = new Point(3, 9);
+            label6.Location = new Point(6, 10);
             label6.Name = "label6";
             label6.Size = new Size(111, 13);
             label6.TabIndex = 45;
@@ -492,7 +581,7 @@
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 7.8F);
             label7.ForeColor = Color.Black;
-            label7.Location = new Point(3, 33);
+            label7.Location = new Point(6, 33);
             label7.Name = "label7";
             label7.Size = new Size(127, 26);
             label7.TabIndex = 46;
@@ -508,6 +597,50 @@
             label25.TabIndex = 20;
             label25.Text = "Разворот коронки";
             // 
+            // tableLayoutPanel8
+            // 
+            tableLayoutPanel8.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
+            tableLayoutPanel8.ColumnCount = 2;
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
+            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
+            tableLayoutPanel8.Controls.Add(underfillSettings_underFillRectWidthNumUd, 1, 0);
+            tableLayoutPanel8.Controls.Add(label8, 0, 0);
+            tableLayoutPanel8.Dock = DockStyle.Fill;
+            tableLayoutPanel8.Location = new Point(902, 299);
+            tableLayoutPanel8.Name = "tableLayoutPanel8";
+            tableLayoutPanel8.RowCount = 4;
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel8.Size = new Size(215, 124);
+            tableLayoutPanel8.TabIndex = 21;
+            // 
+            // underfillSettings_underFillRectWidthNumUd
+            // 
+            underfillSettings_underFillRectWidthNumUd.Anchor = AnchorStyles.None;
+            underfillSettings_underFillRectWidthNumUd.Increment = new decimal(new int[] { 32, 0, 0, 0 });
+            underfillSettings_underFillRectWidthNumUd.Location = new Point(148, 6);
+            underfillSettings_underFillRectWidthNumUd.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
+            underfillSettings_underFillRectWidthNumUd.Minimum = new decimal(new int[] { 64, 0, 0, 0 });
+            underfillSettings_underFillRectWidthNumUd.Name = "underfillSettings_underFillRectWidthNumUd";
+            underfillSettings_underFillRectWidthNumUd.Size = new Size(54, 23);
+            underfillSettings_underFillRectWidthNumUd.TabIndex = 46;
+            underfillSettings_underFillRectWidthNumUd.Value = new decimal(new int[] { 1024, 0, 0, 0 });
+            underfillSettings_underFillRectWidthNumUd.ValueChanged += underfillSettings_underFillRectWidthNumUd_ValueChanged;
+            // 
+            // label8
+            // 
+            label8.Anchor = AnchorStyles.Left;
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI", 7.8F);
+            label8.ForeColor = Color.Black;
+            label8.Location = new Point(6, 3);
+            label8.Name = "label8";
+            label8.Size = new Size(124, 26);
+            label8.TabIndex = 45;
+            label8.Text = "Ширина вырезанной коронки:";
+            // 
             // label27
             // 
             label27.Anchor = AnchorStyles.None;
@@ -520,6 +653,7 @@
             // 
             // tableLayoutPanel9
             // 
+            tableLayoutPanel9.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
             tableLayoutPanel9.ColumnCount = 2;
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
             tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
@@ -539,13 +673,14 @@
             // underfillSettings_corrugationsCountForUnderFillNumUd
             // 
             underfillSettings_corrugationsCountForUnderFillNumUd.Anchor = AnchorStyles.None;
-            underfillSettings_corrugationsCountForUnderFillNumUd.Location = new Point(150, 4);
+            underfillSettings_corrugationsCountForUnderFillNumUd.Location = new Point(148, 6);
             underfillSettings_corrugationsCountForUnderFillNumUd.Maximum = new decimal(new int[] { 20, 0, 0, 0 });
             underfillSettings_corrugationsCountForUnderFillNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_corrugationsCountForUnderFillNumUd.Name = "underfillSettings_corrugationsCountForUnderFillNumUd";
             underfillSettings_corrugationsCountForUnderFillNumUd.Size = new Size(54, 23);
             underfillSettings_corrugationsCountForUnderFillNumUd.TabIndex = 48;
             underfillSettings_corrugationsCountForUnderFillNumUd.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            underfillSettings_corrugationsCountForUnderFillNumUd.ValueChanged += underfillSettings_corrugationsCountForUnderFillNumUd_ValueChanged;
             // 
             // label61
             // 
@@ -553,9 +688,9 @@
             label61.AutoSize = true;
             label61.Font = new Font("Segoe UI", 7.8F);
             label61.ForeColor = Color.Black;
-            label61.Location = new Point(3, 2);
+            label61.Location = new Point(6, 3);
             label61.Name = "label61";
-            label61.Size = new Size(128, 26);
+            label61.Size = new Size(125, 26);
             label61.TabIndex = 47;
             label61.Text = "Количество зубцов на коронке:";
             // 
@@ -569,47 +704,32 @@
             label29.TabIndex = 26;
             label29.Text = "Итог";
             // 
-            // tableLayoutPanel8
+            // tableLayoutPanel10
             // 
-            tableLayoutPanel8.ColumnCount = 2;
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
-            tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
-            tableLayoutPanel8.Controls.Add(underfillSettings_underFillRectWidthNumUd, 1, 0);
-            tableLayoutPanel8.Controls.Add(label8, 0, 0);
-            tableLayoutPanel8.Dock = DockStyle.Fill;
-            tableLayoutPanel8.Location = new Point(902, 299);
-            tableLayoutPanel8.Name = "tableLayoutPanel8";
-            tableLayoutPanel8.RowCount = 4;
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel8.Size = new Size(215, 124);
-            tableLayoutPanel8.TabIndex = 21;
+            tableLayoutPanel10.ColumnCount = 1;
+            tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel10.Controls.Add(underfillSettings_resultLabel, 0, 0);
+            tableLayoutPanel10.Dock = DockStyle.Fill;
+            tableLayoutPanel10.Location = new Point(1350, 299);
+            tableLayoutPanel10.Name = "tableLayoutPanel10";
+            tableLayoutPanel10.RowCount = 1;
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel10.Size = new Size(219, 124);
+            tableLayoutPanel10.TabIndex = 34;
             // 
-            // label8
+            // underfillSettings_resultLabel
             // 
-            label8.Anchor = AnchorStyles.Left;
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI", 7.8F);
-            label8.ForeColor = Color.Black;
-            label8.Location = new Point(3, 2);
-            label8.Name = "label8";
-            label8.Size = new Size(124, 26);
-            label8.TabIndex = 45;
-            label8.Text = "Ширина вырезанной коронки:";
-            // 
-            // underfillSettings_underFillRectWidthNumUd
-            // 
-            underfillSettings_underFillRectWidthNumUd.Anchor = AnchorStyles.None;
-            underfillSettings_underFillRectWidthNumUd.Increment = new decimal(new int[] { 32, 0, 0, 0 });
-            underfillSettings_underFillRectWidthNumUd.Location = new Point(150, 4);
-            underfillSettings_underFillRectWidthNumUd.Maximum = new decimal(new int[] { 1024, 0, 0, 0 });
-            underfillSettings_underFillRectWidthNumUd.Minimum = new decimal(new int[] { 64, 0, 0, 0 });
-            underfillSettings_underFillRectWidthNumUd.Name = "underfillSettings_underFillRectWidthNumUd";
-            underfillSettings_underFillRectWidthNumUd.Size = new Size(54, 23);
-            underfillSettings_underFillRectWidthNumUd.TabIndex = 46;
-            underfillSettings_underFillRectWidthNumUd.Value = new decimal(new int[] { 1024, 0, 0, 0 });
+            underfillSettings_resultLabel.Anchor = AnchorStyles.None;
+            underfillSettings_resultLabel.AutoSize = true;
+            underfillSettings_resultLabel.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            underfillSettings_resultLabel.ForeColor = SystemColors.ControlDark;
+            underfillSettings_resultLabel.Location = new Point(72, 47);
+            underfillSettings_resultLabel.Name = "underfillSettings_resultLabel";
+            underfillSettings_resultLabel.Size = new Size(74, 30);
+            underfillSettings_resultLabel.TabIndex = 26;
+            underfillSettings_resultLabel.Text = "NONE";
             // 
             // UnderfillSettingsForm
             // 
@@ -642,12 +762,14 @@
             tableLayoutPanel6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)underfillSettings_rectHeightCoefNumUd).EndInit();
             ((System.ComponentModel.ISupportInitialize)underfillSettings_innerOffsetNumUd).EndInit();
-            tableLayoutPanel9.ResumeLayout(false);
-            tableLayoutPanel9.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)underfillSettings_corrugationsCountForUnderFillNumUd).EndInit();
             tableLayoutPanel8.ResumeLayout(false);
             tableLayoutPanel8.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)underfillSettings_underFillRectWidthNumUd).EndInit();
+            tableLayoutPanel9.ResumeLayout(false);
+            tableLayoutPanel9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)underfillSettings_corrugationsCountForUnderFillNumUd).EndInit();
+            tableLayoutPanel10.ResumeLayout(false);
+            tableLayoutPanel10.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -692,5 +814,13 @@
         private TableLayoutPanel tableLayoutPanel8;
         private NumericUpDown underfillSettings_underFillRectWidthNumUd;
         private Label label8;
+        private TableLayoutPanel tableLayoutPanel10;
+        private Label underfillSettings_resultLabel;
+        private Label label9;
+        private Label label10;
+        private Label label11;
+        private CheckBox underfillSettings_decolorizeBackgroundChb;
+        private CheckBox underfillSettings_normalizeBrightnessChb;
+        private CheckBox underfillSettings_preserveDetailsChb;
     }
 }

@@ -6,11 +6,11 @@ using Point = OpenCvSharp.Point;
 
 namespace CapDefectDetector.ImageProcessing.Utils
 {
-    public class CapOvalityUtils
+    public class CapOvalityDefectUtils
     {
         public double _ovalityThreshold;
 
-        public CapOvalityUtils(OvalityDefectSettings settings)
+        public CapOvalityDefectUtils(OvalityDefectSettings settings)
         {
             SetThreshold(settings.OvalityThreshold);
         }

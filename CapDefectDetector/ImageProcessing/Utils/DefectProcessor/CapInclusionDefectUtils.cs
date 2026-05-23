@@ -8,7 +8,7 @@ using Size = OpenCvSharp.Size;
 
 namespace CapDefectDetector.ImageProcessing.Utils
 {
-    public class CapInclusionUtils
+    public class CapInclusionDefectUtils
     {
         private double _coefCapRadiusInclusion;
 
@@ -26,7 +26,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
         private double _maxAreaInclusion;
         private double _inclusionThreshold;
 
-        public CapInclusionUtils(InclusionDefectSettings settings)
+        public CapInclusionDefectUtils(InclusionDefectSettings settings)
         {
             SetCoefCapRadiusInclusion(settings.CoefCapRadiusInclusion);
 
@@ -77,19 +77,19 @@ namespace CapDefectDetector.ImageProcessing.Utils
             };
         }
 
-        public bool CheckForInclusions(
-            Mat gray,
-            Mat image,
-            Mat drawFrame,
-            CancellationToken token,
-            Point[] capContour)
+        public bool CheckForInclusions(Mat gray,Mat image,Mat drawFrame,CancellationToken token,Point[] capContour)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
 
                 if (capContour == null || capContour.Length < 5)
+                {
+                    ErrorLogger.Log(
+                        new Exception("Контур крышки пустой или содержит слишком мало точек"),
+                        "CheckForInclusions - проверка контура");
                     return false;
+                }
 
                 token.ThrowIfCancellationRequested();
 
