@@ -157,7 +157,6 @@ namespace CapDefectDetector
         private int window = 15;
         private int morph_size = 7;
         private int morph_size_2 = 7;
-        private const float OUTIER_THRESHOLD = 1.15f;
 
         //Для работы с файлами рецептов крышек
         private Dictionary<string, CapRecipe> _recipes = new();
@@ -172,9 +171,10 @@ namespace CapDefectDetector
         private CapObloyDefectUtils _obloyUtils;
         private CapUnderfillDefectUtils _underfillUtils;
         private DefectSettings _currentDefectSettings;
+        //Флаг для проверки измененных парамтеров дефектов
+        private bool _defectSettingsSaved = true;
 
         // Параметры для нахождения "Облой"
-        private Mat _capRadiusMask = new Mat(532, 568, MatType.CV_8UC1);
         private Mat _blurChannel_0;
         private Mat _blurChannel_1;
         private Mat _blurChannel_2;
@@ -1808,9 +1808,7 @@ namespace CapDefectDetector
                             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                             Converters =
                             {
-                                new System.Text.Json.Serialization.JsonStringEnumConverter(
-                                    System.Text.Json.JsonNamingPolicy.CamelCase,
-                                    allowIntegerValues: true)
+                                new System.Text.Json.Serialization.JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.CamelCase, allowIntegerValues: true)
                             }
                         });
 
@@ -1823,6 +1821,7 @@ namespace CapDefectDetector
                 paramDefCmB.Items.Add(key);
 
             paramDefCmB.SelectedItem = name;
+            _defectSettingsSaved = true;
 
             MessageBox.Show(existedBefore ? $"Файл настроек \"{name}\" обновлён!" : $"Файл настроек \"{name}\" создан!");
         }
@@ -1864,7 +1863,7 @@ namespace CapDefectDetector
                 capFlashOffsetNumUpD.Value = (decimal)r.Obloy.CapFlashOffset;
                 obloyPixCountNumUpD.Value = (decimal)r.Obloy.MinAreaObloy;
 
-                _underfillUtils = new CapUnderfillDefectUtils(_colorUtils, r.Underfill);
+                _underfillUtils = new CapUnderfillDefectUtils(r.Underfill);
                 coefCapRadiusMaskUnderFillNumUpD.Value = (decimal)r.Underfill.CoefCapRadiusUnderFill;
                 countCorrugationsNumUpD.Value = (decimal)r.Underfill.CorrugationsCountForUnderFill;
             }
@@ -1992,15 +1991,33 @@ namespace CapDefectDetector
         #endregion
 
         #region Прочие обработчики
-
-        private void CloseProgramButton_Click(object sender, EventArgs e)
+        private void MainWorkForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ShutdownApplication();
-        }
+            if (e.CloseReason == CloseReason.ApplicationExitCall)
+                return;
 
-        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            CloseProgramButton_Click(null, null);
+            if (!ConfirmApplicationExit())
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            if (!CheckDefectSettingsBeforeExit())
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            SendShutdownSignalToPlc();
+            CloseCamera();
+            DisconnectModbus();
+
+            #if OLD_FRAME_PROCESSING
+            #else
+            DisposeImageQueue();
+            #endif
+            this.FormClosing -= MainWorkForm_FormClosing;
+            Application.Exit();
         }
 
         private void receptCapsCmb_SelectedIndexChanged(object sender, EventArgs e)
@@ -2446,70 +2463,92 @@ namespace CapDefectDetector
             }
         }
 
-
-        private void ShutdownApplication()
+        private bool CheckDefectSettingsBeforeExit()
         {
-            try
+            if (_defectSettingsSaved)
+                return true;
+
+            DialogResult result = MessageBox.Show("Не сохранены настройки дефектов, выйти (Да) или сохранить (Нет).","Предупреждение",MessageBoxButtons.YesNo,MessageBoxIcon.Warning);
+
+            switch (result)
             {
-                // --- Отправляем сигнал завершения в ПР205 ---
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    try
-                    {
-                        _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
-                        _modbusClient.WriteRegister(_breakerAllowRegister, (ushort)_breakerAllowFalse);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Ошибка при отправке сигнала завершения в ПР205: {ex.Message}");
-                    }
-                }
+                case DialogResult.Yes:
+                    return true;
 
-                // --- Закрываем камеру ---
-                if (_cam != null && _cameraConnected)
-                {
-                    try
-                    {
-                        if (_cam.Streamed)
-                            _cam.EndStream();
-                        _cam.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Ошибка при закрытии камеры: {ex.Message}");
-                    }
-                    finally
-                    {
-                        _cam = null;
-                        _cameraConnected = false;
-                    }
-                }
+                case DialogResult.No:
+                    return false;
 
-                // --- Отключаем modbus ---
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    try
-                    {
-                        _modbusClient.Disconnect();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Ошибка при отключении от ПР205: {ex.Message}");
-                    }
-                }
-
-#if OLD_FRAME_PROCESSING
-#else
-                // --- Освобождение кадрового буфера ---
-                _imageQueue.Dispose();
-#endif
-            }
-            finally
-            {
-                Application.Exit();
+                default:
+                    return false;
             }
         }
 
+        private bool ConfirmApplicationExit()
+        {
+            DialogResult result = MessageBox.Show("Завершить работу приложения?","Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            return result == DialogResult.Yes;
+        }
+
+        private void SendShutdownSignalToPlc()
+        {
+            if (_modbusClient == null || !_modbusClient.Connected)
+                return;
+
+            try
+            {
+                _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
+                _modbusClient.WriteRegister(_breakerAllowRegister, (ushort)_breakerAllowFalse);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    $"Ошибка при отправке сигнала завершения в ПР205: {ex.Message}");
+            }
+        }
+
+        private void CloseCamera()
+        {
+            if (_cam == null || !_cameraConnected)
+                return;
+
+            try
+            {
+                if (_cam.Streamed)
+                    _cam.EndStream();
+
+                _cam.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при закрытии камеры: {ex.Message}");
+            }
+            finally
+            {
+                _cam = null;
+                _cameraConnected = false;
+            }
+        }
+
+        private void DisconnectModbus()
+        {
+            if (_modbusClient == null || !_modbusClient.Connected)
+                return;
+
+            try
+            {
+                _modbusClient.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при отключении от ПР205: {ex.Message}");
+            }
+        }
+
+        private void DisposeImageQueue()
+        {
+            _imageQueue?.Dispose();
+        }
 
         #endregion
 
@@ -2520,18 +2559,23 @@ namespace CapDefectDetector
             if (_isApplyingDefectSettings) return;
 
             _ovalityUtils.SetThreshold((double)ovalityCoefNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void circleCoefNumUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _inclusionUtils.SetInclusionThreshold((double)circleCoefNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void coefCapRadiusInclusionUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _inclusionUtils.SetCoefCapRadiusInclusion((double)coefCapRadiusInclusionUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void minSquareInclusionNumUpD_ValueChanged(object sender, EventArgs e)
@@ -2543,43 +2587,57 @@ namespace CapDefectDetector
         private void maxSquareInclusionNumUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _inclusionUtils.SetMaxAreaInclusion((double)maxSquareInclusionNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void minSquareInpaintNumUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _paintUtils.SetMinAreaInpaintDefect((double)minSquareInpaintNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void whiteThresoldNumUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _paintUtils.SetMinInpaintWhiteThreshold((double)whiteThresoldNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void capFlashOffsetNumUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _obloyUtils.SetCapFlashOffset((double)capFlashOffsetNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void obloyPixCountNumUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _obloyUtils.SetMinAreaObloy((double)obloyPixCountNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void countCorrugationsNumUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _underfillUtils.SetCorrugationsCountForUnderFill((double)countCorrugationsNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void coefCapRadiusMaskUnderFillNumUpD_ValueChanged(object sender, EventArgs e)
         {
             if (_isApplyingDefectSettings) return;
+
             _underfillUtils.SetCoefCapRadiusUnderFill((double)coefCapRadiusMaskUnderFillNumUpD.Value);
+            _defectSettingsSaved = false;
         }
 
         private void LoadSettings()
@@ -4679,6 +4737,8 @@ namespace CapDefectDetector
             {
                 var settings = _ovalityUtils.GetSettings();
                 ovalityCoefNumUpD.Value = (decimal)settings.OvalityThreshold;
+
+                _defectSettingsSaved = false;
             }
         }
 
@@ -4696,6 +4756,8 @@ namespace CapDefectDetector
                 minSquareInclusionNumUpD.Value = (decimal)settings.MinAreaInclusion;
                 maxSquareInclusionNumUpD.Value = (decimal)settings.MaxAreaInclusion;
                 circleCoefNumUpD.Value = (decimal)settings.InclusionThreshold;
+
+                _defectSettingsSaved = false;
             }
         }
 
@@ -4711,6 +4773,8 @@ namespace CapDefectDetector
                var settings = _paintUtils.GetSettings();
                 minSquareInpaintNumUpD.Value = (decimal)settings.MinAreaInpaintDefect;
                 whiteThresoldNumUpD.Value = (decimal)settings.MinInpaintWhiteThreshold;
+
+                _defectSettingsSaved = false;
             }
         }
 
@@ -4726,6 +4790,8 @@ namespace CapDefectDetector
                 var settings = _obloyUtils.GetSettings();
                 capFlashOffsetNumUpD.Value = (decimal)settings.CapFlashOffset;
                 obloyPixCountNumUpD.Value = (decimal)settings.MinAreaObloy;
+
+                _defectSettingsSaved = false;
             }
         }
 
@@ -4741,6 +4807,8 @@ namespace CapDefectDetector
                 var settings = _underfillUtils.GetSettings();
                 coefCapRadiusMaskUnderFillNumUpD.Value = (decimal)settings.CoefCapRadiusUnderFill;
                 countCorrugationsNumUpD.Value = (decimal)settings.CorrugationsCountForUnderFill;
+
+                _defectSettingsSaved = false;
             }
         }
         #endregion

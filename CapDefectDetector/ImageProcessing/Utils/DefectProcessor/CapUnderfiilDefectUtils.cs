@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Threading;
+﻿using System.Numerics;
 using CapDefectDetector.DTO.DefectSettings;
 using CapDefectDetector.ImageProcessing.Utils.ContourProcessor;
 using CapDefectDetector.Logger;
@@ -34,9 +30,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
         private double[] _cosTable;
         private readonly object _trigTablesLock = new object();
 
-        public readonly CapColorContourUtils _colorUtils;
-
-        public CapUnderfillDefectUtils(CapColorContourUtils colorUtils,UnderfillDefectSettings settings)
+        public CapUnderfillDefectUtils(UnderfillDefectSettings settings)
         {
             SetCapsColor(settings.CapsColor);
             SetDecolorizeBackground(settings.DecolorizeBackground);
@@ -121,7 +115,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
                 if (capContour == null || capContour.Length < 5)
                 {
-                    ErrorLogger.Log(new Exception("Контур для проверки недолива пустой или содержит недостаточно точек"),"CheckForUnderFillDefects - проверка наличия контура");
+                    ErrorLogger.Log(new Exception("Контур для проверки недолива пустой или содержит недостаточно точек"), "CheckForUnderFillDefects - проверка наличия контура");
 
                     return false;
                 }
@@ -131,7 +125,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
                 {
                     token.ThrowIfCancellationRequested();
 
-                    var (outerEllipse, innerEllipse) = CreateEllipses(capContour);
+                    (RotatedRect outerEllipse, RotatedRect innerEllipse) = CreateEllipses(capContour);
 
                     int rectHeight = CalculateRectHeight(outerEllipse);
 
@@ -168,18 +162,13 @@ namespace CapDefectDetector.ImageProcessing.Utils
             {
                 Mat result = image.Clone();
 
-                CapColorContourUtils.NonlinearBackgroundDecolorization(
-                    result,
-                    _capsColor,
-                    _decolorizeBackground,
-                    _normalizeBrightness,
-                    _preserveDetails);
+                CapColorContourUtils.NonlinearBackgroundDecolorization(result,_capsColor,_decolorizeBackground,_normalizeBrightness,_preserveDetails);
 
                 return result;
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex,"CapUnderFillUtils - ошибка коррекции цвета");
+                ErrorLogger.Log(ex, "CapUnderFillUtils - ошибка коррекции цвета");
                 throw;
             }
         }
@@ -189,7 +178,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             try
             {
                 Mat gray = new Mat();
-                Cv2.CvtColor(image,gray,ColorConversionCodes.BGR2GRAY);
+                Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
 
                 return gray;
             }
@@ -205,8 +194,8 @@ namespace CapDefectDetector.ImageProcessing.Utils
             try
             {
                 RotatedRect outerEllipse = Cv2.FitEllipse(contour);
-                Size2f innerSize = new Size2f((float)(outerEllipse.Size.Width * _coefCapRadiusUnderFill),(float)(outerEllipse.Size.Height * _coefCapRadiusUnderFill));
-                RotatedRect innerEllipse = new RotatedRect(outerEllipse.Center,innerSize,outerEllipse.Angle);
+                Size2f innerSize = new Size2f((float)(outerEllipse.Size.Width * _coefCapRadiusUnderFill), (float)(outerEllipse.Size.Height * _coefCapRadiusUnderFill));
+                RotatedRect innerEllipse = new RotatedRect(outerEllipse.Center, innerSize, outerEllipse.Angle);
 
                 return (outerEllipse, innerEllipse);
             }
@@ -250,7 +239,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex,"CapUnderFillUtils - ошибка применения маски");
+                ErrorLogger.Log(ex, "CapUnderFillUtils - ошибка применения маски");
 
                 throw;
             }
@@ -265,12 +254,12 @@ namespace CapDefectDetector.ImageProcessing.Utils
         {
             try
             {
-                Mat stripe = new Mat(rectHeight,_underfillRectWidth,MatType.CV_8UC1);
-                float outerRadius =(float)(Math.Max(outerEllipse.Size.Width,outerEllipse.Size.Height) / 2);
-                float innerRadius =(float)(Math.Max(innerEllipse.Size.Width,innerEllipse.Size.Height) / 2);
+                Mat stripe = new Mat(rectHeight, _underfillRectWidth, MatType.CV_8UC1);
+                float outerRadius = (float)(Math.Max(outerEllipse.Size.Width, outerEllipse.Size.Height) / 2);
+                float innerRadius = (float)(Math.Max(innerEllipse.Size.Width, innerEllipse.Size.Height) / 2);
                 float meanRadius = (outerRadius + innerRadius) / 2;
-                Point center = new Point((int)outerEllipse.Center.X,(int)outerEllipse.Center.Y);
-                GetStripeImg(maskedGray,stripe,_sinTable,_cosTable,center,(int)meanRadius,maskedGray.Width,maskedGray.Height,_underfillRectWidth,rectHeight,_innerOffset);
+                Point center = new Point((int)outerEllipse.Center.X, (int)outerEllipse.Center.Y);
+                GetStripeImg(maskedGray, stripe, _sinTable, _cosTable, center, (int)meanRadius, maskedGray.Width, maskedGray.Height, _underfillRectWidth, rectHeight, _innerOffset);
 
                 return stripe;
             }
@@ -287,7 +276,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             try
             {
                 float[] signal = new float[_underfillRectWidth];
-                GetWStatistics(stripe,signal,_underfillRectWidth,rectHeight);
+                GetWStatistics(stripe, signal, _underfillRectWidth, rectHeight);
                 return signal;
             }
             catch (Exception ex)
@@ -297,11 +286,11 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        public void DrawResult(Mat drawFrame,RotatedRect ellipse,bool defect)
+        public void DrawResult(Mat drawFrame, RotatedRect ellipse, bool defect)
         {
             try
             {
-                Scalar color =defect? new Scalar(0, 0, 255): new Scalar(0, 255, 0);
+                Scalar color = defect ? new Scalar(0, 0, 255) : new Scalar(0, 255, 0);
                 Cv2.Ellipse(drawFrame, ellipse, color, 2);
             }
             catch (Exception ex)
@@ -373,7 +362,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        public static void GetWStatistics(Mat src,float[] dst,int w,int h)
+        public static void GetWStatistics(Mat src, float[] dst, int w, int h)
         {
             Array.Clear(dst, 0, dst.Length);
 
@@ -416,12 +405,12 @@ namespace CapDefectDetector.ImageProcessing.Utils
                     double x = sinTable[i] * r + center.X;
                     double y = cosTable[i] * r + center.Y;
 
-                    dst.Set<byte>(j,i,Bilinear8Bit(src, x, y, w, h));
+                    dst.Set<byte>(j, i, Bilinear8Bit(src, x, y, w, h));
                 }
             }
         }
 
-        public static byte Bilinear8Bit(Mat img,double x,double y,int w,int h)
+        public static byte Bilinear8Bit(Mat img, double x, double y, int w, int h)
         {
             int u = (int)x;
             int v = (int)y;

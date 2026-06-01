@@ -607,7 +607,7 @@
             morphCb.Font = new Font("Segoe UI", 7.8F);
             morphCb.FormattingEnabled = true;
             morphCb.Items.AddRange(new object[] { "1", "2", "3" });
-            morphCb.Location = new Point(342, 240);
+            morphCb.Location = new Point(342, 241);
             morphCb.Name = "morphCb";
             morphCb.Size = new Size(75, 20);
             morphCb.TabIndex = 7;
@@ -630,7 +630,7 @@
             windowCb.Font = new Font("Segoe UI", 7.8F);
             windowCb.FormattingEnabled = true;
             windowCb.Items.AddRange(new object[] { "3", "5", "7", "9", "11", "13", "15" });
-            windowCb.Location = new Point(258, 240);
+            windowCb.Location = new Point(258, 241);
             windowCb.Name = "windowCb";
             windowCb.Size = new Size(75, 20);
             windowCb.TabIndex = 6;
@@ -2107,7 +2107,7 @@
             receptCapsCmB.BackColor = Color.White;
             receptCapsCmB.Font = new Font("Segoe UI", 7.8F);
             receptCapsCmB.FormattingEnabled = true;
-            receptCapsCmB.Location = new Point(239, 10);
+            receptCapsCmB.Location = new Point(239, 11);
             receptCapsCmB.Name = "receptCapsCmB";
             receptCapsCmB.Size = new Size(230, 20);
             receptCapsCmB.TabIndex = 38;
@@ -2794,7 +2794,7 @@
             paramDefCmB.BackColor = Color.White;
             paramDefCmB.Font = new Font("Segoe UI", 7.8F);
             paramDefCmB.FormattingEnabled = true;
-            paramDefCmB.Location = new Point(85, 11);
+            paramDefCmB.Location = new Point(85, 12);
             paramDefCmB.Name = "paramDefCmB";
             paramDefCmB.Size = new Size(103, 20);
             paramDefCmB.TabIndex = 39;
@@ -3829,7 +3829,7 @@
             prSettingsCmB.BackColor = Color.White;
             prSettingsCmB.Font = new Font("Segoe UI", 7.8F);
             prSettingsCmB.FormattingEnabled = true;
-            prSettingsCmB.Location = new Point(271, 7);
+            prSettingsCmB.Location = new Point(271, 8);
             prSettingsCmB.Name = "prSettingsCmB";
             prSettingsCmB.Size = new Size(112, 20);
             prSettingsCmB.TabIndex = 39;
@@ -4518,7 +4518,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "CapDefect Detector";
             WindowState = FormWindowState.Maximized;
-            FormClosing += Form2_FormClosing;
+            FormClosing += MainWorkForm_FormClosing;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();

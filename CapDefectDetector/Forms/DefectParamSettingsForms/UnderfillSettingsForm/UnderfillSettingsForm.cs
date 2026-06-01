@@ -46,7 +46,7 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.UnderfillSettingsForm
             _recipe = recipe;
 
             _sourceUnderfiilUtils = underfillUtils;
-            _editableUnderfillUtils = new CapUnderfillDefectUtils(underfillUtils._colorUtils, underfillUtils.GetSettings());
+            _editableUnderfillUtils = new CapUnderfillDefectUtils(underfillUtils.GetSettings());
 
             _element1 = element1;
             _element2 = element2;
