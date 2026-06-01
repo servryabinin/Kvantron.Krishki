@@ -23,14 +23,12 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.OvalitySettingsForm
 
         #region Глобальные поля
         private Point[] _contour;
-        private RotatedRect _ellipse;
-        private float _axisRatio;
         private bool _isOval;
         private Mat _element1;
         private Mat _element2;
         #endregion
 
-        public OvalitySettingsForm(Mat image, CapRecipe recipe, CapOvalityDefectUtils ovalityUtils, Mat element1, Mat element2)
+        public  OvalitySettingsForm(Mat image, CapRecipe recipe, CapOvalityDefectUtils ovalityUtils, Mat element1, Mat element2)
         {
             InitializeComponent();
 

@@ -134,6 +134,8 @@ namespace CapDefectDetector
         private readonly CapColorContourUtils _colorUtils = new CapColorContourUtils();
         private readonly CapBlackOrBrownContourUtils _blackOrBrownUtils = new CapBlackOrBrownContourUtils();
         private CapRecipe _currentRecipe;
+        private CapContourUtils _capContourUtils;
+        private CapContourUtils _editableCapContourUtils;
         // Поля рецепта
         private byte _capsColor = 0;
         private const byte GREEN_THRESHOLD = 40;
@@ -170,7 +172,6 @@ namespace CapDefectDetector
         private CapPaintDefectUtils _paintUtils;
         private CapObloyDefectUtils _obloyUtils;
         private CapUnderfillDefectUtils _underfillUtils;
-        private DefectSettings _currentDefectSettings;
         //Флаг для проверки измененных парамтеров дефектов
         private bool _defectSettingsSaved = true;
 
@@ -1844,8 +1845,6 @@ namespace CapDefectDetector
 
             try
             {
-                _currentDefectSettings = r;
-
                 _ovalityUtils = new CapOvalityDefectUtils(r.Ovality);
                 ovalityCoefNumUpD.Value = (decimal)r.Ovality.OvalityThreshold;
 
@@ -2036,155 +2035,107 @@ namespace CapDefectDetector
         {
             _isApplyingRecipe = true;
 
-            _currentRecipe = r;
-
-            // ---------- Цветовые флаги ----------
-            _isGreenColor = r.IsGreen;
-            _isColored = r.IsColored;
-            _isYellowCap = r.IsYellow;
-            _capsAreWhite = r.IsWhite;
-            _isBlackOrBrown = r.IsBlackOrBrown;
-
-            _recipeIsGreenColor = r.IsGreen;
-            _recipeIsColored = r.IsColored;
-            _recipeIsYellowCap = r.IsYellow;
-            _recipeCapsAreWhite = r.IsWhite;
-            _recipeIsBlackOrBrown = r.IsBlackOrBrown;
-
-            // ---------- Параметры обработки ----------
-            // Для цв/бцв крышек
-            window = r.Window;
-            morph_size = r.MorphSize;
-            morph_size_2 = r.MorphSize2;
-            _capsColor = r.CapsColor;
-            _saturationColor = r.CameraSaturation;
-
-            _contourCorrectionColor = (float)Clamp(
-                (decimal)r.ContourCorrectionColor,
-                contourCorrectionColorUpDown.Minimum,
-                contourCorrectionColorUpDown.Maximum
-            );
-
-            // Для черных/коричневых крышек
-            _saturationBlackOrBrown = (int)Clamp(
-                r.CameraSaturationBlackOrBrown,
-                saturationBlackOrBrownUpDown.Minimum,
-                saturationBlackOrBrownUpDown.Maximum
-            );
-
-            _medianFilter = (int)Clamp(
-                r.MedianFilter,
-                medianFilterUpDown.Minimum,
-                medianFilterUpDown.Maximum
-            );
-
-            _cannyThreshold = (int)Clamp(
-                r.CannyThreshold,
-                cannyUpDown.Minimum,
-                cannyUpDown.Maximum
-            );
-
-            _contourCorrectionBlackOrBrown = (float)Clamp(
-                (decimal)r.ContourCorrectionBlackOrBrown,
-                contourCorrectionBlackOrBrownUpDown.Minimum,
-                contourCorrectionBlackOrBrownUpDown.Maximum
-            );
-
-            // ---------- Чекбоксы UI (важно ДО камеры) ----------
-            isWhiteCb.Checked = _capsAreWhite;
-            isBlackOrBrownCb.Checked = _isBlackOrBrown;
-            isColorCb.Checked = _isColored;
-            isGreenCb.Checked = _isGreenColor;
-            isYellowCb.Checked = _isYellowCap;
-
-            UpdateColorModeUI();
-
-            // ---------- Камера ----------
-            if (_cam != null)
+            try
             {
-                uint saturation = isBlackOrBrownCb.Checked
-                    ? (uint)r.CameraSaturationBlackOrBrown
-                    : (uint)r.CameraSaturation;
+                _currentRecipe = r;
 
-                _cam.Saturation = saturation;
-                _cam.SetSaturation();
+                _capContourUtils = new CapContourUtils(r);
+                _editableCapContourUtils = new CapContourUtils(r);
+
+                #region Чекбоксы
+                isWhiteCb.Checked = r.IsWhite;
+                isBlackOrBrownCb.Checked = r.IsBlackOrBrown;
+                isColorCb.Checked = r.IsColored;
+                isGreenCb.Checked = r.IsGreen;
+                isYellowCb.Checked = r.IsYellow;
+                UpdateColorModeUI();
+                #endregion
+
+                #region Настройка сатурации камеры
+                if (_cam != null)
+                {
+                    uint saturation = r.IsBlackOrBrown ? (uint)r.CameraSaturationBlackOrBrown : (uint)r.CameraSaturation;
+                    _cam.Saturation = saturation;
+                    _cam.SetSaturation();
+                }
+                #endregion
+
+                #region Блокировка непрокраса если крышка белая
+                if (r.IsWhite)
+                {
+                    inpaintCB.Checked = false;
+                    inpaintCB.Enabled = false;
+                }
+                else
+                {
+                    inpaintCB.Enabled = true;
+                    inpaintCB.Checked = true;
+                }
+                #endregion
+
+                #region Интерфейс рецепта
+
+                // Интерфейс настрорйки цветных крышек (начало)
+                saturationColorUpDown.Value = Clamp(
+                    r.CameraSaturation,
+                    saturationColorUpDown.Minimum,
+                    saturationColorUpDown.Maximum
+                );
+
+                capcolorUpDown.Value = Clamp(
+                    r.CapsColor,
+                    capcolorUpDown.Minimum,
+                    capcolorUpDown.Maximum
+                );
+
+                if (windowCb.Items.Contains(r.Window.ToString()))
+                    windowCb.SelectedItem = r.Window.ToString();
+
+                if (morphCb.Items.Contains(r.MorphSize.ToString()))
+                    morphCb.SelectedItem = r.MorphSize.ToString();
+
+                contourCorrectionColorUpDown.Value = Clamp(
+                    (decimal)r.ContourCorrectionColor,
+                    contourCorrectionColorUpDown.Minimum,
+                    contourCorrectionColorUpDown.Maximum
+                );
+                // Интерфейс настрорйки цветных крышек (Конец)
+
+                // Интерфейс настрорйки черных/коричневых крышек (начало)
+                saturationBlackOrBrownUpDown.Value = Clamp(
+                    r.CameraSaturationBlackOrBrown,
+                    saturationBlackOrBrownUpDown.Minimum,
+                    saturationBlackOrBrownUpDown.Maximum
+                );
+
+                medianFilterUpDown.Value = Clamp(
+                    r.MedianFilter,
+                    medianFilterUpDown.Minimum,
+                    medianFilterUpDown.Maximum
+                );
+
+                cannyUpDown.Value = Clamp(
+                    r.CannyThreshold,
+                    cannyUpDown.Minimum,
+                    cannyUpDown.Maximum
+                );
+
+                contourCorrectionBlackOrBrownUpDown.Value = Clamp(
+                    (decimal)r.ContourCorrectionBlackOrBrown,
+                    contourCorrectionBlackOrBrownUpDown.Minimum,
+                    contourCorrectionBlackOrBrownUpDown.Maximum
+                );
+                // Интерфейс настрорйки черных/коричневых крышек (конец)
+                #endregion
+
+                receptNameTb.Text = r.Name;
+
+                frameSaturationNumUpD.Text =(r.IsBlackOrBrown? r.CameraSaturationBlackOrBrown: r.CameraSaturation).ToString();
             }
-
-            // ---------- inpaint ----------
-            if (_capsAreWhite)
+            finally
             {
-                inpaintCB.Checked = false;
-                inpaintCB.Enabled = false;
+                _isApplyingRecipe = false;
             }
-            else
-            {
-                inpaintCB.Enabled = true;
-                inpaintCB.Checked = true;
-            }
-
-            // ---------- Интерфейс рецепта ----------
-            // Для цв/бцв крышек
-            saturationColorUpDown.Value = Clamp(
-                r.CameraSaturation,
-                saturationColorUpDown.Minimum,
-                saturationColorUpDown.Maximum
-            );
-
-            capcolorUpDown.Value = Clamp(
-                r.CapsColor,
-                capcolorUpDown.Minimum,
-                capcolorUpDown.Maximum
-            );
-
-            if (windowCb.Items.Contains(r.Window.ToString()))
-                windowCb.SelectedItem = r.Window.ToString();
-
-            if (morphCb.Items.Contains(r.MorphSize.ToString()))
-                morphCb.SelectedItem = r.MorphSize.ToString();
-
-            contourCorrectionColorUpDown.Value = Clamp(
-                (decimal)r.ContourCorrectionColor,
-                contourCorrectionColorUpDown.Minimum,
-                contourCorrectionColorUpDown.Maximum
-            );
-
-            // Для черных/коричневых крышек
-            saturationBlackOrBrownUpDown.Value = Clamp(
-                r.CameraSaturationBlackOrBrown,
-                saturationBlackOrBrownUpDown.Minimum,
-                saturationBlackOrBrownUpDown.Maximum
-            );
-
-            medianFilterUpDown.Value = Clamp(
-                r.MedianFilter,
-                medianFilterUpDown.Minimum,
-                medianFilterUpDown.Maximum
-            );
-
-            cannyUpDown.Value = Clamp(
-                r.CannyThreshold,
-                cannyUpDown.Minimum,
-                cannyUpDown.Maximum
-            );
-
-            contourCorrectionBlackOrBrownUpDown.Value = Clamp(
-                (decimal)r.ContourCorrectionBlackOrBrown,
-                contourCorrectionBlackOrBrownUpDown.Minimum,
-                contourCorrectionBlackOrBrownUpDown.Maximum
-            );
-
-            // ---------- UI текст ----------
-            receptNameTb.Text = r.Name;
-
-            frameSaturationNumUpD.Text = (
-                isBlackOrBrownCb.Checked
-                    ? r.CameraSaturationBlackOrBrown
-                    : r.CameraSaturation
-            ).ToString();
-
-            RebuildMorphology();
-
-            _isApplyingRecipe = false;
         }
 
         private decimal Clamp(decimal value, decimal min, decimal max)
@@ -2213,71 +2164,6 @@ namespace CapDefectDetector
             }
         }
 
-        #endregion
-
-        #endregion
-
-        #region Вспомогательные методы обработки
-
-        private CapContourResult GetCapContour(Mat gray, Mat image)
-        {
-            if (gray.Empty() || image.Empty())
-                return null;
-
-            if (_isBlackOrBrown)
-            {
-                return GetBlackOrBrownContour(gray, image);
-            }
-            else
-            {
-                return GetColorCapContour(gray, image);
-            }
-        }
-
-
-        #region Цветные крышки
-        private CapContourResult GetColorCapContour(Mat gray, Mat image)
-        {
-            if (gray.Empty() || image.Empty())
-                return null;
-
-            Mat sat = _colorUtils.ApplySaturationStep(image, _saturationColor);
-            Mat caps = _colorUtils.ApplyCapsColorStep(sat, _capsColor, _isColored, _isYellowCap, _isGreenColor);
-            Mat[] channels = _colorUtils.ApplyWindowStep(caps, window);
-            _colorUtils.ApplyMorphologyStep(channels, element1, element2);
-            Point[] contour = _colorUtils.GetMaxContour(channels[2]);
-            contour = _colorUtils.CorrectContour(contour, _contourCorrectionColor);
-            return new CapContourResult
-            {
-                Contour = contour,
-                Blur1 = channels[1],
-                Blur2 = channels[2],
-                Mask = caps
-            };
-        }
-        #endregion
-
-        #region методы для черных крышек
-        private CapContourResult GetBlackOrBrownContour(Mat grayInput, Mat image)
-        {
-            if (image.Empty())
-                return null;
-
-            Mat sat = _blackOrBrownUtils.ApplySaturationStep(image, _saturationBlackOrBrown);
-            Mat gray = _blackOrBrownUtils.ApplyGrayStep(sat);
-            Mat blurred = _blackOrBrownUtils.ApplyMedianStep(gray, _medianFilter);
-            Mat edges = _blackOrBrownUtils.ApplyCannyStep(blurred, _cannyThreshold);
-            Point[] contour = _blackOrBrownUtils.ApplyEllipseStep(edges);
-            contour = _blackOrBrownUtils.CorrectContour(contour, _contourCorrectionBlackOrBrown);
-
-            return new CapContourResult
-            {
-                Contour = contour,
-                Blur1 = blurred,
-                Blur2 = edges,
-                Mask = edges
-            };
-        }
         #endregion
 
         #endregion
@@ -2985,10 +2871,7 @@ namespace CapDefectDetector
 
                                 frameToProcess.CopyTo(_frameToDisplay);
 
-                                CapContourResult capResult = GetCapContour(gray, frameToProcess);
-                                Point[] capContour = capResult?.Contour;
-                                _blurChannel_1 = capResult?.Blur1;
-                                _blurChannel_2 = capResult?.Blur2;
+                                CapContourResult capResult = _capContourUtils.GetCapContour(gray, frameToProcess);
 
                                 bool anyDefect = false;
                                 List<string> defects = new();
@@ -3748,7 +3631,7 @@ namespace CapDefectDetector
                 Cv2.CvtColor(frameBase, grayBase, ColorConversionCodes.BGR2GRAY);
 
                 // Контур крышки
-                CapContourResult capResult = GetCapContour(grayBase, frameBase);
+                CapContourResult capResult = _capContourUtils.GetCapContour(grayBase, frameBase);
                 Point[] contour = capResult?.Contour;
                 if (contour == null || contour.Length == 0)
                 {
@@ -3917,10 +3800,10 @@ namespace CapDefectDetector
 
             Point[] contour;
 
-            if (_recipeIsBlackOrBrown)
+            if (_editableCapContourUtils.GetIsBlackOrBrown())
             {
                 contour = ProcessBlackOrBrown();
-                contour = _blackOrBrownUtils.CorrectContour(contour, (float)contourCorrectionBlackOrBrownUpDown.Value);
+                contour = _editableCapContourUtils.CorrectContour(contour, _editableCapContourUtils.GetContourCorrectionColor());
                 Mat result = DrawContour(contour);
                 contourCorrectionBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(result);
                 resultContourBlackOrBrownSmallPb.Image = BitmapConverter.ToBitmap(result);
@@ -3929,7 +3812,7 @@ namespace CapDefectDetector
             else
             {
                 contour = ProcessColor();
-                contour = _colorUtils.CorrectContour(contour, (float)contourCorrectionColorUpDown.Value);
+                contour = _editableCapContourUtils.CorrectContour(contour, _editableCapContourUtils.GetContourCorrectionBlackOrBrown());
                 Mat result = DrawContour(contour);
                 contourCorrectionColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(result);
                 resultContourColorSmallPb.Image = BitmapConverter.ToBitmap(result);
@@ -3939,18 +3822,18 @@ namespace CapDefectDetector
 
         private Point[] ProcessBlackOrBrown()
         {
-            Mat satImg = _blackOrBrownUtils.ApplySaturationStep(_imageOriginReceptParam, (int)saturationBlackOrBrownUpDown.Value);
+            Mat satImg = _editableCapContourUtils.ApplySaturationStep(_imageOriginReceptParam, _editableCapContourUtils.GetCameraSaturationBlackOrBrown());
             saturationBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
-            Mat gray = _blackOrBrownUtils.ApplyGrayStep(satImg);
+            Mat gray = _editableCapContourUtils.ApplyGrayStep(satImg);
 
-            Mat blurred = _blackOrBrownUtils.ApplyMedianStep(gray, (int)medianFilterUpDown.Value);
+            Mat blurred = _editableCapContourUtils.ApplyMedianStep(gray, _editableCapContourUtils.GetMedianFilter());
             medianFilterBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(blurred);
 
-            Mat edges = _blackOrBrownUtils.ApplyCannyStep(blurred, (int)cannyUpDown.Value);
+            Mat edges = _editableCapContourUtils.ApplyCannyStep(blurred, _editableCapContourUtils.GetCannyThreshold());
             cannyBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(edges);
 
-            return _blackOrBrownUtils.ApplyEllipseStep(edges);
+            return _editableCapContourUtils.ApplyEllipseStep(edges);
         }
 
 
@@ -3959,24 +3842,21 @@ namespace CapDefectDetector
             if (_imageOriginReceptParam == null || _imageOriginReceptParam.Empty())
                 return null;
 
-            Mat satImg = _colorUtils.ApplySaturationStep(_imageOriginReceptParam, (int)saturationColorUpDown.Value);
+            Mat satImg = _editableCapContourUtils.ApplySaturationStep(_imageOriginReceptParam, _editableCapContourUtils.GetCameraSaturation());
             saturationColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(satImg);
 
-            Mat capsImg = _colorUtils.ApplyCapsColorStep(satImg, (byte)capcolorUpDown.Value, _recipeIsColored, _recipeIsYellowCap, _recipeIsGreenColor);
+            Mat capsImg = _editableCapContourUtils.ApplyCapsColorStep(satImg, _editableCapContourUtils.GetCapsColor(), _editableCapContourUtils.GetIsColored(), _editableCapContourUtils.GetIsYellow(), _editableCapContourUtils.GetIsGreen());
             capscolorColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(capsImg);
 
-            Mat[] channels = _colorUtils.ApplyWindowStep(capsImg, int.Parse(windowCb.Text));
+            Mat[] channels = _editableCapContourUtils.ApplyWindowStep(capsImg, _editableCapContourUtils.GetWindow());
             windowColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(channels[1]);
 
-            int morph = int.Parse(morphCb.Text);
-            Mat element1 = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
-            Mat element2 = Cv2.GetStructuringElement(MorphShapes.Cross, new Size(2 * morph + 1, 2 * morph + 1), new Point(morph, morph));
-            _colorUtils.ApplyMorphologyStep(channels, element1, element2);
+            _editableCapContourUtils.ApplyMorphologyStep(channels, _editableCapContourUtils.GetElement1(), _editableCapContourUtils.GetElement2());
             Mat morphImg = channels[2];
 
             morphColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(morphImg);
 
-            return _colorUtils.GetMaxContour(morphImg);
+            return _editableCapContourUtils.GetMaxContour(morphImg);
         }
 
         private Mat DrawContour(Point[] contour)
@@ -3993,26 +3873,43 @@ namespace CapDefectDetector
 
         private void saturationUpDown_ValueChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            _editableCapContourUtils.SetCameraSaturation((int)saturationColorUpDown.Value);
             RecomputeAll();
         }
 
         private void capcolorUpDown_ValueChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            _editableCapContourUtils.SetCapsColor((byte)capcolorUpDown.Value);
             RecomputeAll();
         }
 
         private void windowCb_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            if (int.TryParse(windowCb.Text, out int value))
+                _editableCapContourUtils.SetWindow(value);
             RecomputeAll();
         }
 
         private void morphCb_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            if (int.TryParse(morphCb.Text, out int value))
+                _editableCapContourUtils.SetMorphSize(value);
             RecomputeAll();
         }
 
         private void contourCorrectionColorUpDown_ValueChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            _editableCapContourUtils.SetContourCorrectionColor((int)contourCorrectionColorUpDown.Value);
             RecomputeAll();
         }
 
@@ -4101,35 +3998,9 @@ namespace CapDefectDetector
 
             bool existedBefore = File.Exists(fullPath);
 
-            int windowValue = 0;
-            if (windowCb.SelectedItem != null)
-                int.TryParse(windowCb.SelectedItem.ToString(), out windowValue);
+            CapRecipe recipe = _editableCapContourUtils.GetSettings();
 
-            int morphSize = 1;
-            if (morphCb.SelectedItem != null)
-                int.TryParse(morphCb.SelectedItem.ToString(), out morphSize);
-
-            int morphSize2 = morphSize;
-
-            var recipe = new CapRecipe
-            {
-                Name = name,
-                CapsColor = (byte)capcolorUpDown.Value,
-                Window = windowValue,
-                MorphSize = morphSize,
-                MorphSize2 = morphSize2,
-                CameraSaturation = (int)saturationColorUpDown.Value,
-                ContourCorrectionColor = (float)contourCorrectionColorUpDown.Value,
-                CameraSaturationBlackOrBrown = (int)saturationBlackOrBrownUpDown.Value,
-                ContourCorrectionBlackOrBrown = (float)contourCorrectionBlackOrBrownUpDown.Value,
-                MedianFilter = (int)medianFilterUpDown.Value,
-                CannyThreshold = (int)cannyUpDown.Value,
-
-                IsGreen = _recipeIsGreenColor,
-                IsColored = _recipeIsColored,
-                IsYellow = _recipeIsYellowCap,
-                IsWhite = _recipeCapsAreWhite
-            };
+            recipe.Name = name;
 
             string json = System.Text.Json.JsonSerializer.Serialize(
                 recipe,
@@ -4147,12 +4018,10 @@ namespace CapDefectDetector
             receptCapsCmB.Items.Clear();
             foreach (var recipeName in _recipes.Keys)
                 receptCapsCmB.Items.Add(recipeName);
+
             receptCapsCmB.SelectedItem = name;
 
-            if (existedBefore)
-                MessageBox.Show($"Рецепт \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else
-                MessageBox.Show($"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(existedBefore? $"Рецепт \"{name}\" редактирован успешно!": $"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private bool ValidateRecept(out string error)
@@ -4226,6 +4095,7 @@ namespace CapDefectDetector
         {
             if (_isApplyingRecipe) return;
             _recipeIsGreenColor = isGreenCb.Checked;
+            _editableCapContourUtils.SetIsGreen(isGreenCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -4234,6 +4104,7 @@ namespace CapDefectDetector
         {
             if (_isApplyingRecipe) return;
             _recipeIsColored = isColorCb.Checked;
+            _editableCapContourUtils.SetIsColored(isColorCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -4242,6 +4113,7 @@ namespace CapDefectDetector
         {
             if (_isApplyingRecipe) return;
             _recipeIsYellowCap = isYellowCb.Checked;
+            _editableCapContourUtils.SetIsYellow(isYellowCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -4250,6 +4122,7 @@ namespace CapDefectDetector
         {
             if (_isApplyingRecipe) return;
             _recipeCapsAreWhite = isWhiteCb.Checked;
+            _editableCapContourUtils.SetIsWhite(isWhiteCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -4258,6 +4131,7 @@ namespace CapDefectDetector
         {
             if (_isApplyingRecipe) return;
             _recipeIsBlackOrBrown = isBlackOrBrownCb.Checked;
+            _editableCapContourUtils.SetIsBlackOrBrown(isBlackOrBrownCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
         }
@@ -4431,21 +4305,33 @@ namespace CapDefectDetector
 
         private void saturationBlackOrBrownUpDown_ValueChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            _editableCapContourUtils.SetCameraSaturationBlackOrBrown((int)saturationBlackOrBrownUpDown.Value);
             RecomputeAll();
         }
 
         private void medianFilterUpDown_ValueChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            _editableCapContourUtils.SetMedianFilter((int)medianFilterUpDown.Value);
             RecomputeAll();
         }
 
         private void cannyUpDown_ValueChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            _editableCapContourUtils.SetCannyThreshold((int)cannyUpDown.Value);
             RecomputeAll();
         }
 
         private void contourCorrectionBlackOrBrownUpDown_ValueChanged(object sender, EventArgs e)
         {
+            if (_isApplyingRecipe) return;
+
+            _editableCapContourUtils.SetContourCorrectionBlackOrBrown((float)contourCorrectionBlackOrBrownUpDown.Value);
             RecomputeAll();
         }
 

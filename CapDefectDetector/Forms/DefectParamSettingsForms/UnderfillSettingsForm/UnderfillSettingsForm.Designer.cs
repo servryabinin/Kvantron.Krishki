@@ -383,7 +383,6 @@
             underfillSettings_UnderFillcapsColorNumUd.Anchor = AnchorStyles.None;
             underfillSettings_UnderFillcapsColorNumUd.Location = new Point(142, 6);
             underfillSettings_UnderFillcapsColorNumUd.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
-            underfillSettings_UnderFillcapsColorNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             underfillSettings_UnderFillcapsColorNumUd.Name = "underfillSettings_UnderFillcapsColorNumUd";
             underfillSettings_UnderFillcapsColorNumUd.Size = new Size(67, 23);
             underfillSettings_UnderFillcapsColorNumUd.TabIndex = 9;
