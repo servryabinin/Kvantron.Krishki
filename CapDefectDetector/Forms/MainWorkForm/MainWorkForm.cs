@@ -1,16 +1,12 @@
 ﻿//#define OLD_FRAME_PROCESSING
 
 using System.Collections.Immutable;
-using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using CapDefectDetector.Authorization;
 using CapDefectDetector.CameraAndModbusClasses;
-using CapDefectDetector.Domain;
 using CapDefectDetector.DTO.CameraSettings;
 using CapDefectDetector.DTO.CapRecipe;
 using CapDefectDetector.DTO.DefectSettings;
@@ -43,8 +39,6 @@ namespace CapDefectDetector
         // UI элементы
         private Color _connectedColor = Color.FromArgb(229, 115, 115); // красный — отключить
         private Color _disconnectedColor = Color.FromArgb(4, 85, 191); // синий — подключить
-        private bool _capsAreWhite = false;
-        private bool _recipeCapsAreWhite = false;
         private bool _manualDisconnect = false;
         // Выделение лейблов
         private Color _labelNormalColor = Color.Black;
@@ -74,7 +68,6 @@ namespace CapDefectDetector
         // Состояния приложения
         private bool _cameraConnected = false;
         private bool _prConnected = false;
-        private bool _isFirstImageCam1 = false;
         private bool _cameraError1 = false;
         private bool _isStreamCam = false;
         private bool _isProcessing = false;
@@ -130,35 +123,9 @@ namespace CapDefectDetector
         private float _percentOkCaps = 0;
         private float _percentNgCaps = 0;
 
-        //Объекты утилит для нахождения контуров
-        private readonly CapColorContourUtils _colorUtils = new CapColorContourUtils();
-        private readonly CapBlackOrBrownContourUtils _blackOrBrownUtils = new CapBlackOrBrownContourUtils();
         private CapRecipe _currentRecipe;
         private CapContourUtils _capContourUtils;
         private CapContourUtils _editableCapContourUtils;
-        // Поля рецепта
-        private byte _capsColor = 0;
-        private const byte GREEN_THRESHOLD = 40;
-        private static bool _isGreenColor = false;
-        private static bool _isColored = true;
-        private static bool _isYellowCap = false;
-        private static bool _isBlackOrBrown = false;
-        private static bool _recipeIsGreenColor = false;
-        private static bool _recipeIsColored = true;
-        private static bool _recipeIsYellowCap = false;
-        private static bool _recipeIsBlackOrBrown = false;
-        private static int _saturationColor = 0;
-        private static int _saturationBlackOrBrown = 0;
-        private static float _contourCorrectionColor = 1.15f;
-        private static float _contourCorrectionBlackOrBrown = 1.15f;
-        private static int _medianFilter = 0;
-        private static int _cannyThreshold = 0;
-        // Морфологические элементы
-        private Mat element1;
-        private Mat element2;
-        private int window = 15;
-        private int morph_size = 7;
-        private int morph_size_2 = 7;
 
         //Для работы с файлами рецептов крышек
         private Dictionary<string, CapRecipe> _recipes = new();
@@ -174,11 +141,6 @@ namespace CapDefectDetector
         private CapUnderfillDefectUtils _underfillUtils;
         //Флаг для проверки измененных парамтеров дефектов
         private bool _defectSettingsSaved = true;
-
-        // Параметры для нахождения "Облой"
-        private Mat _blurChannel_0;
-        private Mat _blurChannel_1;
-        private Mat _blurChannel_2;
 
         // Изображения для различных проверок
         private Mat _imageForOvality;
@@ -436,7 +398,6 @@ namespace CapDefectDetector
             InitializePrSettings();
             LoadPrParam();
             InitializeCameraSettings();
-            InitializeMorphologicalElements();
 
             recognizeButton.Enabled = false;
 
@@ -571,26 +532,6 @@ namespace CapDefectDetector
             _imageOriginReceptParam = new Mat();
         }
 
-        private void InitializeMorphologicalElements()
-        {
-            RebuildMorphology();
-        }
-
-        private void RebuildMorphology()
-        {
-            element1 = Cv2.GetStructuringElement(
-                MorphShapes.Rect,
-                new Size(2 * morph_size + 1, 2 * morph_size + 1),
-                new Point(morph_size, morph_size)
-            );
-
-            element2 = Cv2.GetStructuringElement(
-                MorphShapes.Cross,
-                new Size(2 * morph_size_2 + 1, 2 * morph_size_2 + 1),
-                new Point(morph_size_2, morph_size_2)
-            );
-        }
-
         private void InitializeDefectSettingsFileWatcher()
         {
             if (!Directory.Exists(_folderParamDefect))
@@ -629,7 +570,7 @@ namespace CapDefectDetector
             LoadDefectSettings();
 
             paramDefCmB.Items.Clear();
-            foreach (var defectSettingName in _defectSettings.Keys)
+            foreach (string defectSettingName in _defectSettings.Keys)
                 paramDefCmB.Items.Add(defectSettingName);
         }
 
@@ -668,7 +609,7 @@ namespace CapDefectDetector
             LoadPrSettings();
 
             prSettingsCmB.Items.Clear();
-            foreach (var prSettingsName in _prSettings.Keys)
+            foreach (string prSettingsName in _prSettings.Keys)
                 prSettingsCmB.Items.Add(prSettingsName);
         }
 
@@ -712,7 +653,7 @@ namespace CapDefectDetector
             LoadRecipes();
 
             receptCapsCmB.Items.Clear();
-            foreach (var recipeName in _recipes.Keys)
+            foreach (string recipeName in _recipes.Keys)
                 receptCapsCmB.Items.Add(recipeName);
         }
 
@@ -751,7 +692,7 @@ namespace CapDefectDetector
             LoadCameraSettings();
 
             cameraSettingsCmB.Items.Clear();
-            foreach (var cameraSettingsName in _cameraSettings.Keys)
+            foreach (string cameraSettingsName in _cameraSettings.Keys)
                 cameraSettingsCmB.Items.Add(cameraSettingsName);
         }
 
@@ -802,12 +743,12 @@ namespace CapDefectDetector
             LoadRecipes();
 
             receptCapsCmB.Items.Clear();
-            foreach (var recipe in _recipes.Keys)
+            foreach (string recipe in _recipes.Keys)
                 receptCapsCmB.Items.Add(recipe);
 
             if (_recipes.Count > 0)
             {
-                var lastRecipeName = Properties.Settings.Default.Settings_LastRecipeFileName;
+                string lastRecipeName = Properties.Settings.Default.Settings_LastRecipeFileName;
 
                 if (!string.IsNullOrEmpty(lastRecipeName) && receptCapsCmB.Items.Contains(lastRecipeName))
                 {
@@ -826,12 +767,12 @@ namespace CapDefectDetector
             LoadDefectSettings();
 
             paramDefCmB.Items.Clear();
-            foreach (var defectSettings in _defectSettings.Keys)
+            foreach (string defectSettings in _defectSettings.Keys)
                 paramDefCmB.Items.Add(defectSettings);
 
             if (_defectSettings.Count > 0)
             {
-                var lastDefectSettingsName = Properties.Settings.Default.Settings_LastDefectSettingsFileName;
+                string lastDefectSettingsName = Properties.Settings.Default.Settings_LastDefectSettingsFileName;
 
                 if (!string.IsNullOrEmpty(lastDefectSettingsName) && paramDefCmB.Items.Contains(lastDefectSettingsName))
                 {
@@ -850,12 +791,12 @@ namespace CapDefectDetector
             LoadPrSettings();
 
             prSettingsCmB.Items.Clear();
-            foreach (var prSettings in _prSettings.Keys)
+            foreach (string prSettings in _prSettings.Keys)
                 prSettingsCmB.Items.Add(prSettings);
 
             if (_prSettings.Count > 0)
             {
-                var lastPrSettingsName = Properties.Settings.Default.Settings_LastPrSettingsFileName;
+                string lastPrSettingsName = Properties.Settings.Default.Settings_LastPrSettingsFileName;
                 if (!string.IsNullOrEmpty(lastPrSettingsName) && prSettingsCmB.Items.Contains(lastPrSettingsName))
                 {
                     prSettingsCmB.SelectedItem = lastPrSettingsName;
@@ -873,12 +814,12 @@ namespace CapDefectDetector
             LoadCameraSettings();
 
             cameraSettingsCmB.Items.Clear();
-            foreach (var cameraSettings in _cameraSettings.Keys)
+            foreach (string cameraSettings in _cameraSettings.Keys)
                 cameraSettingsCmB.Items.Add(cameraSettings);
 
             if (_cameraSettings.Count > 0)
             {
-                var lastCameraSettings = Properties.Settings.Default.Settings_LastCameraSettingsFileName;
+                string lastCameraSettings = Properties.Settings.Default.Settings_LastCameraSettingsFileName;
                 if (!string.IsNullOrEmpty(lastCameraSettings) && cameraSettingsCmB.Items.Contains(lastCameraSettings))
                 {
                     cameraSettingsCmB.SelectedItem = lastCameraSettings;
@@ -900,7 +841,7 @@ namespace CapDefectDetector
 
             string[] files = Directory.GetFiles(_recipesFolder, "*.json");
 
-            foreach (var file in files)
+            foreach (string file in files)
             {
                 string name = Path.GetFileNameWithoutExtension(file);
                 string json = File.ReadAllText(file);
@@ -920,7 +861,7 @@ namespace CapDefectDetector
 
             string[] files = Directory.GetFiles(_folderParamDefect, "*.json");
 
-            foreach (var file in files)
+            foreach (string file in files)
             {
                 string name = Path.GetFileNameWithoutExtension(file);
                 string json = File.ReadAllText(file);
@@ -940,7 +881,7 @@ namespace CapDefectDetector
 
             string[] files = Directory.GetFiles(_folderParamPr205, "*.json");
 
-            foreach (var file in files)
+            foreach (string file in files)
             {
                 string name = Path.GetFileNameWithoutExtension(file);
                 string json = File.ReadAllText(file);
@@ -960,7 +901,7 @@ namespace CapDefectDetector
 
             string[] files = Directory.GetFiles(_folderParamCamera, "*.json");
 
-            foreach (var file in files)
+            foreach (string file in files)
             {
                 string name = Path.GetFileNameWithoutExtension(file);
                 string json = File.ReadAllText(file);
@@ -1426,7 +1367,7 @@ namespace CapDefectDetector
             LoadCameraSettings();
 
             cameraSettingsCmB.Items.Clear();
-            foreach (var cameraSettingsNamer in _cameraSettings.Keys)
+            foreach (string cameraSettingsNamer in _cameraSettings.Keys)
                 cameraSettingsCmB.Items.Add(cameraSettingsNamer);
             cameraSettingsCmB.SelectedItem = name;
 
@@ -1619,7 +1560,7 @@ namespace CapDefectDetector
             LoadPrSettings();
 
             prSettingsCmB.Items.Clear();
-            foreach (var prSettingsNamer in _prSettings.Keys)
+            foreach (string prSettingsNamer in _prSettings.Keys)
                 prSettingsCmB.Items.Add(prSettingsNamer);
             prSettingsCmB.SelectedItem = name;
 
@@ -1818,7 +1759,7 @@ namespace CapDefectDetector
             LoadDefectSettings();
 
             paramDefCmB.Items.Clear();
-            foreach (var key in _defectSettings.Keys)
+            foreach (string key in _defectSettings.Keys)
                 paramDefCmB.Items.Add(key);
 
             paramDefCmB.SelectedItem = name;
@@ -2011,10 +1952,10 @@ namespace CapDefectDetector
             CloseCamera();
             DisconnectModbus();
 
-            #if OLD_FRAME_PROCESSING
-            #else
+#if OLD_FRAME_PROCESSING
+#else
             DisposeImageQueue();
-            #endif
+#endif
             this.FormClosing -= MainWorkForm_FormClosing;
             Application.Exit();
         }
@@ -2130,7 +2071,7 @@ namespace CapDefectDetector
 
                 receptNameTb.Text = r.Name;
 
-                frameSaturationNumUpD.Text =(r.IsBlackOrBrown? r.CameraSaturationBlackOrBrown: r.CameraSaturation).ToString();
+                frameSaturationNumUpD.Text = (r.IsBlackOrBrown ? r.CameraSaturationBlackOrBrown : r.CameraSaturation).ToString();
             }
             finally
             {
@@ -2354,7 +2295,7 @@ namespace CapDefectDetector
             if (_defectSettingsSaved)
                 return true;
 
-            DialogResult result = MessageBox.Show("Не сохранены настройки дефектов, выйти (Да) или сохранить (Нет).","Предупреждение",MessageBoxButtons.YesNo,MessageBoxIcon.Warning);
+            DialogResult result = MessageBox.Show("Не сохранены настройки дефектов, выйти (Да) или сохранить (Нет).", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             switch (result)
             {
@@ -2371,7 +2312,7 @@ namespace CapDefectDetector
 
         private bool ConfirmApplicationExit()
         {
-            DialogResult result = MessageBox.Show("Завершить работу приложения?","Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Завершить работу приложения?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             return result == DialogResult.Yes;
         }
@@ -2652,8 +2593,6 @@ namespace CapDefectDetector
                     return;
                 }
 
-                _isFirstImageCam1 = false;
-
                 if (!isInit && !LocalSettings.Instance.UseModule)
                 {
                     if (!_cameraError1)
@@ -2740,7 +2679,7 @@ namespace CapDefectDetector
                     height / 2 + 10
                 };
 
-                var currentRows = new byte[rowsY.Length][];
+                byte[][] currentRows = new byte[rowsY.Length][];
 
                 for (int i = 0; i < rowsY.Length; i++)
                 {
@@ -3478,76 +3417,6 @@ namespace CapDefectDetector
 
         #endregion
 
-        #region Методы цветовой обработки
-
-        public static void NonlinearBackgroundDecolorization(Mat img, byte nWhite, bool isColored, bool isYellowCap, bool isGreenColor)
-        {
-            if (img.Empty() || img.Type() != MatType.CV_8UC3)
-                throw new ArgumentException("Ожидается 3-канальное 8-битное изображение.");
-
-            int total = img.Rows * img.Cols * 3;
-
-            unsafe
-            {
-                byte* data = (byte*)img.DataPointer;
-
-                // 1️ Выбеливание, если крышка не зелёная
-                if (!isGreenColor)
-                {
-                    for (int i = 0; i < total; i++)
-                    {
-                        int val = (255 * data[i]) / nWhite;
-                        if (val > 255) val = 255;
-                        data[i] = (byte)val;
-                    }
-                }
-                else
-                {
-                    // 2️ Ветка для зелёных крышек — как в C++-коде
-                    for (int i = 0; i < total; i += 3)
-                    {
-                        data[i + 1] = (byte)Math.Abs(
-                            data[i + 1] - ((data[i] + data[i + 2]) >> 1)
-                        );
-                    }
-                }
-
-                // 3 Если крышка цветная
-                if (isColored)
-                {
-                    for (int i = 0; i < total; i += 3)
-                    {
-                        if (!isGreenColor)
-                        {
-                            if (isYellowCap)
-                            {
-                                data[i] = (byte)((3 * data[i + 2] + data[i + 1]) >> 2);
-                            }
-                            else
-                            {
-                                data[i] = (byte)Math.Abs(data[i] - ((data[i + 1] + data[i + 2]) >> 1));
-                            }
-                        }
-                        else
-                        {
-                            // Для зелёных крышек — бинаризация по синему каналу
-                            if (data[i + 1] < GREEN_THRESHOLD)
-                            {
-                                data[i] = (byte)0x00;
-                            }
-                            else
-                            {
-                                data[i] = (byte)0xFF;
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-        #endregion
-
         #region Тестирование нахождения брака
         private void loadImageTestTb_Click(object sender, EventArgs e)
         {
@@ -4016,12 +3885,12 @@ namespace CapDefectDetector
             LoadRecipes();
 
             receptCapsCmB.Items.Clear();
-            foreach (var recipeName in _recipes.Keys)
+            foreach (string recipeName in _recipes.Keys)
                 receptCapsCmB.Items.Add(recipeName);
 
             receptCapsCmB.SelectedItem = name;
 
-            MessageBox.Show(existedBefore? $"Рецепт \"{name}\" редактирован успешно!": $"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(existedBefore ? $"Рецепт \"{name}\" редактирован успешно!" : $"Рецепт \"{name}\" создан успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private bool ValidateRecept(out string error)
@@ -4057,26 +3926,22 @@ namespace CapDefectDetector
                 error = "Корр. контура должна быть в диапазоне 1–2.";
                 return false;
             }
-
-            if (_isBlackOrBrown)
+            if (medianFilterUpDown.Value <= 0)
             {
-                if (medianFilterUpDown.Value <= 0)
-                {
-                    error = "Медианный фильтр должен быть больше 0.";
-                    return false;
-                }
+                error = "Медианный фильтр должен быть больше 0.";
+                return false;
+            }
 
-                if (cannyUpDown.Value < 0)
-                {
-                    error = "Порог Canny должен быть больше 0.";
-                    return false;
-                }
+            if (cannyUpDown.Value < 0)
+            {
+                error = "Порог Canny должен быть больше 0.";
+                return false;
+            }
 
-                if (contourCorrectionBlackOrBrownUpDown.Value < 0 || contourCorrectionBlackOrBrownUpDown.Value > 2)
-                {
-                    error = "Коррекция контура (черные) должна быть 0–2.";
-                    return false;
-                }
+            if (contourCorrectionBlackOrBrownUpDown.Value < 0 || contourCorrectionBlackOrBrownUpDown.Value > 2)
+            {
+                error = "Коррекция контура (черные) должна быть 0–2.";
+                return false;
             }
 
             return true;
@@ -4094,7 +3959,6 @@ namespace CapDefectDetector
         private void isGreenCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _recipeIsGreenColor = isGreenCb.Checked;
             _editableCapContourUtils.SetIsGreen(isGreenCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
@@ -4103,7 +3967,6 @@ namespace CapDefectDetector
         private void isColorCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _recipeIsColored = isColorCb.Checked;
             _editableCapContourUtils.SetIsColored(isColorCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
@@ -4112,7 +3975,6 @@ namespace CapDefectDetector
         private void isYellowCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _recipeIsYellowCap = isYellowCb.Checked;
             _editableCapContourUtils.SetIsYellow(isYellowCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
@@ -4121,7 +3983,6 @@ namespace CapDefectDetector
         private void isWhiteCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _recipeCapsAreWhite = isWhiteCb.Checked;
             _editableCapContourUtils.SetIsWhite(isWhiteCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
@@ -4130,7 +3991,6 @@ namespace CapDefectDetector
         private void isBlackOrBrownCb_CheckedChanged(object sender, EventArgs e)
         {
             if (_isApplyingRecipe) return;
-            _recipeIsBlackOrBrown = isBlackOrBrownCb.Checked;
             _editableCapContourUtils.SetIsBlackOrBrown(isBlackOrBrownCb.Checked);
             UpdateColorModeUI();
             RecomputeAll();
@@ -4617,7 +4477,7 @@ namespace CapDefectDetector
             if (_isProcessing || _isProcessingFromFolder)
                 return;
 
-            var form = new OvalitySettingsForm(_imageForTest, _currentRecipe, _ovalityUtils, element1, element2);
+            var form = new OvalitySettingsForm(_imageForTest, _ovalityUtils, _capContourUtils);
 
             if (form.ShowDialog() == DialogResult.OK)
             {
@@ -4633,7 +4493,7 @@ namespace CapDefectDetector
             if (_isProcessing || _isProcessingFromFolder)
                 return;
 
-            var form = new InclusionSettingsForm(_imageForTest, _currentRecipe, _inclusionUtils, element1, element2);
+            var form = new InclusionSettingsForm(_imageForTest, _inclusionUtils, _capContourUtils);
 
             if (form.ShowDialog() == DialogResult.OK)
             {
@@ -4652,11 +4512,11 @@ namespace CapDefectDetector
             if (_isProcessing || _isProcessingFromFolder)
                 return;
 
-            var form = new InpaintSettingsForm(_imageForTest, _currentRecipe, _paintUtils, element1, element2);
+            var form = new InpaintSettingsForm(_imageForTest, _paintUtils, _capContourUtils);
 
             if (form.ShowDialog() == DialogResult.OK)
             {
-               var settings = _paintUtils.GetSettings();
+                var settings = _paintUtils.GetSettings();
                 minSquareInpaintNumUpD.Value = (decimal)settings.MinAreaInpaintDefect;
                 whiteThresoldNumUpD.Value = (decimal)settings.MinInpaintWhiteThreshold;
 
@@ -4669,7 +4529,7 @@ namespace CapDefectDetector
             if (_isProcessing || _isProcessingFromFolder)
                 return;
 
-            var form = new ObloySettingsForm(_imageForTest, _currentRecipe, _obloyUtils, element1, element2);
+            var form = new ObloySettingsForm(_imageForTest, _obloyUtils, _capContourUtils);
 
             if (form.ShowDialog() == DialogResult.OK)
             {
@@ -4686,7 +4546,7 @@ namespace CapDefectDetector
             if (_isProcessing || _isProcessingFromFolder)
                 return;
 
-            var form = new UnderfillSettingsForm(_imageForTest, _currentRecipe, _underfillUtils, element1, element2);
+            var form = new UnderfillSettingsForm(_imageForTest, _underfillUtils, _capContourUtils);
 
             if (form.ShowDialog() == DialogResult.OK)
             {

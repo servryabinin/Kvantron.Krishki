@@ -23,39 +23,27 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm
     {
         #region Объекты классов
         private Mat _image;
-        private readonly CapRecipe _recipe;
 
         private readonly CapObloyDefectUtils _sourceObloyUtils;
         private readonly CapObloyDefectUtils _editableObloyUtils;
-        private readonly CapColorContourUtils _colorUtils;
-        private readonly CapBlackOrBrownContourUtils _blackOrBrownUtils;
+        private readonly CapContourUtils _capContourUtils;
         #endregion
 
         #region Глобальные поля
         private Point[] _contour;
-        private Mat _blurChannel1;
         private Mat _blurChannel2;
-        private Mat _capRadiusMask;
         private bool _isObloy;
-        private Mat _element1;
-        private Mat _element2;
         #endregion
 
-        public ObloySettingsForm(Mat image, CapRecipe recipe, CapObloyDefectUtils obloyUtils, Mat element1, Mat element2)
+        public ObloySettingsForm(Mat image, CapObloyDefectUtils obloyUtils, CapContourUtils capContourUtils)
         {
             InitializeComponent();
 
             _image = image?.Clone();
-            _recipe = recipe;
 
             _sourceObloyUtils = obloyUtils;
             _editableObloyUtils = new CapObloyDefectUtils(obloyUtils.GetSettings());
-
-            _element1 = element1;
-            _element2 = element2;
-
-            _colorUtils = new CapColorContourUtils();
-            _blackOrBrownUtils = new CapBlackOrBrownContourUtils();
+            _capContourUtils = capContourUtils;
 
             BindEnums();
             ApplySettingsToUI();
@@ -102,13 +90,12 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm
             using var gray = new Mat();
             Cv2.CvtColor(_image, gray, ColorConversionCodes.BGR2GRAY);
 
-            var result = GetCapContour(gray, _image);
+            var result = _capContourUtils.GetCapContour(gray, _image);
 
             if (result?.Contour == null || result.Contour.Length < 5)
                 return;
 
             _contour = result.Contour;
-            _blurChannel1 = result.Blur1;
             _blurChannel2 = result.Blur2;
 
             Mat draw = _image.Clone();
@@ -181,57 +168,6 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm
 
             return overlay;
         }
-        #endregion
-
-        #region Нахождение контура
-        private CapContourResult GetCapContour(Mat gray, Mat image)
-        {
-            if (_recipe.IsBlackOrBrown)
-            {
-                return GetBlackOrBrownContour(gray, image);
-            }
-            else
-            {
-                return GetColorCapContour(gray, image);
-            }
-        }
-
-        private CapContourResult GetColorCapContour(Mat gray, Mat image)
-        {
-            Mat sat = _colorUtils.ApplySaturationStep(image, _recipe.CameraSaturation);
-            Mat caps = _colorUtils.ApplyCapsColorStep(sat, _recipe.CapsColor, _recipe.IsColored, _recipe.IsYellow, _recipe.IsGreen);
-            Mat[] channels = _colorUtils.ApplyWindowStep(caps, _recipe.Window);
-            _colorUtils.ApplyMorphologyStep(channels, _element1, _element2);
-            var contour = _colorUtils.GetMaxContour(channels[2]);
-            contour = _colorUtils.CorrectContour(contour, _recipe.ContourCorrectionColor);
-
-            return new CapContourResult
-            {
-                Contour = contour,
-                Blur1 = channels[1],
-                Blur2 = channels[2],
-                Mask = caps
-            };
-        }
-
-        private CapContourResult GetBlackOrBrownContour(Mat gray, Mat image)
-        {
-            Mat sat = _blackOrBrownUtils.ApplySaturationStep(image, _recipe.CameraSaturationBlackOrBrown);
-            Mat g = _blackOrBrownUtils.ApplyGrayStep(sat);
-            Mat blurred = _blackOrBrownUtils.ApplyMedianStep(g, _recipe.MedianFilter);
-            Mat edges = _blackOrBrownUtils.ApplyCannyStep(blurred, _recipe.CannyThreshold);
-            var contour = _blackOrBrownUtils.ApplyEllipseStep(edges);
-            contour = _blackOrBrownUtils.CorrectContour(contour, _recipe.ContourCorrectionBlackOrBrown);
-
-            return new CapContourResult
-            {
-                Contour = contour,
-                Blur1 = blurred,
-                Blur2 = edges,
-                Mask = edges
-            };
-        }
-
         #endregion
 
         #region Обработчики событий при взаимодействии с интерфейсом
