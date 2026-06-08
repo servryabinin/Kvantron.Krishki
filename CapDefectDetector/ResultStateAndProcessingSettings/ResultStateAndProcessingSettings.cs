@@ -41,6 +41,7 @@ namespace CapDefectDetector.ResultStateAndProcessingSettings
         public string DefectText;
         public string SaveFolder;
         public string FileName;
+
     }
 
     class ProcessingSettings
