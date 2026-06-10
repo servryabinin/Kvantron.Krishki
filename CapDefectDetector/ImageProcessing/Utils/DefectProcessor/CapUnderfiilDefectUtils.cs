@@ -162,7 +162,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             {
                 Mat result = image.Clone();
 
-                CapColorContourUtils.NonlinearBackgroundDecolorization(result,_capsColor,_decolorizeBackground,_normalizeBrightness,_preserveDetails);
+                CapContourUtils.NonlinearBackgroundDecolorization(result,_capsColor,_decolorizeBackground,_normalizeBrightness,_preserveDetails);
 
                 return result;
             }

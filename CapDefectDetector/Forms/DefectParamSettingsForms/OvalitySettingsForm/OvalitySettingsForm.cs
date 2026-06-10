@@ -13,7 +13,6 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.OvalitySettingsForm
     {
         #region Объекты классов
         private Mat _image;
-        private readonly CapRecipe _recipe;
 
         private readonly CapOvalityDefectUtils _sourceOvalityUtils;
         private readonly CapOvalityDefectUtils _editableOvalityUtils;

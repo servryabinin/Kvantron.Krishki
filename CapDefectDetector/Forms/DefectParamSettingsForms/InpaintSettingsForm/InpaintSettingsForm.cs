@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using CapDefectDetector.Domain;
 using CapDefectDetector.DTO.CapRecipe;
 using CapDefectDetector.ImageProcessing.Utils;
 using CapDefectDetector.ImageProcessing.Utils.ContourProcessor;

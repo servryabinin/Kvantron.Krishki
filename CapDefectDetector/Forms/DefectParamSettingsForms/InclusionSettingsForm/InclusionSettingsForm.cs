@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using CapDefectDetector.Domain;
 using CapDefectDetector.DTO.CapRecipe;
 using CapDefectDetector.ImageProcessing.Utils;
 using CapDefectDetector.ImageProcessing.Utils.ContourProcessor;

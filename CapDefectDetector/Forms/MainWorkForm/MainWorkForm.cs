@@ -55,6 +55,8 @@ namespace CapDefectDetector
         private int _breakerOffsetRegister = 16404;
         private int _breakerAllowRegister = 16401;
         private int _startRecognizeProcessingRegister = 16400;
+        private int _semaphoreOrangeRegister = 16406;
+        private int _semaphoreGreenRegister = 16407;
         //Значения на регистрах ПР205: время отбраковки, расстояние от датчика до камера, расстояние от датчика до сдува
         private int _breakingTimeValue = 55;
         private int _cameraOffsetValue = 300;
@@ -64,6 +66,8 @@ namespace CapDefectDetector
         private int _breakerAllowFalse = 0;
         private int _recognizeProcessingStart = 1;
         private int _recognizeProcessingFinish = 0;
+        private int _semaphoreOn = 1;
+        private int _semaphoreOff = 0;
 
         // Состояния приложения
         private bool _cameraConnected = false;
@@ -236,7 +240,7 @@ namespace CapDefectDetector
             InitializeComponent();
             InitializeReceptTabControl();
             InitializeApplication();
-            SendStopSignalsToPLC();
+            SendStopSignalsAndSemaphoreToPLC();
         }
 
         private void InitializeReceptTabControl()
@@ -718,7 +722,7 @@ namespace CapDefectDetector
             }
         }
 
-        private void SendStopSignalsToPLC()
+        private void SendStopSignalsAndSemaphoreToPLC()
         {
             try
             {
@@ -730,6 +734,8 @@ namespace CapDefectDetector
                     // Сбрасываем startRecognizeProcessing
                     if (!_isImageLoaded)
                         _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
+
+                    _modbusClient.WriteRegister(_semaphoreOrangeRegister, (ushort)_semaphoreOn);
                 }
             }
             catch (Exception ex)
@@ -2142,6 +2148,7 @@ namespace CapDefectDetector
                         try
                         {
                             _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
+                            _modbusClient.WriteRegister(_semaphoreGreenRegister, (ushort)_semaphoreOff);
                         }
                         catch (Exception ex)
                         {
@@ -2181,12 +2188,7 @@ namespace CapDefectDetector
             {
                 if (_modbusClient == null || !_modbusClient.Connected)
                 {
-                    MessageBox.Show(
-                        "ПР205 не подключено, отбраковка не будет происходить.",
-                        "Предупреждение",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
-                    );
+                    MessageBox.Show("ПР205 не подключено, отбраковка не будет происходить.","Предупреждение",MessageBoxButtons.OK,MessageBoxIcon.Warning);
                 }
                 else
                 {
@@ -2194,7 +2196,7 @@ namespace CapDefectDetector
                     {
                         // Отправляем сигнал на ПР
                         _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingStart);
-
+                        _modbusClient.WriteRegister(_semaphoreGreenRegister, (ushort)_semaphoreOn);
                     }
                 }
 
@@ -2326,6 +2328,7 @@ namespace CapDefectDetector
             {
                 _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
                 _modbusClient.WriteRegister(_breakerAllowRegister, (ushort)_breakerAllowFalse);
+                _modbusClient.WriteRegister(_semaphoreOrangeRegister, (ushort)_semaphoreOff);
             }
             catch (Exception ex)
             {

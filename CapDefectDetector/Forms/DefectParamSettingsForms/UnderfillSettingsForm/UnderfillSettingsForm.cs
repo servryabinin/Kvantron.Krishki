@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CapDefectDetector.Domain;
 using CapDefectDetector.DTO.CapRecipe;
 using CapDefectDetector.ImageProcessing.Utils;
 using CapDefectDetector.ImageProcessing.Utils.ContourProcessor;
@@ -22,7 +21,6 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.UnderfillSettingsForm
     {
         #region Объекты классов
         private Mat _image;
-        private readonly CapRecipe _recipe;
 
         private readonly CapUnderfillDefectUtils _sourceUnderfiilUtils;
         private readonly CapUnderfillDefectUtils _editableUnderfillUtils;

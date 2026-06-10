@@ -4977,5 +4977,6 @@
         private Label underfillParamLb;
         private Label label21;
         private NumericUpDown capFlashOffsetNumUpD;
+        private TabPage semaphoreSettings;
     }
 }
