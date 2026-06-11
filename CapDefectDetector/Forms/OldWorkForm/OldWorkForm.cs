@@ -24,7 +24,7 @@ namespace CapDefectDetector
         // Оборудование
         private DioModule module = null;
         private HikCamera cam;
-        private ModbusTCP modbusClient;
+        private ModuleIO modbusClient;
 
         // Состояния приложения
         private bool cameraConnected = false;
@@ -172,7 +172,7 @@ namespace CapDefectDetector
 
         #region Конструктор и инициализация
 
-        public OldWorkForm(HikCamera camera, ModbusTCP modbus)
+        public OldWorkForm(HikCamera camera, ModuleIO modbus)
         {
             cam = camera;
             modbusClient = modbus;
@@ -261,7 +261,7 @@ namespace CapDefectDetector
         {
             try
             {
-                modbusClient = new ModbusTCP("10.10.69.38", 502);
+                modbusClient = new ModuleIO("10.10.69.38", 502);
                 modbusClient.Connect();
 
                 if (modbusClient.Connected)
@@ -389,7 +389,7 @@ namespace CapDefectDetector
             try
             {
                 string ip = textBox5.Text.Trim();
-                modbusClient = new ModbusTCP(ip, 502);
+                modbusClient = new ModuleIO(ip, 502);
                 modbusClient.Connect();
 
                 if (modbusClient.Connected)

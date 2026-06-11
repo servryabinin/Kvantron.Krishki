@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CapDefectDetector.DTO.CameraSettings
 {
-    class CameraSettings
+    class HikCameraSettings
     {
         public string Name { get; set; }
         public int Width { get; set; }

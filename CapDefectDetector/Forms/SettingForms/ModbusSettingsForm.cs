@@ -77,10 +77,10 @@ namespace CapDefectDetector
 
             Task.Run(() =>
             {
-                ModbusTCP testClient = null;
+                ModuleIO testClient = null;
                 try
                 {
-                    testClient = new ModbusTCP(ipTextBox.Text, (int)portNumericUpDown.Value);
+                    testClient = new ModuleIO(ipTextBox.Text, (int)portNumericUpDown.Value);
                     bool connected = testClient.Connect();
 
                     this.Invoke(new Action(() =>

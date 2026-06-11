@@ -35,6 +35,9 @@
             label16 = new Label();
             label15 = new Label();
             camStatus = new Label();
+            breakerOffsetUd = new NumericUpDown();
+            cameraOffsetUd = new NumericUpDown();
+            breakingTimeUd = new NumericUpDown();
             ovalityCoefNumUpD = new NumericUpDown();
             tableLayoutPanel9 = new TableLayoutPanel();
             label75 = new Label();
@@ -280,9 +283,6 @@
             tableLayoutPanel32 = new TableLayoutPanel();
             tableLayoutPanel5 = new TableLayoutPanel();
             breakingAllowCb = new CheckBox();
-            breakerOffsetTb = new TextBox();
-            cameraOffsetTb = new TextBox();
-            breakingTimeTb = new TextBox();
             label25 = new Label();
             label27 = new Label();
             label31 = new Label();
@@ -323,6 +323,9 @@
             tableLayoutPanel16 = new TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)breakerOffsetUd).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)cameraOffsetUd).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)breakingTimeUd).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).BeginInit();
             tableLayoutPanel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)contourCorrectionColorReceptParamSmallPb).BeginInit();
@@ -521,6 +524,42 @@
             camStatus.Size = new Size(94, 13);
             camStatus.TabIndex = 2;
             camStatus.Text = "Не подключена";
+            // 
+            // breakerOffsetUd
+            // 
+            breakerOffsetUd.Anchor = AnchorStyles.None;
+            breakerOffsetUd.Font = new Font("Segoe UI", 7.8F);
+            breakerOffsetUd.Location = new Point(267, 110);
+            breakerOffsetUd.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            breakerOffsetUd.Name = "breakerOffsetUd";
+            breakerOffsetUd.Size = new Size(111, 21);
+            breakerOffsetUd.TabIndex = 6;
+            breakerOffsetUd.TextAlign = HorizontalAlignment.Center;
+            breakerOffsetUd.ValueChanged += breakerOffsetUd_ValueChanged;
+            // 
+            // cameraOffsetUd
+            // 
+            cameraOffsetUd.Anchor = AnchorStyles.None;
+            cameraOffsetUd.Font = new Font("Segoe UI", 7.8F);
+            cameraOffsetUd.Location = new Point(267, 74);
+            cameraOffsetUd.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            cameraOffsetUd.Name = "cameraOffsetUd";
+            cameraOffsetUd.Size = new Size(111, 21);
+            cameraOffsetUd.TabIndex = 5;
+            cameraOffsetUd.TextAlign = HorizontalAlignment.Center;
+            cameraOffsetUd.ValueChanged += cameraOffsetUd_ValueChanged;
+            // 
+            // breakingTimeUd
+            // 
+            breakingTimeUd.Anchor = AnchorStyles.None;
+            breakingTimeUd.Font = new Font("Segoe UI", 7.8F);
+            breakingTimeUd.Location = new Point(267, 40);
+            breakingTimeUd.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            breakingTimeUd.Name = "breakingTimeUd";
+            breakingTimeUd.Size = new Size(111, 21);
+            breakingTimeUd.TabIndex = 4;
+            breakingTimeUd.TextAlign = HorizontalAlignment.Center;
+            breakingTimeUd.ValueChanged += breakingTimeUd_ValueChanged;
             // 
             // ovalityCoefNumUpD
             // 
@@ -3708,7 +3747,6 @@
             // 
             cameraIpTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             cameraIpTextBox.BackColor = SystemColors.Window;
-            cameraIpTextBox.BorderStyle = BorderStyle.FixedSingle;
             cameraIpTextBox.Font = new Font("Segoe UI", 7.8F);
             cameraIpTextBox.Location = new Point(267, 21);
             cameraIpTextBox.Name = "cameraIpTextBox";
@@ -3904,11 +3942,11 @@
             tableLayoutPanel5.ColumnCount = 2;
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 69.2913361F));
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30.708662F));
+            tableLayoutPanel5.Controls.Add(breakerOffsetUd, 1, 3);
             tableLayoutPanel5.Controls.Add(breakingAllowCb, 1, 0);
-            tableLayoutPanel5.Controls.Add(breakerOffsetTb, 1, 3);
-            tableLayoutPanel5.Controls.Add(cameraOffsetTb, 1, 2);
-            tableLayoutPanel5.Controls.Add(breakingTimeTb, 1, 1);
+            tableLayoutPanel5.Controls.Add(cameraOffsetUd, 1, 2);
             tableLayoutPanel5.Controls.Add(label25, 0, 0);
+            tableLayoutPanel5.Controls.Add(breakingTimeUd, 1, 1);
             tableLayoutPanel5.Controls.Add(label27, 0, 1);
             tableLayoutPanel5.Controls.Add(label31, 0, 2);
             tableLayoutPanel5.Controls.Add(label7, 0, 3);
@@ -3935,45 +3973,6 @@
             breakingAllowCb.TabIndex = 17;
             breakingAllowCb.UseVisualStyleBackColor = true;
             breakingAllowCb.CheckedChanged += breakingAllowCb_CheckedChanged;
-            // 
-            // breakerOffsetTb
-            // 
-            breakerOffsetTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            breakerOffsetTb.BackColor = SystemColors.Window;
-            breakerOffsetTb.BorderStyle = BorderStyle.FixedSingle;
-            breakerOffsetTb.Font = new Font("Segoe UI", 7.8F);
-            breakerOffsetTb.Location = new Point(267, 110);
-            breakerOffsetTb.Name = "breakerOffsetTb";
-            breakerOffsetTb.Size = new Size(111, 21);
-            breakerOffsetTb.TabIndex = 21;
-            breakerOffsetTb.Text = "2430";
-            breakerOffsetTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // cameraOffsetTb
-            // 
-            cameraOffsetTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            cameraOffsetTb.BackColor = SystemColors.Window;
-            cameraOffsetTb.BorderStyle = BorderStyle.FixedSingle;
-            cameraOffsetTb.Font = new Font("Segoe UI", 7.8F);
-            cameraOffsetTb.Location = new Point(267, 74);
-            cameraOffsetTb.Name = "cameraOffsetTb";
-            cameraOffsetTb.Size = new Size(111, 21);
-            cameraOffsetTb.TabIndex = 19;
-            cameraOffsetTb.Text = "300";
-            cameraOffsetTb.TextAlign = HorizontalAlignment.Center;
-            // 
-            // breakingTimeTb
-            // 
-            breakingTimeTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            breakingTimeTb.BackColor = SystemColors.Window;
-            breakingTimeTb.BorderStyle = BorderStyle.FixedSingle;
-            breakingTimeTb.Font = new Font("Segoe UI", 7.8F);
-            breakingTimeTb.Location = new Point(267, 40);
-            breakingTimeTb.Name = "breakingTimeTb";
-            breakingTimeTb.Size = new Size(111, 21);
-            breakingTimeTb.TabIndex = 16;
-            breakingTimeTb.Text = "55";
-            breakingTimeTb.TextAlign = HorizontalAlignment.Center;
             // 
             // label25
             // 
@@ -4117,10 +4116,10 @@
             // 
             // pr205IpTb
             // 
+            pr205IpTb.Anchor = AnchorStyles.None;
             pr205IpTb.BackColor = SystemColors.Window;
-            pr205IpTb.Dock = DockStyle.Fill;
             pr205IpTb.Font = new Font("Segoe UI", 7.8F);
-            pr205IpTb.Location = new Point(267, 69);
+            pr205IpTb.Location = new Point(267, 73);
             pr205IpTb.Name = "pr205IpTb";
             pr205IpTb.Size = new Size(112, 21);
             pr205IpTb.TabIndex = 31;
@@ -4181,9 +4180,8 @@
             // 
             // pr205PortTb
             // 
-            pr205PortTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            pr205PortTb.Anchor = AnchorStyles.None;
             pr205PortTb.BackColor = SystemColors.Window;
-            pr205PortTb.BorderStyle = BorderStyle.FixedSingle;
             pr205PortTb.Font = new Font("Segoe UI", 7.8F);
             pr205PortTb.Location = new Point(267, 39);
             pr205PortTb.Name = "pr205PortTb";
@@ -4522,6 +4520,9 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)breakerOffsetUd).EndInit();
+            ((System.ComponentModel.ISupportInitialize)cameraOffsetUd).EndInit();
+            ((System.ComponentModel.ISupportInitialize)breakingTimeUd).EndInit();
             ((System.ComponentModel.ISupportInitialize)ovalityCoefNumUpD).EndInit();
             tableLayoutPanel9.ResumeLayout(false);
             tableLayoutPanel9.PerformLayout();
@@ -4796,9 +4797,6 @@
         private TabPage prBreakingSettings;
         private TableLayoutPanel tableLayoutPanel5;
         private CheckBox breakingAllowCb;
-        private TextBox breakerOffsetTb;
-        private TextBox cameraOffsetTb;
-        private TextBox breakingTimeTb;
         private Label label25;
         private Label label27;
         private Label label31;
@@ -4978,5 +4976,8 @@
         private Label label21;
         private NumericUpDown capFlashOffsetNumUpD;
         private TabPage semaphoreSettings;
+        private NumericUpDown breakerOffsetUd;
+        private NumericUpDown cameraOffsetUd;
+        private NumericUpDown breakingTimeUd;
     }
 }

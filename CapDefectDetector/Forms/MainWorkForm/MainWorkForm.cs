@@ -49,7 +49,7 @@ namespace CapDefectDetector
 
         // Регистры ПР205
         private HikCamera _cam;
-        private ModbusTCP _modbusClient;
+        private ModuleIO _modbusClient;
         private int _breakingTimeRegister = 16466;
         private int _cameraOffsetRegister = 16402;
         private int _breakerOffsetRegister = 16404;
@@ -127,7 +127,6 @@ namespace CapDefectDetector
         private float _percentOkCaps = 0;
         private float _percentNgCaps = 0;
 
-        private CapRecipe _currentRecipe;
         private CapContourUtils _capContourUtils;
         private CapContourUtils _editableCapContourUtils;
 
@@ -169,19 +168,18 @@ namespace CapDefectDetector
         private FileSystemWatcher _defectSettingsWatcher;
 
         private string _folderParamPr205 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Настройки\\Настройка аппаратуры\\Настройки ПР205");
-        private Dictionary<string, PrSettings> _prSettings = new();
+        private Dictionary<string, ModuleIOSettings> _prSettings = new();
         private bool _isApplyingPrSettings = false;
         private FileSystemWatcher _prSettingsWatcher;
 
         private string _folderParamCamera = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Настройки\\Настройка аппаратуры\\Настройки камеры");
-        private Dictionary<string, CameraSettings> _cameraSettings = new();
+        private Dictionary<string, HikCameraSettings> _cameraSettings = new();
         private bool _isApplyingCameraSettings = false;
         private FileSystemWatcher _cameraSettingsWatcher;
 
         // Работа с изображениями из файла
         private ImmutableList<string> _imageFiles = [];
         private int _currentImageIndex = 0;
-        private int _currentFrameNumber = 0;
 
         //Избежание дубликатов кадров
         private ulong _lastFrameHash = 0;
@@ -189,9 +187,6 @@ namespace CapDefectDetector
         private byte[][]? _lastRows;
         private bool _hasLastRows = false;
         private Mat? _lastFrameForDuplicate;
-
-        //Статистика
-        private StatisticsManager _statisticsManager;
 
         //Режим вывода изображения: Все, хорошие, плохие
         private enum OutputMode
@@ -208,7 +203,7 @@ namespace CapDefectDetector
 
         #region Конструктор и инициализация
 
-        public MainWorkForm(HikCamera camera, ModbusTCP modbus)
+        public MainWorkForm(HikCamera camera, ModuleIO modbus)
         {
             // Проверяем, что камера не null и подключена
             if (camera != null)
@@ -259,21 +254,21 @@ namespace CapDefectDetector
             if (isConnected)
             {
                 // === подключено ===
-                if (cameraOffsetTb != null)
+                if (cameraOffsetUd != null)
                 {
-                    cameraOffsetTb.Text = _cameraOffsetValue.ToString();
+                    cameraOffsetUd.Text = _cameraOffsetValue.ToString();
                     SendCameraOffset(_cameraOffsetValue);
                 }
 
-                if (breakerOffsetTb != null)
+                if (breakerOffsetUd != null)
                 {
-                    breakerOffsetTb.Text = _breakerOffsetValue.ToString();
+                    breakerOffsetUd.Text = _breakerOffsetValue.ToString();
                     SendBreakerOffset(_breakerOffsetValue);
                 }
 
-                if (breakingTimeTb != null)
+                if (breakingTimeUd != null)
                 {
-                    breakingTimeTb.Text = _breakingTimeValue.ToString();
+                    breakingTimeUd.Text = _breakingTimeValue.ToString();
                     SendBreakingTime(_breakingTimeValue);
                 }
 
@@ -327,52 +322,9 @@ namespace CapDefectDetector
                 //Если потеря связи с ПЛК — останавливаем обработку
                 if (_isProcessing && !_manualDisconnect)
                 {
-                    _isProcessing = false;
+                    _ = StopProcessingAsync();
 
-                    _processingCts?.Cancel();
-
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            if (_processingTask != null)
-                                await _processingTask;
-                        }
-                        catch
-                        {
-                        }
-
-#if OLD_FRAME_PROCESSING
-                        lock (frameLock)
-                        {
-                            latestFrame?.Dispose();
-                            latestFrame = null;
-                            newFrameAvailable = false;
-                        }
-#else
-
-                        _imageQueue.Clear();
-#endif
-
-                        recognizeButton.Text = "Начать анализ";
-                        recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
-                        recognizeButton.Enabled = true;
-
-                        if (!_isImageLoaded)
-                            startStreamButton.Enabled = true;
-                        if (_isImageLoaded)
-                            loadImageButton.Enabled = true;
-
-                        BeginInvoke(() =>
-                        {
-                            MessageBox.Show(
-                                "Потеряно соединение с ПР205. Обработка кадров остановлена. При переподключении сдув будет отключен.",
-                                "Ошибка соединения",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Warning
-                            );
-                        });
-                    });
+                    MessageBox.Show("Потеряно соединение с ПР205. Обработка кадров остановлена. При переподключении сдув будет отключен.", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -703,21 +655,21 @@ namespace CapDefectDetector
         private void LoadPrParam()
         {
             // ===== Параметры ПР =====
-            if (breakingTimeTb != null)
+            if (breakingTimeUd != null)
             {
-                _breakingTimeValue = int.Parse(breakingTimeTb.Text);
+                _breakingTimeValue = int.Parse(breakingTimeUd.Text);
                 SendBreakingTime(_breakingTimeValue);
             }
 
-            if (breakerOffsetTb != null)
+            if (breakerOffsetUd != null)
             {
-                _breakerOffsetValue = int.Parse(breakerOffsetTb.Text);
+                _breakerOffsetValue = int.Parse(breakerOffsetUd.Text);
                 SendBreakerOffset(_breakerOffsetValue);
             }
 
-            if (cameraOffsetTb != null)
+            if (cameraOffsetUd != null)
             {
-                _cameraOffsetValue = int.Parse(cameraOffsetTb.Text);
+                _cameraOffsetValue = int.Parse(cameraOffsetUd.Text);
                 SendCameraOffset(_cameraOffsetValue);
             }
         }
@@ -892,7 +844,7 @@ namespace CapDefectDetector
                 string name = Path.GetFileNameWithoutExtension(file);
                 string json = File.ReadAllText(file);
 
-                PrSettings prSettings = JsonConvert.DeserializeObject<PrSettings>(json);
+                ModuleIOSettings prSettings = JsonConvert.DeserializeObject<ModuleIOSettings>(json);
                 if (prSettings != null)
                     _prSettings[name] = prSettings;
             }
@@ -912,7 +864,7 @@ namespace CapDefectDetector
                 string name = Path.GetFileNameWithoutExtension(file);
                 string json = File.ReadAllText(file);
 
-                CameraSettings cameraSettings = JsonConvert.DeserializeObject<CameraSettings>(json);
+                HikCameraSettings cameraSettings = JsonConvert.DeserializeObject<HikCameraSettings>(json);
                 if (cameraSettings != null)
                     _cameraSettings[name] = cameraSettings;
             }
@@ -1027,6 +979,7 @@ namespace CapDefectDetector
                     _modbusClient.DisableAutoReconnect();
                     _modbusClient.StopPolling();
                     _modbusClient.Disconnect();
+                    ModbusClient_ConnectionStatusChanged(false);
 
                     ErrorLogger.Log(
                         new Exception("Отключение от ПР205 выполнено успешно"),
@@ -1065,7 +1018,7 @@ namespace CapDefectDetector
                 if (_modbusClient != null)
                     _modbusClient.ConnectionStatusChanged -= ModbusClient_ConnectionStatusChanged;
 
-                _modbusClient = new ModbusTCP(ip, port);
+                _modbusClient = new ModuleIO(ip, port);
                 _modbusClient.ConnectionStatusChanged += ModbusClient_ConnectionStatusChanged;
                 _modbusClient.EnableAutoReconnect();
 
@@ -1341,7 +1294,7 @@ namespace CapDefectDetector
 
             bool existedBefore = File.Exists(fullPath);
 
-            var cameraSettings = new CameraSettings
+            var cameraSettings = new HikCameraSettings
             {
                 Name = name,
                 Height = int.Parse(frameHeightNumUpD.Text),
@@ -1361,13 +1314,6 @@ namespace CapDefectDetector
             );
 
             File.WriteAllText(fullPath, json, Encoding.UTF8);
-
-            // Сохраняем в Settings
-            Properties.Settings.Default.Settings_WidthFrame = frameWidthNumUpD.Text;
-            Properties.Settings.Default.Settings_HeightFrame = frameHeightNumUpD.Text;
-            Properties.Settings.Default.Settings_ExposureFrame = frameExposureNumUpD.Text;
-            Properties.Settings.Default.Settings_SaturationFrame = frameSaturationNumUpD.Text;
-            Properties.Settings.Default.Save();
 
             // --- Обновляем список настроек дефектов ---
             LoadCameraSettings();
@@ -1396,7 +1342,7 @@ namespace CapDefectDetector
             ApplyCameraSettings(_cameraSettings[key]);
         }
 
-        private void ApplyCameraSettings(CameraSettings r)
+        private void ApplyCameraSettings(HikCameraSettings r)
         {
             _isApplyingCameraSettings = true;
 
@@ -1521,7 +1467,6 @@ namespace CapDefectDetector
                 return;
             }
 
-            // --- Папка ---
             string folder = _folderParamPr205;
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
@@ -1532,17 +1477,14 @@ namespace CapDefectDetector
 
             bool existedBefore = File.Exists(fullPath);
 
-            var prSettings = new PrSettings
+            var prSettings = new ModuleIOSettings
             {
                 Name = name,
-                IpAddress = pr205IpTb.Text,
-                Port = int.Parse(pr205PortTb.Text),
-                BreakingTime = int.Parse(breakingTimeTb.Text),
-                CameraOffset = int.Parse(cameraOffsetTb.Text),
-                BreakerOffset = int.Parse(breakerOffsetTb.Text)
+                BreakingTime = _modbusClient.GetBreakingTime(),
+                CameraOffset = _modbusClient.GetCameraOffset(),
+                BreakerOffset = _modbusClient.GetBreakerOffset()
             };
 
-            // --- JSON с нормальной русской кодировкой ---
             string json = System.Text.Json.JsonSerializer.Serialize(
                 prSettings,
                 new System.Text.Json.JsonSerializerOptions
@@ -1554,15 +1496,10 @@ namespace CapDefectDetector
 
             File.WriteAllText(fullPath, json, Encoding.UTF8);
 
-            // Сохраняем в Settings
-            Properties.Settings.Default.Settings_BreakingTime = breakingTimeTb.Text;
-            Properties.Settings.Default.Settings_CameraOffset = cameraOffsetTb.Text;
-            Properties.Settings.Default.Settings_BreakerOffset = breakerOffsetTb.Text;
             Properties.Settings.Default.Settings_IpAdressPr = pr205IpTb.Text;
             Properties.Settings.Default.Settings_PortPr = pr205PortTb.Text;
             Properties.Settings.Default.Save();
 
-            // --- Обновляем список настроек дефектов ---
             LoadPrSettings();
 
             prSettingsCmB.Items.Clear();
@@ -1570,7 +1507,6 @@ namespace CapDefectDetector
                 prSettingsCmB.Items.Add(prSettingsNamer);
             prSettingsCmB.SelectedItem = name;
 
-            // --- Сообщение ---
             if (existedBefore)
                 MessageBox.Show($"Файл настроек \"{name}\" редактирован успешно!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
@@ -1589,17 +1525,21 @@ namespace CapDefectDetector
             ApplyPrSettings(_prSettings[key]);
         }
 
-        private void ApplyPrSettings(PrSettings r)
+        private void ApplyPrSettings(ModuleIOSettings r)
         {
             _isApplyingPrSettings = true;
 
-            pr205IpTb.Text = r.IpAddress;
-            pr205PortTb.Text = r.Port.ToString();
-            breakingTimeTb.Text = r.BreakingTime.ToString();
-            cameraOffsetTb.Text = r.CameraOffset.ToString();
-            breakerOffsetTb.Text = r.BreakerOffset.ToString();
-
-            _isApplyingPrSettings = false;
+            try
+            {
+                _modbusClient?.ApplyLocalSettings(r);
+                breakingTimeUd.Text = r.BreakingTime.ToString();
+                cameraOffsetUd.Text = r.CameraOffset.ToString();
+                breakerOffsetUd.Text = r.BreakerOffset.ToString();
+            }
+            finally
+            {
+                _isApplyingPrSettings = false;
+            }
         }
 
         private bool ValidatePrSettings()
@@ -1633,30 +1573,30 @@ namespace CapDefectDetector
                     return false;
                 }
 
-                if (!int.TryParse(breakingTimeTb.Text, out int delay) || delay < 0 || delay > 65535)
+                if (!int.TryParse(breakingTimeUd.Text, out int delay) || delay < 0 || delay > 65535)
                 {
                     string msg = "'Время сдува, мс' должно быть числом от 0 до 65535.";
                     ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
                     MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    breakingTimeTb.Focus();
+                    breakingTimeUd.Focus();
                     return false;
                 }
 
-                if (!int.TryParse(cameraOffsetTb.Text, out int cameraOffset) || cameraOffset < 0 || cameraOffset > 65535)
+                if (!int.TryParse(cameraOffsetUd.Text, out int cameraOffset) || cameraOffset < 0 || cameraOffset > 65535)
                 {
                     string msg = "'Расстояние от датчика до камеры, шаги' должно быть числом от 0 до 65535.";
                     ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
                     MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    cameraOffsetTb.Focus();
+                    cameraOffsetUd.Focus();
                     return false;
                 }
 
-                if (!int.TryParse(breakerOffsetTb.Text, out int breakerOffset) || breakerOffset < 0 || breakerOffset > 65535)
+                if (!int.TryParse(breakerOffsetUd.Text, out int breakerOffset) || breakerOffset < 0 || breakerOffset > 65535)
                 {
                     string msg = "'Расстояние от датчика до сдува, шаги' должно быть числом от 0 до 65535.";
                     ErrorLogger.Log(new Exception(msg), "ValidatePrSettings");
                     MessageBox.Show(msg, "Ошибка валидации", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    breakerOffsetTb.Focus();
+                    breakerOffsetUd.Focus();
                     return false;
                 }
 
@@ -1675,48 +1615,39 @@ namespace CapDefectDetector
         private async void ApplyPr_Click(object sender, EventArgs e)
         {
             if (_modbusClient == null || !_modbusClient.Connected)
-            {
                 return;
-            }
 
             _applyPrCts = new CancellationTokenSource();
 
             try
             {
-                if (!int.TryParse(breakingTimeTb.Text.Trim(),
-                        NumberStyles.Integer,
-                        CultureInfo.InvariantCulture,
-                        out _breakingTimeValue) || _breakingTimeValue <= 0)
-                {
-                    _breakingTimeValue = 55;
-                }
-
-                await Task.Run(() => SendBreakingTime(_breakingTimeValue), _applyPrCts.Token);
-
-                if (!int.TryParse(cameraOffsetTb.Text.Trim(),
-                        NumberStyles.Integer,
-                        CultureInfo.InvariantCulture,
-                        out _cameraOffsetValue) || _cameraOffsetValue <= 0)
-                {
-                    _cameraOffsetValue = 300;
-                }
-
-                await Task.Run(() => SendCameraOffset(_cameraOffsetValue), _applyPrCts.Token);
-
-                if (!int.TryParse(breakerOffsetTb.Text.Trim(),
-                        NumberStyles.Integer,
-                        CultureInfo.InvariantCulture,
-                        out _breakerOffsetValue) || _breakerOffsetValue <= 0)
-                {
-                    _breakerOffsetValue = 2430;
-                }
-
-                await Task.Run(() => SendBreakerOffset(_breakerOffsetValue), _applyPrCts.Token);
+                await Task.Run(() => _modbusClient.ApplySettings(), _applyPrCts.Token);
             }
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Ошибка при отправке параметров на ПР205 (ApplyPr_Click)");
             }
+        }
+
+        private void breakingTimeUd_ValueChanged(object sender, EventArgs e)
+        {
+            if (_isApplyingPrSettings) return;
+
+            _modbusClient?.SetBreakingTime((int)breakingTimeUd.Value);
+        }
+
+        private void cameraOffsetUd_ValueChanged(object sender, EventArgs e)
+        {
+            if (_isApplyingPrSettings) return;
+
+            _modbusClient?.SetCameraOffset((int)cameraOffsetUd.Value);
+        }
+
+        private void breakerOffsetUd_ValueChanged(object sender, EventArgs e)
+        {
+            if (_isApplyingPrSettings) return;
+
+            _modbusClient?.SetBreakerOffset((int)breakerOffsetUd.Value);
         }
         #endregion
 
@@ -1984,8 +1915,6 @@ namespace CapDefectDetector
 
             try
             {
-                _currentRecipe = r;
-
                 _capContourUtils = new CapContourUtils(r);
                 _editableCapContourUtils = new CapContourUtils(r);
 
@@ -2188,7 +2117,7 @@ namespace CapDefectDetector
             {
                 if (_modbusClient == null || !_modbusClient.Connected)
                 {
-                    MessageBox.Show("ПР205 не подключено, отбраковка не будет происходить.","Предупреждение",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                    MessageBox.Show("ПР205 не подключено, отбраковка не будет происходить.", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 else
                 {

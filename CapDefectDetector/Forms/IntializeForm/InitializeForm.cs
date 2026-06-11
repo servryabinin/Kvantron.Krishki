@@ -11,7 +11,7 @@ namespace CapDefectDetector
     {
         // Публичные свойства для передачи в основную форму
         public HikCamera Camera { get; private set; }
-        public ModbusTCP ModbusClient { get; private set; }
+        public ModuleIO ModbusClient { get; private set; }
         public bool CameraConnected { get; private set; }
         public bool ModbusConnected { get; private set; }
 
@@ -145,7 +145,7 @@ namespace CapDefectDetector
                     port = 502; // или другое дефолтное значение
                 }
 
-                ModbusClient = new ModbusTCP(ip, port);
+                ModbusClient = new ModuleIO(ip, port);
                 bool connected = ModbusClient.Connect();
 
                 this.Invoke(new Action(() =>
@@ -340,7 +340,7 @@ namespace CapDefectDetector
                         {
                             // Создаем новый клиент
                             ModbusClient?.Disconnect();
-                            ModbusClient = new ModbusTCP(modbusSettingsForm.ModbusIP, modbusSettingsForm.ModbusPort);
+                            ModbusClient = new ModuleIO(modbusSettingsForm.ModbusIP, modbusSettingsForm.ModbusPort);
                             bool connected = ModbusClient.Connect();
 
                             this.Invoke(new Action(() =>

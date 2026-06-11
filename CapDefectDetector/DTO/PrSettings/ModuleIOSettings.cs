@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace CapDefectDetector.DTO.PrSettings
 {
-    class PrSettings
+    public class ModuleIOSettings
     {
         public string Name { get; set; }
-        public string IpAddress { get; set; }
-        public int Port { get; set; }  
         public int BreakingTime { get; set; }
         public int CameraOffset { get; set; }
         public int BreakerOffset { get; set; }
     }
 }
+ 
