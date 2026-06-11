@@ -253,24 +253,10 @@ namespace CapDefectDetector
 
             if (isConnected)
             {
-                // === подключено ===
-                if (cameraOffsetUd != null)
-                {
-                    cameraOffsetUd.Text = _cameraOffsetValue.ToString();
-                    SendCameraOffset(_cameraOffsetValue);
-                }
-
-                if (breakerOffsetUd != null)
-                {
-                    breakerOffsetUd.Text = _breakerOffsetValue.ToString();
-                    SendBreakerOffset(_breakerOffsetValue);
-                }
-
-                if (breakingTimeUd != null)
-                {
-                    breakingTimeUd.Text = _breakingTimeValue.ToString();
-                    SendBreakingTime(_breakingTimeValue);
-                }
+                Debug.WriteLine(
+                    $"ApplySettings: Connected={_modbusClient.Connected}"
+                );
+                _modbusClient.ApplySettings();
 
                 _manualDisconnect = false;
 
@@ -291,7 +277,7 @@ namespace CapDefectDetector
                 {
                     try
                     {
-                        _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
+                        _modbusClient.StopRecognizeProcessing();
                     }
                     catch (Exception ex)
                     {
@@ -654,23 +640,20 @@ namespace CapDefectDetector
 
         private void LoadPrParam()
         {
-            // ===== Параметры ПР =====
-            if (breakingTimeUd != null)
+            try
             {
-                _breakingTimeValue = int.Parse(breakingTimeUd.Text);
-                SendBreakingTime(_breakingTimeValue);
+                if (_modbusClient != null && _modbusClient.Connected)
+                {
+                    _modbusClient.ApplySettings();
+                }
             }
-
-            if (breakerOffsetUd != null)
+            catch (TaskCanceledException)
             {
-                _breakerOffsetValue = int.Parse(breakerOffsetUd.Text);
-                SendBreakerOffset(_breakerOffsetValue);
+
             }
-
-            if (cameraOffsetUd != null)
+            catch (Exception ex)
             {
-                _cameraOffsetValue = int.Parse(cameraOffsetUd.Text);
-                SendCameraOffset(_cameraOffsetValue);
+                ErrorLogger.Log(ex, $"Ошибка отправки настроек в ПР205 при инициалзации.");
             }
         }
 
@@ -681,13 +664,13 @@ namespace CapDefectDetector
                 if (_modbusClient != null && _modbusClient.Connected)
                 {
                     // Сбрасываем breakerAllowRegister
-                    _modbusClient.WriteRegister(_breakerAllowRegister, (ushort)_breakerAllowFalse);
+                    _modbusClient.DenyBreaker();
 
                     // Сбрасываем startRecognizeProcessing
                     if (!_isImageLoaded)
-                        _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
+                        _modbusClient.StopRecognizeProcessing();
 
-                    _modbusClient.WriteRegister(_semaphoreOrangeRegister, (ushort)_semaphoreOn);
+                    _modbusClient.TurnOnOrangeSemaphore();
                 }
             }
             catch (Exception ex)
@@ -2076,8 +2059,8 @@ namespace CapDefectDetector
                     {
                         try
                         {
-                            _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
-                            _modbusClient.WriteRegister(_semaphoreGreenRegister, (ushort)_semaphoreOff);
+                            _modbusClient.StopRecognizeProcessing();
+                            _modbusClient.TurnOffGreenSemaphore();
                         }
                         catch (Exception ex)
                         {
@@ -2124,8 +2107,8 @@ namespace CapDefectDetector
                     if (!_isImageLoaded)
                     {
                         // Отправляем сигнал на ПР
-                        _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingStart);
-                        _modbusClient.WriteRegister(_semaphoreGreenRegister, (ushort)_semaphoreOn);
+                        _modbusClient.StartRecognizeProcessing();
+                        _modbusClient.TurnOnGreenSemaphore();
                     }
                 }
 
@@ -2255,9 +2238,9 @@ namespace CapDefectDetector
 
             try
             {
-                _modbusClient.WriteRegister(_startRecognizeProcessingRegister, (ushort)_recognizeProcessingFinish);
-                _modbusClient.WriteRegister(_breakerAllowRegister, (ushort)_breakerAllowFalse);
-                _modbusClient.WriteRegister(_semaphoreOrangeRegister, (ushort)_semaphoreOff);
+                _modbusClient.StopRecognizeProcessing();
+                _modbusClient.DenyBreaker();
+                _modbusClient.TurnOffOrangeSemaphore();
             }
             catch (Exception ex)
             {
@@ -2906,7 +2889,7 @@ namespace CapDefectDetector
 
                                     _ = Task.Run(() =>
                                     {
-                                        try { SendQualityStatus(st); }
+                                        try { _modbusClient.SendQualityStatus(st); }
                                         catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка PLC"); }
                                     });
                                 }
@@ -3141,93 +3124,15 @@ namespace CapDefectDetector
         #endregion
 
         #region Методы работы с Modbus
-        private void SendQualityStatus(PLCData.QualityStatus qualityStatus)
-        {
-            try
-            {
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    _modbusClient.WriteRegister(PLCData.QualityRegisterModbus, (ushort)qualityStatus);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // Норма, ничего не делаем
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, $"Ошибка отправки статуса качества {qualityStatus} на ПЛК");
-            }
-        }
-
-        private void SendBreakingTime(int breakingTime)
-        {
-            try
-            {
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    _modbusClient.WriteRegister(_breakingTimeRegister, (ushort)breakingTime);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, $"Ошибка отправки времени обдува ({breakingTime}) на ПЛК");
-            }
-        }
-
-        private void SendCameraOffset(int cameraOffset)
-        {
-            try
-            {
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    _modbusClient.WriteRegister(_cameraOffsetRegister, (ushort)cameraOffset);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, $"Ошибка отправки смещения камеры ({cameraOffset}) на ПЛК");
-            }
-        }
-
-        private void SendBreakerOffset(int breakerOffset)
-        {
-            try
-            {
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    _modbusClient.WriteRegister(_breakerOffsetRegister, (ushort)breakerOffset);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                // отмена - нормально
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, $"Ошибка отправки смещения отбраковщика ({breakerOffset}) на ПЛК");
-            }
-        }
-
         private void breakingAllowCb_CheckedChanged(object sender, EventArgs e)
         {
             try
             {
                 if (_modbusClient != null && _modbusClient.Connected)
                 {
-                    int valueToSend = breakingAllowCb.Checked
-                        ? (int)_breakerAllowTrue
-                        : (int)_breakerAllowFalse;
+                    bool valueToSend = breakingAllowCb.Checked;
 
-                    _modbusClient.WriteRegister(_breakerAllowRegister, (ushort)valueToSend);
+                    _modbusClient.SetBreakerAllow(valueToSend);
                 }
             }
             catch (Exception ex)

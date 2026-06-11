@@ -1,5 +1,7 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics;
+using System.Net.Sockets;
 using CapDefectDetector.DTO.PrSettings;
+using CapDefectDetector.Hardware;
 using Timer = System.Threading.Timer;
 
 namespace CapDefectDetector.CameraAndModbusClasses
@@ -96,6 +98,10 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// Регистр сетевой переменной для включения зеленого сигнала светофора
         /// </summary>
         private const int SEMAPHORE_GREEN_REGISTER = 16407;
+        /// <summary>
+        /// Регистр состояния качества, в который отпрвляется сигнал качества
+        /// </summary>
+        public const int QUALITY_SIGNAL_REGISTER = 16465;
         #endregion
 
         #region Параметры для времени отбраковки, расстояние от датчика до камеры, расстояние от датчика до отбраковщика
@@ -144,6 +150,8 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// Свойство для получения статуса подключения к модулю I/O
         /// </summary>
         public bool Connected => connected;
+
+
 
         /// <summary>
         /// Контсруктор класса ModuleIO, который принимает IP адрес и порт для подключения к модулю I/O
@@ -382,6 +390,11 @@ namespace CapDefectDetector.CameraAndModbusClasses
         public void ApplyBreakerOffset() => WriteRegister(BREAKER_OFFSET_REGISTER, (ushort)_breakerOffsetValue);
 
         /// <summary>
+        /// Записать расстояние до отбраковщика в ПР205
+        /// </summary>
+        public void SendQualityStatus(PLCData.QualityStatus qualityStatus) => WriteRegister(QUALITY_SIGNAL_REGISTER, (ushort)qualityStatus);
+
+        /// <summary>
         /// Записать все настроечные параметры в ПР205
         /// </summary>
         public void ApplySettings()
@@ -399,43 +412,55 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// </summary>
         /// <param name="register">Номер регистра</param>
         /// <param name="value">Значение для записи</param>
-        public void WriteRegister(int register, ushort value)
+        public bool WriteRegister(int register, ushort value)
         {
-            try
+            lock (_ioLock)
             {
-                if (!connected || stream == null)
-                    throw new InvalidOperationException("Modbus client is not connected.");
+                if (tcpClient == null || stream == null || !tcpClient.Connected)
+                    return false;
 
-                ushort transactionId = (ushort)Interlocked.Increment(ref transactionNumber);
-
-                byte[] trans = BitConverter.GetBytes(transactionId);
-                byte[] reg = BitConverter.GetBytes((ushort)register);
-                byte[] val = BitConverter.GetBytes(value);
-
-                byte[] request = new byte[]
+                try
                 {
-                    trans[1], trans[0],   // Transaction ID
-                    0x00, 0x00,           // Protocol ID
-                    0x00, 0x06,           // Length
-                    0x01,                 // Unit ID
-                    0x06,                 // Function code (Write Single Register)
+                    ushort transactionId = (ushort)Interlocked.Increment(ref transactionNumber);
+
+                    byte[] trans = BitConverter.GetBytes(transactionId);
+                    byte[] reg = BitConverter.GetBytes((ushort)register);
+                    byte[] val = BitConverter.GetBytes(value);
+
+                    byte[] request = new byte[]
+                    {
+                    trans[1], trans[0],
+                    0x00, 0x00,
+                    0x00, 0x06,
+                    0x01,
+                    0x06,
                     reg[1], reg[0],
                     val[1], val[0]
-                };
+                    };
 
-                lock (_ioLock)
-                {
                     stream.Write(request, 0, request.Length);
 
                     byte[] response = new byte[12];
-                    int bytesRead = stream.Read(response, 0, response.Length);
-                }
+                    stream.Read(response, 0, response.Length);
 
-            }
-            catch
-            {
-                connected = false;
-                throw;
+                    return true;
+                }
+                catch
+                {
+                    connected = false;
+
+                    try
+                    {
+                        stream?.Close();
+                        tcpClient?.Close();
+                    }
+                    catch { }
+
+                    stream = null;
+                    tcpClient = null;
+
+                    return false;
+                }
             }
         }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CapDefectDetector.Hardware
 {
-    internal class PLCData
+    public class PLCData
     {
         /// <summary>
         /// Регистр состояния качества, в который отправлются данные
