@@ -87,6 +87,10 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// </summary>
         private const int BREAKER_ALLOW_REGISTER = 16401;
         /// <summary>
+        /// Регистр сетевой переменной для установки разрешения звукового сигнала
+        /// </summary>
+        private const int SOUND_SIGNAL_ALLOW_REGISTER = 16408;
+        /// <summary>
         /// Регистр сетевой переменной для запуска процесса распознавания
         /// </summary>
         private const int START_RECOGNIZE_PROCESSING_REGISTER = 16400;
@@ -125,9 +129,17 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// </summary>
         private const int BREAKER_ALLOW_TRUE = 1;
         /// <summary>
-        /// Детерминированные значения для разрешения отбраковки: 0 - физическая отбраковка запрещена
+        /// Детерминированные значения для запрещения отбраковки: 0 - физическая отбраковка запрещена
         /// </summary>
         private const int BREAKER_ALLOW_FALSE = 0;
+        /// <summary>
+        /// Детерминированные значения для разрешения звукового сигнала: 1 - звуковой сигнал разрешен
+        /// </summary>
+        private const int SOUND_SIGNAL_ALLOW_TRUE = 1;
+        /// <summary>
+        /// Детерминированные значения для запрещения звукового сигнала: 0 - звуковой сигнал запрещен
+        /// </summary>
+        private const int SOUND_SIGNAL_ALLOW_FALSE = 0;
         /// <summary>
         /// Детерминированные значения для запуска процесса распознавания: 1 - начать ставить крышки в очередь на отбраковку
         /// </summary>
@@ -341,7 +353,20 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// Установить произвольное состояние разрешения отбраковки
         /// </summary>
         public void SetBreakerAllow(bool allow) => WriteRegister(BREAKER_ALLOW_REGISTER, (ushort)(allow ? BREAKER_ALLOW_TRUE : BREAKER_ALLOW_FALSE));
+        /// <summary>
+        /// Разрешить физическую отбраковку
+        /// </summary>
+        public void AllowSoundSignal() => WriteRegister(SOUND_SIGNAL_ALLOW_REGISTER, (ushort)SOUND_SIGNAL_ALLOW_TRUE);
 
+        /// <summary>
+        /// Запретить физическую отбраковку
+        /// </summary>
+        public void DenySoundSignal() => WriteRegister(SOUND_SIGNAL_ALLOW_REGISTER, (ushort)SOUND_SIGNAL_ALLOW_FALSE);
+
+        /// <summary>
+        /// Установить произвольное состояние разрешения отбраковки
+        /// </summary>
+        public void SetSoundSignalAllow(bool allow) => WriteRegister(SOUND_SIGNAL_ALLOW_REGISTER, (ushort)(allow ? SOUND_SIGNAL_ALLOW_TRUE : SOUND_SIGNAL_ALLOW_FALSE));
         /// <summary>
         /// Запустить процесс распознавания
         /// </summary>

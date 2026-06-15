@@ -282,6 +282,8 @@
             prBreakingSettings = new TabPage();
             tableLayoutPanel32 = new TableLayoutPanel();
             tableLayoutPanel5 = new TableLayoutPanel();
+            soundSignalAllowCb = new CheckBox();
+            label78 = new Label();
             breakingAllowCb = new CheckBox();
             label25 = new Label();
             label27 = new Label();
@@ -529,7 +531,7 @@
             // 
             breakerOffsetUd.Anchor = AnchorStyles.None;
             breakerOffsetUd.Font = new Font("Segoe UI", 7.8F);
-            breakerOffsetUd.Location = new Point(267, 110);
+            breakerOffsetUd.Location = new Point(267, 113);
             breakerOffsetUd.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             breakerOffsetUd.Name = "breakerOffsetUd";
             breakerOffsetUd.Size = new Size(111, 21);
@@ -541,7 +543,7 @@
             // 
             cameraOffsetUd.Anchor = AnchorStyles.None;
             cameraOffsetUd.Font = new Font("Segoe UI", 7.8F);
-            cameraOffsetUd.Location = new Point(267, 74);
+            cameraOffsetUd.Location = new Point(267, 84);
             cameraOffsetUd.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             cameraOffsetUd.Name = "cameraOffsetUd";
             cameraOffsetUd.Size = new Size(111, 21);
@@ -553,7 +555,7 @@
             // 
             breakingTimeUd.Anchor = AnchorStyles.None;
             breakingTimeUd.Font = new Font("Segoe UI", 7.8F);
-            breakingTimeUd.Location = new Point(267, 40);
+            breakingTimeUd.Location = new Point(267, 57);
             breakingTimeUd.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             breakingTimeUd.Name = "breakingTimeUd";
             breakingTimeUd.Size = new Size(111, 21);
@@ -3941,25 +3943,54 @@
             // 
             tableLayoutPanel5.ColumnCount = 2;
             tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 69.2913361F));
-            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30.708662F));
-            tableLayoutPanel5.Controls.Add(breakerOffsetUd, 1, 3);
+            tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30.70866F));
+            tableLayoutPanel5.Controls.Add(soundSignalAllowCb, 1, 1);
+            tableLayoutPanel5.Controls.Add(label78, 0, 1);
+            tableLayoutPanel5.Controls.Add(breakerOffsetUd, 1, 4);
             tableLayoutPanel5.Controls.Add(breakingAllowCb, 1, 0);
-            tableLayoutPanel5.Controls.Add(cameraOffsetUd, 1, 2);
+            tableLayoutPanel5.Controls.Add(cameraOffsetUd, 1, 3);
             tableLayoutPanel5.Controls.Add(label25, 0, 0);
-            tableLayoutPanel5.Controls.Add(breakingTimeUd, 1, 1);
-            tableLayoutPanel5.Controls.Add(label27, 0, 1);
-            tableLayoutPanel5.Controls.Add(label31, 0, 2);
-            tableLayoutPanel5.Controls.Add(label7, 0, 3);
+            tableLayoutPanel5.Controls.Add(breakingTimeUd, 1, 2);
+            tableLayoutPanel5.Controls.Add(label27, 0, 2);
+            tableLayoutPanel5.Controls.Add(label31, 0, 3);
+            tableLayoutPanel5.Controls.Add(label7, 0, 4);
             tableLayoutPanel5.Dock = DockStyle.Fill;
             tableLayoutPanel5.Location = new Point(3, 3);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
-            tableLayoutPanel5.RowCount = 4;
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
+            tableLayoutPanel5.RowCount = 5;
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tableLayoutPanel5.Size = new Size(381, 139);
             tableLayoutPanel5.TabIndex = 22;
+            // 
+            // soundSignalAllowCb
+            // 
+            soundSignalAllowCb.AutoSize = true;
+            soundSignalAllowCb.Dock = DockStyle.Fill;
+            soundSignalAllowCb.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            soundSignalAllowCb.ForeColor = Color.Black;
+            soundSignalAllowCb.Location = new Point(267, 30);
+            soundSignalAllowCb.Name = "soundSignalAllowCb";
+            soundSignalAllowCb.Size = new Size(111, 21);
+            soundSignalAllowCb.TabIndex = 24;
+            soundSignalAllowCb.UseVisualStyleBackColor = true;
+            soundSignalAllowCb.CheckedChanged += soundSignalAllowCb_CheckedChanged;
+            // 
+            // label78
+            // 
+            label78.AutoSize = true;
+            label78.Dock = DockStyle.Fill;
+            label78.Font = new Font("Segoe UI", 7.8F);
+            label78.ForeColor = Color.Black;
+            label78.Location = new Point(3, 27);
+            label78.Name = "label78";
+            label78.Size = new Size(258, 27);
+            label78.TabIndex = 23;
+            label78.Text = "Включить звуковой сигнал:";
+            label78.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // breakingAllowCb
             // 
@@ -3969,7 +4000,7 @@
             breakingAllowCb.ForeColor = Color.Black;
             breakingAllowCb.Location = new Point(267, 3);
             breakingAllowCb.Name = "breakingAllowCb";
-            breakingAllowCb.Size = new Size(111, 28);
+            breakingAllowCb.Size = new Size(111, 21);
             breakingAllowCb.TabIndex = 17;
             breakingAllowCb.UseVisualStyleBackColor = true;
             breakingAllowCb.CheckedChanged += breakingAllowCb_CheckedChanged;
@@ -3982,7 +4013,7 @@
             label25.ForeColor = Color.Black;
             label25.Location = new Point(3, 0);
             label25.Name = "label25";
-            label25.Size = new Size(258, 34);
+            label25.Size = new Size(258, 27);
             label25.TabIndex = 15;
             label25.Text = "Включить сдув:";
             label25.TextAlign = ContentAlignment.MiddleLeft;
@@ -3993,9 +4024,9 @@
             label27.Dock = DockStyle.Fill;
             label27.Font = new Font("Segoe UI", 7.8F);
             label27.ForeColor = Color.Black;
-            label27.Location = new Point(3, 34);
+            label27.Location = new Point(3, 54);
             label27.Name = "label27";
-            label27.Size = new Size(258, 34);
+            label27.Size = new Size(258, 27);
             label27.TabIndex = 18;
             label27.Text = "Время сдува, мс";
             label27.TextAlign = ContentAlignment.MiddleLeft;
@@ -4006,9 +4037,9 @@
             label31.Dock = DockStyle.Fill;
             label31.Font = new Font("Segoe UI", 7.8F);
             label31.ForeColor = Color.Black;
-            label31.Location = new Point(3, 68);
+            label31.Location = new Point(3, 81);
             label31.Name = "label31";
-            label31.Size = new Size(258, 34);
+            label31.Size = new Size(258, 27);
             label31.TabIndex = 20;
             label31.Text = "Расстояние от датчика до камеры, шаги:";
             label31.TextAlign = ContentAlignment.MiddleLeft;
@@ -4018,9 +4049,9 @@
             label7.AutoSize = true;
             label7.Dock = DockStyle.Fill;
             label7.Font = new Font("Segoe UI", 7.8F);
-            label7.Location = new Point(3, 102);
+            label7.Location = new Point(3, 108);
             label7.Name = "label7";
-            label7.Size = new Size(258, 37);
+            label7.Size = new Size(258, 31);
             label7.TabIndex = 22;
             label7.Text = "Расстояние от датчика до сдува, шаги";
             label7.TextAlign = ContentAlignment.MiddleLeft;
@@ -4979,5 +5010,7 @@
         private NumericUpDown breakerOffsetUd;
         private NumericUpDown cameraOffsetUd;
         private NumericUpDown breakingTimeUd;
+        private CheckBox soundSignalAllowCb;
+        private Label label78;
     }
 }

@@ -253,9 +253,6 @@ namespace CapDefectDetector
 
             if (isConnected)
             {
-                Debug.WriteLine(
-                    $"ApplySettings: Connected={_modbusClient.Connected}"
-                );
                 _modbusClient.ApplySettings();
 
                 _manualDisconnect = false;
@@ -268,7 +265,7 @@ namespace CapDefectDetector
 
                 _prConnected = true;
                 breakingAllowCb.Enabled = true;
-                breakingAllowCb.Checked = false;
+                soundSignalAllowCb.Enabled = true;
                 applyPrBreakerParamButton.Enabled = true;
 
 
@@ -303,6 +300,7 @@ namespace CapDefectDetector
 
                 _prConnected = false;
                 breakingAllowCb.Enabled = false;
+                soundSignalAllowCb.Enabled = false;
                 applyPrBreakerParamButton.Enabled = false;
 
                 //Если потеря связи с ПЛК — останавливаем обработку
@@ -383,6 +381,7 @@ namespace CapDefectDetector
                 connectPrButton.Text = "Подключиться к ПР";
                 connectPrButton.BackColor = _disconnectedColor;
                 breakingAllowCb.Enabled = false;
+                soundSignalAllowCb.Enabled = false;
                 applyPrBreakerParamButton.Enabled = false;
             }
         }
@@ -665,6 +664,7 @@ namespace CapDefectDetector
                 {
                     // Сбрасываем breakerAllowRegister
                     _modbusClient.DenyBreaker();
+                    _modbusClient.DenySoundSignal();
 
                     // Сбрасываем startRecognizeProcessing
                     if (!_isImageLoaded)
@@ -2240,6 +2240,7 @@ namespace CapDefectDetector
             {
                 _modbusClient.StopRecognizeProcessing();
                 _modbusClient.DenyBreaker();
+                _modbusClient.DenySoundSignal();
                 _modbusClient.TurnOffOrangeSemaphore();
             }
             catch (Exception ex)
@@ -3133,6 +3134,23 @@ namespace CapDefectDetector
                     bool valueToSend = breakingAllowCb.Checked;
 
                     _modbusClient.SetBreakerAllow(valueToSend);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Ошибка при отправке сигнала на ПР205");
+            }
+        }
+
+        private void soundSignalAllowCb_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_modbusClient != null && _modbusClient.Connected)
+                {
+                    bool valueToSend = soundSignalAllowCb.Checked;
+
+                    _modbusClient.SetSoundSignalAllow(valueToSend);
                 }
             }
             catch (Exception ex)
