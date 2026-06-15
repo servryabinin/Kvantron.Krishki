@@ -3969,6 +3969,7 @@
             // soundSignalAllowCb
             // 
             soundSignalAllowCb.AutoSize = true;
+            soundSignalAllowCb.CheckAlign = ContentAlignment.MiddleCenter;
             soundSignalAllowCb.Dock = DockStyle.Fill;
             soundSignalAllowCb.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             soundSignalAllowCb.ForeColor = Color.Black;
@@ -3995,6 +3996,7 @@
             // breakingAllowCb
             // 
             breakingAllowCb.AutoSize = true;
+            breakingAllowCb.CheckAlign = ContentAlignment.MiddleCenter;
             breakingAllowCb.Dock = DockStyle.Fill;
             breakingAllowCb.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             breakingAllowCb.ForeColor = Color.Black;
