@@ -429,13 +429,13 @@ namespace CapDefectDetector.CameraAndModbusClasses
 
                     byte[] request = new byte[]
                     {
-                    trans[1], trans[0],
-                    0x00, 0x00,
-                    0x00, 0x06,
-                    0x01,
-                    0x06,
-                    reg[1], reg[0],
-                    val[1], val[0]
+                        trans[1], trans[0],
+                        0x00, 0x00,
+                        0x00, 0x06,
+                        0x01,
+                        0x06,
+                        reg[1], reg[0],
+                        val[1], val[0]
                     };
 
                     stream.Write(request, 0, request.Length);
