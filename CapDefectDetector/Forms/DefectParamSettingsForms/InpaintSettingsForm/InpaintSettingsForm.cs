@@ -55,7 +55,7 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InpaintSettingsForm
             inpaintSettings_sMinNumUd.Value = (decimal)s.SMin;
             inpaintSettings_sMaxNumUd.Value = (decimal)s.SMax;
             inpaintSettings_vMinNumUd.Value = (decimal)s.VMin;
-            inpaintSettings_vMaxNumUd.Value = (decimal)s.SMax;
+            inpaintSettings_vMaxNumUd.Value = (decimal)s.VMax;
             inpaintSettings_inpaintMinAreaNumUd.Value = (decimal)s.MinAreaInpaintDefect;
             inpaintSettings_inpaintWhiteThresholdNumUd.Value = (decimal)s.MinInpaintWhiteThreshold;
         }
