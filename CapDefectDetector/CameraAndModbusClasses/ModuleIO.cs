@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using CapDefectDetector.DTO.PrSettings;
 using CapDefectDetector.Hardware;
+using EasyModbus;
 using Timer = System.Threading.Timer;
 
 namespace CapDefectDetector.CameraAndModbusClasses
@@ -35,11 +36,11 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// <summary>
         /// Ip адрес модуля I/O
         /// </summary>
-        private string ipAddressModule = "127.0.0.1";
+        public string ipAddressModule = "127.0.0.1";
         /// <summary>
         /// Порт модуля I/O
         /// </summary>
-        private int portModule = 502;
+        public int portModule = 502;
         #endregion
 
         #region Объекты для переподключения
@@ -427,6 +428,20 @@ namespace CapDefectDetector.CameraAndModbusClasses
             ApplyBreakingTime();
             ApplyCameraOffset();
             ApplyBreakerOffset();
+        }
+
+        /// <summary>
+        /// Записать все параметры в ПР205 при инициалзации приложения
+        /// </summary>
+        public void ApplyInitialSettings()
+        {
+            ApplyBreakingTime();
+            ApplyCameraOffset();
+            ApplyBreakerOffset();
+            DenyBreaker();
+            DenySoundSignal();
+            StopRecognizeProcessing();
+            TurnOnOrangeSemaphore();
         }
 
         #endregion

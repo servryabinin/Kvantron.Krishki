@@ -50,24 +50,6 @@ namespace CapDefectDetector
         // Регистры ПР205
         private HikCamera _cam;
         private ModuleIO _modbusClient;
-        private int _breakingTimeRegister = 16466;
-        private int _cameraOffsetRegister = 16402;
-        private int _breakerOffsetRegister = 16404;
-        private int _breakerAllowRegister = 16401;
-        private int _startRecognizeProcessingRegister = 16400;
-        private int _semaphoreOrangeRegister = 16406;
-        private int _semaphoreGreenRegister = 16407;
-        //Значения на регистрах ПР205: время отбраковки, расстояние от датчика до камера, расстояние от датчика до сдува
-        private int _breakingTimeValue = 55;
-        private int _cameraOffsetValue = 300;
-        private int _breakerOffsetValue = 2430;
-        //Значения для разрешения на сдув и начало обработки
-        private int _breakerAllowTrue = 1;
-        private int _breakerAllowFalse = 0;
-        private int _recognizeProcessingStart = 1;
-        private int _recognizeProcessingFinish = 0;
-        private int _semaphoreOn = 1;
-        private int _semaphoreOff = 0;
 
         // Состояния приложения
         private bool _cameraConnected = false;
@@ -205,37 +187,29 @@ namespace CapDefectDetector
 
         public MainWorkForm(HikCamera camera, ModuleIO modbus)
         {
-            // Проверяем, что камера не null и подключена
-            if (camera != null)
-            {
-                _cam = camera;
-                _cameraConnected = true;
-            }
-            else
-            {
-                _cam = null;
-                _cameraConnected = false;
-            }
+            InitializeConnections(camera, modbus);
+            InitializeComponent();
+            InitializeReceptTabControl();
+            InitializeApplication();
+            InitializeModuleInitSettings();
+        }
 
-            if (modbus != null)
-            {
-                _modbusClient = modbus;
-                _prConnected = true;
+        private void InitializeConnections(HikCamera camera, ModuleIO modbus)
+        {
+            _cam = camera;
+            _cameraConnected = camera != null;
+            if (_cam != null)
+                _cam.SendImage += GetImage;
 
+            _modbusClient = modbus;
+            _prConnected = modbus != null;
+
+            if (_modbusClient != null)
+            {
                 _modbusClient.ConnectionStatusChanged += ModbusClient_ConnectionStatusChanged;
                 _modbusClient.EnableAutoReconnect();
                 _modbusClient.StartPolling();
             }
-            else
-            {
-                _modbusClient = null;
-                _prConnected = false;
-            }
-
-            InitializeComponent();
-            InitializeReceptTabControl();
-            InitializeApplication();
-            SendStopSignalsAndSemaphoreToPLC();
         }
 
         private void InitializeReceptTabControl()
@@ -254,205 +228,101 @@ namespace CapDefectDetector
             if (isConnected)
             {
                 _modbusClient.ApplySettings();
-
                 _manualDisconnect = false;
-
-                prStatus.Text = "Подключено";
-                prStatus.ForeColor = Color.Green;
-
-                connectPrButton.Text = "Отключиться от ПР";
-                connectPrButton.BackColor = _connectedColor;
-
                 _prConnected = true;
-                breakingAllowCb.Enabled = true;
-                soundSignalAllowCb.Enabled = true;
-                applyPrBreakerParamButton.Enabled = true;
 
+                UpdatePRConnectionUI(true);
 
-                // И сбросить анализ
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    try
-                    {
-                        _modbusClient.StopRecognizeProcessing();
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorLogger.Log(ex, "Ошибка при сбросе регистра после переподключения");
-                    }
-                }
+                try { _modbusClient.StopRecognizeProcessing(); }
+                catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка при сбросе регистра после переподключения"); }
             }
             else
             {
-                // === отключено ===
-                if (_manualDisconnect)
-                {
-                    prStatus.Text = "Откл. вручную";
-                }
-                else
-                {
-                    prStatus.Text = "Не подключено";
-                }
-
-                prStatus.ForeColor = Color.Red;
-                connectPrButton.Text = "Подключиться к ПР";
-                connectPrButton.BackColor = _disconnectedColor;
-
                 _prConnected = false;
-                breakingAllowCb.Enabled = false;
-                soundSignalAllowCb.Enabled = false;
-                applyPrBreakerParamButton.Enabled = false;
+                UpdatePRConnectionUI(false);
 
-                //Если потеря связи с ПЛК — останавливаем обработку
                 if (_isProcessing && !_manualDisconnect)
                 {
                     _ = StopProcessingAsync();
-
                     MessageBox.Show("Потеряно соединение с ПР205. Обработка кадров остановлена. При переподключении сдув будет отключен.", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+            }
+        }
+
+        private void UpdatePRConnectionUI(bool connected)
+        {
+            if (connected)
+            {
+                prStatus.Text = "Подключено";
+                pr205IpTb.Text = _modbusClient.ipAddressModule;
+                pr205PortTb.Text = _modbusClient.portModule.ToString();
+                prStatus.ForeColor = Color.Green;
+                connectPrButton.Text = "Отключиться от ПР";
+                connectPrButton.BackColor = _connectedColor;
+                breakingAllowCb.Enabled = true;
+                soundSignalAllowCb.Enabled = true;
+                applyPrBreakerParamButton.Enabled = true;
+            }
+            else
+            {
+                prStatus.Text = _manualDisconnect ? "Откл. вручную" : "Не подключено";
+                prStatus.ForeColor = Color.Red;
+                pr205IpTb.Text = _modbusClient.ipAddressModule;
+                pr205PortTb.Text = _modbusClient.portModule.ToString();
+                connectPrButton.Text = "Подключиться к ПР";
+                connectPrButton.BackColor = _disconnectedColor;
+                breakingAllowCb.Enabled = false;
+                soundSignalAllowCb.Enabled = false;
+                applyPrBreakerParamButton.Enabled = false;
+            }
+        }
+
+        private void UpdateCameraConnectionUI()
+        {
+            bool connected = _cam?.Connected == true;
+
+            if (connected)
+            {
+                cameraIpTextBox.Text = _cam.IpAdress;
+                camStatus.Text = "Подключено";
+                camStatus.ForeColor = Color.Green;
+                connectCameraButton.Text = "Отключиться от камеры";
+                connectCameraButton.BackColor = _connectedColor;
+            }
+            else
+            {
+                cameraIpTextBox.Text = "Камера не выбрана на этапе инициализации";
+                camStatus.Text = "Не подключено";
+                camStatus.ForeColor = Color.Red;
+                connectCameraButton.Text = "Подключиться к камере";
+                connectCameraButton.BackColor = _disconnectedColor;
+                startStreamButton.Enabled = false;
+                applySettingsButton.Enabled = false;
             }
         }
 
         private void InitializeApplication()
         {
             InitializeSettingsBindings();
-            InitializeCoreSystems();
-            InitializePR205Status();
-            InitializeCameraStatus();
+            InitializeImageMatrices();
+            InitializeAllFileWatchers();
+            InitializeAllSettings();
+            UpdateConnectionStatuses();
             InitializeCycleSystem();
             InitializeUISelections();
             InitializeAuthorizationSystem();
-            InitializeStatistics();
             InitLabelHoverEffects();
-        }
-
-        private void InitializeCoreSystems()
-        {
-            InitializeImageMatrices();
-            InitializeRecipeFolderAndRecipeFileWatcher();
-            InitializeDefectSettingsFileWatcher();
-            InitializePrSettingsFileWatcher();
-            InitializeCameraSettingsFileWatcher();
-            InitializeRecepts();
-            InitializeDefectSettings();
-            InitializePrSettings();
-            LoadPrParam();
-            InitializeCameraSettings();
 
             recognizeButton.Enabled = false;
-
             StartStop(false, true);
             LocalSettings.Instance.Save();
         }
 
         private void InitializeSettingsBindings()
         {
-            ovalityCB.CheckedChanged += AnySettingChanged;
-            inclusionCB.CheckedChanged += AnySettingChanged;
-            inpaintCB.CheckedChanged += AnySettingChanged;
-            obloyCB.CheckedChanged += AnySettingChanged;
-            underFillCb.CheckedChanged += AnySettingChanged;
-
-            okCapsSaveCb.CheckedChanged += AnySettingChanged;
-            ngCapsSaveCb.CheckedChanged += AnySettingChanged;
-        }
-
-        private void InitializePR205Status()
-        {
-            pr205IpTb.Text = Properties.Settings.Default.Settings_IpAdressPr;
-
-            int savedPort;
-            if (int.TryParse(Properties.Settings.Default.Settings_PortPr, out savedPort))
-                pr205PortTb.Text = savedPort.ToString();
-            else
-                pr205PortTb.Text = "502";
-
-            if (_modbusClient != null && _modbusClient.Connected)
-            {
-                prStatus.Text = "Подключено";
-                prStatus.ForeColor = Color.Green;
-                connectPrButton.Text = "Отключиться от ПР";
-                connectPrButton.BackColor = _connectedColor;
-            }
-            else
-            {
-                prStatus.Text = "Не подключено";
-                prStatus.ForeColor = Color.Red;
-                connectPrButton.Text = "Подключиться к ПР";
-                connectPrButton.BackColor = _disconnectedColor;
-                breakingAllowCb.Enabled = false;
-                soundSignalAllowCb.Enabled = false;
-                applyPrBreakerParamButton.Enabled = false;
-            }
-        }
-
-        private void InitializeCameraStatus()
-        {
-            if (_cam != null && _cam.Connected)
-            {
-                _cam.SendImage += GetImage;
-                camStatus.Text = "Подключено";
-                camStatus.ForeColor = Color.Green;
-                connectCameraButton.Text = "Отключиться от камеры";
-                connectCameraButton.BackColor = _connectedColor;
-                cameraIpTextBox.Text = _cam.IpAdress;
-            }
-            else
-            {
-                camStatus.Text = "Не подключено";
-                camStatus.ForeColor = Color.Red;
-                connectCameraButton.Text = "Подключиться к камере";
-                connectCameraButton.BackColor = _disconnectedColor;
-                cameraIpTextBox.Text = "Камера не выбрана на этапе инициализации";
-            }
-        }
-
-        private void InitializeCycleSystem()
-        {
-            int cycle = 0;
-            int.TryParse(Properties.Settings.Default.Settings_LastCycleTime, out cycle);
-
-            // защита от неправильного значения
-            if (cycle < cycleUpDown.Minimum)
-            {
-                cycle = (int)cycleUpDown.Minimum;
-                Properties.Settings.Default.Settings_LastCycleTime = cycle.ToString();
-                Properties.Settings.Default.Save();
-            }
-
-            CycleImageSaver.SetCycleHours(cycle);
-
-            if (cycleUpDown != null)
-                cycleUpDown.Value = cycle;
-
-            CycleImageSaver.Init();
-            currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
-        }
-
-        private void InitializeUISelections()
-        {
-            if (outputImageCmB.Items.Count > 0)
-                outputImageCmB.SelectedIndex = 0;
-        }
-
-        private void InitializeAuthorizationSystem()
-        {
-            AuthManager.Instance.RoleChanged += OnRoleChanged;
-
-            AuthManager.Instance.SetRole(Role.Operator);
-            ApplyRoleRestrictions(AuthManager.Instance.CurrentRole);
-            UpdateRoleUI(AuthManager.Instance.CurrentRole);
-
-            _roleDisplayTimer.Interval = 1000;
-            _roleDisplayTimer.Tick += (s, e) =>
-            {
-                if (AuthManager.Instance.CurrentRole == Role.Admin)
-                    timeLeftTb.Text = AuthManager.Instance.GetSecondsLeft().ToString();
-                else
-                    timeLeftTb.Text = "∞";
-            };
-
-            _roleDisplayTimer.Start();
+            var checkboxes = new[] { ovalityCB, inclusionCB, inpaintCB, obloyCB, underFillCb, okCapsSaveCb, ngCapsSaveCb };
+            foreach (var cb in checkboxes)
+                cb.CheckedChanged += AnySettingChanged;
         }
 
         private void InitializeImageMatrices()
@@ -473,396 +343,225 @@ namespace CapDefectDetector
             _imageOriginReceptParam = new Mat();
         }
 
-        private void InitializeDefectSettingsFileWatcher()
+        private void InitializeAllFileWatchers()
         {
-            if (!Directory.Exists(_folderParamDefect))
-                Directory.CreateDirectory(_folderParamDefect);
+            InitializeFileWatcher(ref _recipesWatcher, _recipesFolder, OnRecipesFolderChanged);
+            InitializeFileWatcher(ref _defectSettingsWatcher, _folderParamDefect, OnDefectSettingsFolderChanged);
+            InitializeFileWatcher(ref _prSettingsWatcher, _folderParamPr205, OnPrSettingsFolderChanged);
+            InitializeFileWatcher(ref _cameraSettingsWatcher, _folderParamCamera, OnCameraSettingsFolderChanged);
+        }
 
-            // Настройка FileSystemWatcher
-            _defectSettingsWatcher = new FileSystemWatcher
+        private void InitializeFileWatcher(ref FileSystemWatcher watcher, string folder, FileSystemEventHandler handler)
+        {
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            watcher = new FileSystemWatcher
             {
-                Path = _folderParamDefect,
+                Path = folder,
                 Filter = "*.json",
                 NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
             };
 
-            _defectSettingsWatcher.Created += OnDefectSettingsFolderChanged;
-            _defectSettingsWatcher.Deleted += OnDefectSettingsFolderChanged;
-            _defectSettingsWatcher.Renamed += OnDefectSettingsFolderChanged;
+            watcher.Created += handler;
+            watcher.Deleted += handler;
+            watcher.Renamed += new RenamedEventHandler(handler);
+            watcher.EnableRaisingEvents = true;
+        }
 
-            _defectSettingsWatcher.EnableRaisingEvents = true;
+        // Универсальный метод для настройки ComboBox
+        private void SetupComboBox<T>(ComboBox cb, Dictionary<string, T> dict, string lastSelectedKey)
+        {
+            cb.Items.Clear();
+            foreach (var key in dict.Keys)
+                cb.Items.Add(key);
+
+            if (dict.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(lastSelectedKey) && cb.Items.Contains(lastSelectedKey))
+                    cb.SelectedItem = lastSelectedKey;
+                else
+                    cb.SelectedIndex = 0;
+            }
+        }
+
+        private void InitializeAllSettings()
+        {
+            // Рецепты
+            LoadRecipes();
+            SetupComboBox(receptCapsCmB, _recipes, Properties.Settings.Default.Settings_LastRecipeFileName);
+
+            // Настройки дефектов
+            LoadDefectSettings();
+            SetupComboBox(paramDefCmB, _defectSettings, Properties.Settings.Default.Settings_LastDefectSettingsFileName);
+
+            // Настройки ПР205
+            LoadPrSettings();
+            SetupComboBox(prSettingsCmB, _prSettings, Properties.Settings.Default.Settings_LastPrSettingsFileName);
+
+            // Настройки камеры
+            LoadCameraSettings();
+            SetupComboBox(cameraSettingsCmB, _cameraSettings, Properties.Settings.Default.Settings_LastCameraSettingsFileName);
+        }
+
+        private void UpdateConnectionStatuses()
+        {
+            UpdatePRConnectionUI(_modbusClient?.Connected == true);
+            UpdateCameraConnectionUI();
+        }
+
+        private void InitializeCycleSystem()
+        {
+            int cycle = 0;
+            int.TryParse(Properties.Settings.Default.Settings_LastCycleTime, out cycle);
+
+            if (cycle < cycleUpDown.Minimum)
+            {
+                cycle = (int)cycleUpDown.Minimum;
+                Properties.Settings.Default.Settings_LastCycleTime = cycle.ToString();
+                Properties.Settings.Default.Save();
+            }
+
+            CycleImageSaver.SetCycleHours(cycle);
+            cycleUpDown.Value = cycle;
+            CycleImageSaver.Init();
+            currentFolderTb.Text = CycleImageSaver.CurrentCycleFolder;
+        }
+
+        private void InitializeUISelections()
+        {
+            if (outputImageCmB.Items.Count > 0)
+                outputImageCmB.SelectedIndex = 0;
+        }
+
+        private void InitializeAuthorizationSystem()
+        {
+            AuthManager.Instance.RoleChanged += OnRoleChanged;
+            AuthManager.Instance.SetRole(Role.Operator);
+            ApplyRoleRestrictions(AuthManager.Instance.CurrentRole);
+            UpdateRoleUI(AuthManager.Instance.CurrentRole);
+
+            _roleDisplayTimer.Interval = 1000;
+            _roleDisplayTimer.Tick += (s, e) =>
+            {
+                timeLeftTb.Text = AuthManager.Instance.CurrentRole == Role.Admin
+                    ? AuthManager.Instance.GetSecondsLeft().ToString()
+                    : "∞";
+            };
+            _roleDisplayTimer.Start();
+        }
+
+        #region Обработчики изменения папок (Watchers)
+
+        private void OnRecipesFolderChanged(object sender, FileSystemEventArgs e)
+        {
+            if (InvokeRequired) { Invoke(new Action(() => ReloadRecipes())); }
+            else { ReloadRecipes(); }
         }
 
         private void OnDefectSettingsFolderChanged(object sender, FileSystemEventArgs e)
         {
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => ReloadDefectSettings()));
-            }
-            else
-            {
-                ReloadDefectSettings();
-            }
-        }
-
-        // Метод для обновления комбобокса
-        private void ReloadDefectSettings()
-        {
-            LoadDefectSettings();
-
-            paramDefCmB.Items.Clear();
-            foreach (string defectSettingName in _defectSettings.Keys)
-                paramDefCmB.Items.Add(defectSettingName);
-        }
-
-        private void InitializePrSettingsFileWatcher()
-        {
-            if (!Directory.Exists(_folderParamPr205))
-                Directory.CreateDirectory(_folderParamPr205);
-            // Настройка FileSystemWatcher
-            _prSettingsWatcher = new FileSystemWatcher
-            {
-                Path = _folderParamPr205,
-                Filter = "*.json",
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
-            };
-            _prSettingsWatcher.Created += OnPrSettingsFolderChanged;
-            _prSettingsWatcher.Deleted += OnPrSettingsFolderChanged;
-            _prSettingsWatcher.Renamed += OnPrSettingsFolderChanged;
-            _prSettingsWatcher.EnableRaisingEvents = true;
+            if (InvokeRequired) { Invoke(new Action(() => ReloadDefectSettings())); }
+            else { ReloadDefectSettings(); }
         }
 
         private void OnPrSettingsFolderChanged(object sender, FileSystemEventArgs e)
         {
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => ReloadPrSettings()));
-            }
-            else
-            {
-                ReloadPrSettings();
-            }
-        }
-
-        // Метод для обновления комбобокса
-        private void ReloadPrSettings()
-        {
-            LoadPrSettings();
-
-            prSettingsCmB.Items.Clear();
-            foreach (string prSettingsName in _prSettings.Keys)
-                prSettingsCmB.Items.Add(prSettingsName);
-        }
-
-        private void InitializeRecipeFolderAndRecipeFileWatcher()
-        {
-            currentReceptFolderTb.Text = _recipesFolder;
-
-            if (!Directory.Exists(_recipesFolder))
-                Directory.CreateDirectory(_recipesFolder);
-
-            // Настройка FileSystemWatcher
-            _recipesWatcher = new FileSystemWatcher
-            {
-                Path = _recipesFolder,
-                Filter = "*.json",
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
-            };
-
-            _recipesWatcher.Created += OnRecipesFolderChanged;
-            _recipesWatcher.Deleted += OnRecipesFolderChanged;
-            _recipesWatcher.Renamed += OnRecipesFolderChanged;
-
-            _recipesWatcher.EnableRaisingEvents = true;
-        }
-
-        private void OnRecipesFolderChanged(object sender, FileSystemEventArgs e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => ReloadRecipes()));
-            }
-            else
-            {
-                ReloadRecipes();
-            }
-        }
-
-        // Метод для обновления комбобокса
-        private void ReloadRecipes()
-        {
-            LoadRecipes();
-
-            receptCapsCmB.Items.Clear();
-            foreach (string recipeName in _recipes.Keys)
-                receptCapsCmB.Items.Add(recipeName);
-        }
-
-        private void InitializeCameraSettingsFileWatcher()
-        {
-            if (!Directory.Exists(_folderParamCamera))
-                Directory.CreateDirectory(_folderParamCamera);
-            // Настройка FileSystemWatcher
-            _cameraSettingsWatcher = new FileSystemWatcher
-            {
-                Path = _folderParamCamera,
-                Filter = "*.json",
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
-            };
-            _cameraSettingsWatcher.Created += OnCameraSettingsFolderChanged;
-            _cameraSettingsWatcher.Deleted += OnCameraSettingsFolderChanged;
-            _cameraSettingsWatcher.Renamed += OnCameraSettingsFolderChanged;
-            _cameraSettingsWatcher.EnableRaisingEvents = true;
+            if (InvokeRequired) { Invoke(new Action(() => ReloadPrSettings())); }
+            else { ReloadPrSettings(); }
         }
 
         private void OnCameraSettingsFolderChanged(object sender, FileSystemEventArgs e)
         {
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => ReloadCameraSettings()));
-            }
-            else
-            {
-                ReloadCameraSettings();
-            }
+            if (InvokeRequired) { Invoke(new Action(() => ReloadCameraSettings())); }
+            else { ReloadCameraSettings(); }
         }
 
-        // Метод для обновления комбобокса
+        #endregion
+
+        #region Методы перезагрузки настроек
+
+        private void ReloadRecipes()
+        {
+            LoadRecipes();
+            receptCapsCmB.Items.Clear();
+            foreach (var name in _recipes.Keys)
+                receptCapsCmB.Items.Add(name);
+        }
+
+        private void ReloadDefectSettings()
+        {
+            LoadDefectSettings();
+            paramDefCmB.Items.Clear();
+            foreach (var name in _defectSettings.Keys)
+                paramDefCmB.Items.Add(name);
+        }
+
+        private void ReloadPrSettings()
+        {
+            LoadPrSettings();
+            prSettingsCmB.Items.Clear();
+            foreach (var name in _prSettings.Keys)
+                prSettingsCmB.Items.Add(name);
+        }
+
         private void ReloadCameraSettings()
         {
             LoadCameraSettings();
-
             cameraSettingsCmB.Items.Clear();
-            foreach (string cameraSettingsName in _cameraSettings.Keys)
-                cameraSettingsCmB.Items.Add(cameraSettingsName);
+            foreach (var name in _cameraSettings.Keys)
+                cameraSettingsCmB.Items.Add(name);
         }
 
-        private void LoadPrParam()
-        {
-            try
-            {
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    _modbusClient.ApplySettings();
-                }
-            }
-            catch (TaskCanceledException)
-            {
+        #endregion
 
-            }
-            catch (Exception ex)
-            {
-                ErrorLogger.Log(ex, $"Ошибка отправки настроек в ПР205 при инициалзации.");
-            }
-        }
-
-        private void SendStopSignalsAndSemaphoreToPLC()
-        {
-            try
-            {
-                if (_modbusClient != null && _modbusClient.Connected)
-                {
-                    // Сбрасываем breakerAllowRegister
-                    _modbusClient.DenyBreaker();
-                    _modbusClient.DenySoundSignal();
-
-                    // Сбрасываем startRecognizeProcessing
-                    if (!_isImageLoaded)
-                        _modbusClient.StopRecognizeProcessing();
-
-                    _modbusClient.TurnOnOrangeSemaphore();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Ошибка отправки в PLC: " + ex.Message);
-            }
-        }
-
-        private void InitializeRecepts()
-        {
-            LoadRecipes();
-
-            receptCapsCmB.Items.Clear();
-            foreach (string recipe in _recipes.Keys)
-                receptCapsCmB.Items.Add(recipe);
-
-            if (_recipes.Count > 0)
-            {
-                string lastRecipeName = Properties.Settings.Default.Settings_LastRecipeFileName;
-
-                if (!string.IsNullOrEmpty(lastRecipeName) && receptCapsCmB.Items.Contains(lastRecipeName))
-                {
-                    receptCapsCmB.SelectedItem = lastRecipeName;
-                }
-                else
-                {
-                    // иначе выбираем первый
-                    receptCapsCmB.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void InitializeDefectSettings()
-        {
-            LoadDefectSettings();
-
-            paramDefCmB.Items.Clear();
-            foreach (string defectSettings in _defectSettings.Keys)
-                paramDefCmB.Items.Add(defectSettings);
-
-            if (_defectSettings.Count > 0)
-            {
-                string lastDefectSettingsName = Properties.Settings.Default.Settings_LastDefectSettingsFileName;
-
-                if (!string.IsNullOrEmpty(lastDefectSettingsName) && paramDefCmB.Items.Contains(lastDefectSettingsName))
-                {
-                    paramDefCmB.SelectedItem = lastDefectSettingsName;
-                }
-                else
-                {
-                    // иначе выбираем первый
-                    paramDefCmB.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void InitializePrSettings()
-        {
-            LoadPrSettings();
-
-            prSettingsCmB.Items.Clear();
-            foreach (string prSettings in _prSettings.Keys)
-                prSettingsCmB.Items.Add(prSettings);
-
-            if (_prSettings.Count > 0)
-            {
-                string lastPrSettingsName = Properties.Settings.Default.Settings_LastPrSettingsFileName;
-                if (!string.IsNullOrEmpty(lastPrSettingsName) && prSettingsCmB.Items.Contains(lastPrSettingsName))
-                {
-                    prSettingsCmB.SelectedItem = lastPrSettingsName;
-                }
-                else
-                {
-                    // иначе выбираем первый
-                    prSettingsCmB.SelectedIndex = 0;
-                }
-            }
-        }
-
-        private void InitializeCameraSettings()
-        {
-            LoadCameraSettings();
-
-            cameraSettingsCmB.Items.Clear();
-            foreach (string cameraSettings in _cameraSettings.Keys)
-                cameraSettingsCmB.Items.Add(cameraSettings);
-
-            if (_cameraSettings.Count > 0)
-            {
-                string lastCameraSettings = Properties.Settings.Default.Settings_LastCameraSettingsFileName;
-                if (!string.IsNullOrEmpty(lastCameraSettings) && cameraSettingsCmB.Items.Contains(lastCameraSettings))
-                {
-                    cameraSettingsCmB.SelectedItem = lastCameraSettings;
-                }
-                else
-                {
-                    // иначе выбираем первый
-                    cameraSettingsCmB.SelectedIndex = 0;
-                }
-            }
-        }
+        #region Загрузка настроек из файлов
 
         private void LoadRecipes()
         {
             _recipes.Clear();
-
-            if (!Directory.Exists(_recipesFolder))
-                Directory.CreateDirectory(_recipesFolder);
-
-            string[] files = Directory.GetFiles(_recipesFolder, "*.json");
-
-            foreach (string file in files)
-            {
-                string name = Path.GetFileNameWithoutExtension(file);
-                string json = File.ReadAllText(file);
-
-                CapRecipe recipe = JsonConvert.DeserializeObject<CapRecipe>(json);
-                if (recipe != null)
-                    _recipes[name] = recipe;
-            }
+            LoadSettingsFromFolder(_recipesFolder, _recipes, (json) => JsonConvert.DeserializeObject<CapRecipe>(json));
         }
 
         private void LoadDefectSettings()
         {
             _defectSettings.Clear();
-
-            if (!Directory.Exists(_folderParamDefect))
-                Directory.CreateDirectory(_folderParamDefect);
-
-            string[] files = Directory.GetFiles(_folderParamDefect, "*.json");
-
-            foreach (string file in files)
-            {
-                string name = Path.GetFileNameWithoutExtension(file);
-                string json = File.ReadAllText(file);
-
-                DefectSettings defectSettings = JsonConvert.DeserializeObject<DefectSettings>(json);
-                if (defectSettings != null)
-                    _defectSettings[name] = defectSettings;
-            }
+            LoadSettingsFromFolder(_folderParamDefect, _defectSettings, (json) => JsonConvert.DeserializeObject<DefectSettings>(json));
         }
 
         private void LoadPrSettings()
         {
             _prSettings.Clear();
-
-            if (!Directory.Exists(_folderParamPr205))
-                Directory.CreateDirectory(_folderParamPr205);
-
-            string[] files = Directory.GetFiles(_folderParamPr205, "*.json");
-
-            foreach (string file in files)
-            {
-                string name = Path.GetFileNameWithoutExtension(file);
-                string json = File.ReadAllText(file);
-
-                ModuleIOSettings prSettings = JsonConvert.DeserializeObject<ModuleIOSettings>(json);
-                if (prSettings != null)
-                    _prSettings[name] = prSettings;
-            }
+            LoadSettingsFromFolder(_folderParamPr205, _prSettings, (json) => JsonConvert.DeserializeObject<ModuleIOSettings>(json));
         }
 
         private void LoadCameraSettings()
         {
             _cameraSettings.Clear();
+            LoadSettingsFromFolder(_folderParamCamera, _cameraSettings, (json) => JsonConvert.DeserializeObject<HikCameraSettings>(json));
+        }
 
-            if (!Directory.Exists(_folderParamCamera))
-                Directory.CreateDirectory(_folderParamCamera);
+        private void LoadSettingsFromFolder<T>(string folder, Dictionary<string, T> dict, Func<string, T> deserialize)
+        {
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
 
-            string[] files = Directory.GetFiles(_folderParamCamera, "*.json");
-
-            foreach (string file in files)
+            foreach (string file in Directory.GetFiles(folder, "*.json"))
             {
                 string name = Path.GetFileNameWithoutExtension(file);
                 string json = File.ReadAllText(file);
-
-                HikCameraSettings cameraSettings = JsonConvert.DeserializeObject<HikCameraSettings>(json);
-                if (cameraSettings != null)
-                    _cameraSettings[name] = cameraSettings;
+                T item = deserialize(json);
+                if (item != null)
+                    dict[name] = item;
             }
         }
 
-        private void InitializeStatistics()
-        {
-            //_statisticsManager = new StatisticsManager(statisticsDataGridView);
-        }
+        #endregion
 
         private void InitLabelHoverEffects()
         {
             _labelNormalFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
             _labelHoverFont = new Font("Segoe UI", 8.25F, FontStyle.Bold | FontStyle.Underline);
-
             ApplyHover(ovalityParamLb, inclusionParamLb, inpaintParamLb, obloyParamLb, underfillParamLb);
         }
 
@@ -873,14 +572,26 @@ namespace CapDefectDetector
                 label.Cursor = Cursors.Hand;
                 label.ForeColor = _labelNormalColor;
                 label.Font = _labelNormalFont;
-
-                label.MouseEnter -= Label_MouseEnter;
-                label.MouseLeave -= Label_MouseLeave;
-
                 label.MouseEnter += Label_MouseEnter;
                 label.MouseLeave += Label_MouseLeave;
             }
         }
+
+        private void InitializeModuleInitSettings()
+        {
+            try
+            {
+                if (_modbusClient?.Connected == true)
+                {
+                    _modbusClient.ApplyInitialSettings();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка отправки в PLC: " + ex.Message);
+            }
+        }
+
         #endregion
 
         #region Обработчики событий UI
@@ -895,11 +606,9 @@ namespace CapDefectDetector
                 {
                     _cam.SendImage -= GetImage;
                     _cam.Close();
-
                     _cameraConnected = false;
                     connectCameraButton.Text = "Подключиться к камере";
                     connectCameraButton.BackColor = _disconnectedColor;
-
                     camStatus.Text = "Не подключено";
                     camStatus.ForeColor = Color.Red;
 
@@ -916,12 +625,9 @@ namespace CapDefectDetector
                         _cameraConnected = true;
                         connectCameraButton.Text = "Отключиться от камеры";
                         connectCameraButton.BackColor = _connectedColor;
-
                         camStatus.Text = "Подключено";
                         camStatus.ForeColor = Color.Green;
-
                         startStreamButton.Enabled = true;
-
                         ErrorLogger.Log(new Exception("Камера успешно подключена"), "connectCameraButton_Click");
                     }
                     else
@@ -929,12 +635,9 @@ namespace CapDefectDetector
                         _cameraConnected = false;
                         connectCameraButton.Text = "Подключиться к камере";
                         connectCameraButton.BackColor = _disconnectedColor;
-
                         camStatus.Text = "Не подключено";
                         camStatus.ForeColor = Color.Red;
-
                         startStreamButton.Enabled = false;
-
                         ErrorLogger.Log(new Exception("Не удалось подключиться к камере"), "connectCameraButton_Click");
                     }
                 }
@@ -1154,7 +857,6 @@ namespace CapDefectDetector
 
                 _isStreamCam = true;
 
-                //ApplyRecognitionParameters();
 
                 if (AuthManager.Instance.CurrentRole == Role.Operator)
                 {
