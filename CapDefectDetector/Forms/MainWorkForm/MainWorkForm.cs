@@ -3041,7 +3041,6 @@ namespace CapDefectDetector
         {
             try
             {
-                //ApplyRecognitionParameters();
 
                 if (_imageForTest == null || _imageForTest.Empty())
                 {
@@ -3229,7 +3228,7 @@ namespace CapDefectDetector
             if (_editableCapContourUtils.GetIsBlackOrBrown())
             {
                 contour = ProcessBlackOrBrown();
-                contour = _editableCapContourUtils.CorrectContour(contour, _editableCapContourUtils.GetContourCorrectionColor());
+                contour = _editableCapContourUtils.CorrectContour(contour, _editableCapContourUtils.GetContourCorrectionBlackOrBrown());
                 Mat result = DrawContour(contour);
                 contourCorrectionBlackOrBrownReceptParamSmallPb.Image = BitmapConverter.ToBitmap(result);
                 resultContourBlackOrBrownSmallPb.Image = BitmapConverter.ToBitmap(result);
@@ -3238,7 +3237,7 @@ namespace CapDefectDetector
             else
             {
                 contour = ProcessColor();
-                contour = _editableCapContourUtils.CorrectContour(contour, _editableCapContourUtils.GetContourCorrectionBlackOrBrown());
+                contour = _editableCapContourUtils.CorrectContour(contour, _editableCapContourUtils.GetContourCorrectionColor());
                 Mat result = DrawContour(contour);
                 contourCorrectionColorReceptParamSmallPb.Image = BitmapConverter.ToBitmap(result);
                 resultContourColorSmallPb.Image = BitmapConverter.ToBitmap(result);
@@ -3335,7 +3334,7 @@ namespace CapDefectDetector
         {
             if (_isApplyingRecipe) return;
 
-            _editableCapContourUtils.SetContourCorrectionColor((int)contourCorrectionColorUpDown.Value);
+            _editableCapContourUtils.SetContourCorrectionColor((float)contourCorrectionColorUpDown.Value);
             RecomputeAll();
         }
 

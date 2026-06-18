@@ -11,6 +11,8 @@ namespace CapDefectDetector.DTO.DefectSettings
     {
         public double CapFlashOffset { get; set; } = 3.0;
 
+        public double NoiseContourArea { get; set; } = 10.0;
+
         public MorphShapes MorphShape { get; set; } = MorphShapes.Rect;
         public MorphTypes MorphType { get; set; } = MorphTypes.Erode;
         public int KernelSize { get; set; } = 3;

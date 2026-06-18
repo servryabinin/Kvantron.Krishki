@@ -10,6 +10,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
     public class CapObloyDefectUtils
     {
         private double _capFlashOffset;
+        private double _noiseContourArea;
         private int _morphIterations;
         private MorphShapes _morphShape;
         private MorphTypes _morphType;
@@ -21,6 +22,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
         public CapObloyDefectUtils(ObloyDefectSettings settings)
         {
             SetCapFlashOffset(settings.CapFlashOffset);
+            SetNoiseContourArea(settings.NoiseContourArea);
             SetKernelSize(settings.KernelSize);
             SetMorphShape(settings.MorphShape);
             SetMorphType(settings.MorphType);
@@ -31,6 +33,8 @@ namespace CapDefectDetector.ImageProcessing.Utils
         }
 
         public void SetCapFlashOffset(double value) => _capFlashOffset = value;
+
+        public void SetNoiseContourArea(double value) => _noiseContourArea = value;
 
         public void SetMorphShape(MorphShapes value)
         {
@@ -55,6 +59,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             return new ObloyDefectSettings
             {
                 CapFlashOffset = _capFlashOffset,
+                NoiseContourArea = _noiseContourArea,
                 MorphShape = _morphShape,
                 MorphType = _morphType,
                 KernelSize = _kernelSize,
@@ -88,15 +93,17 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
                 CreateCapMask(capRadiusMask, image, center, radius);
 
-                Mat andResult = ApplyCapMask(capRadiusMask, blurChannel2);
+                Mat filteredBlur = FilterNoise(blurChannel2);
+
+                Mat andResult = ApplyCapMask(capRadiusMask, filteredBlur);
 
                 Mat morphInput = ApplyMorphology(andResult);
 
-                var (contours, pixCount) = Analyze(morphInput);
+                var validContours = Analyze(morphInput);
 
-                bool isDefect = isObloyExist(pixCount);
+                bool isDefect = isObloyExist(validContours);
 
-                DrawIfNeeded(isDefect, drawFrame, contours);
+                DrawIfNeeded(isDefect, drawFrame, validContours);
 
                 return isDefect;
             }
@@ -142,45 +149,50 @@ namespace CapDefectDetector.ImageProcessing.Utils
             return morphed;
         }
 
-        public (Point[][] contours, int pixCount) Analyze(Mat input)
+        public List<Point[]> Analyze(Mat input)
         {
             Cv2.FindContours(
                 input,
                 out Point[][] contours,
                 out _,
                 RetrievalModes.External,
-                ContourApproximationModes.ApproxNone);
+                ContourApproximationModes.ApproxSimple);
 
-            int pixCount = Cv2.CountNonZero(input);
+            var validContours = new List<Point[]>();
 
-            return (contours, pixCount);
+            foreach (var c in contours)
+            {
+                double area = Cv2.ContourArea(c);
+
+                if (area >= _minAreaObloy)
+                {
+                    validContours.Add(c);
+                }
+            }
+
+            return validContours;
         }
 
-        public bool isObloyExist (int pixCount)
+        public bool isObloyExist(List<Point[]> validContours)
         {
-            return pixCount > _minAreaObloy;
+            return validContours.Count > 0;
         }
-                    
-        public void DrawIfNeeded(bool isDefect, Mat drawFrame, Point[][] contours)
+
+        public void DrawIfNeeded(bool isDefect, Mat drawFrame, List<Point[]> validContours)
         {
             if (!isDefect) return;
 
-            Cv2.DrawContours(drawFrame, contours, -1, new Scalar(0, 0, 255), 2);
+            Cv2.DrawContours(drawFrame, validContours, -1, Scalar.Red, 2);
         }
 
-        public Point ComputeCenter(Point[] capContour)
+        public Point ComputeCenter(Point[] contour)
         {
-            double x = 0, y = 0;
+            var m = Cv2.Moments(contour);
 
-            foreach (var pt in capContour)
-            {
-                x += pt.X;
-                y += pt.Y;
-            }
+            int cx = (int)(m.M10 / m.M00);
+            int cy = (int)(m.M01 / m.M00);
 
-            return new Point(
-                (int)(x / capContour.Length),
-                (int)(y / capContour.Length));
+            return new Point(cx, cy);
         }
 
         public double ComputeRadius(Point[] capContour, Point center)
@@ -204,6 +216,33 @@ namespace CapDefectDetector.ImageProcessing.Utils
                 center,
                 (float)(radius + 3f),
                 (float)(radius + 3f + _capFlashOffset));
+        }
+
+        public Mat FilterNoise(Mat blur2)
+        {
+            Mat filtered = Mat.Zeros(blur2.Size(), MatType.CV_8UC1);
+
+            Cv2.FindContours(
+                blur2,
+                out Point[][] contours,
+                out _,
+                RetrievalModes.External,
+                ContourApproximationModes.ApproxSimple);
+
+            foreach (var contour in contours)
+            {
+                if (Cv2.ContourArea(contour) < _noiseContourArea)
+                    continue;
+
+                Cv2.DrawContours(
+                    filtered,
+                    new[] { contour },
+                    -1,
+                    Scalar.White,
+                    -1);
+            }
+
+            return filtered;
         }
 
         public void GetIdealCapMask(Mat mask, Point center, float innerRadius, float outerRadius)

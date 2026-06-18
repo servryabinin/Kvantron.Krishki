@@ -64,6 +64,7 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm
             var s = _editableObloyUtils.GetSettings();
 
             obloySettings_capFlashOffsetNumUd.Value = (decimal)s.CapFlashOffset;
+            obloySettings_noiseContourAreaNumUd.Value = (decimal)s.NoiseContourArea;
             obloySettings_obloyMorphTypeCb.SelectedItem = s.MorphType.ToString();
             obloySettings_obloyKernelSizeNumUd.Value = (decimal)s.KernelSize;
             obloySettings_obloyMorphShapeCb.SelectedItem = s.MorphShape.ToString();
@@ -121,22 +122,29 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm
 
                 Mat capOverlay = CreateCapOverlay(drawFrame, capMask);
                 obloySettings_obloyCapMaskPb.Image = BitmapConverter.ToBitmap(capOverlay);
-                obloySettings_obloyBlurInputPb.Image = BitmapConverter.ToBitmap(_blurChannel2);
 
-                Mat andResult = _editableObloyUtils.ApplyCapMask(capMask, _blurChannel2);
+                obloySettings_obloyBlurInputPb.Image =BitmapConverter.ToBitmap(_blurChannel2);
+
+                Mat filteredBlur = _editableObloyUtils.FilterNoise(_blurChannel2);
+
+                obloySettings_obloyFilteredBlurPb.Image = BitmapConverter.ToBitmap(filteredBlur);
+
+                Mat andResult = _editableObloyUtils.ApplyCapMask(capMask, filteredBlur);
+
                 obloySettings_obloyAfterAndPb.Image = BitmapConverter.ToBitmap(andResult);
 
                 Mat morph = _editableObloyUtils.ApplyMorphology(andResult);
+
                 obloySettings_obloyMorphPb.Image =BitmapConverter.ToBitmap(morph);
 
-                var (contours, pixCount) = _editableObloyUtils.Analyze(morph);
-                _isObloy = _editableObloyUtils.isObloyExist(pixCount);
+                var validContours = _editableObloyUtils.Analyze(morph);
+                _isObloy = _editableObloyUtils.isObloyExist(validContours);
                 Mat contourView = drawFrame.Clone();
                 if (_isObloy)
                 {
-                    _editableObloyUtils.DrawIfNeeded(_isObloy, contourView, contours);
+                    _editableObloyUtils.DrawIfNeeded(_isObloy, contourView, validContours);
                 }
-                obloySettings_obloyContoursPb.Image =BitmapConverter.ToBitmap(contourView);
+                obloySettings_obloyContoursPb.Image = BitmapConverter.ToBitmap(contourView);
 
                 Mat result = contourView.Clone();
                 obloySettings_obloyResultPb.Image = BitmapConverter.ToBitmap(result);
@@ -177,6 +185,16 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm
                 return;
 
             _editableObloyUtils.SetCapFlashOffset((double)obloySettings_capFlashOffsetNumUd.Value);
+
+            RunPipeline();
+        }
+
+        private void obloySettings_noiseContourAreaNumUd_ValueChanged(object sender, EventArgs e)
+        {
+            if (!obloySettings_noiseContourAreaNumUd.Focused)
+                return;
+
+            _editableObloyUtils.SetNoiseContourArea((double)obloySettings_noiseContourAreaNumUd.Value);
 
             RunPipeline();
         }
@@ -255,6 +273,7 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm
             var s = _editableObloyUtils.GetSettings();
 
             _sourceObloyUtils.SetCapFlashOffset(s.CapFlashOffset);
+            _sourceObloyUtils.SetNoiseContourArea(s.NoiseContourArea);
             _sourceObloyUtils.SetMorphShape(s.MorphShape);
             _sourceObloyUtils.SetMorphType(s.MorphType);
             _sourceObloyUtils.SetKernelSize(s.KernelSize);
