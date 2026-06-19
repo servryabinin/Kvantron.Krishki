@@ -93,7 +93,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
                 token.ThrowIfCancellationRequested();
 
-                Mat step1 = DrawSearchArea(drawFrame, capContour);
+                DrawSearchArea(drawFrame, capContour);
 
                 Mat step2 = AdaptiveBinarizeStep(gray, capContour);
 
@@ -110,7 +110,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
             }
         }
 
-        public Mat DrawSearchArea(Mat drawFrame, Point[] capContour)
+        public void DrawSearchArea(Mat drawFrame, Point[] capContour)
         {
             RotatedRect ellipse = Cv2.FitEllipse(capContour);
 
@@ -118,17 +118,15 @@ namespace CapDefectDetector.ImageProcessing.Utils
             float radius = ComputeRadius(ellipse);
 
             Cv2.Circle(drawFrame, (Point)center, (int)radius, new Scalar(255, 0, 0), 2);
-
-            return drawFrame;
         }
 
         public Mat AdaptiveBinarizeStep(Mat gray, Point[] capContour)
         {
             RotatedRect ellipse = Cv2.FitEllipse(capContour);
 
-            Mat mask = CreateMask(gray.Size(), ellipse.Center, ComputeRadius(ellipse));
+            using Mat mask = CreateMask(gray.Size(), ellipse.Center, ComputeRadius(ellipse));
 
-            Mat cropped = new Mat();
+            using Mat cropped = new Mat();
             gray.CopyTo(cropped, mask);
 
             Mat binary = new Mat();

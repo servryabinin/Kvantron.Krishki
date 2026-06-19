@@ -374,9 +374,9 @@
             label9.AutoSize = true;
             label9.Location = new Point(6, 39);
             label9.Name = "label9";
-            label9.Size = new Size(16, 15);
+            label9.Size = new Size(106, 15);
             label9.TabIndex = 10;
-            label9.Text = "1:";
+            label9.Text = "Обесцветить фон:";
             // 
             // underfillSettings_UnderFillcapsColorNumUd
             // 
@@ -405,9 +405,9 @@
             label10.AutoSize = true;
             label10.Location = new Point(6, 69);
             label10.Name = "label10";
-            label10.Size = new Size(16, 15);
+            label10.Size = new Size(91, 15);
             label10.TabIndex = 11;
-            label10.Text = "2:";
+            label10.Text = "Норм. яркость:";
             // 
             // label11
             // 
@@ -415,9 +415,9 @@
             label11.AutoSize = true;
             label11.Location = new Point(6, 99);
             label11.Name = "label11";
-            label11.Size = new Size(16, 15);
+            label11.Size = new Size(87, 15);
             label11.TabIndex = 12;
-            label11.Text = "3:";
+            label11.Text = "Сохр. деталей:";
             // 
             // underfillSettings_decolorizeBackgroundChb
             // 

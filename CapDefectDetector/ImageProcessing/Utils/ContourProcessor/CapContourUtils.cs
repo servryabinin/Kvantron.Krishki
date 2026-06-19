@@ -6,7 +6,7 @@ using Size = OpenCvSharp.Size;
 
 namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
 {
-    public class CapContourUtils
+    public class CapContourUtils : IDisposable
     {
         #region Ненастраиваемые поля
         private const byte GREEN_THRESHOLD = 40;
@@ -36,6 +36,10 @@ namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
         #region Морфология
         private Mat _element1;
         private Mat _element2;
+        #endregion
+
+        #region Осовобождение памяти
+        private bool _disposed;
         #endregion
 
         public CapContourUtils(CapRecipe settings)
@@ -169,8 +173,8 @@ namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
             if (gray.Empty() || image.Empty())
                 return null;
 
-            Mat sat = ApplySaturationStep(image, _saturationColor);
-            Mat caps = ApplyCapsColorStep(sat, _capsColor, _isColoredCap, _isYellowCap, _isGreenCap);
+            using Mat sat = ApplySaturationStep(image, _saturationColor);
+            using Mat caps = ApplyCapsColorStep(sat, _capsColor, _isColoredCap, _isYellowCap, _isGreenCap);
             Mat[] channels = ApplyWindowStep(caps, _window);
             ApplyMorphologyStep(channels, _element1, _element2);
             Point[] contour = GetMaxContour(channels[2]);
@@ -189,9 +193,9 @@ namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
             if (image.Empty())
                 return null;
 
-            Mat sat = ApplySaturationStep(image, _saturationBlackOrBrown);
-            Mat gray = ApplyGrayStep(sat);
-            Mat blurred = ApplyMedianStep(gray, _medianFilter);
+            using Mat sat = ApplySaturationStep(image, _saturationBlackOrBrown);
+            using Mat gray = ApplyGrayStep(sat);
+            using Mat blurred = ApplyMedianStep(gray, _medianFilter);
             Mat edges = ApplyCannyStep(blurred, _cannyThreshold);
             Point[] contour = ApplyEllipseStep(edges);
             contour = CorrectContour(contour, _contourCorrectionBlackOrBrown);
@@ -377,40 +381,34 @@ namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
             return SimulateCameraSaturation(input, saturation);
         }
 
-        public Mat SimulateCameraSaturation(Mat img, int saturation)
+        public static Mat SimulateCameraSaturation(Mat img, int saturation)
         {
-            if (img.Empty())
+            if (img == null || img.Empty())
                 return null;
 
             float koeff = saturation / 128.0f;
 
-            Mat imgHSV = new Mat();
-
-            Cv2.CvtColor(img, imgHSV, ColorConversionCodes.BGR2HSV);
-
-            Mat[] hsv = Cv2.Split(imgHSV);
-
-            Mat h = hsv[0];
-            Mat s = hsv[1];
-            Mat v = hsv[2];
+            using Mat hsv = new Mat();
+            Cv2.CvtColor(img, hsv, ColorConversionCodes.BGR2HSV);
 
             unsafe
             {
-                byte* satPtr = (byte*)s.DataPointer;
-                int total = s.Rows * s.Cols;
+                byte* data = hsv.DataPointer;
+                int total = hsv.Rows * hsv.Cols;
+
                 for (int i = 0; i < total; i++)
                 {
-                    float corrected = koeff * satPtr[i];
-                    if (corrected > 255f)
-                        corrected = 255f;
-                    satPtr[i] = (byte)corrected;
+                    int idx = i * 3;
+
+                    float val = data[idx + 1] * koeff;
+                    data[idx + 1] = (byte)Math.Min(255f, val);
                 }
             }
 
-            Cv2.Merge(new Mat[] { h, s, v }, imgHSV);
-            Mat imgSat = new Mat();
-            Cv2.CvtColor(imgHSV, imgSat, ColorConversionCodes.HSV2BGR);
-            return imgSat;
+            Mat result = new Mat();
+            Cv2.CvtColor(hsv, result, ColorConversionCodes.HSV2BGR);
+
+            return result;
         }
 
         public Point[] CorrectContour(Point[] contour, float threshold)
@@ -449,6 +447,19 @@ namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
             }
 
             return fixedContour.ToArray();
+        }
+        #endregion
+
+        #region Освобождение памяти
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            _element1?.Dispose();
+            _element2?.Dispose();
+
+            _disposed = true;
         }
         #endregion
     }

@@ -114,8 +114,8 @@ namespace CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm
                 inclusionSettings_inclusionOriginalPb.Image = BitmapConverter.ToBitmap(drawFrame);
 
                 Mat croppedView = drawFrame.Clone();
-                Mat step1 = _editableInclusionUtils.DrawSearchArea(croppedView, _contour);
-                inclusionSettings_inclusionCroppedPb.Image = BitmapConverter.ToBitmap(step1);
+                _editableInclusionUtils.DrawSearchArea(croppedView, _contour);
+                inclusionSettings_inclusionCroppedPb.Image = BitmapConverter.ToBitmap(croppedView);
 
                 Mat gray = new Mat();
                 Cv2.CvtColor(drawFrame, gray, ColorConversionCodes.BGR2GRAY);

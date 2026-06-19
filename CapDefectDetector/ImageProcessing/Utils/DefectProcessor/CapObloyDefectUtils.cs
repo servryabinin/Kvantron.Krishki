@@ -7,7 +7,7 @@ using Size = OpenCvSharp.Size;
 
 namespace CapDefectDetector.ImageProcessing.Utils
 {
-    public class CapObloyDefectUtils
+    public class CapObloyDefectUtils : IDisposable
     {
         private double _capFlashOffset;
         private double _noiseContourArea;
@@ -93,13 +93,13 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
                 CreateCapMask(capRadiusMask, image, center, radius);
 
-                Mat filteredBlur = FilterNoise(blurChannel2);
+                using Mat filteredBlur = FilterNoise(blurChannel2);
 
-                Mat andResult = ApplyCapMask(capRadiusMask, filteredBlur);
+                using Mat andResult = ApplyCapMask(capRadiusMask, filteredBlur);
 
-                Mat morphInput = ApplyMorphology(andResult);
+                using Mat morphInput = ApplyMorphology(andResult);
 
-                var validContours = Analyze(morphInput);
+                List<Point[]> validContours = Analyze(morphInput);
 
                 bool isDefect = isObloyExist(validContours);
 
@@ -260,10 +260,17 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
         public void InitKernel()
         {
+            _elementMask?.Dispose();
+
             _elementMask = Cv2.GetStructuringElement(
                 _morphShape,
                 new Size(_kernelSize, _kernelSize),
                 new Point(_kernelSize / 2, _kernelSize / 2));
+        }
+
+        public void Dispose()
+        {
+            _elementMask?.Dispose();
         }
     }
 }

@@ -2428,7 +2428,7 @@ namespace CapDefectDetector
 
                                 frameToProcess.CopyTo(_frameToDisplay);
 
-                                CapContourResult capResult = _capContourUtils.GetCapContour(gray, frameToProcess);
+                                using CapContourResult capResult = _capContourUtils.GetCapContour(gray, frameToProcess);
 
                                 bool anyDefect = false;
                                 List<string> defects = new();
