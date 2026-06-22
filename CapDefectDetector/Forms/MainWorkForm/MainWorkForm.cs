@@ -240,7 +240,6 @@ namespace CapDefectDetector
             {
                 _prConnected = false;
                 UpdatePRConnectionUI(false);
-
                 if (_isProcessing && !_manualDisconnect)
                 {
                     _ = StopProcessingAsync();
