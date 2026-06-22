@@ -51,7 +51,7 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// <summary>
         /// Константа интервала подключения 
         /// </summary>
-        private const int POLL_INTERVAL = 1000; // 5 секунд
+        private const int POLL_INTERVAL = 1000; // 1 секунд
         /// <summary>
         /// Флаг подключения к модулю I/O
         /// </summary>
