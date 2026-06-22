@@ -2584,6 +2584,7 @@ namespace CapDefectDetector
                                 }
 
                                 // === PLC ===
+
                                 if (!_isProcessingFromFolder)
                                 {
                                     var st = anyDefect
