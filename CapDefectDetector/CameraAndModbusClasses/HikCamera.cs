@@ -374,7 +374,7 @@ namespace CapDefectDetector.CameraAndModbusClasses
                         {
                             // КЛОНИРУЕМ данные. Теперь 'm' — это независимая копия в RAM.
                             Mat m = rawMat.Clone();
-                            Cv2.CvtColor(m, m, ColorConversionCodes.BGRA2RGB);
+                            Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
 
                             // Теперь можно СРАЗУ вернуть буфер камере, не дожидаясь Invoke
                             m_MyCamera.MV_CC_FreeImageBuffer_NET(ref stImageOut);
