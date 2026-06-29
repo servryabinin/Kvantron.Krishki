@@ -1689,7 +1689,7 @@ namespace CapDefectDetector
                 #endregion
 
                 receptNameTb.Text = r.Name;
-
+                currentReceptFolderTb.Text = _recipesFolder;
                 frameSaturationNumUpD.Text = (r.IsBlackOrBrown ? r.CameraSaturationBlackOrBrown : r.CameraSaturation).ToString();
             }
             finally
@@ -1752,6 +1752,9 @@ namespace CapDefectDetector
                 {
                     ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync во время остановки обработки");
                 }
+                ResetState();
+                _isProcessing = false;
+                _imageQueue.Clear();
 
                 // Если есть подключение, отправляем стоп-сигнал
                 if (_modbusClient != null && _modbusClient.Connected)
@@ -1773,8 +1776,6 @@ namespace CapDefectDetector
             finally
             {
                 _uiTimer?.Stop();
-
-                _isProcessing = false;
 
                 recognizeButton.Text = "Начать анализ";
                 recognizeButton.BackColor = Color.FromArgb(4, 85, 191);
@@ -2156,7 +2157,9 @@ namespace CapDefectDetector
                 {
                     try
                     {
+                        _img1?.Dispose();
                         _img1 = img.Clone();
+
                         _imageQueue.Put(img.Clone());
                     }
                     catch (Exception ex)
@@ -2169,9 +2172,10 @@ namespace CapDefectDetector
                 {
                     try
                     {
+                        _img1?.Dispose();
                         _img1 = img.Clone();
-                        UpdatePictureBox(originPb, img);
-                        //CycleImageSaver.SaveDuplicate(img, 0);
+
+                        UpdatePictureBox(originPb, _img1);
                     }
                     catch (Exception ex)
                     {
@@ -2388,7 +2392,14 @@ namespace CapDefectDetector
                         newFrameAvailable = false;
                     }
 #else
-                            frameToProcess = _imageQueue.Get(token);
+                            try
+                            {
+                                frameToProcess = _imageQueue.Get(token);
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                break;
+                            }
 #endif
                         }
                         else if (_isProcessingFromFolder)
@@ -3997,6 +4008,43 @@ namespace CapDefectDetector
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Ошибка обновления UI");
+            }
+        }
+
+        private void ResetState()
+        {
+            lock (_stateLock)
+            {
+                _state.Frame?.Dispose();
+                _state.Frame = null;
+
+                _state.GeneralCapsCount = 0;
+                _state.Ok = 0;
+                _state.Ng = 0;
+                _state.PercentOK = 0;
+                _state.PercentNG = 0;
+
+                _state.OvalityDefectCount = 0;
+                _state.InclusionDefectCount = 0;
+                _state.PaintDefectCount = 0;
+                _state.ObloyDefectCount = 0;
+                _state.UnderFillDefectCount = 0;
+
+                _state.PercentOvality = 0;
+                _state.PercentInclusion = 0;
+                _state.PercentPaint = 0;
+                _state.PercentObloy = 0;
+                _state.PercentUnderFill = 0;
+
+                _state.TimeOvality = 0;
+                _state.TimeInclusion = 0;
+                _state.TimePaint = 0;
+                _state.TimeObloy = 0;
+                _state.TimeUnderFill = 0;
+
+                _state.Time = 0;
+                _state.DefectText = string.Empty;
+                _state.IsNg = false;
             }
         }
         #endregion

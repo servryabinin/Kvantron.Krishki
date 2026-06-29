@@ -17,6 +17,10 @@ namespace CapDefectDetector.CameraAndModbusClasses
 
     public class HikCamera
     {
+        MyCamera.MV_FRAME_OUT stImageOut = new MyCamera.MV_FRAME_OUT();
+
+        MyCamera.MV_CC_INPUT_FRAME_INFO stInputFrameInfo = new MyCamera.MV_CC_INPUT_FRAME_INFO();
+
         //Acquisition Control
         public AcquisitionMode AcquisitionMode { get; set; } //режим получения кадров
         public bool FrameRateControlEnable { get; set; } //включить ограничение кадров
@@ -356,36 +360,41 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// </summary>
         private void ReceiveImageWorkThread()
         {
-            int nRet = MyCamera.MV_OK;            
-            
-            MyCamera.MV_FRAME_OUT stImageOut = new MyCamera.MV_FRAME_OUT();
-            MyCamera.MV_CC_INPUT_FRAME_INFO stInputFrameInfo = new MyCamera.MV_CC_INPUT_FRAME_INFO();
-
-			mainThread = new Thread(() =>
+            int nRet = MyCamera.MV_OK;
+            mainThread = new Thread(() =>
             {
                 while (isGrabbing)
-                {                    
+                {
                     nRet = m_MyCamera.MV_CC_GetImageBuffer_NET(ref stImageOut, 1000);
 
-                    if (nRet == MyCamera.MV_OK)
+                    if (nRet != MyCamera.MV_OK)
+                        continue;
+
+                    Mat frame = null;
+
+                    try
                     {
-                        // Создаем временный объект для доступа к памяти SDK
-                        using (Mat rawMat = new Mat(stImageOut.stFrameInfo.nHeight, stImageOut.stFrameInfo.nWidth, MatType.CV_8UC3, stImageOut.pBufAddr))
+                        using (Mat temp = new Mat(
+                            stImageOut.stFrameInfo.nHeight,
+                            stImageOut.stFrameInfo.nWidth,
+                            MatType.CV_8UC3,
+                            stImageOut.pBufAddr))
                         {
-                            // КЛОНИРУЕМ данные. Теперь 'm' — это независимая копия в RAM.
-                            Mat m = rawMat.Clone();
-                            Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
-
-                            // Теперь можно СРАЗУ вернуть буфер камере, не дожидаясь Invoke
-                            m_MyCamera.MV_CC_FreeImageBuffer_NET(ref stImageOut);
-
-                            // Отправляем копию на обработку
-                            SendImage?.Invoke(m);
+                            frame = new Mat();
+                            Cv2.CvtColor(temp, frame, ColorConversionCodes.BGR2RGB);
                         }
                     }
+                    finally
+                    {
+                        m_MyCamera.MV_CC_FreeImageBuffer_NET(ref stImageOut);
+                    }
+
+                    SendImage?.Invoke(frame);
                 }
             });
-			mainThread.Start();            
+
+            mainThread.IsBackground = true;
+            mainThread.Start();
         }
     }
 }

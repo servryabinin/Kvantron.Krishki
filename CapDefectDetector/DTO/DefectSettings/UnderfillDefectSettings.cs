@@ -8,10 +8,10 @@ namespace CapDefectDetector.DTO.DefectSettings
 {
     public class UnderfillDefectSettings
     {
-        public byte CapsColor { get; set; }
-        public bool DecolorizeBackground { get; set; }
-        public bool NormalizeBrightness { get; set; }
-        public bool PreserveDetails { get; set; }
+        public byte CapsColor { get; set; } = 140;
+        public bool DecolorizeBackground { get; set; } = true;
+        public bool NormalizeBrightness { get; set; } = true;
+        public bool PreserveDetails { get; set; } = false;
 
         public double CoefCapRadiusUnderFill { get; set; } = 0.8;
 
