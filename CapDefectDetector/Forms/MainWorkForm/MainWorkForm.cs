@@ -196,7 +196,7 @@ namespace CapDefectDetector
 
         private void InitializeConnections(HikCamera camera, ModuleIO modbus)
         {
-            _cam = camera;
+            _cam = camera; 
             _cameraConnected = camera != null;
             if (_cam != null)
                 _cam.SendImage += GetImage;
