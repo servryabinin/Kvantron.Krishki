@@ -174,7 +174,7 @@ namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
                 return null;
 
             using Mat sat = ApplySaturationStep(image, _saturationColor);
-            using Mat caps = ApplyCapsColorStep(sat, _capsColor, _isColoredCap, _isYellowCap, _isGreenCap);
+            Mat caps = ApplyCapsColorStep(sat, _capsColor, _isColoredCap, _isYellowCap, _isGreenCap);
             Mat[] channels = ApplyWindowStep(caps, _window);
             ApplyMorphologyStep(channels, _element1, _element2);
             Point[] contour = GetMaxContour(channels[2]);
@@ -195,7 +195,7 @@ namespace CapDefectDetector.ImageProcessing.Utils.ContourProcessor
 
             using Mat sat = ApplySaturationStep(image, _saturationBlackOrBrown);
             using Mat gray = ApplyGrayStep(sat);
-            using Mat blurred = ApplyMedianStep(gray, _medianFilter);
+            Mat blurred = ApplyMedianStep(gray, _medianFilter);
             Mat edges = ApplyCannyStep(blurred, _cannyThreshold);
             Point[] contour = ApplyEllipseStep(edges);
             contour = CorrectContour(contour, _contourCorrectionBlackOrBrown);
