@@ -9,23 +9,23 @@ namespace CapDefectDetector.DTO.CapRecipe
     public class CapRecipe
     {
         public string Name { get; set; }
-        public byte CapsColor { get; set; }
-        public int Window { get; set; }
-        public int MorphSize { get; set; }
-        public int MorphSize2 { get; set; }
-        public int CameraSaturation { get; set; }
-        public float ContourCorrectionColor{ get; set; }
-        public bool IsGreen { get; set; }
-        public bool IsColored { get; set; }
-        public bool IsYellow { get; set; }
-        public bool IsWhite { get; set; }
+        public byte CapsColor { get; set; } = 100;
+        public int Window { get; set; } = 5;
+        public int MorphSize { get; set; } = 3;
+        public int MorphSize2 { get; set; } = 3;
+        public int CameraSaturation { get; set; } = 128;
+        public float ContourCorrectionColor { get; set; } = 1.15f;
+        public bool IsGreen { get; set; } = false;
+        public bool IsColored { get; set; } = true;
+        public bool IsYellow { get; set; } = false;
+        public bool IsWhite { get; set; } = false;
 
         //------Для черных/коричневых крышек------
-        public int CameraSaturationBlackOrBrown { get; set; }
-        public int MedianFilter { get; set; }
-        public int CannyThreshold { get; set; }
-        public float ContourCorrectionBlackOrBrown { get; set; }
-        public bool IsBlackOrBrown{ get; set; }
+        public int CameraSaturationBlackOrBrown { get; set; } = 128;
+        public int MedianFilter { get; set; } = 3;
+        public int CannyThreshold { get; set; } = 3;
+        public float ContourCorrectionBlackOrBrown { get; set; } = 1.15f;
+        public bool IsBlackOrBrown { get; set; } = false;
     }
 
 }

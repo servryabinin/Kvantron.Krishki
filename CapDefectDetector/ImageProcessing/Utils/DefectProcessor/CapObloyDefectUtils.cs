@@ -80,7 +80,7 @@ namespace CapDefectDetector.ImageProcessing.Utils
         {
             try
             {
-                //token.ThrowIfCancellationRequested();
+                token.ThrowIfCancellationRequested();
 
                 if (capContour == null || capContour.Length < 5)
                     return false;
@@ -90,6 +90,8 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
                 var center = ComputeCenter(capContour);
                 var radius = ComputeRadius(capContour, center);
+
+                if (radius <= 0) return false;
 
                 CreateCapMask(capRadiusMask, image, center, radius);
 
@@ -189,10 +191,17 @@ namespace CapDefectDetector.ImageProcessing.Utils
         {
             var m = Cv2.Moments(contour);
 
-            int cx = (int)(m.M10 / m.M00);
-            int cy = (int)(m.M01 / m.M00);
+            if (Math.Abs(m.M00) < 1e-6)
+                return new Point(0, 0);
 
-            return new Point(cx, cy);
+            double cx = m.M10 / m.M00;
+            double cy = m.M01 / m.M00;
+
+            if (double.IsNaN(cx) || double.IsNaN(cy) ||
+                double.IsInfinity(cx) || double.IsInfinity(cy))
+                return new Point(0, 0);
+
+            return new Point((int)cx, (int)cy);
         }
 
         public double ComputeRadius(Point[] capContour, Point center)
@@ -211,6 +220,12 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
         public void CreateCapMask(Mat capRadiusMask, Mat image, Point center, double radius)
         {
+            if (capRadiusMask == null || capRadiusMask.Empty())
+                return;
+
+            if (radius <= 0 || double.IsNaN(radius) || double.IsInfinity(radius))
+                return;
+
             GetIdealCapMask(
                 capRadiusMask,
                 center,
@@ -247,6 +262,15 @@ namespace CapDefectDetector.ImageProcessing.Utils
 
         public void GetIdealCapMask(Mat mask, Point center, float innerRadius, float outerRadius)
         {
+            if (mask == null || mask.Empty())
+                return;
+
+            if (innerRadius < 0) innerRadius = 0;
+            if (outerRadius < 0) outerRadius = 0;
+
+            if (outerRadius <= innerRadius)
+                return;
+
             mask.SetTo(0);
 
             using var outer = new Mat(mask.Size(), MatType.CV_8UC1, Scalar.Black);

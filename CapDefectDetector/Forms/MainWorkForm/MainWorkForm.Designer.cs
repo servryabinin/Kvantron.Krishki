@@ -31,10 +31,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWorkForm));
             pictureBox1 = new PictureBox();
             panel2 = new Panel();
-            cameraStatusLabel = new Label();
+            videoStreamStatusLabel = new Label();
             label16 = new Label();
             label15 = new Label();
-            camStatus = new Label();
+            cameraConnectionStatusLabel = new Label();
             breakerOffsetUd = new NumericUpDown();
             cameraOffsetUd = new NumericUpDown();
             breakingTimeUd = new NumericUpDown();
@@ -287,8 +287,10 @@
             breakingAllowCb = new CheckBox();
             label25 = new Label();
             label27 = new Label();
-            label31 = new Label();
-            label7 = new Label();
+            distanceFromSensorToCameraLb = new Label();
+            distanceFromSensorToBreakerLb = new Label();
+            tableLayoutPanel55 = new TableLayoutPanel();
+            moduleSettingsStatusLabel = new Label();
             applyPrBreakerParamButton = new Button();
             tabControl3 = new TabControl();
             tabPrNetworkSettings = new TabPage();
@@ -298,7 +300,7 @@
             pr205IpTb = new TextBox();
             label30 = new Label();
             label40 = new Label();
-            prStatus = new Label();
+            moduleIOStatusLabel = new Label();
             label26 = new Label();
             pr205PortTb = new TextBox();
             tabPage2 = new TabPage();
@@ -438,6 +440,7 @@
             prBreakingSettings.SuspendLayout();
             tableLayoutPanel32.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
+            tableLayoutPanel55.SuspendLayout();
             tabControl3.SuspendLayout();
             tabPrNetworkSettings.SuspendLayout();
             tableLayoutPanel31.SuspendLayout();
@@ -473,26 +476,26 @@
             // panel2
             // 
             panel2.BorderStyle = BorderStyle.Fixed3D;
-            panel2.Controls.Add(cameraStatusLabel);
+            panel2.Controls.Add(videoStreamStatusLabel);
             panel2.Controls.Add(label16);
             panel2.Controls.Add(label15);
-            panel2.Controls.Add(camStatus);
+            panel2.Controls.Add(cameraConnectionStatusLabel);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(3, 3);
             panel2.Name = "panel2";
             panel2.Size = new Size(1095, 151);
             panel2.TabIndex = 9;
             // 
-            // cameraStatusLabel
+            // videoStreamStatusLabel
             // 
-            cameraStatusLabel.AutoSize = true;
-            cameraStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
-            cameraStatusLabel.ForeColor = Color.Black;
-            cameraStatusLabel.Location = new Point(147, 29);
-            cameraStatusLabel.Name = "cameraStatusLabel";
-            cameraStatusLabel.Size = new Size(71, 13);
-            cameraStatusLabel.TabIndex = 3;
-            cameraStatusLabel.Text = "Не запущен";
+            videoStreamStatusLabel.AutoSize = true;
+            videoStreamStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            videoStreamStatusLabel.ForeColor = Color.Black;
+            videoStreamStatusLabel.Location = new Point(146, 28);
+            videoStreamStatusLabel.Name = "videoStreamStatusLabel";
+            videoStreamStatusLabel.Size = new Size(71, 13);
+            videoStreamStatusLabel.TabIndex = 3;
+            videoStreamStatusLabel.Text = "Не запущен";
             // 
             // label16
             // 
@@ -516,16 +519,16 @@
             label15.TabIndex = 0;
             label15.Text = "Статус камеры:";
             // 
-            // camStatus
+            // cameraConnectionStatusLabel
             // 
-            camStatus.AutoSize = true;
-            camStatus.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
-            camStatus.ForeColor = Color.Black;
-            camStatus.Location = new Point(146, 61);
-            camStatus.Name = "camStatus";
-            camStatus.Size = new Size(94, 13);
-            camStatus.TabIndex = 2;
-            camStatus.Text = "Не подключена";
+            cameraConnectionStatusLabel.AutoSize = true;
+            cameraConnectionStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold);
+            cameraConnectionStatusLabel.ForeColor = Color.Black;
+            cameraConnectionStatusLabel.Location = new Point(146, 61);
+            cameraConnectionStatusLabel.Name = "cameraConnectionStatusLabel";
+            cameraConnectionStatusLabel.Size = new Size(94, 13);
+            cameraConnectionStatusLabel.TabIndex = 2;
+            cameraConnectionStatusLabel.Text = "Не подключена";
             // 
             // breakerOffsetUd
             // 
@@ -648,7 +651,7 @@
             morphCb.Font = new Font("Segoe UI", 7.8F);
             morphCb.FormattingEnabled = true;
             morphCb.Items.AddRange(new object[] { "1", "2", "3" });
-            morphCb.Location = new Point(342, 241);
+            morphCb.Location = new Point(342, 240);
             morphCb.Name = "morphCb";
             morphCb.Size = new Size(75, 20);
             morphCb.TabIndex = 7;
@@ -671,7 +674,7 @@
             windowCb.Font = new Font("Segoe UI", 7.8F);
             windowCb.FormattingEnabled = true;
             windowCb.Items.AddRange(new object[] { "3", "5", "7", "9", "11", "13", "15" });
-            windowCb.Location = new Point(258, 241);
+            windowCb.Location = new Point(258, 240);
             windowCb.Name = "windowCb";
             windowCb.Size = new Size(75, 20);
             windowCb.TabIndex = 6;
@@ -1129,20 +1132,19 @@
             groupBox1.ForeColor = Color.FromArgb(4, 85, 191);
             groupBox1.Location = new Point(312, 3);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(157, 61);
+            groupBox1.Size = new Size(157, 60);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Что выводить";
             // 
             // outputImageCmB
             // 
-            outputImageCmB.Anchor = AnchorStyles.None;
+            outputImageCmB.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             outputImageCmB.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
             outputImageCmB.FormattingEnabled = true;
-            outputImageCmB.Items.AddRange(new object[] { "Все", "Хорошие", "Плохие" });
-            outputImageCmB.Location = new Point(3, 25);
+            outputImageCmB.Location = new Point(6, 25);
             outputImageCmB.Name = "outputImageCmB";
-            outputImageCmB.Size = new Size(151, 20);
+            outputImageCmB.Size = new Size(145, 20);
             outputImageCmB.TabIndex = 0;
             outputImageCmB.SelectedIndexChanged += outputImageCmB_SelectedIndexChanged;
             // 
@@ -1537,12 +1539,12 @@
             tableLayoutPanel19.Location = new Point(0, 0);
             tableLayoutPanel19.Name = "tableLayoutPanel19";
             tableLayoutPanel19.RowCount = 6;
-            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 5.200952F));
-            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 8.321524F));
-            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 5.200952F));
-            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 34.2273445F));
-            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 5.200952F));
-            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 41.848278F));
+            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0164094F));
+            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 8.227369F));
+            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0164094F));
+            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 34.7377777F));
+            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 5.0164094F));
+            tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 41.98562F));
             tableLayoutPanel19.Size = new Size(478, 878);
             tableLayoutPanel19.TabIndex = 4;
             // 
@@ -1990,17 +1992,17 @@
             tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 23.4597149F));
             tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 21.8009472F));
             tableLayoutPanel20.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34.1232224F));
+            tableLayoutPanel20.Controls.Add(groupBox1, 3, 0);
             tableLayoutPanel20.Controls.Add(loadImageButton, 0, 0);
             tableLayoutPanel20.Controls.Add(startStreamButton, 1, 0);
             tableLayoutPanel20.Controls.Add(recognizeButton, 2, 0);
-            tableLayoutPanel20.Controls.Add(groupBox1, 3, 0);
             tableLayoutPanel20.Dock = DockStyle.Fill;
-            tableLayoutPanel20.Location = new Point(3, 48);
+            tableLayoutPanel20.Location = new Point(3, 47);
             tableLayoutPanel20.Name = "tableLayoutPanel20";
             tableLayoutPanel20.RowCount = 1;
             tableLayoutPanel20.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel20.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel20.Size = new Size(472, 67);
+            tableLayoutPanel20.Size = new Size(472, 66);
             tableLayoutPanel20.TabIndex = 5;
             // 
             // loadImageButton
@@ -2012,7 +2014,7 @@
             loadImageButton.ForeColor = Color.White;
             loadImageButton.Location = new Point(3, 3);
             loadImageButton.Name = "loadImageButton";
-            loadImageButton.Size = new Size(91, 61);
+            loadImageButton.Size = new Size(91, 60);
             loadImageButton.TabIndex = 1;
             loadImageButton.Text = "Загрузить";
             loadImageButton.UseVisualStyleBackColor = false;
@@ -2027,7 +2029,7 @@
             startStreamButton.ForeColor = Color.White;
             startStreamButton.Location = new Point(100, 3);
             startStreamButton.Name = "startStreamButton";
-            startStreamButton.Size = new Size(104, 61);
+            startStreamButton.Size = new Size(104, 60);
             startStreamButton.TabIndex = 2;
             startStreamButton.Text = "Получить изображение";
             startStreamButton.UseVisualStyleBackColor = false;
@@ -2042,7 +2044,7 @@
             recognizeButton.ForeColor = Color.White;
             recognizeButton.Location = new Point(210, 3);
             recognizeButton.Name = "recognizeButton";
-            recognizeButton.Size = new Size(96, 61);
+            recognizeButton.Size = new Size(96, 60);
             recognizeButton.TabIndex = 4;
             recognizeButton.Text = "Начать анализ";
             recognizeButton.UseVisualStyleBackColor = false;
@@ -2055,10 +2057,10 @@
             label44.Dock = DockStyle.Fill;
             label44.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label44.ForeColor = Color.White;
-            label44.Location = new Point(0, 463);
+            label44.Location = new Point(0, 464);
             label44.Margin = new Padding(0);
             label44.Name = "label44";
-            label44.Size = new Size(478, 45);
+            label44.Size = new Size(478, 44);
             label44.TabIndex = 7;
             label44.Text = "Результаты работы";
             label44.TextAlign = ContentAlignment.MiddleCenter;
@@ -2073,7 +2075,7 @@
             label2.Location = new Point(0, 0);
             label2.Margin = new Padding(0);
             label2.Name = "label2";
-            label2.Size = new Size(478, 45);
+            label2.Size = new Size(478, 44);
             label2.TabIndex = 0;
             label2.Text = "Получение изображения и анализ";
             label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -2098,7 +2100,7 @@
             tableLayoutPanel1.Controls.Add(percentOkCapsTb, 1, 4);
             tableLayoutPanel1.Controls.Add(percentNgCapsTb, 1, 5);
             tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(3, 166);
+            tableLayoutPanel1.Location = new Point(3, 163);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 7;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
@@ -2109,14 +2111,14 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.2857141F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(472, 294);
+            tableLayoutPanel1.Size = new Size(472, 298);
             tableLayoutPanel1.TabIndex = 6;
             // 
             // generalTimeTb
             // 
             generalTimeTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             generalTimeTb.Font = new Font("Segoe UI", 7.8F);
-            generalTimeTb.Location = new Point(239, 262);
+            generalTimeTb.Location = new Point(239, 264);
             generalTimeTb.Name = "generalTimeTb";
             generalTimeTb.Size = new Size(230, 21);
             generalTimeTb.TabIndex = 44;
@@ -2183,11 +2185,11 @@
             label38.AutoSize = true;
             label38.Dock = DockStyle.Right;
             label38.Font = new Font("Segoe UI", 7.8F);
-            label38.Location = new Point(142, 126);
+            label38.Location = new Point(168, 126);
             label38.Name = "label38";
-            label38.Size = new Size(91, 42);
+            label38.Size = new Size(65, 42);
             label38.TabIndex = 3;
-            label38.Text = "Количество NG:";
+            label38.Text = "Кол-во NG:";
             label38.TextAlign = ContentAlignment.MiddleRight;
             // 
             // label39
@@ -2221,7 +2223,7 @@
             label42.Font = new Font("Segoe UI", 7.8F);
             label42.Location = new Point(150, 252);
             label42.Name = "label42";
-            label42.Size = new Size(83, 42);
+            label42.Size = new Size(83, 46);
             label42.TabIndex = 6;
             label42.Text = "Общее время:";
             label42.TextAlign = ContentAlignment.MiddleRight;
@@ -2269,10 +2271,10 @@
             label34.Dock = DockStyle.Fill;
             label34.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label34.ForeColor = Color.White;
-            label34.Location = new Point(0, 118);
+            label34.Location = new Point(0, 116);
             label34.Margin = new Padding(0);
             label34.Name = "label34";
-            label34.Size = new Size(478, 45);
+            label34.Size = new Size(478, 44);
             label34.TabIndex = 5;
             label34.Text = "Общая информация";
             label34.TextAlign = ContentAlignment.MiddleCenter;
@@ -2835,7 +2837,7 @@
             paramDefCmB.BackColor = Color.White;
             paramDefCmB.Font = new Font("Segoe UI", 7.8F);
             paramDefCmB.FormattingEnabled = true;
-            paramDefCmB.Location = new Point(85, 12);
+            paramDefCmB.Location = new Point(85, 11);
             paramDefCmB.Name = "paramDefCmB";
             paramDefCmB.Size = new Size(103, 20);
             paramDefCmB.TabIndex = 39;
@@ -3869,7 +3871,7 @@
             prSettingsCmB.BackColor = Color.White;
             prSettingsCmB.Font = new Font("Segoe UI", 7.8F);
             prSettingsCmB.FormattingEnabled = true;
-            prSettingsCmB.Location = new Point(271, 8);
+            prSettingsCmB.Location = new Point(271, 7);
             prSettingsCmB.Name = "prSettingsCmB";
             prSettingsCmB.Size = new Size(112, 20);
             prSettingsCmB.TabIndex = 39;
@@ -3929,7 +3931,7 @@
             tableLayoutPanel32.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 66.72414F));
             tableLayoutPanel32.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.2758636F));
             tableLayoutPanel32.Controls.Add(tableLayoutPanel5, 0, 0);
-            tableLayoutPanel32.Controls.Add(applyPrBreakerParamButton, 1, 0);
+            tableLayoutPanel32.Controls.Add(tableLayoutPanel55, 1, 0);
             tableLayoutPanel32.Dock = DockStyle.Fill;
             tableLayoutPanel32.Location = new Point(3, 3);
             tableLayoutPanel32.Name = "tableLayoutPanel32";
@@ -3952,8 +3954,8 @@
             tableLayoutPanel5.Controls.Add(label25, 0, 0);
             tableLayoutPanel5.Controls.Add(breakingTimeUd, 1, 2);
             tableLayoutPanel5.Controls.Add(label27, 0, 2);
-            tableLayoutPanel5.Controls.Add(label31, 0, 3);
-            tableLayoutPanel5.Controls.Add(label7, 0, 4);
+            tableLayoutPanel5.Controls.Add(distanceFromSensorToCameraLb, 0, 3);
+            tableLayoutPanel5.Controls.Add(distanceFromSensorToBreakerLb, 0, 4);
             tableLayoutPanel5.Dock = DockStyle.Fill;
             tableLayoutPanel5.Location = new Point(3, 3);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -4033,39 +4035,68 @@
             label27.Text = "Время сдува, мс";
             label27.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // label31
+            // distanceFromSensorToCameraLb
             // 
-            label31.AutoSize = true;
-            label31.Dock = DockStyle.Fill;
-            label31.Font = new Font("Segoe UI", 7.8F);
-            label31.ForeColor = Color.Black;
-            label31.Location = new Point(3, 81);
-            label31.Name = "label31";
-            label31.Size = new Size(258, 27);
-            label31.TabIndex = 20;
-            label31.Text = "Расстояние от датчика до камеры, шаги:";
-            label31.TextAlign = ContentAlignment.MiddleLeft;
+            distanceFromSensorToCameraLb.AutoSize = true;
+            distanceFromSensorToCameraLb.Dock = DockStyle.Fill;
+            distanceFromSensorToCameraLb.Font = new Font("Segoe UI", 7.8F);
+            distanceFromSensorToCameraLb.ForeColor = Color.Black;
+            distanceFromSensorToCameraLb.Location = new Point(3, 81);
+            distanceFromSensorToCameraLb.Name = "distanceFromSensorToCameraLb";
+            distanceFromSensorToCameraLb.Size = new Size(258, 27);
+            distanceFromSensorToCameraLb.TabIndex = 20;
+            distanceFromSensorToCameraLb.Text = "Расстояние от датчика до камеры, шаги:";
+            distanceFromSensorToCameraLb.TextAlign = ContentAlignment.MiddleLeft;
+            distanceFromSensorToCameraLb.Click += distanceFromSensorToCameraLb_Click;
             // 
-            // label7
+            // distanceFromSensorToBreakerLb
             // 
-            label7.AutoSize = true;
-            label7.Dock = DockStyle.Fill;
-            label7.Font = new Font("Segoe UI", 7.8F);
-            label7.Location = new Point(3, 108);
-            label7.Name = "label7";
-            label7.Size = new Size(258, 31);
-            label7.TabIndex = 22;
-            label7.Text = "Расстояние от датчика до сдува, шаги";
-            label7.TextAlign = ContentAlignment.MiddleLeft;
+            distanceFromSensorToBreakerLb.AutoSize = true;
+            distanceFromSensorToBreakerLb.Dock = DockStyle.Fill;
+            distanceFromSensorToBreakerLb.Font = new Font("Segoe UI", 7.8F);
+            distanceFromSensorToBreakerLb.Location = new Point(3, 108);
+            distanceFromSensorToBreakerLb.Name = "distanceFromSensorToBreakerLb";
+            distanceFromSensorToBreakerLb.Size = new Size(258, 31);
+            distanceFromSensorToBreakerLb.TabIndex = 22;
+            distanceFromSensorToBreakerLb.Text = "Расстояние от датчика до сдува, шаги";
+            distanceFromSensorToBreakerLb.TextAlign = ContentAlignment.MiddleLeft;
+            distanceFromSensorToBreakerLb.Click += distanceFromSensorToBreakerLb_Click;
+            // 
+            // tableLayoutPanel55
+            // 
+            tableLayoutPanel55.ColumnCount = 1;
+            tableLayoutPanel55.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel55.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel55.Controls.Add(moduleSettingsStatusLabel, 0, 1);
+            tableLayoutPanel55.Controls.Add(applyPrBreakerParamButton, 0, 0);
+            tableLayoutPanel55.Dock = DockStyle.Fill;
+            tableLayoutPanel55.Location = new Point(390, 3);
+            tableLayoutPanel55.Name = "tableLayoutPanel55";
+            tableLayoutPanel55.RowCount = 2;
+            tableLayoutPanel55.RowStyles.Add(new RowStyle(SizeType.Percent, 66.90647F));
+            tableLayoutPanel55.RowStyles.Add(new RowStyle(SizeType.Percent, 33.0935249F));
+            tableLayoutPanel55.Size = new Size(187, 139);
+            tableLayoutPanel55.TabIndex = 23;
+            // 
+            // moduleSettingsStatusLabel
+            // 
+            moduleSettingsStatusLabel.Anchor = AnchorStyles.Top;
+            moduleSettingsStatusLabel.AutoSize = true;
+            moduleSettingsStatusLabel.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            moduleSettingsStatusLabel.Location = new Point(50, 92);
+            moduleSettingsStatusLabel.Name = "moduleSettingsStatusLabel";
+            moduleSettingsStatusLabel.Size = new Size(87, 13);
+            moduleSettingsStatusLabel.TabIndex = 4;
+            moduleSettingsStatusLabel.Text = "Не применены";
             // 
             // applyPrBreakerParamButton
             // 
-            applyPrBreakerParamButton.Anchor = AnchorStyles.None;
+            applyPrBreakerParamButton.Anchor = AnchorStyles.Bottom;
             applyPrBreakerParamButton.BackColor = Color.FromArgb(4, 85, 191);
             applyPrBreakerParamButton.FlatAppearance.BorderSize = 0;
             applyPrBreakerParamButton.Font = new Font("Segoe UI", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
             applyPrBreakerParamButton.ForeColor = Color.White;
-            applyPrBreakerParamButton.Location = new Point(408, 44);
+            applyPrBreakerParamButton.Location = new Point(18, 33);
             applyPrBreakerParamButton.Name = "applyPrBreakerParamButton";
             applyPrBreakerParamButton.Size = new Size(150, 56);
             applyPrBreakerParamButton.TabIndex = 2;
@@ -4134,7 +4165,7 @@
             tableLayoutPanel4.Controls.Add(pr205IpTb, 1, 2);
             tableLayoutPanel4.Controls.Add(label30, 0, 0);
             tableLayoutPanel4.Controls.Add(label40, 0, 2);
-            tableLayoutPanel4.Controls.Add(prStatus, 1, 0);
+            tableLayoutPanel4.Controls.Add(moduleIOStatusLabel, 1, 0);
             tableLayoutPanel4.Controls.Add(label26, 0, 1);
             tableLayoutPanel4.Controls.Add(pr205PortTb, 1, 1);
             tableLayoutPanel4.Dock = DockStyle.Fill;
@@ -4185,18 +4216,18 @@
             label40.Text = "Ip адрес сдува:";
             label40.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // prStatus
+            // moduleIOStatusLabel
             // 
-            prStatus.AutoSize = true;
-            prStatus.Dock = DockStyle.Fill;
-            prStatus.Font = new Font("Segoe UI", 7.8F);
-            prStatus.ForeColor = Color.Black;
-            prStatus.Location = new Point(267, 0);
-            prStatus.Name = "prStatus";
-            prStatus.Size = new Size(112, 33);
-            prStatus.TabIndex = 11;
-            prStatus.Text = "Не подключена";
-            prStatus.TextAlign = ContentAlignment.MiddleCenter;
+            moduleIOStatusLabel.AutoSize = true;
+            moduleIOStatusLabel.Dock = DockStyle.Fill;
+            moduleIOStatusLabel.Font = new Font("Segoe UI", 7.8F);
+            moduleIOStatusLabel.ForeColor = Color.Black;
+            moduleIOStatusLabel.Location = new Point(267, 0);
+            moduleIOStatusLabel.Name = "moduleIOStatusLabel";
+            moduleIOStatusLabel.Size = new Size(112, 33);
+            moduleIOStatusLabel.TabIndex = 11;
+            moduleIOStatusLabel.Text = "Не подключена";
+            moduleIOStatusLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label26
             // 
@@ -4690,6 +4721,8 @@
             tableLayoutPanel32.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
+            tableLayoutPanel55.ResumeLayout(false);
+            tableLayoutPanel55.PerformLayout();
             tabControl3.ResumeLayout(false);
             tabPrNetworkSettings.ResumeLayout(false);
             tableLayoutPanel31.ResumeLayout(false);
@@ -4716,13 +4749,14 @@
         }
 
         #endregion
+        private Label videoStreamStatusLabel;
         private TextBox generalTime;
         private PictureBox pictureBox1;
         private Panel panel2;
         private Label cameraStatusLabel;
         private Label label16;
         private Label label15;
-        private Label camStatus;
+        private Label cameraConnectionStatusLabel;
         private TableLayoutPanel tableLayoutPanel11;
         private Label label9;
         private Label label10;
@@ -4832,8 +4866,8 @@
         private CheckBox breakingAllowCb;
         private Label label25;
         private Label label27;
-        private Label label31;
-        private Label label7;
+        private Label distanceFromSensorToCameraLb;
+        private Label distanceFromSensorToBreakerLb;
         private Button applyPrBreakerParamButton;
         private TabControl tabControl3;
         private TabPage tabPrNetworkSettings;
@@ -4841,7 +4875,7 @@
         private TextBox pr205IpTb;
         private Label label30;
         private Label label40;
-        private Label prStatus;
+        private Label moduleIOStatusLabel;
         private Label label26;
         private TextBox pr205PortTb;
         private Button connectPrButton;
@@ -5014,5 +5048,8 @@
         private NumericUpDown breakingTimeUd;
         private CheckBox soundSignalAllowCb;
         private Label label78;
+        private TextBox textBox3;
+        private TableLayoutPanel tableLayoutPanel55;
+        private Label moduleSettingsStatusLabel;
     }
 }

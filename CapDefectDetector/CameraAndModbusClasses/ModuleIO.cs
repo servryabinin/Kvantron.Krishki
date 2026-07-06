@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net.Sockets;
+using CapDefectDetector.DTO.DefectSettings;
 using CapDefectDetector.DTO.PrSettings;
 using CapDefectDetector.Hardware;
 using EasyModbus;
@@ -122,6 +123,22 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// Параметр для расстояния от датчика до отбраковщика, который будет записываться в регистр BREAKER_OFFSET_REGISTER
         /// </summary>
         private int _breakerOffsetValue = 2430;
+        /// <summary>
+        /// Диметр колеса энкодера, мм
+        /// </summary>
+        public int _diameterEncoderWheelValue = 48;
+        /// <summary>
+        /// Разрядность энкодера
+        /// </summary>
+        public int _encoderBitrateValue = 600;
+        /// <summary>
+        /// Расстояние от датчика до камеры, мм
+        /// </summary>
+        public int _distanceFromSensorToCameraValue = 50;
+        /// <summary>
+        /// Расстояние от датчика до отбраковщика, мм
+        /// </summary>
+        public int _distanceFromSensorToBreakerValue = 330;
         #endregion
 
         #region Детерминированные значения для разрешения отбраковки, запуска процесса распознавания и светофора
@@ -164,8 +181,6 @@ namespace CapDefectDetector.CameraAndModbusClasses
         /// </summary>
         public bool Connected => connected;
 
-
-
         /// <summary>
         /// Контсруктор класса ModuleIO, который принимает IP адрес и порт для подключения к модулю I/O
         /// </summary>
@@ -194,6 +209,30 @@ namespace CapDefectDetector.CameraAndModbusClasses
         public void SetBreakerOffset(int value) => _breakerOffsetValue = value;
 
         /// <summary>
+        /// Установить диаметр колеса энкодера, в мм
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetDiameterEncoderWheel(int value) => _diameterEncoderWheelValue = value;
+
+        /// <summary>
+        /// Установить значение разрядности энкодера
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetEncoderBitrate(int value) => _encoderBitrateValue = value;
+
+        /// <summary>
+        /// Установить расстояние от датчика до камеры, в мм
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetDistanceFromSensorToCamera(int value) => _distanceFromSensorToCameraValue = value;
+
+        /// <summary>
+        /// Устанвоить расстояние от датчика до отбраковщика, в мм
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetDistanceFromSensorToBreaker(int value) => _distanceFromSensorToBreakerValue = value;
+
+        /// <summary>
         /// Получить время отбраковки
         /// </summary>
         /// <returns></returns>
@@ -212,6 +251,28 @@ namespace CapDefectDetector.CameraAndModbusClasses
         public int GetBreakerOffset() => _breakerOffsetValue;
 
         /// <summary>
+        /// Получить все настройки модуля ввода-вывода
+        /// </summary>
+        /// <returns></returns>
+        public ModuleIOSettings GetSettings()
+        {
+            return new ModuleIOSettings
+            {
+                BreakingTime = _breakingTimeValue,
+                CameraOffset = _cameraOffsetValue,
+                BreakerOffset = _breakerOffsetValue,
+                BreakerSettings = new BreakingSettings
+                {
+                    DiameterEncoderWheel = _diameterEncoderWheelValue,
+                    EncoderBitrate = _encoderBitrateValue,
+                    DistanceFromSensorToCamera = _distanceFromSensorToCameraValue,
+                    DistanceFromSensorToBreaker = _distanceFromSensorToBreakerValue
+                }
+            };
+        }
+
+
+        /// <summary>
         /// Применить все настройки ModuleIO через сеттеры
         /// </summary>
         public void ApplyLocalSettings(ModuleIOSettings settings)
@@ -219,6 +280,14 @@ namespace CapDefectDetector.CameraAndModbusClasses
             SetBreakingTime(settings.BreakingTime);
             SetCameraOffset(settings.CameraOffset);
             SetBreakerOffset(settings.BreakerOffset);
+
+            if (settings.BreakerSettings != null)
+            {
+                SetDiameterEncoderWheel(settings.BreakerSettings.DiameterEncoderWheel);
+                SetEncoderBitrate(settings.BreakerSettings.EncoderBitrate);
+                SetDistanceFromSensorToCamera(settings.BreakerSettings.DistanceFromSensorToCamera);
+                SetDistanceFromSensorToBreaker(settings.BreakerSettings.DistanceFromSensorToBreaker);
+            }
         }
         #endregion
 
@@ -444,6 +513,47 @@ namespace CapDefectDetector.CameraAndModbusClasses
             TurnOnOrangeSemaphore();
         }
 
+        #endregion
+
+        #region Рассчет значений
+        public double GetWheelCircumferenceMm()
+        {
+            return Math.PI * _diameterEncoderWheelValue;
+        }
+
+        public double GetTicksPerMm()
+        {
+            if (_diameterEncoderWheelValue <= 0 || _encoderBitrateValue <= 0)
+                return 0;
+
+            return _encoderBitrateValue / GetWheelCircumferenceMm();
+        }
+
+        public double GetMmPerTick()
+        {
+            if (_diameterEncoderWheelValue <= 0 || _encoderBitrateValue <= 0)
+                return 0;
+
+            return GetWheelCircumferenceMm() / _encoderBitrateValue;
+        }
+
+        public int GetCameraOffsetTicks()
+        {
+            if (_diameterEncoderWheelValue <= 0 || _encoderBitrateValue <= 0)
+                return 0;
+
+            return (int)Math.Round(_distanceFromSensorToCameraValue * (_encoderBitrateValue / GetWheelCircumferenceMm())
+            );
+        }
+
+        public int GetBreakerOffsetTicks()
+        {
+            if (_diameterEncoderWheelValue <= 0 || _encoderBitrateValue <= 0)
+                return 0;
+
+            return (int)Math.Round(_distanceFromSensorToBreakerValue * (_encoderBitrateValue / GetWheelCircumferenceMm())
+            );
+        }
         #endregion
 
         #region Запись/Чтение регистров

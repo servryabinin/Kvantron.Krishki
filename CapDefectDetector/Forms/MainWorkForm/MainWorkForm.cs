@@ -11,7 +11,9 @@ using CapDefectDetector.DTO.CameraSettings;
 using CapDefectDetector.DTO.CapRecipe;
 using CapDefectDetector.DTO.DefectSettings;
 using CapDefectDetector.DTO.PrSettings;
+using CapDefectDetector.Enums;
 using CapDefectDetector.Forms;
+using CapDefectDetector.Forms.BreakerSettingsForm;
 using CapDefectDetector.Forms.DefectParamSettingsForms.InclusionSettingsForm;
 using CapDefectDetector.Forms.DefectParamSettingsForms.InpaintSettingsForm;
 using CapDefectDetector.Forms.DefectParamSettingsForms.ObloySettingsForm;
@@ -170,14 +172,14 @@ namespace CapDefectDetector
         private bool _hasLastRows = false;
         private Mat? _lastFrameForDuplicate;
 
-        //Режим вывода изображения: Все, хорошие, плохие
-        private enum OutputMode
-        {
-            All,
-            Good,
-            Bad
-        }
-        private OutputMode _outputMode = OutputMode.All;
+        #region Перечисления
+        private OutputMode _outputMode = OutputMode.All;     //Режим вывода изображения: Все, хорошие, плохие
+        private VideoStreamMode _videoStreamMode = VideoStreamMode.Stopped;      //Статус состояния видеопотока: запущен, не запущен
+        private CameraConnectionStatus _cameraStatus = CameraConnectionStatus.Disconnected;    //Статус состояния подключения камеры: подключено, не подключено
+        private ModuleIOConnectionStatus _moduleIOStatus = ModuleIOConnectionStatus.Disconnected;    //Статус состояния подключения модуля ввода-вывода: подключено, не подключено
+        private ModuleSettingsStatus _moduleSettingsStatus = ModuleSettingsStatus.NotApplied;
+        private bool _settingsChanged = false;
+        #endregion
 
         private Timer _roleDisplayTimer = new Timer();
 
@@ -196,7 +198,7 @@ namespace CapDefectDetector
 
         private void InitializeConnections(HikCamera camera, ModuleIO modbus)
         {
-            _cam = camera; 
+            _cam = camera;
             _cameraConnected = camera != null;
             if (_cam != null)
                 _cam.SendImage += GetImage;
@@ -252,10 +254,11 @@ namespace CapDefectDetector
         {
             if (connected)
             {
-                prStatus.Text = "Подключено";
+                _moduleIOStatus = ModuleIOConnectionStatus.Connected;
+                moduleIOStatusLabel.Text = EnumHelper.GetDescription(_moduleIOStatus);
                 pr205IpTb.Text = _modbusClient.ipAddressModule;
                 pr205PortTb.Text = _modbusClient.portModule.ToString();
-                prStatus.ForeColor = Color.Green;
+                moduleIOStatusLabel.ForeColor = Color.Green;
                 connectPrButton.Text = "Отключиться от ПР";
                 connectPrButton.BackColor = _connectedColor;
                 breakingAllowCb.Enabled = true;
@@ -264,8 +267,9 @@ namespace CapDefectDetector
             }
             else
             {
-                prStatus.Text = _manualDisconnect ? "Откл. вручную" : "Не подключено";
-                prStatus.ForeColor = Color.Red;
+                _moduleIOStatus = _manualDisconnect ? ModuleIOConnectionStatus.ManualDisconnected : ModuleIOConnectionStatus.Disconnected;
+                moduleIOStatusLabel.Text = EnumHelper.GetDescription(_moduleIOStatus);
+                moduleIOStatusLabel.ForeColor = Color.Red;
                 pr205IpTb.Text = _modbusClient.ipAddressModule;
                 pr205PortTb.Text = _modbusClient.portModule.ToString();
                 connectPrButton.Text = "Подключиться к ПР";
@@ -279,20 +283,21 @@ namespace CapDefectDetector
         private void UpdateCameraConnectionUI()
         {
             bool connected = _cam?.Connected == true;
+            _cameraStatus = connected ? CameraConnectionStatus.Connected : CameraConnectionStatus.Disconnected;
 
             if (connected)
             {
                 cameraIpTextBox.Text = _cam.IpAdress;
-                camStatus.Text = "Подключено";
-                camStatus.ForeColor = Color.Green;
+                cameraConnectionStatusLabel.Text = EnumHelper.GetDescription(_cameraStatus);
+                cameraConnectionStatusLabel.ForeColor = Color.Green;
                 connectCameraButton.Text = "Отключиться от камеры";
                 connectCameraButton.BackColor = _connectedColor;
             }
             else
             {
                 cameraIpTextBox.Text = "Камера не выбрана на этапе инициализации";
-                camStatus.Text = "Не подключено";
-                camStatus.ForeColor = Color.Red;
+                cameraConnectionStatusLabel.Text = EnumHelper.GetDescription(_cameraStatus);
+                cameraConnectionStatusLabel.ForeColor = Color.Red;
                 connectCameraButton.Text = "Подключиться к камере";
                 connectCameraButton.BackColor = _disconnectedColor;
                 startStreamButton.Enabled = false;
@@ -429,8 +434,19 @@ namespace CapDefectDetector
 
         private void InitializeUISelections()
         {
-            if (outputImageCmB.Items.Count > 0)
-                outputImageCmB.SelectedIndex = 0;
+            InitializeOutputModeComboBox();
+        }
+
+        private void InitializeOutputModeComboBox()
+        {
+            outputImageCmB.Items.Clear();
+
+            foreach (OutputMode mode in Enum.GetValues(typeof(OutputMode)))
+            {
+                outputImageCmB.Items.Add(EnumHelper.GetDescription(mode));
+            }
+
+            outputImageCmB.SelectedIndex = 0;
         }
 
         private void InitializeAuthorizationSystem()
@@ -519,13 +535,41 @@ namespace CapDefectDetector
         private void LoadRecipes()
         {
             _recipes.Clear();
-            LoadSettingsFromFolder(_recipesFolder, _recipes, (json) => JsonConvert.DeserializeObject<CapRecipe>(json));
+
+            LoadSettingsFromFolder(_recipesFolder, _recipes,
+                json => JsonConvert.DeserializeObject<CapRecipe>(json));
+
+            if (_recipes.Count == 0)
+            {
+                var defaultRecipe = CreateDefaultRecipe();
+
+                var fileName = "DefaultRecipe.json";
+                var fullPath = Path.Combine(_recipesFolder, fileName);
+
+                SaveJson(fullPath, defaultRecipe);
+
+                _recipes["DefaultRecipe"] = defaultRecipe;
+            }
         }
 
         private void LoadDefectSettings()
         {
             _defectSettings.Clear();
-            LoadSettingsFromFolder(_folderParamDefect, _defectSettings, (json) => JsonConvert.DeserializeObject<DefectSettings>(json));
+
+            LoadSettingsFromFolder(_folderParamDefect, _defectSettings,
+                json => JsonConvert.DeserializeObject<DefectSettings>(json));
+
+            if (_defectSettings.Count == 0)
+            {
+                var defaultSettings = CreateDefaultDefectSettings();
+
+                var fileName = "DefaultDefectSettings.json";
+                var fullPath = Path.Combine(_folderParamDefect, fileName);
+
+                SaveJson(fullPath, defaultSettings);
+
+                _defectSettings["DefaultDefectSettings"] = defaultSettings;
+            }
         }
 
         private void LoadPrSettings()
@@ -561,7 +605,7 @@ namespace CapDefectDetector
         {
             _labelNormalFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
             _labelHoverFont = new Font("Segoe UI", 8.25F, FontStyle.Bold | FontStyle.Underline);
-            ApplyHover(ovalityParamLb, inclusionParamLb, inpaintParamLb, obloyParamLb, underfillParamLb);
+            ApplyHover(ovalityParamLb, inclusionParamLb, inpaintParamLb, obloyParamLb, underfillParamLb, distanceFromSensorToCameraLb, distanceFromSensorToBreakerLb);
         }
 
         private void ApplyHover(params Label[] labels)
@@ -583,6 +627,9 @@ namespace CapDefectDetector
                 if (_modbusClient?.Connected == true)
                 {
                     _modbusClient.ApplyInitialSettings();
+
+                    _moduleSettingsStatus = ModuleSettingsStatus.Applied;
+                    UpdateModuleSettingsStatus();
                 }
             }
             catch (Exception ex)
@@ -591,6 +638,34 @@ namespace CapDefectDetector
             }
         }
 
+        #endregion
+
+        #region Дефолтные значения если нет настроек дефектов
+        private void SaveJson<T>(string path, T obj)
+        {
+            var json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+            File.WriteAllText(path, json);
+        }
+
+        private DefectSettings CreateDefaultDefectSettings()
+        {
+            return new DefectSettings
+            {
+                Ovality = new OvalityDefectSettings(),
+                Inclusion = new InclusionDefectSettings(),
+                Paint = new PaintDefectSettings(),
+                Obloy = new ObloyDefectSettings(),
+                Underfill = new UnderfillDefectSettings()
+            };
+        }
+
+        private CapRecipe CreateDefaultRecipe()
+        {
+            return new CapRecipe
+            {
+                Name = "DefaultRecipe"
+            };
+        }
         #endregion
 
         #region Обработчики событий UI
@@ -606,10 +681,11 @@ namespace CapDefectDetector
                     _cam.SendImage -= GetImage;
                     _cam.Close();
                     _cameraConnected = false;
+                    _cameraStatus = CameraConnectionStatus.Disconnected;
                     connectCameraButton.Text = "Подключиться к камере";
                     connectCameraButton.BackColor = _disconnectedColor;
-                    camStatus.Text = "Не подключено";
-                    camStatus.ForeColor = Color.Red;
+                    cameraConnectionStatusLabel.Text = EnumHelper.GetDescription(_cameraStatus);
+                    cameraConnectionStatusLabel.ForeColor = Color.Red;
 
                     startStreamButton.Enabled = false;
 
@@ -622,20 +698,22 @@ namespace CapDefectDetector
                         _cam.SendImage -= GetImage;
                         _cam.SendImage += GetImage;
                         _cameraConnected = true;
+                        _cameraStatus = CameraConnectionStatus.Connected;
                         connectCameraButton.Text = "Отключиться от камеры";
                         connectCameraButton.BackColor = _connectedColor;
-                        camStatus.Text = "Подключено";
-                        camStatus.ForeColor = Color.Green;
+                        cameraConnectionStatusLabel.Text = EnumHelper.GetDescription(_cameraStatus);
+                        cameraConnectionStatusLabel.ForeColor = Color.Green;
                         startStreamButton.Enabled = true;
                         ErrorLogger.Log(new Exception("Камера успешно подключена"), "connectCameraButton_Click");
                     }
                     else
                     {
                         _cameraConnected = false;
+                        _cameraStatus = CameraConnectionStatus.Disconnected;
                         connectCameraButton.Text = "Подключиться к камере";
                         connectCameraButton.BackColor = _disconnectedColor;
-                        camStatus.Text = "Не подключено";
-                        camStatus.ForeColor = Color.Red;
+                        cameraConnectionStatusLabel.Text = EnumHelper.GetDescription(_cameraStatus);
+                        cameraConnectionStatusLabel.ForeColor = Color.Red;
                         startStreamButton.Enabled = false;
                         ErrorLogger.Log(new Exception("Не удалось подключиться к камере"), "connectCameraButton_Click");
                     }
@@ -645,10 +723,11 @@ namespace CapDefectDetector
             {
                 ErrorLogger.Log(ex, "Ошибка в connectCameraButton_Click");
                 _cameraConnected = false;
+                _cameraStatus = CameraConnectionStatus.Disconnected;
                 connectCameraButton.Text = "Подключиться";
                 connectCameraButton.BackColor = _disconnectedColor;
-                camStatus.Text = "Не подключено";
-                camStatus.ForeColor = Color.Red;
+                cameraConnectionStatusLabel.Text = EnumHelper.GetDescription(_cameraStatus);
+                cameraConnectionStatusLabel.ForeColor = Color.Red;
                 startStreamButton.Enabled = false;
             }
         }
@@ -856,6 +935,8 @@ namespace CapDefectDetector
 
                 _isStreamCam = true;
 
+                _videoStreamMode = VideoStreamMode.Running;
+
 
                 if (AuthManager.Instance.CurrentRole == Role.Operator)
                 {
@@ -873,8 +954,8 @@ namespace CapDefectDetector
 
                 startStreamButton.Text = "Остановить";
                 startStreamButton.BackColor = Color.FromArgb(229, 115, 115);
-                cameraStatusLabel.Text = "Запущен";
-                cameraStatusLabel.ForeColor = Color.Green;
+                videoStreamStatusLabel.Text = EnumHelper.GetDescription(_videoStreamMode);
+                videoStreamStatusLabel.ForeColor = Color.Green;
                 recognizeButton.Enabled = true;
 
                 loadImageForReceptParamBt.Enabled = false;
@@ -897,6 +978,7 @@ namespace CapDefectDetector
         private void StopStream()
         {
             _isStreamCam = false;
+            _videoStreamMode = VideoStreamMode.Stopped;
 
             originPb.Image?.Dispose();
             originPb.Image = null;
@@ -913,8 +995,8 @@ namespace CapDefectDetector
 
             startStreamButton.Text = "Изображение с камеры";
             startStreamButton.BackColor = Color.FromArgb(66, 133, 244);
-            cameraStatusLabel.Text = "Не запущен";
-            cameraStatusLabel.ForeColor = Color.Black;
+            videoStreamStatusLabel.Text = EnumHelper.GetDescription(_videoStreamMode);
+            videoStreamStatusLabel.ForeColor = Color.Black;
             recognizeButton.Enabled = false;
 
             loadImageForReceptParamBt.Enabled = true;
@@ -1161,13 +1243,9 @@ namespace CapDefectDetector
 
             bool existedBefore = File.Exists(fullPath);
 
-            var prSettings = new ModuleIOSettings
-            {
-                Name = name,
-                BreakingTime = _modbusClient.GetBreakingTime(),
-                CameraOffset = _modbusClient.GetCameraOffset(),
-                BreakerOffset = _modbusClient.GetBreakerOffset()
-            };
+            // Получаем сразу все настройки
+            ModuleIOSettings prSettings = _modbusClient.GetSettings();
+            prSettings.Name = name;
 
             string json = System.Text.Json.JsonSerializer.Serialize(
                 prSettings,
@@ -1306,6 +1384,8 @@ namespace CapDefectDetector
             try
             {
                 await Task.Run(() => _modbusClient.ApplySettings(), _applyPrCts.Token);
+                _moduleSettingsStatus = ModuleSettingsStatus.Applied;
+                UpdateModuleSettingsStatus();
             }
             catch (Exception ex)
             {
@@ -1318,6 +1398,9 @@ namespace CapDefectDetector
             if (_isApplyingPrSettings) return;
 
             _modbusClient?.SetBreakingTime((int)breakingTimeUd.Value);
+
+            _moduleSettingsStatus = ModuleSettingsStatus.NotApplied;
+            UpdateModuleSettingsStatus();
         }
 
         private void cameraOffsetUd_ValueChanged(object sender, EventArgs e)
@@ -1325,6 +1408,9 @@ namespace CapDefectDetector
             if (_isApplyingPrSettings) return;
 
             _modbusClient?.SetCameraOffset((int)cameraOffsetUd.Value);
+
+            _moduleSettingsStatus = ModuleSettingsStatus.NotApplied;
+            UpdateModuleSettingsStatus();
         }
 
         private void breakerOffsetUd_ValueChanged(object sender, EventArgs e)
@@ -1332,6 +1418,24 @@ namespace CapDefectDetector
             if (_isApplyingPrSettings) return;
 
             _modbusClient?.SetBreakerOffset((int)breakerOffsetUd.Value);
+
+            _moduleSettingsStatus = ModuleSettingsStatus.NotApplied;
+            UpdateModuleSettingsStatus();
+        }
+
+        private void UpdateModuleSettingsStatus()
+        {
+            if (moduleSettingsStatusLabel == null || moduleSettingsStatusLabel.IsDisposed)
+                return;
+
+            if (moduleSettingsStatusLabel.InvokeRequired)
+            {
+                moduleSettingsStatusLabel.BeginInvoke(new Action(UpdateModuleSettingsStatus));
+                return;
+            }
+
+            moduleSettingsStatusLabel.Text = EnumHelper.GetDescription(_moduleSettingsStatus);
+            moduleSettingsStatusLabel.ForeColor = _moduleSettingsStatus == ModuleSettingsStatus.Applied ? Color.Green : Color.Red;
         }
         #endregion
 
@@ -1707,21 +1811,9 @@ namespace CapDefectDetector
 
         private void outputImageCmB_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (outputImageCmB.SelectedIndex)
-            {
-                case 0:
-                    _outputMode = OutputMode.All;   // Все
-                    break;
-                case 1:
-                    _outputMode = OutputMode.Good;  // Хорошие
-                    break;
-                case 2:
-                    _outputMode = OutputMode.Bad;   // Плохие
-                    break;
-                default:
-                    _outputMode = OutputMode.All;
-                    break;
-            }
+            _outputMode = EnumHelper.GetValueByDescription<OutputMode>(
+                outputImageCmB.SelectedItem.ToString()
+            );
         }
 
         #endregion
@@ -1752,7 +1844,6 @@ namespace CapDefectDetector
                 {
                     ErrorLogger.Log(ex, "Ошибка в StopProcessingAsync во время остановки обработки");
                 }
-                ResetState();
                 _isProcessing = false;
                 _imageQueue.Clear();
 
@@ -1831,8 +1922,6 @@ namespace CapDefectDetector
                 {
                     loadImageButton.Enabled = false;
                 }
-
-                StartUiLoop();
             }
             catch (Exception ex)
             {
@@ -2512,54 +2601,48 @@ namespace CapDefectDetector
 
                                 string defectText = defects.Count > 0 ? string.Join(", ", defects) : "-";
 
-                                // === обновление состояния (НЕ UI) ===
-                                long t = stopwatch.ElapsedMilliseconds;
-                                lock (_stateLock)
+                                stopwatch.Stop();
+
+                                ResultState snapshot = new ResultState
                                 {
-                                    _state.Frame?.Dispose();
-                                    _state.Frame = _frameToDisplay.Clone();
+                                    Frame = _frameToDisplay.Clone(),
 
-                                    _generalCapsCount++;
-                                    if (anyDefect)
-                                    {
-                                        _ngCapsCount++;
-                                    }
-                                    else
-                                    {
-                                        _okCapsCount++;
-                                    }
+                                    GeneralCapsCount = ++_generalCapsCount,
+                                    Ng = anyDefect ? ++_ngCapsCount : _ngCapsCount,
+                                    Ok = anyDefect ? _okCapsCount : ++_okCapsCount,
 
-                                    _percentNgCaps = _generalCapsCount > 0 ? _ngCapsCount / _generalCapsCount * 100 : 0;
-                                    _percentOkCaps = _generalCapsCount > 0 ? _okCapsCount / _generalCapsCount * 100 : 0;
+                                    PercentNG = _generalCapsCount > 0 ? (float)_ngCapsCount / _generalCapsCount * 100f : 0,
+                                    PercentOK = _generalCapsCount > 0 ? (float)_okCapsCount / _generalCapsCount * 100f : 0,
 
-                                    _state.GeneralCapsCount = _generalCapsCount;
-                                    _state.Ok = _okCapsCount;
-                                    _state.Ng = _ngCapsCount;
-                                    _state.PercentNG = _percentNgCaps;
-                                    _state.PercentOK = _percentOkCaps;
+                                    OvalityDefectCount = _ovalityDefectCount,
+                                    InclusionDefectCount = _inclusionDefectCount,
+                                    PaintDefectCount = _paintDefectCount,
+                                    ObloyDefectCount = _obloyDefectCount,
+                                    UnderFillDefectCount = _underFillDefectCount,
 
-                                    _state.OvalityDefectCount = _ovalityDefectCount;
-                                    _state.InclusionDefectCount = _inclusionDefectCount;
-                                    _state.PaintDefectCount = _paintDefectCount;
-                                    _state.ObloyDefectCount = _obloyDefectCount;
-                                    _state.UnderFillDefectCount = _underFillDefectCount;
+                                    PercentOvality = _percentOvalityCaps,
+                                    PercentInclusion = _percentInclusionCaps,
+                                    PercentPaint = _percentInpaintCaps,
+                                    PercentObloy = _percentObloyCaps,
+                                    PercentUnderFill = _percentUnderfillCaps,
 
-                                    _state.PercentOvality = _percentOvalityCaps;
-                                    _state.PercentPaint = _percentInpaintCaps;
-                                    _state.PercentInclusion = _percentInclusionCaps;
-                                    _state.PercentObloy = _percentObloyCaps;
-                                    _state.PercentUnderFill = _percentUnderfillCaps;
+                                    TimeOvality = _timeOvality,
+                                    TimeInclusion = _timeInclusion,
+                                    TimePaint = _timeInpaint,
+                                    TimeObloy = _timeObloy,
+                                    TimeUnderFill = _timeUnderFill,
 
-                                    _state.TimeOvality = _timeOvality;
-                                    _state.TimeInclusion = _timeInclusion;
-                                    _state.TimePaint = _timeInpaint;
-                                    _state.TimeObloy = _timeObloy;
-                                    _state.TimeUnderFill = _timeUnderFill;
+                                    Time = stopwatch.ElapsedMilliseconds,
+                                    IsNg = anyDefect,
+                                    DefectText = defectText
+                                };
 
-                                    _state.Time = t;
-                                    _state.DefectText = defectText;
-                                    _state.IsNg = anyDefect;
-                                }
+                                BeginInvoke(new Action(() =>
+                                {
+                                    UpdateUi(snapshot);
+
+                                    snapshot.Frame?.Dispose();
+                                }));
 
                                 string defectSuffix = defects.Count > 0
                                     ? "_" + string.Join(", ", defects)
@@ -2607,8 +2690,6 @@ namespace CapDefectDetector
                                         catch (Exception ex) { ErrorLogger.Log(ex, "Ошибка PLC"); }
                                     });
                                 }
-
-                                stopwatch.Stop();
                             }
                             catch (Exception ex)
                             {
@@ -2913,7 +2994,7 @@ namespace CapDefectDetector
 
         #region Методы обновления UI
 
-        private void UpdatePictureBox(PictureBox pictureBox, Mat image)
+        /*private void UpdatePictureBox(PictureBox pictureBox, Mat image)
         {
             try
             {
@@ -2948,6 +3029,67 @@ namespace CapDefectDetector
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex, "Ошибка в UpdatePictureBox, (внешний уровень) для PictureBox: {pictureBox}");
+            }
+        }*/
+
+        private void UpdatePictureBox(PictureBox pictureBox, Mat image)
+        {
+            try
+            {
+                if (pictureBox == null)
+                {
+                    return;
+                }
+
+                if (pictureBox.IsDisposed || pictureBox.Disposing)
+                {
+                    return;
+                }
+
+                if (image == null)
+                {
+                    return;
+                }
+
+                if (image.Empty())
+                {
+                    return;
+                }
+
+                Bitmap bitmap = null;
+
+                try
+                {
+                    // Пока Mat гарантированно жив, создаем независимый Bitmap
+                    bitmap = BitmapConverter.ToBitmap(image);
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Mat уже уничтожен — просто выходим
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.Log(ex, "Ошибка преобразования Mat в Bitmap.");
+                    return;
+                }
+
+                try
+                {
+                    var oldImage = pictureBox.Image;
+
+                    pictureBox.Image = bitmap;
+                    oldImage?.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    bitmap?.Dispose();
+                    ErrorLogger.Log(ex, "Ошибка установки изображения в PictureBox.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex, "Необработанная ошибка UpdatePictureBox.");
             }
         }
 
@@ -3910,63 +4052,17 @@ namespace CapDefectDetector
             _settings = ReadSettingsFromUi();
         }
 
-        private void StartUiLoop()
+        private void UpdateUi(ResultState snapshot)
         {
-            _uiTimer = new System.Windows.Forms.Timer();
-            _uiTimer.Interval = 100;
-
-            _uiTimer.Tick += UiTimer_Tick;
-
-            _uiTimer.Start();
-        }
-
-        private void UiTimer_Tick(object sender, EventArgs e)
-        {
-            ResultState snapshot;
-
-            lock (_stateLock)
-            {
-                snapshot = new ResultState
-                {
-                    Frame = _state.Frame?.Clone(),
-
-                    GeneralCapsCount = _state.GeneralCapsCount,
-                    Ok = _state.Ok,
-                    Ng = _state.Ng,
-                    PercentOK = _state.PercentOK,
-                    PercentNG = _state.PercentNG,
-
-                    OvalityDefectCount = _state.OvalityDefectCount,
-                    InclusionDefectCount = _state.InclusionDefectCount,
-                    PaintDefectCount = _state.PaintDefectCount,
-                    ObloyDefectCount = _state.ObloyDefectCount,
-                    UnderFillDefectCount = _state.UnderFillDefectCount,
-
-                    PercentOvality = _state.PercentOvality,
-                    PercentInclusion = _state.PercentInclusion,
-                    PercentPaint = _state.PercentPaint,
-                    PercentObloy = _state.PercentObloy,
-                    PercentUnderFill = _state.PercentUnderFill,
-
-                    TimeOvality = _state.TimeOvality,
-                    TimeInclusion = _state.TimeInclusion,
-                    TimeUnderFill = _state.TimeUnderFill,
-                    TimeObloy = _state.TimeObloy,
-                    TimePaint = _state.TimePaint,
-
-                    Time = _state.Time,
-                    IsNg = _state.IsNg,
-
-                    DefectText = _state.DefectText,
-
-                };
-            }
-
             try
             {
+                if (snapshot == null)
+                    return;
+
                 generalCapsCountTb.Text = snapshot.GeneralCapsCount.ToString();
                 okCapsCountTb.Text = snapshot.Ok.ToString();
                 ngCapsCountTb.Text = snapshot.Ng.ToString();
+
                 percentOkCapsTb.Text = snapshot.PercentOK.ToString("F1");
                 percentNgCapsTb.Text = snapshot.PercentNG.ToString("F1");
 
@@ -3995,56 +4091,14 @@ namespace CapDefectDetector
                     (_outputMode == OutputMode.Good && !snapshot.IsNg) ||
                     (_outputMode == OutputMode.Bad && snapshot.IsNg);
 
-                if (snapshot.Frame != null)
+                if (show && snapshot.Frame != null && !snapshot.Frame.Empty())
                 {
-                    if (show)
-                    {
-                        UpdatePictureBox(originPb, snapshot.Frame);
-                    }
-
-                    snapshot.Frame.Dispose();
+                    UpdatePictureBox(originPb, snapshot.Frame);
                 }
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex, "Ошибка обновления UI");
-            }
-        }
-
-        private void ResetState()
-        {
-            lock (_stateLock)
-            {
-                _state.Frame?.Dispose();
-                _state.Frame = null;
-
-                _state.GeneralCapsCount = 0;
-                _state.Ok = 0;
-                _state.Ng = 0;
-                _state.PercentOK = 0;
-                _state.PercentNG = 0;
-
-                _state.OvalityDefectCount = 0;
-                _state.InclusionDefectCount = 0;
-                _state.PaintDefectCount = 0;
-                _state.ObloyDefectCount = 0;
-                _state.UnderFillDefectCount = 0;
-
-                _state.PercentOvality = 0;
-                _state.PercentInclusion = 0;
-                _state.PercentPaint = 0;
-                _state.PercentObloy = 0;
-                _state.PercentUnderFill = 0;
-
-                _state.TimeOvality = 0;
-                _state.TimeInclusion = 0;
-                _state.TimePaint = 0;
-                _state.TimeObloy = 0;
-                _state.TimeUnderFill = 0;
-
-                _state.Time = 0;
-                _state.DefectText = string.Empty;
-                _state.IsNg = false;
+                ErrorLogger.Log(ex, "Ошибка UpdateUi");
             }
         }
         #endregion
@@ -4159,6 +4213,38 @@ namespace CapDefectDetector
                 countCorrugationsNumUpD.Value = (decimal)settings.CorrugationsCountForUnderFill;
 
                 _defectSettingsSaved = false;
+            }
+        }
+        #endregion
+
+        #region Рассчет расстояний от датчика до камеры и от датчика до отбраковщика
+        private void distanceFromSensorToCameraLb_Click(object sender, EventArgs e)
+        {
+            var form = new BreakerSettingsForm(_modbusClient);
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                var settings = _modbusClient.GetSettings();
+                cameraOffsetUd.Value = (decimal)settings.CameraOffset;
+                breakerOffsetUd.Value = (decimal)settings.BreakerOffset;
+
+                _moduleSettingsStatus = ModuleSettingsStatus.NotApplied;
+                UpdateModuleSettingsStatus();
+            }
+        }
+
+        private void distanceFromSensorToBreakerLb_Click(object sender, EventArgs e)
+        {
+            var form = new BreakerSettingsForm(_modbusClient);
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                var settings = _modbusClient.GetSettings();
+                cameraOffsetUd.Value = (decimal)settings.CameraOffset;
+                breakerOffsetUd.Value = (decimal)settings.BreakerOffset;
+
+                _moduleSettingsStatus = ModuleSettingsStatus.NotApplied;
+                UpdateModuleSettingsStatus();
             }
         }
         #endregion
