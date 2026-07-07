@@ -292,7 +292,8 @@ namespace CapDefectDetector.CameraAndModbusClasses
         {
             if (!Streamed)
             {
-				int nRet = m_MyCamera.MV_CC_StartGrabbing_NET();
+                m_MyCamera.MV_CC_SetImageNodeNum_NET(300);
+                int nRet = m_MyCamera.MV_CC_StartGrabbing_NET();
 				if (MyCamera.MV_OK != nRet)
 				{
 					Console.WriteLine("Start grabbing failed:{0:x8}", nRet);

@@ -1172,7 +1172,6 @@
             // 
             capFlashOffsetNumUpD.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
             capFlashOffsetNumUpD.Location = new Point(3, 29);
-            capFlashOffsetNumUpD.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             capFlashOffsetNumUpD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             capFlashOffsetNumUpD.Name = "capFlashOffsetNumUpD";
             capFlashOffsetNumUpD.Size = new Size(68, 22);

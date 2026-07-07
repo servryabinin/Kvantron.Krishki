@@ -396,7 +396,6 @@
             // 
             obloySettings_capFlashOffsetNumUd.Anchor = AnchorStyles.None;
             obloySettings_capFlashOffsetNumUd.Location = new Point(120, 6);
-            obloySettings_capFlashOffsetNumUd.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
             obloySettings_capFlashOffsetNumUd.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             obloySettings_capFlashOffsetNumUd.Name = "obloySettings_capFlashOffsetNumUd";
             obloySettings_capFlashOffsetNumUd.Size = new Size(55, 23);

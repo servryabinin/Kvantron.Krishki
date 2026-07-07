@@ -516,11 +516,19 @@ namespace CapDefectDetector.CameraAndModbusClasses
         #endregion
 
         #region Рассчет значений
+        /// <summary>
+        /// Рассчитывает длину окружности колеса энкодера (число Пи умножаем на диаметр (2 радиуса))
+        /// </summary>
+        /// <returns></returns>
         public double GetWheelCircumferenceMm()
         {
             return Math.PI * _diameterEncoderWheelValue;
         }
 
+        /// <summary>
+        /// Расчет тиков на мм
+        /// </summary>
+        /// <returns></returns>
         public double GetTicksPerMm()
         {
             if (_diameterEncoderWheelValue <= 0 || _encoderBitrateValue <= 0)
@@ -529,6 +537,10 @@ namespace CapDefectDetector.CameraAndModbusClasses
             return _encoderBitrateValue / GetWheelCircumferenceMm();
         }
 
+        /// <summary>
+        /// Расчет мм на тик
+        /// </summary>
+        /// <returns></returns>
         public double GetMmPerTick()
         {
             if (_diameterEncoderWheelValue <= 0 || _encoderBitrateValue <= 0)
@@ -537,21 +549,29 @@ namespace CapDefectDetector.CameraAndModbusClasses
             return GetWheelCircumferenceMm() / _encoderBitrateValue;
         }
 
+        /// <summary>
+        /// Расчет расстояния от датчика до камеры в тиках
+        /// </summary>
+        /// <returns></returns>
         public int GetCameraOffsetTicks()
         {
             if (_diameterEncoderWheelValue <= 0 || _encoderBitrateValue <= 0)
                 return 0;
 
-            return (int)Math.Round(_distanceFromSensorToCameraValue * (_encoderBitrateValue / GetWheelCircumferenceMm())
+            return (int)Math.Round(_distanceFromSensorToCameraValue * GetTicksPerMm()
             );
         }
 
+        /// <summary>
+        /// Расчет расстояния от датчика до отбраковщика в тиках
+        /// </summary>
+        /// <returns></returns>
         public int GetBreakerOffsetTicks()
         {
             if (_diameterEncoderWheelValue <= 0 || _encoderBitrateValue <= 0)
                 return 0;
 
-            return (int)Math.Round(_distanceFromSensorToBreakerValue * (_encoderBitrateValue / GetWheelCircumferenceMm())
+            return (int)Math.Round(_distanceFromSensorToBreakerValue * GetTicksPerMm()
             );
         }
         #endregion

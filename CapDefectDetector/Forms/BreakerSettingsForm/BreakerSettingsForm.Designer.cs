@@ -157,11 +157,11 @@
             // 
             // breakerSettingsForm_mmOnStepTb
             // 
-            breakerSettingsForm_mmOnStepTb.Anchor = AnchorStyles.Left;
+            breakerSettingsForm_mmOnStepTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             breakerSettingsForm_mmOnStepTb.Enabled = false;
             breakerSettingsForm_mmOnStepTb.Location = new Point(195, 9);
             breakerSettingsForm_mmOnStepTb.Name = "breakerSettingsForm_mmOnStepTb";
-            breakerSettingsForm_mmOnStepTb.Size = new Size(120, 22);
+            breakerSettingsForm_mmOnStepTb.Size = new Size(180, 22);
             breakerSettingsForm_mmOnStepTb.TabIndex = 27;
             // 
             // label6
@@ -213,29 +213,29 @@
             // 
             // breakerSettingsForm_stepOnMmTb
             // 
-            breakerSettingsForm_stepOnMmTb.Anchor = AnchorStyles.Left;
+            breakerSettingsForm_stepOnMmTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             breakerSettingsForm_stepOnMmTb.Enabled = false;
             breakerSettingsForm_stepOnMmTb.Location = new Point(195, 46);
             breakerSettingsForm_stepOnMmTb.Name = "breakerSettingsForm_stepOnMmTb";
-            breakerSettingsForm_stepOnMmTb.Size = new Size(120, 22);
+            breakerSettingsForm_stepOnMmTb.Size = new Size(180, 22);
             breakerSettingsForm_stepOnMmTb.TabIndex = 24;
             // 
             // breakerSettingsForm_breakerOffsetTb
             // 
-            breakerSettingsForm_breakerOffsetTb.Anchor = AnchorStyles.Left;
+            breakerSettingsForm_breakerOffsetTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             breakerSettingsForm_breakerOffsetTb.Enabled = false;
             breakerSettingsForm_breakerOffsetTb.Location = new Point(195, 121);
             breakerSettingsForm_breakerOffsetTb.Name = "breakerSettingsForm_breakerOffsetTb";
-            breakerSettingsForm_breakerOffsetTb.Size = new Size(120, 22);
+            breakerSettingsForm_breakerOffsetTb.Size = new Size(180, 22);
             breakerSettingsForm_breakerOffsetTb.TabIndex = 26;
             // 
             // breakerSettingsForm_cameraOffsetTb
             // 
-            breakerSettingsForm_cameraOffsetTb.Anchor = AnchorStyles.Left;
+            breakerSettingsForm_cameraOffsetTb.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             breakerSettingsForm_cameraOffsetTb.Enabled = false;
             breakerSettingsForm_cameraOffsetTb.Location = new Point(195, 83);
             breakerSettingsForm_cameraOffsetTb.Name = "breakerSettingsForm_cameraOffsetTb";
-            breakerSettingsForm_cameraOffsetTb.Size = new Size(120, 22);
+            breakerSettingsForm_cameraOffsetTb.Size = new Size(180, 22);
             breakerSettingsForm_cameraOffsetTb.TabIndex = 25;
             // 
             // groupBox1
@@ -277,39 +277,39 @@
             // 
             // breakerSettingsForm_distanceFromSensorToBreakerNuD
             // 
-            breakerSettingsForm_distanceFromSensorToBreakerNuD.Anchor = AnchorStyles.Left;
+            breakerSettingsForm_distanceFromSensorToBreakerNuD.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             breakerSettingsForm_distanceFromSensorToBreakerNuD.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             breakerSettingsForm_distanceFromSensorToBreakerNuD.Location = new Point(195, 120);
             breakerSettingsForm_distanceFromSensorToBreakerNuD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             breakerSettingsForm_distanceFromSensorToBreakerNuD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             breakerSettingsForm_distanceFromSensorToBreakerNuD.Name = "breakerSettingsForm_distanceFromSensorToBreakerNuD";
-            breakerSettingsForm_distanceFromSensorToBreakerNuD.Size = new Size(120, 23);
+            breakerSettingsForm_distanceFromSensorToBreakerNuD.Size = new Size(180, 23);
             breakerSettingsForm_distanceFromSensorToBreakerNuD.TabIndex = 7;
             breakerSettingsForm_distanceFromSensorToBreakerNuD.Value = new decimal(new int[] { 1, 0, 0, 0 });
             breakerSettingsForm_distanceFromSensorToBreakerNuD.ValueChanged += breakerSettingsForm_distanceFromSensorToBreakerNuD_ValueChanged;
             // 
             // breakerSettingsForm_distanceFromSensorToCameraNuD
             // 
-            breakerSettingsForm_distanceFromSensorToCameraNuD.Anchor = AnchorStyles.Left;
+            breakerSettingsForm_distanceFromSensorToCameraNuD.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             breakerSettingsForm_distanceFromSensorToCameraNuD.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
             breakerSettingsForm_distanceFromSensorToCameraNuD.Location = new Point(195, 83);
             breakerSettingsForm_distanceFromSensorToCameraNuD.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             breakerSettingsForm_distanceFromSensorToCameraNuD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             breakerSettingsForm_distanceFromSensorToCameraNuD.Name = "breakerSettingsForm_distanceFromSensorToCameraNuD";
-            breakerSettingsForm_distanceFromSensorToCameraNuD.Size = new Size(120, 22);
+            breakerSettingsForm_distanceFromSensorToCameraNuD.Size = new Size(180, 22);
             breakerSettingsForm_distanceFromSensorToCameraNuD.TabIndex = 6;
             breakerSettingsForm_distanceFromSensorToCameraNuD.Value = new decimal(new int[] { 1, 0, 0, 0 });
             breakerSettingsForm_distanceFromSensorToCameraNuD.ValueChanged += breakerSettingsForm_distanceFromSensorToCameraNuD_ValueChanged;
             // 
             // breakerSettingsForm_encoderBitrateNuD
             // 
-            breakerSettingsForm_encoderBitrateNuD.Anchor = AnchorStyles.Left;
+            breakerSettingsForm_encoderBitrateNuD.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             breakerSettingsForm_encoderBitrateNuD.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
             breakerSettingsForm_encoderBitrateNuD.Location = new Point(195, 45);
             breakerSettingsForm_encoderBitrateNuD.Maximum = new decimal(new int[] { 15000, 0, 0, 0 });
             breakerSettingsForm_encoderBitrateNuD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             breakerSettingsForm_encoderBitrateNuD.Name = "breakerSettingsForm_encoderBitrateNuD";
-            breakerSettingsForm_encoderBitrateNuD.Size = new Size(120, 23);
+            breakerSettingsForm_encoderBitrateNuD.Size = new Size(180, 23);
             breakerSettingsForm_encoderBitrateNuD.TabIndex = 5;
             breakerSettingsForm_encoderBitrateNuD.Value = new decimal(new int[] { 1, 0, 0, 0 });
             breakerSettingsForm_encoderBitrateNuD.ValueChanged += breakerSettingsForm_encoderBitrateNuD_ValueChanged;
@@ -354,19 +354,19 @@
             label5.Font = new Font("Segoe UI", 8.25F);
             label5.Location = new Point(6, 118);
             label5.Name = "label5";
-            label5.Size = new Size(147, 26);
+            label5.Size = new Size(178, 26);
             label5.TabIndex = 3;
-            label5.Text = "Расстояние от датчика до отбраковщика, мм:";
+            label5.Text = "Расстояние от датчика до сдува, мм:";
             // 
             // breakerSettingsForm_diameterEncoderWheelNuD
             // 
-            breakerSettingsForm_diameterEncoderWheelNuD.Anchor = AnchorStyles.Left;
+            breakerSettingsForm_diameterEncoderWheelNuD.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             breakerSettingsForm_diameterEncoderWheelNuD.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
             breakerSettingsForm_diameterEncoderWheelNuD.Location = new Point(195, 9);
             breakerSettingsForm_diameterEncoderWheelNuD.Maximum = new decimal(new int[] { 500, 0, 0, 0 });
             breakerSettingsForm_diameterEncoderWheelNuD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             breakerSettingsForm_diameterEncoderWheelNuD.Name = "breakerSettingsForm_diameterEncoderWheelNuD";
-            breakerSettingsForm_diameterEncoderWheelNuD.Size = new Size(120, 22);
+            breakerSettingsForm_diameterEncoderWheelNuD.Size = new Size(180, 22);
             breakerSettingsForm_diameterEncoderWheelNuD.TabIndex = 4;
             breakerSettingsForm_diameterEncoderWheelNuD.Value = new decimal(new int[] { 1, 0, 0, 0 });
             breakerSettingsForm_diameterEncoderWheelNuD.ValueChanged += breakerSettingsForm_diameterEncoderWheelNuD_ValueChanged;
