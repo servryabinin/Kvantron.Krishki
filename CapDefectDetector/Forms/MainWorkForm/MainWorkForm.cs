@@ -193,7 +193,7 @@ namespace CapDefectDetector
             InitializeComponent();
             InitializeReceptTabControl();
             InitializeApplication();
-            InitializeModuleInitSettings();
+            InitializeModuleInitSettings(); 
         }
 
         private void InitializeConnections(HikCamera camera, ModuleIO modbus)
