@@ -24,6 +24,7 @@ using CapDefectDetector.Hardware;
 using CapDefectDetector.ImageProcessing.Utils;
 using CapDefectDetector.ImageProcessing.Utils.ContourProcessor;
 using CapDefectDetector.Logger;
+using CapDefectDetector.Properties;
 using CapDefectDetector.ResultStateAndProcessingSettings;
 using CapDefectDetector.StatisticProcessing;
 using Newtonsoft.Json;
@@ -210,7 +211,7 @@ namespace CapDefectDetector
             {
                 _modbusClient.ConnectionStatusChanged += ModbusClient_ConnectionStatusChanged;
                 _modbusClient.EnableAutoReconnect();
-                _modbusClient.StartPolling();
+                //_modbusClient.StartPolling();
             }
         }
 
@@ -788,7 +789,7 @@ namespace CapDefectDetector
 
                 if (_modbusClient.Connect())
                 {
-                    _modbusClient.StartPolling();
+                    //_modbusClient.StartPolling();
 
                     ModbusClient_ConnectionStatusChanged(true);
 
@@ -2648,7 +2649,7 @@ namespace CapDefectDetector
                                     ? "_" + string.Join(", ", defects)
                                     : "";
 
-                                string fileName = $"{(anyDefect ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}{defectSuffix}.png";
+                                string fileName = $"{(anyDefect ? "NG" : "OK")}_{DateTime.Now:dd.MM.yyyy_HH-mm-ss_fff}{defectSuffix}_{stopwatch.ElapsedMilliseconds}.png";
 
                                 // === сохранение (без UI) ===
                                 if (settings.SaveOk || settings.SaveNg)

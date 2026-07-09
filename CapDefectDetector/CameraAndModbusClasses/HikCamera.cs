@@ -317,9 +317,10 @@ namespace CapDefectDetector.CameraAndModbusClasses
         {
             if (Streamed)
             {
-				mainThread.Interrupt();
-
 				isGrabbing = false;
+                //mainThread.Interrupt();
+                mainThread.Join(timeout: TimeSpan.FromSeconds(2));
+
 				Streamed = isGrabbing;
 
 				int nRet = m_MyCamera.MV_CC_StopGrabbing_NET();
